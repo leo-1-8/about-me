@@ -67,6 +67,12 @@
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        /* Completely remove from layout when hidden so it never blocks the intro */
+        .loading-screen.hidden.removed {
+            display: none !important;
         }
 
         /* Sleep mode overlay (10:00 PM - 5:00 AM) */
@@ -2664,6 +2670,10 @@
             text-align: center;
         }
 
+        body.intro-visible .form-link-below {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .form-link-below {
                 position: fixed;
@@ -2843,7 +2853,7 @@
             display: none;
         }
 
-        /* Post-loading welcome intro */
+        /* Post-loading welcome intro - very high z-index so nothing can cover the Skip button */
         .intro-box {
             position: fixed;
             top: 50%;
@@ -2854,7 +2864,7 @@
             padding: 20px 24px;
             border-radius: 14px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-            z-index: 10004;
+            z-index: 99998;
             width: 90%;
             max-width: 640px;
             display: none;
@@ -2862,10 +2872,12 @@
             transition: opacity 0.8s ease;
             text-align: center;
             border: 2px solid rgba(27, 94, 32, 0.2);
+            pointer-events: auto;
         }
 
         .intro-box.show {
             display: block;
+            pointer-events: auto;
         }
 
         .intro-box.fade-out {
@@ -2898,6 +2910,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 99999;
+            pointer-events: auto;
+            touch-action: manipulation;
         }
 
         .intro-skip:hover {
@@ -3141,6 +3157,13 @@
                 visibility: visible !important;
                 opacity: 1 !important;
                 position: relative;
+            }
+
+            .button-container .main-button.btn-about {
+                width: calc(100% - 36px);
+                max-width: calc(100% - 36px);
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .main-button::after {
@@ -3387,13 +3410,19 @@
 
             .main-button {
                 flex: 1 1 calc(50% - 10px);
-                min-width: 140px;
-                max-width: 200px;
-                padding: 12px 20px;
-                font-size: 15px;
+                min-width: 120px;
+                max-width: 160px;
+                padding: 12px 18px;
+                font-size: 14px;
                 visibility: visible !important;
                 opacity: 1 !important;
                 position: relative;
+            }
+
+            .button-container .main-button.btn-about {
+                flex: 1 1 calc(50% - 10px);
+                min-width: 120px;
+                max-width: 160px;
             }
 
             .main-button::after {
@@ -4988,6 +5017,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
                         <p style="margin-top: 20px;"><strong>🐛 BUGS, ERRORS AND OTHERS</strong></p>
                         <p>You may still encounter some glitches, bugs, or errors, but I will fix them as soon as I find them</p>
+                        <p>+30 other bugs/ errors fixes</p>
                         <p>Thank you for answering my form</p>
                         <p>7 people asked me to create a calculator, so I made one</p>
                         <p>Thank you, and see you in the next update
@@ -5301,6 +5331,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     .then(function(data) { return data && data.datetime ? new Date(data.datetime) : null; })
                     .catch(function() { return null; });
             }
+            function getServerTimeWithOffset() {
+                return fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
+                    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+                    .then(function(data) {
+                        if (!data || !data.datetime) return null;
+                        return { now: new Date(data.datetime), utcOffset: data.utc_offset || '' };
+                    })
+                    .catch(function() { return null; });
+            }
             function showSleepMode() {
                 if (sleepOverlay) sleepOverlay.classList.add('show');
                 document.body.classList.add('sleep-mode');
@@ -5373,6 +5412,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     if (isSleepWindow(now)) {
                         if (introBox) {
                             introBox.classList.add('fade-out');
+                            document.body.classList.remove('intro-visible');
                             setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
                         }
                         startSleepLoop(now);
@@ -5385,11 +5425,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             function startSleepMonitor() {
                 if (sleepMonitorInterval) return;
                 sleepMonitorInterval = setInterval(function() {
-                    if (!sleepOverlay || sleepOverlay.classList.contains('show')) return;
+                        if (!sleepOverlay || sleepOverlay.classList.contains('show')) return;
                     getServerTime().then(function(serverDate) {
                         var now = serverDate || new Date();
                         if (isSleepWindow(now)) {
-                            if (introBox) introBox.style.display = 'none';
+                            if (introBox) { introBox.style.display = 'none'; document.body.classList.remove('intro-visible'); }
                             startSleepLoop(now);
                         }
                     });
@@ -5452,6 +5492,45 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const introBox = document.getElementById('introBox');
             const introSkip = document.getElementById('introSkip');
             let introHideTimer = null;
+            // Document-level click so Skip works even if something blocks the button
+            document.addEventListener('click', function introSkipDelegated(e) {
+                if (!introBox || !introBox.classList.contains('show')) return;
+                var hitButton = e.target.closest('#introSkip');
+                if (!hitButton && introSkip) {
+                    var rect = introSkip.getBoundingClientRect();
+                    if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) hitButton = true;
+                }
+                if (!hitButton) return;
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                if (introHideTimer) {
+                    clearTimeout(introHideTimer);
+                    introHideTimer = null;
+                }
+                checkSleepThenShowUI(function() {
+                    if (mainWarning) {
+                        mainWarning.style.display = '';
+                        if (formLinkBelow) formLinkBelow.style.display = '';
+                        if (countdownAlreadyDone) {
+                            if (warningTimerLine) warningTimerLine.style.display = 'none';
+                            if (updatingMsgEl) updatingMsgEl.style.display = 'block';
+                        } else {
+                            if (warningTimerLine) warningTimerLine.style.display = '';
+                            if (updatingMsgEl) updatingMsgEl.style.display = 'none';
+                        }
+                    }
+                    enableMusicMiniButton();
+                    showUpdatesButton();
+                    showMainButtons();
+                    setTimeout(function() { try { startBgMusic(); } catch {} }, 100);
+                    if (introBox) {
+                        introBox.classList.add('fade-out');
+                        document.body.classList.remove('intro-visible');
+                        setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
+                    }
+                });
+            });
             const mainWarning = document.getElementById('mainWarning');
             const warningTimerEl = document.getElementById('warningTimer');
             const warningTimerLine = document.getElementById('warningTimerLine');
@@ -5638,9 +5717,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     stopMessageRotation();
                     setTimeout(function() {
                         loadingScreen.classList.add('hidden');
+                        // After fade finishes, remove loading screen from layout so it can't block the Skip button
+                        setTimeout(function() {
+                            loadingScreen.classList.add('removed');
+                        }, 600);
                         // Show welcome intro box
                         if (introBox) {
                             introBox.classList.add('show');
+                            document.body.classList.add('intro-visible');
                             // Hide warning while intro is visible
                             if (mainWarning) mainWarning.style.display = 'none';
                             if (formLinkBelow) formLinkBelow.style.display = 'none';
@@ -5663,6 +5747,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                     setTimeout(function() { try { startBgMusic(); } catch {} }, 100);
                                     if (introBox) {
                                         introBox.classList.add('fade-out');
+                                        document.body.classList.remove('intro-visible');
                                         setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
                                     }
                                 });
@@ -5691,6 +5776,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                         setTimeout(function() { try { startBgMusic(); } catch {} }, 100);
                                         if (introBox) {
                                             introBox.classList.add('fade-out');
+                                            document.body.classList.remove('intro-visible');
                                             setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
                                         }
                                     });
@@ -5724,6 +5810,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 return dd + ':' + hh + ':' + mm + ':' + ss;
             }
 
+            var updatesCountdownServerNow = null;
+            var updatesCountdownServerFetchedAt = null;
+            var updatesCountdownTargetDate = null;
+            var updatesCountdownRefreshMs = 60000;
+
             function startWarningCountdown() {
                 if (!warningTimerEl) return;
                 if (countdownAlreadyDone) {
@@ -5731,39 +5822,63 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     if (updatingMsgEl) updatingMsgEl.style.display = 'block';
                     return;
                 }
-                // Determine target for updates: April 30, 2026 at 12:00 AM local time
-                // Use local time to ensure it matches the user's clock
-                if (!targetNov15) {
-                    // month index: 3 = April, day: 30, hour 0, minute 0, second 0
-                    targetNov15 = new Date(2026, 3, 30, 0, 0, 0);
-                }
+                if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 3, 30, 0, 0, 0);
                 function updateCountdown() {
-                    // Always use current local time
-                    const now = new Date();
-                    // Recalculate target to ensure it uses local timezone
-                    const targetDate = new Date(2026, 3, 30, 0, 0, 0);
-                    let diff = Math.floor((targetDate.getTime() - now.getTime()) / 1000);
-                    if (diff < 0) diff = 0;
-                    if (warningTimerEl) warningTimerEl.textContent = formatDhms(diff);
-                    if (diff === 0) {
-                        if (warningCountdownInterval) {
-                            clearInterval(warningCountdownInterval);
-                        }
-                        // Swap timer with "UPDATING..."
-                        if (warningTimerLine) warningTimerLine.style.display = 'none';
-                        if (updatingMsgEl) updatingMsgEl.style.display = 'block';
-                        if (!countdownAlreadyDone) {
-                            countdownAlreadyDone = true;
-                            try {
-                                localStorage.setItem(COUNTDOWN_DONE_KEY, 'true');
-                            } catch (error) {
-                                // ignore storage errors
+                    function setDiffFromNow(now) {
+                        if (!updatesCountdownTargetDate) return now;
+                        var diff = Math.floor((updatesCountdownTargetDate.getTime() - now.getTime()) / 1000);
+                        if (diff < 0) diff = 0;
+                        if (warningTimerEl) warningTimerEl.textContent = formatDhms(diff);
+                        if (diff === 0) {
+                            if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+                            if (warningTimerLine) warningTimerLine.style.display = 'none';
+                            if (updatingMsgEl) updatingMsgEl.style.display = 'block';
+                            if (!countdownAlreadyDone) {
+                                countdownAlreadyDone = true;
+                                try { localStorage.setItem(COUNTDOWN_DONE_KEY, 'true'); } catch (e) {}
+                                unlockChristmasFeatures();
+                                startPreviewTimer();
                             }
-                            // Unlock features when timer hits 0 (permanent unlock)
-                            unlockChristmasFeatures();
-                            // Also start preview timer for testing (10 minutes)
-                            startPreviewTimer();
                         }
+                        return now;
+                    }
+                    if (updatesCountdownServerNow && updatesCountdownServerFetchedAt !== null) {
+                        var elapsed = Date.now() - updatesCountdownServerFetchedAt;
+                        if (elapsed > updatesCountdownRefreshMs) {
+                            getServerTimeWithOffset().then(function(data) {
+                                if (data) {
+                                    updatesCountdownServerNow = data.now;
+                                    updatesCountdownServerFetchedAt = Date.now();
+                                    if (data.utcOffset && !updatesCountdownTargetDate) {
+                                        var targetStr = '2026-04-30T00:00:00' + data.utcOffset;
+                                        updatesCountdownTargetDate = new Date(targetStr);
+                                    }
+                                }
+                                setDiffFromNow(new Date(updatesCountdownServerNow.getTime() + (Date.now() - updatesCountdownServerFetchedAt)));
+                            });
+                            return;
+                        }
+                        var now = new Date(updatesCountdownServerNow.getTime() + (Date.now() - updatesCountdownServerFetchedAt));
+                        setDiffFromNow(now);
+                    } else {
+                        setDiffFromNow(new Date());
+                        getServerTimeWithOffset().then(function(data) {
+                            if (data) {
+                                updatesCountdownServerNow = data.now;
+                                updatesCountdownServerFetchedAt = Date.now();
+                                if (data.utcOffset) {
+                                    var targetStr = '2026-04-30T00:00:00' + data.utcOffset;
+                                    updatesCountdownTargetDate = new Date(targetStr);
+                                }
+                                var now = new Date(updatesCountdownServerNow.getTime() + (Date.now() - updatesCountdownServerFetchedAt));
+                                setDiffFromNow(now);
+                            } else {
+                                if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 3, 30, 0, 0, 0);
+                                updatesCountdownServerNow = new Date();
+                                updatesCountdownServerFetchedAt = Date.now();
+                                setDiffFromNow(new Date());
+                            }
+                        });
                     }
                 }
                 updateCountdown();
