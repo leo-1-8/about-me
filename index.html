@@ -79,6 +79,16 @@
         body.sleep-mode {
             overflow: hidden !important;
         }
+        /* When site is closed, hide all main UI so only the sleep overlay is visible */
+        body.sleep-mode .intro-box,
+        body.sleep-mode .button-container,
+        body.sleep-mode .update-button-container,
+        body.sleep-mode .warning-message,
+        body.sleep-mode .form-link-below {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
         .sleep-overlay {
             position: fixed;
             inset: 0;
@@ -271,6 +281,209 @@
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             transform: translateZ(0);
+        }
+
+        /* Theme toggle (top-right on main menu) */
+        .theme-toggle {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 25001;
+            border: none;
+            padding: 0;
+            background: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        /* Only show after intro is done/skipped */
+        body.intro-pending .theme-toggle {
+            display: none !important;
+        }
+        body.sleep-mode .theme-toggle {
+            display: none !important;
+        }
+        .theme-toggle-ui {
+            width: 150px;
+            height: 44px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(8px);
+            position: relative;
+        }
+        .theme-toggle-label {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #111;
+            text-transform: uppercase;
+            user-select: none;
+            white-space: nowrap;
+            line-height: 1;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 16px;
+            right: 50px; /* leave space for knob */
+            text-align: left;
+            pointer-events: none;
+        }
+        .theme-toggle-knob {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(0, 0, 0, 0.18);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+            line-height: 1;
+            flex-shrink: 0;
+            transition: left 0.25s ease, right 0.25s ease, background 0.25s ease, color 0.25s ease;
+            color: #111;
+            position: absolute;
+            right: 6px;
+            top: 6px;
+        }
+        .theme-toggle-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            color: #111;
+        }
+        body.dark-mode .theme-toggle-icon {
+            color: rgba(255, 255, 255, 0.92);
+        }
+        #themeIconMoon { display: none; }
+        body.dark-mode #themeIconSun { display: none; }
+        body.dark-mode #themeIconMoon { display: block; }
+        body.dark-mode .theme-toggle-ui {
+            background: rgba(0, 0, 0, 0.55);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+        body.dark-mode .theme-toggle-label {
+            color: rgba(255, 255, 255, 0.9);
+            left: 50px;  /* leave space for knob on left */
+            right: 16px;
+            text-align: right;
+        }
+        body.dark-mode .theme-toggle-knob {
+            right: auto;
+            left: 6px;
+            background: rgba(0, 0, 0, 0.7);
+            color: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Dark mode (main page + modals basic) */
+        body.dark-mode .main-content {
+            background: #070b14;
+            color: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .warning-message {
+            background: rgba(255, 107, 107, 0.18);
+            border-color: rgba(255, 107, 107, 0.35);
+            color: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .form-link-below a {
+            color: #86efac !important;
+        }
+
+        /* Dark mode: keep main buttons/text bright */
+        body.dark-mode .main-button {
+            color: #fff;
+        }
+        body.dark-mode .whats-new-icon-btn {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+        }
+
+        body.dark-mode .countdown-title,
+        body.dark-mode .countdown-timer,
+        body.dark-mode .countdown-timer .time-label {
+            color: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .modal-box {
+            background: rgba(10, 14, 26, 0.92);
+            color: rgba(255, 255, 255, 0.92);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        body.dark-mode .modal-title {
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        /* Dark mode: make all modal text white (except special buttons) */
+        body.dark-mode #aboutModal .modal-content,
+        body.dark-mode #aboutModal .modal-content *,
+        body.dark-mode #gamingModal .modal-content,
+        body.dark-mode #gamingModal .modal-content *,
+        body.dark-mode #musicModal .modal-content,
+        body.dark-mode #musicModal .modal-content *,
+        body.dark-mode #singerModal .modal-content,
+        body.dark-mode #singerModal .modal-content *,
+        body.dark-mode #myAppsModal .modal-content,
+        body.dark-mode #myAppsModal .modal-content * {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body.dark-mode #musicModal a,
+        body.dark-mode #singerModal a {
+            color: #86efac !important;
+        }
+        body.dark-mode #singerModal .social-link a {
+            color: #4caf50 !important;
+        }
+        body.dark-mode #singerModal .social-link a:hover {
+            color: #2e7d32 !important;
+        }
+        body.dark-mode #musicModal .music-control-button,
+        body.dark-mode #musicModal .play-button,
+        body.dark-mode #musicModal .modal-action-button,
+        body.dark-mode #gamingModal .gaming-link-button,
+        body.dark-mode #myAppsModal .modal-action-button {
+            color: #fff !important;
+        }
+        body.dark-mode #musicModal .close-button-left,
+        body.dark-mode #musicModal .music-info-button {
+            color: #fff !important;
+        }
+        body.dark-mode #musicModal .close-button-left,
+        body.dark-mode #musicModal .music-info-button {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Dark mode: force What's New (updates) modal text readable */
+        body.dark-mode #updatesModal .modal-content,
+        body.dark-mode #updatesModal .modal-content * {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body.dark-mode #updatesModal .see-more-link {
+            color: rgba(255, 255, 255, 0.92) !important;
+            text-decoration: underline;
+        }
+        body.dark-mode #updatesModal .updates-summary-accent {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+
+        /* Dark mode: Others/My Favorites modal readability */
+        body.dark-mode #favoritesModal .modal-content,
+        body.dark-mode #favoritesModal .modal-content * {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body.dark-mode #favoritesModal h2 {
+            color: rgba(255, 255, 255, 0.92) !important;
+            text-shadow: none !important;
+        }
+        body.dark-mode #favoritesModal .favorite-card {
+            background: rgba(255, 255, 255, 0.06) !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
         }
         
         /* (Removed) Christmas decorations that floated around the page */
@@ -3219,7 +3432,7 @@
                 bottom: auto;
                 left: auto;
                 transform: none;
-                margin: 45px auto 0;
+                margin: 70px auto 0;
                 padding: 12px 15px;
                 font-size: 11px;
                 box-sizing: border-box;
@@ -3234,13 +3447,45 @@
                 transform: none !important;
                 width: 100%;
                 max-width: 100%;
-                margin: 20px auto 0;
+                margin: 30px auto 0;
                 padding: 10px 15px;
                 text-align: center;
                 display: block !important;
                 visibility: visible !important;
                 opacity: 1 !important;
                 z-index: 100;
+            }
+
+            /* OTP (Personal Details) — keep input + submit inside on mobile */
+            .otp-row {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                gap: 10px;
+            }
+            .otp-input-wrap {
+                width: 100%;
+                justify-content: center;
+            }
+            .otp-input {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            .otp-submit {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* My Apps — keep EXIT on right and shorter */
+            .modal-myapps .modal-buttons {
+                justify-content: flex-end;
+            }
+            .modal-myapps .btn-exit {
+                width: auto !important;
+                padding: 10px 18px !important;
+                border-radius: 999px;
             }
 
             .modal-box {
@@ -3987,6 +4232,28 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <div class="theme-toggle-ui" aria-hidden="true">
+                <div class="theme-toggle-label" id="themeToggleLabel">DAY MODE</div>
+                <div class="theme-toggle-knob" id="themeToggleKnob" aria-hidden="true">
+                    <svg id="themeIconSun" class="theme-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="M4.93 4.93l1.41 1.41"></path>
+                        <path d="M17.66 17.66l1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="M4.93 19.07l1.41-1.41"></path>
+                        <path d="M17.66 6.34l1.41-1.41"></path>
+                    </svg>
+                    <svg id="themeIconMoon" class="theme-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.8A8.5 8.5 0 0 1 11.2 3 7 7 0 1 0 21 12.8z"></path>
+                        <path d="M16.5 2.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"></path>
+                    </svg>
+                </div>
+            </div>
+        </button>
         <div class="countdown-container" id="countdownContainer" style="display: none;">
             <div class="countdown-title">COUNTDOWN TO 2026</div>
             <div class="countdown-timer" id="countdownTimer">
@@ -4006,7 +4273,7 @@
                 <button class="main-button btn-favorites" onclick="openModal('favorites')">
                     <span class="christmas-deco-left">⛄</span>
                     <span class="christmas-deco-right">🎀</span>
-                    My Favorites
+                    Others
                 </button>
                 <button type="button" class="whats-new-icon-btn" onclick="openModal('updates')" title="What's New">?</button>
             </div>
@@ -4250,12 +4517,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         </div>
     </div>
 
-    <!-- My Favorites Modal -->
+    <!-- Others Modal (previously My Favorites) -->
     <div class="modal-overlay" id="favoritesModal">
         <div class="modal-box modal-favorites">
             <button class="close-button" onclick="closeModal('favorites')" title="Close">×</button>
             <div class="modal-content">
-                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">My Favorites</h2>
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Others</h2>
                 <div class="favorites-grid">
                     <div class="favorite-card clickable" onclick="openModal('gaming')">
                         <div class="favorite-icon">🎮</div>
@@ -4328,16 +4595,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     <!-- My Apps Modal -->
     <div class="modal-overlay" id="myAppsModal">
         <div class="modal-box modal-myapps">
-            <button class="close-button" onclick="closeModal('myApps')" title="Close">×</button>
+            <button class="close-button-left" onclick="closeModal('myApps')" title="Close">×</button>
             <h1 class="modal-title">My Apps</h1>
             <div class="modal-content">
                 <p class="modal-text">This is my apps that i created right now</p>
-                <div class="myapps-app-box" onclick="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
-                    <span class="myapps-app-emoji">🧮</span>
-                    <span class="myapps-app-label">Calculator</span>
+                <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                    <div class="myapps-app-box" onclick="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
+                        <span class="myapps-app-emoji">🧮</span>
+                        <span class="myapps-app-label">Calculator</span>
+                    </div>
+                    <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
+                        <span class="myapps-app-emoji">🤖</span>
+                        <span class="myapps-app-label">NovaAI</span>
+                    </div>
                 </div>
                 <div class="modal-buttons">
-                    <button class="modal-action-button btn-exit" onclick="exitPage('myApps')">Exit</button>
+                    <button class="modal-action-button btn-exit" style="margin-left:auto;" onclick="exitPage('myApps')">Exit</button>
                 </div>
             </div>
         </div>
@@ -4349,6 +4622,31 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content modal-calculator-content">
                 <button type="button" class="calculator-close-btn" onclick="closeModal('calculator')" title="Close">×</button>
                 <iframe src="calculator.html" class="calculator-iframe" title="Scientific Calculator"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- NovaAI Modal -->
+    <div class="modal-overlay" id="novaAIModal">
+        <div class="modal-box modal-novaai">
+            <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
+                <div style="max-width:480px;margin:0 auto;">
+                    <div style="padding:18px 20px;border-radius:14px;background:rgba(5,20,10,0.95);border:1px solid rgba(34,197,94,0.7);box-shadow:0 12px 30px rgba(6,95,70,0.6);">
+                        <p style="margin:0;font-family:'Courier New',monospace;font-size:14px;line-height:1.6;color:#22c55e;text-align:center;">
+                            This AI is currently under development,<br>
+                            and I'm actively working on creating and improving it.
+                        </p>
+                    </div>
+                    <div style="margin-top:14px;text-align:center;font-family:'Courier New',monospace;color:#22c55e;">
+                        <div style="font-size:12px;letter-spacing:0.18em;opacity:0.9;">RELEASE IN</div>
+                        <div id="novaAiTimer" style="margin-top:6px;font-size:16px;font-weight:800;letter-spacing:0.12em; font-variant-numeric: tabular-nums;">
+                            --:--:--:--
+                        </div>
+                    </div>
+                    <div style="margin-top:18px;display:flex;justify-content:center;">
+                        <button class="modal-action-button" style="min-width:120px;font-family:'Courier New',monospace;background:transparent;border:2px solid #22c55e;color:#22c55e;" onclick="closeModal('novaAI')">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -4996,9 +5294,25 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content">
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
                 <div class="updates-scroll-body">
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.2</strong></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.3 (CHANGES AND FIXES)</strong></p>
+                    <p id="update13-summary" style="margin-bottom: 8px; font-style: italic;">
+                        This Version Is Fixed
+                        <span id="update13-toggle-top" class="see-more-link" onclick="toggleUpdate13Details()">see more...</span>
+                    </p>
+                    <div id="update13-details" style="display:none; margin-bottom: 15px;">
+                        <p>ADDED DAY AND NIGHT MODE</p>
+                        <p>ADDED A TIMER FOR NOVA AI SCHEDULED FOR THE RELEASE</p>
+                        <p>FIXED THE PASSWORD INPUT BOX</p>
+                        <p>FIXED THE TIMER WHEN THE WEBSITE IS CLOSED</p>
+                        <p>+10 ADDITIONAL FIXES AND IMPROVEMENTS</p>
+                        <p>DAY AND NIGHT MODE ADDED BASED ON USER REQUESTS (10 PEOPLE ASKED FOR IT)
+                            <span id="update13-toggle-bottom" class="see-more-link" onclick="toggleUpdate13Details()">see less...</span>
+                        </p>
+                    </div>
+
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.2 (NEW) </strong></p>
                     <p id="update12-summary" style="margin-bottom: 8px;">
-                        These are the updates and fixes
+                        <span style="font-style: italic;">These are the updates and fixes</span>
                         <span id="update12-toggle-top" class="see-more-link" onclick="toggleUpdate12Details()">see more...</span>
                     </p>
                     <div id="update12-details" style="display:none; margin-bottom: 15px;">
@@ -5008,12 +5322,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <p>Fixed the buttons because they were delayed when clicked</p>
                         <p>Fixed the duplicated "X" button</p>
                         <p>Fixed the green buttons in the About Me section</p>
-                        <p>Fixed the timer in "Updates In", beacause changing the device time in the settings affected the timer</p>
+                        <p>Added password visibility toogle on Personal Details.</p>
                         
-                        <p style="margin-top: 20px;"><strong>💙 MY FAVORITES</strong></p>
+                        <p style="margin-top: 20px;"><strong>💙 OTHERS</strong></p>
+                        <p>Change the name from "My favorites" to "Others"</p>
                         <p>Added 2 "Coming Soon"</p>
                         <p>Added My Apps section</p>
                         <p>Added a calculator (currently under development)</p>
+                        <p>Added NovaAI- This AI will help you with anything. It is currently under development.</p>
                         <p>Fixed the music playback and adjusted the volume</p>
                         <p>Fixed the scrolling effect</p>
                         <p>Fixed the delayed response when clicking buttons</p>
@@ -5311,18 +5627,53 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const sleepTimerEl = document.getElementById('sleepTimer');
             const mainContentEl = document.getElementById('mainContent');
             const introBoxEl = document.getElementById('introBox');
+            const themeToggle = document.getElementById('themeToggle');
+            const themeToggleLabel = document.getElementById('themeToggleLabel');
+            const themeToggleKnob = document.getElementById('themeToggleKnob');
 
-            function isSleepWindow(d) {
-                const h = d.getHours();
+            function applyTheme(mode) {
+                const isDark = mode === 'dark';
+                document.body.classList.toggle('dark-mode', isDark);
+                if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'NIGHT MODE' : 'DAY MODE';
+                try { localStorage.setItem('themeMode', isDark ? 'dark' : 'light'); } catch {}
+            }
+            (function initTheme() {
+                let saved = null;
+                try { saved = localStorage.getItem('themeMode'); } catch {}
+                applyTheme(saved === 'light' ? 'light' : 'dark');
+            })();
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const next = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                    applyTheme(next);
+                });
+            }
+
+            function parseUtcOffsetMinutes(utcOffset) {
+                if (!utcOffset || typeof utcOffset !== 'string') return 0;
+                const m = utcOffset.match(/^([+-])(\d{2}):(\d{2})$/);
+                if (!m) return 0;
+                const sign = m[1] === '-' ? -1 : 1;
+                return sign * (parseInt(m[2], 10) * 60 + parseInt(m[3], 10));
+            }
+            function getHourInOffset(d, offsetMinutes) {
+                const shifted = new Date(d.getTime() + offsetMinutes * 60000);
+                return shifted.getUTCHours();
+            }
+            function isSleepWindow(d, offsetMinutes) {
+                const h = getHourInOffset(d, offsetMinutes || 0);
                 return h >= 22 || h < 5;
             }
-            function getSleepEndTime(d) {
-                const end = new Date(d);
-                if (d.getHours() >= 22) {
-                    end.setDate(end.getDate() + 1);
-                }
-                end.setHours(5, 0, 0, 0);
-                return end;
+            function getSleepEndTime(d, offsetMinutes) {
+                const off = offsetMinutes || 0;
+                const shifted = new Date(d.getTime() + off * 60000);
+                const y = shifted.getUTCFullYear();
+                const mo = shifted.getUTCMonth();
+                let day = shifted.getUTCDate();
+                const h = shifted.getUTCHours();
+                if (h >= 22) day += 1;
+                const endShiftedUtcMs = Date.UTC(y, mo, day, 5, 0, 0, 0);
+                return new Date(endShiftedUtcMs - off * 60000);
             }
             function formatHMS(totalSeconds) {
                 const s = Math.max(0, Math.floor(totalSeconds));
@@ -5348,6 +5699,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     .catch(function() { return null; });
             }
             function showSleepMode() {
+                var introEl = document.getElementById('introBox');
+                if (introEl) { introEl.style.display = 'none'; introEl.classList.remove('show'); }
+                document.body.classList.remove('intro-visible');
                 if (sleepOverlay) sleepOverlay.classList.add('show');
                 document.body.classList.add('sleep-mode');
                 try {
@@ -5358,12 +5712,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 if (sleepOverlay) sleepOverlay.classList.remove('show');
                 document.body.classList.remove('sleep-mode');
             }
-            function startSleepLoop(initialServerTime) {
+            function startSleepLoop(initialServerTime, utcOffsetStr) {
                 if (!sleepOverlay || !sleepTimerEl) return;
                 showSleepMode();
                 var lastServerTime = initialServerTime || new Date();
-                var lastServerTimeFetchedAt = Date.now();
                 var lastServerTimeFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
+                var elapsedSinceFetchMs = 0;
+                var sleepOffsetMinutes = parseUtcOffsetMinutes(utcOffsetStr || '');
                 var refreshIntervalMs = 60000;
 
                 function getCurrentServerTime() {
@@ -5371,24 +5726,29 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         var elapsed = performance.now() - lastServerTimeFetchedAtPerformance;
                         return new Date(lastServerTime.getTime() + elapsed);
                     }
-                    var elapsed = Date.now() - lastServerTimeFetchedAt;
-                    return new Date(lastServerTime.getTime() + elapsed);
+                    // Fallback: rely on interval ticks (no device clock)
+                    return new Date(lastServerTime.getTime() + elapsedSinceFetchMs);
                 }
                 function tick() {
+                    // If performance.now isn't available, advance using tick count (no device clock)
+                    if (!(typeof performance !== 'undefined' && performance.now)) {
+                        elapsedSinceFetchMs += 1000;
+                    }
                     var shouldRefresh = lastServerTimeFetchedAtPerformance !== null && typeof performance !== 'undefined' && performance.now
                         ? (performance.now() - lastServerTimeFetchedAtPerformance > refreshIntervalMs)
-                        : (Date.now() - lastServerTimeFetchedAt > refreshIntervalMs);
+                        : (elapsedSinceFetchMs > refreshIntervalMs);
                     if (shouldRefresh) {
-                        getServerTime().then(function(d) {
-                            if (d) {
-                                lastServerTime = d;
-                                lastServerTimeFetchedAt = Date.now();
+                        getServerTimeWithOffset().then(function(data) {
+                            if (data && data.now) {
+                                lastServerTime = data.now;
                                 lastServerTimeFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
+                                elapsedSinceFetchMs = 0;
+                                sleepOffsetMinutes = parseUtcOffsetMinutes(data.utcOffset || '');
                             }
                         });
                     }
                     var now = getCurrentServerTime();
-                    if (!isSleepWindow(now)) {
+                    if (!isSleepWindow(now, sleepOffsetMinutes)) {
                         hideSleepMode();
                         // Wake up: show main UI (intro already finished/skipped)
                         const mainWarningEl = document.getElementById('mainWarning');
@@ -5414,7 +5774,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         }, 100);
                         return;
                     }
-                    var end = getSleepEndTime(now);
+                    var end = getSleepEndTime(now, sleepOffsetMinutes);
                     var diff = Math.floor((end.getTime() - now.getTime()) / 1000);
                     sleepTimerEl.textContent = formatHMS(diff);
                 }
@@ -5423,15 +5783,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 window.addEventListener('focus', tick);
             }
             function checkSleepThenShowUI(callbackIfAwake) {
-                getServerTime().then(function(serverDate) {
-                    var now = serverDate || new Date();
-                    if (isSleepWindow(now)) {
+                getServerTimeWithOffset().then(function(data) {
+                    // If we can't fetch server time, don't block the UI (Skip must still work).
+                    // Sleep mode will still be enforced once server time becomes available via the monitor loop.
+                    if (!data || !data.now) {
+                        if (callbackIfAwake) callbackIfAwake();
+                        return;
+                    }
+                    var now = data.now;
+                    if (isSleepWindow(now, parseUtcOffsetMinutes(data.utcOffset || ''))) {
                         if (introBox) {
                             introBox.classList.add('fade-out');
                             document.body.classList.remove('intro-visible');
                             setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
                         }
-                        startSleepLoop(now);
+                        startSleepLoop(now, data.utcOffset || '');
                     } else {
                         if (callbackIfAwake) callbackIfAwake();
                     }
@@ -5442,11 +5808,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 if (sleepMonitorInterval) return;
                 sleepMonitorInterval = setInterval(function() {
                         if (!sleepOverlay || sleepOverlay.classList.contains('show')) return;
-                    getServerTime().then(function(serverDate) {
-                        var now = serverDate || new Date();
-                        if (isSleepWindow(now)) {
+                    getServerTimeWithOffset().then(function(data) {
+                        if (!data || !data.now) return;
+                        var now = data.now;
+                        if (isSleepWindow(now, parseUtcOffsetMinutes(data.utcOffset || ''))) {
                             if (introBox) { introBox.style.display = 'none'; document.body.classList.remove('intro-visible'); }
-                            startSleepLoop(now);
+                            startSleepLoop(now, data.utcOffset || '');
                         }
                     });
                 }, 30000);
@@ -5508,7 +5875,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const introBox = document.getElementById('introBox');
             const introSkip = document.getElementById('introSkip');
             let introHideTimer = null;
-            // Document-level click so Skip works even if something blocks the button
+            // Document-level click (capture phase) so Skip works even if something blocks the button
             document.addEventListener('click', function introSkipDelegated(e) {
                 if (!introBox || !introBox.classList.contains('show')) return;
                 var hitButton = e.target.closest('#introSkip');
@@ -5546,7 +5913,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         setTimeout(function() { if (introBox) introBox.style.display = 'none'; }, 900);
                     }
                 });
-            });
+            }, true);
             const mainWarning = document.getElementById('mainWarning');
             const warningTimerEl = document.getElementById('warningTimer');
             const warningTimerLine = document.getElementById('warningTimerLine');
@@ -5846,7 +6213,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     if (updatingMsgEl) updatingMsgEl.style.display = 'block';
                     return;
                 }
-                if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 3, 30, 0, 0, 0);
+                if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 4, 1, 0, 0, 0);
                 function updateCountdown() {
                     function setDiffFromNow(now) {
                         if (!updatesCountdownTargetDate) return now;
@@ -5875,7 +6242,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                     updatesCountdownServerFetchedAt = Date.now();
                                     updatesCountdownFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
                                     if (data.utcOffset && !updatesCountdownTargetDate) {
-                                        var targetStr = '2026-04-30T00:00:00' + data.utcOffset;
+                                        var targetStr = '2026-05-01T00:00:00' + data.utcOffset;
                                         updatesCountdownTargetDate = new Date(targetStr);
                                     }
                                 }
@@ -5895,18 +6262,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                 updatesCountdownServerFetchedAt = Date.now();
                                 updatesCountdownFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
                                 if (data.utcOffset) {
-                                    var targetStr = '2026-04-30T00:00:00' + data.utcOffset;
+                                    var targetStr = '2026-05-01T00:00:00' + data.utcOffset;
                                     updatesCountdownTargetDate = new Date(targetStr);
                                 }
                                 var now = getCountdownNow();
                                 if (now) setDiffFromNow(now);
                             } else {
-                                if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 3, 30, 0, 0, 0);
-                                updatesCountdownServerNow = new Date();
-                                updatesCountdownServerFetchedAt = Date.now();
-                                updatesCountdownFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
-                                var now = getCountdownNow();
-                                if (now) setDiffFromNow(now);
+                                // Do not use device time for this countdown (changing device time must not affect it).
+                                // If server time is unavailable, show a waiting state and retry.
+                                if (warningTimerEl) warningTimerEl.textContent = 'CONNECTING...';
+                                updatesCountdownServerNow = null;
+                                updatesCountdownFetchedAtPerformance = null;
+                                setTimeout(function() { updateCountdown(); }, 2500);
                             }
                         });
                     }
@@ -5943,6 +6310,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const details = document.getElementById('update12-details');
             const topToggle = document.getElementById('update12-toggle-top');
             const bottomToggle = document.getElementById('update12-toggle-bottom');
+            if (!details || !topToggle || !bottomToggle) return;
+            const isHidden = details.style.display === 'none' || details.style.display === '';
+            details.style.display = isHidden ? 'block' : 'none';
+            topToggle.style.display = isHidden ? 'none' : 'inline';
+            bottomToggle.style.display = isHidden ? 'inline' : 'none';
+        }
+
+        function toggleUpdate13Details() {
+            const details = document.getElementById('update13-details');
+            const topToggle = document.getElementById('update13-toggle-top');
+            const bottomToggle = document.getElementById('update13-toggle-bottom');
             if (!details || !topToggle || !bottomToggle) return;
             const isHidden = details.style.display === 'none' || details.style.display === '';
             details.style.display = isHidden ? 'block' : 'none';
@@ -6006,6 +6384,110 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         }, 500);
 
         // Modal Functions
+        // Server time helper (global) for countdowns that must ignore device time.
+        // Uses multiple providers + timeouts, returns Date or null.
+        function getServerTimeNow() {
+            function fetchJsonWithTimeout(url, timeoutMs) {
+                const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+                const t = setTimeout(function() { try { ctrl && ctrl.abort(); } catch {} }, timeoutMs);
+                return fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+                    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+                    .finally(function() { clearTimeout(t); });
+            }
+            // 1) WorldTimeAPI
+            return fetchJsonWithTimeout('https://worldtimeapi.org/api/ip', 4500)
+                .then(function(data) { return data && data.datetime ? new Date(data.datetime) : null; })
+                .catch(function() {
+                    // 2) TimeAPI.io fallback (UTC)
+                    return fetchJsonWithTimeout('https://timeapi.io/api/Time/current/zone?timeZone=Etc/UTC', 4500)
+                        .then(function(data) {
+                            // timeapi.io returns dateTime like "2026-03-19T10:23:00.0000000"
+                            return data && data.dateTime ? new Date(data.dateTime + 'Z') : null;
+                        })
+                        .catch(function() { return null; });
+                });
+        }
+
+        // NovaAI release countdown (Sep 1, 2026 00:00 UTC)
+        let novaAiCountdownInterval = null;
+        let novaAiServerAnchor = null;
+        let novaAiPerfAnchor = null;
+        let novaAiLastSyncPerf = null;
+        const NOVA_AI_SYNC_MS = 60000;
+        const NOVA_AI_RELEASE_UTC_MS = Date.UTC(2026, 8, 1, 0, 0, 0, 0);
+
+        function formatDhmsFromSeconds(totalSeconds) {
+            const s = Math.max(0, Math.floor(totalSeconds));
+            const days = Math.floor(s / 86400);
+            const rem = s % 86400;
+            const hh = String(Math.floor(rem / 3600)).padStart(2, '0');
+            const mm = String(Math.floor((rem % 3600) / 60)).padStart(2, '0');
+            const ss = String(rem % 60).padStart(2, '0');
+            const dd = String(days).padStart(2, '0');
+            return dd + ':' + hh + ':' + mm + ':' + ss;
+        }
+
+        function stopNovaAiCountdown() {
+            if (novaAiCountdownInterval) {
+                clearInterval(novaAiCountdownInterval);
+                novaAiCountdownInterval = null;
+            }
+        }
+
+        function startNovaAiCountdown() {
+            const el = document.getElementById('novaAiTimer');
+            if (!el) return;
+            stopNovaAiCountdown();
+            novaAiServerAnchor = null;
+            novaAiPerfAnchor = null;
+            novaAiLastSyncPerf = null;
+            el.textContent = '--:--:--:--';
+
+            function tick() {
+                if (!el) return;
+                if (!novaAiServerAnchor || novaAiPerfAnchor === null || typeof performance === 'undefined' || !performance.now) return;
+                const perfNow = performance.now();
+                const now = new Date(novaAiServerAnchor.getTime() + (perfNow - novaAiPerfAnchor));
+                const diffSec = Math.floor((NOVA_AI_RELEASE_UTC_MS - now.getTime()) / 1000);
+                el.textContent = formatDhmsFromSeconds(diffSec);
+
+                // Periodically resync from server (does not use device clock)
+                if (novaAiLastSyncPerf !== null && perfNow - novaAiLastSyncPerf > NOVA_AI_SYNC_MS) {
+                    novaAiLastSyncPerf = perfNow;
+                    getServerTimeNow().then(function(serverNow) {
+                        if (serverNow && typeof performance !== 'undefined' && performance.now) {
+                            novaAiServerAnchor = serverNow;
+                            novaAiPerfAnchor = performance.now();
+                        }
+                    });
+                }
+            }
+
+            function fetchAnchor() {
+                getServerTimeNow().then(function(now) {
+                    if (now && typeof performance !== 'undefined' && performance.now) {
+                        novaAiServerAnchor = now;
+                        novaAiPerfAnchor = performance.now();
+                        novaAiLastSyncPerf = novaAiPerfAnchor;
+                        tick();
+                        stopNovaAiCountdown();
+                        novaAiCountdownInterval = setInterval(tick, 1000);
+                    } else {
+                        // Fallback: anchor once using current Date, then use performance.now()
+                        // so changing device time later will NOT affect the countdown.
+                        novaAiServerAnchor = new Date();
+                        novaAiPerfAnchor = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
+                        novaAiLastSyncPerf = novaAiPerfAnchor;
+                        tick();
+                        stopNovaAiCountdown();
+                        novaAiCountdownInterval = setInterval(tick, 1000);
+                    }
+                });
+            }
+
+            fetchAnchor();
+        }
+
         function openModal(type) {
             const modal = document.getElementById(type + 'Modal');
             if (modal) {
@@ -6071,6 +6553,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         if (viewArea) viewArea.style.display = 'none';
                     }
                 }
+
+                if (type === 'novaAI') {
+                    startNovaAiCountdown();
+                }
             }
         }
 
@@ -6087,6 +6573,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 maybeResumeBgMusic();
             }
             // Note: do NOT stop music when closing the music modal so audio can keep playing
+            if (type === 'novaAI') {
+                stopNovaAiCountdown();
+            }
         }
 
         function closeModalOnOverlay(event, type) {
