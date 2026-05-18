@@ -30,9 +30,11 @@
 
     function base() {
         return {
-            settings_title: 'SETTINGS',
+            settings_title: 'System Settings',
             settings_whats_new: "What's New",
             settings_open: 'Open',
+            settings_reset_default: 'Reset to Default',
+            settings_reset_btn: 'Reset',
             settings_theme: 'Theme',
             settings_language: 'Language',
             settings_volume: 'Volume',
@@ -40,8 +42,14 @@
             settings_language_note:
                 'Note: This language feature currently supports only five languages and is still under development. Some parts of the site may still appear in English.',
             aria_lang_note: 'Language note',
+            settings_note_reset:
+                'Note: Reset to Default will restore everything back to its original state.',
+            settings_note_theme:
+                'Note: Day and Night Mode will change the background of the website and affect the entire interface.',
+            aria_reset_note: 'Note about Reset to Default',
+            aria_theme_note: 'Note about Day and Night mode',
             settings_version_note:
-                'Note: This website uses Mobile Data and can drain your mobile load; Wi‑Fi is recommended.',
+                'Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.',
             settings_caution_text: 'Caution: Changing this will also affect your device!',
             btn_ok: 'OK',
             visitors_viewing_now: 'Viewing Now:',
@@ -84,9 +92,11 @@
     window.I18N = {
         en: base(),
         fil: Object.assign(base(), {
-            settings_title: 'SETTINGS',
+            settings_title: 'Mga Setting ng Sistema',
             settings_whats_new: 'Ano ang Bago',
             settings_open: 'Buksan',
+            settings_reset_default: 'Ibalik sa Default',
+            settings_reset_btn: 'I-reset',
             settings_theme: 'Tema',
             settings_language: 'Wika',
             settings_volume: 'Volume',
@@ -94,8 +104,14 @@
             settings_language_note:
                 'Paalala: Ang feature na wika ay sumusuporta pa lamang sa limang wika at patuloy na binubuo. Maaaring may mga bahagi pa ring nasa English.',
             aria_lang_note: 'Paalala sa wika',
+            settings_note_reset:
+                'Paalala: ang Ibalik sa Default ay ibabalik ang lahat sa orihinal na estado.',
+            settings_note_theme:
+                'Paalala: binabago ng Araw/Gabi mode ang background ng site at buong interface.',
+            aria_reset_note: 'Paalala tungkol sa Ibalik sa Default',
+            aria_theme_note: 'Paalala tungkol sa tema (Araw/Gabi)',
             settings_version_note:
-                'Paalala: gumagamit ang site ng Mobile Data at maaaring maubos ang load; mas mainam ang Wi‑Fi.',
+                'Paalala: gumagamit ang site ng Mobile Data at maaaring maubos ang load mo. Lubos na inirerekomenda ang Wi‑Fi.',
             settings_caution_text: 'Babala: maaapektuhan din ng pagbabagong ito ang iyong device!',
             theme_day: 'ARAW MODE',
             theme_night: 'GABI MODE',
@@ -129,9 +145,11 @@
             visitors_checking: 'Sinusuri...'
         }),
         id: Object.assign(base(), {
-            settings_title: 'PENGATURAN',
+            settings_title: 'Pengaturan Sistem',
             settings_whats_new: 'Yang Baru',
             settings_open: 'Buka',
+            settings_reset_default: 'Kembalikan ke Default',
+            settings_reset_btn: 'Atur Ulang',
             settings_theme: 'Tema',
             settings_language: 'Bahasa',
             settings_volume: 'Volume',
@@ -139,8 +157,14 @@
             settings_language_note:
                 'Catatan: Fitur bahasa saat ini hanya mendukung lima bahasa dan masih dalam pengembangan. Sebagian teks mungkin masih dalam bahasa Inggris.',
             aria_lang_note: 'Catatan bahasa',
+            settings_note_reset:
+                'Catatan: Kembalikan ke Default akan mengembalikan semua ke keadaan semula.',
+            settings_note_theme:
+                'Catatan: Mode Siang/Malam mengubah latar situs dan memengaruhi seluruh tampilan.',
+            aria_reset_note: 'Catatan tentang Kembalikan ke Default',
+            aria_theme_note: 'Catatan tentang mode siang dan malam',
             settings_version_note:
-                'Catatan: situs ini memakai data seluler dan bisa menghabiskan kuota; Wi‑Fi disarankan.',
+                'Catatan: situs ini memakai data seluler dan dapat menghabiskan kuota Anda. Wi‑Fi sangat disarankan.',
             settings_caution_text: 'Peringatan: perubahan ini juga memengaruhi perangkat Anda!',
             theme_day: 'MODE SIANG',
             theme_night: 'MODE MALAM',
@@ -174,9 +198,11 @@
             visitors_checking: 'Memeriksa...'
         }),
         ja: Object.assign(base(), {
-            settings_title: '設定',
+            settings_title: 'システム設定',
             settings_whats_new: '新着情報',
             settings_open: '開く',
+            settings_reset_default: '初期設定に戻す',
+            settings_reset_btn: 'リセット',
             settings_theme: 'テーマ',
             settings_language: '言語',
             settings_volume: '音量',
@@ -184,8 +210,14 @@
             settings_language_note:
                 '注意：言語機能は現在5言語のみ対応しており、開発中です。サイトの一部は英語のまま表示されることがあります。',
             aria_lang_note: '言語についての注意',
+            settings_note_reset:
+                '注意：初期設定に戻すと、すべてが元の状態に戻ります。',
+            settings_note_theme:
+                '注意：昼モード／夜モードはサイトの背景と全体の見た目を変えます。',
+            aria_reset_note: '初期設定に戻すことの説明',
+            aria_theme_note: 'テーマ（昼夜）の説明',
             settings_version_note:
-                '注意：モバイルデータ通信を使用します。通信量がかかるため、Wi‑Fi の利用をおすすめします。',
+                '注意：モバイルデータ通信を使用し、通信料がかかる場合があります。Wi‑Fi の利用を強くおすすめします。',
             settings_caution_text: '注意：変更は端末側にも影響することがあります。',
             theme_day: '昼モード',
             theme_night: '夜モード',
@@ -219,9 +251,11 @@
             visitors_checking: '確認中…'
         }),
         ko: Object.assign(base(), {
-            settings_title: '설정',
+            settings_title: '시스템 설정',
             settings_whats_new: '새 소식',
             settings_open: '열기',
+            settings_reset_default: '기본값으로 초기화',
+            settings_reset_btn: '초기화',
             settings_theme: '테마',
             settings_language: '언어',
             settings_volume: '음량',
@@ -229,8 +263,14 @@
             settings_language_note:
                 '안내: 언어 기능은 현재 5개 언어만 지원하며 계속 개발 중입니다. 일부 내용은 영어로 표시될 수 있습니다.',
             aria_lang_note: '언어 안내',
+            settings_note_reset:
+                '안내: 기본값으로 초기화하면 모든 설정이 처음 상태로 돌아갑니다.',
+            settings_note_theme:
+                '안내: 낮/밤 모드는 사이트 배경과 전체 화면 스타일을 바꿉니다.',
+            aria_reset_note: '초기화 안내',
+            aria_theme_note: '낮·밤 모드 안내',
             settings_version_note:
-                '안내: 모바일 데이터를 사용하며 데이터 요금이 발생할 수 있어요. Wi‑Fi 사용을 권장합니다.',
+                '안내: 모바일 데이터를 사용하며 데이터 요금이 나갈 수 있어요. Wi‑Fi 사용을 적극 권장합니다.',
             settings_caution_text: '주의: 변경 사항이 기기에도 영향을 줄 수 있어요!',
             theme_day: '낮 모드',
             theme_night: '밤 모드',
@@ -268,12 +308,14 @@
     window.getSiteLang = function () {
         try {
             var c = localStorage.getItem(STORAGE_KEY);
+            if (c != null) c = String(c).trim();
             if (window.SITE_LANG_KEYS.indexOf(c) >= 0) return c;
         } catch (e) {}
         return 'en';
     };
 
     window.setSiteLang = function (code) {
+        if (code != null) code = String(code).trim();
         if (window.SITE_LANG_KEYS.indexOf(code) < 0) code = 'en';
         try {
             localStorage.setItem(STORAGE_KEY, code);
@@ -289,8 +331,9 @@
     };
 
     window.applySiteLanguage = function (code) {
+        if (code != null) code = String(code).trim();
+        if (window.SITE_LANG_KEYS.indexOf(code) < 0) code = 'en';
         window.setSiteLang(code);
-        code = window.getSiteLang();
         var bundle = window.I18N[code] || window.I18N.en;
         document.documentElement.setAttribute('lang', code === 'fil' ? 'fil' : code);
 
@@ -307,6 +350,27 @@
             var v = bundle[k];
             if (v === undefined || v === '') v = window.I18N.en[k];
             if (v !== undefined) el.setAttribute('aria-label', v);
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n-html');
+            if (!k) return;
+            var v = bundle[k];
+            if (v === undefined || v === '') v = window.I18N.en[k];
+            if (v !== undefined) el.innerHTML = v;
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n-placeholder');
+            if (!k) return;
+            var v = bundle[k];
+            if (v === undefined || v === '') v = window.I18N.en[k];
+            if (v !== undefined) el.setAttribute('placeholder', v);
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+            var k = el.getAttribute('data-i18n-title');
+            if (!k) return;
+            var v = bundle[k];
+            if (v === undefined || v === '') v = window.I18N.en[k];
+            if (v !== undefined) el.setAttribute('title', v);
         });
 
         var introEl = document.getElementById('introWelcomeMessage');
@@ -337,6 +401,12 @@
             try {
                 window.__reapplyVisitorsStatusForLang();
             } catch (e) {}
+        }
+
+        var unavailableBox = document.getElementById('unavailableMessage');
+        var unavailableTextEl = document.getElementById('unavailableMessageText');
+        if (unavailableBox && unavailableTextEl && !unavailableBox.classList.contains('show')) {
+            unavailableTextEl.textContent = window.t('unavailable_default');
         }
     };
 })();

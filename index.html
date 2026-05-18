@@ -1,14 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        :root {
+            --font-timer: 'JetBrains Mono', 'Segoe UI Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace;
         }
 
         body {
@@ -307,12 +315,17 @@
         }
         .settings-card {
             width: min(760px, calc(100vw - 40px));
+            max-height: min(92vh, calc(100vh - 40px));
+            max-height: min(92vh, calc(100dvh - 40px));
             background: linear-gradient(180deg, #102847 0%, #0a1a31 100%);
             border: 1px solid rgba(139, 191, 255, 0.22);
             border-radius: 12px;
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
             overflow: hidden;
             color: rgba(235, 244, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
         .settings-card-header {
             display: flex;
@@ -320,6 +333,7 @@
             justify-content: space-between;
             padding: 14px 14px 12px 16px;
             border-bottom: 1px solid rgba(139, 191, 255, 0.2);
+            flex-shrink: 0;
         }
         .settings-card-title {
             font-weight: 900;
@@ -382,15 +396,11 @@
         .settings-lang-heading-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
             width: 100%;
             margin-bottom: 2px;
         }
         .settings-lang-heading-row .settings-row-label {
             margin: 0;
-            flex: 1;
-            min-width: 0;
         }
         .settings-lang-wrap {
             position: relative;
@@ -421,6 +431,12 @@
         .settings-lang-trigger .settings-lang-chev {
             font-weight: 900;
             opacity: 0.85;
+            display: inline-block;
+            transition: transform 0.2s ease;
+            transform: rotate(0deg);
+        }
+        .settings-lang-trigger[aria-expanded="true"] .settings-lang-chev {
+            transform: rotate(90deg);
         }
         .settings-lang-menu {
             display: none;
@@ -520,6 +536,24 @@
             padding: 14px 16px 16px 16px;
             display: grid;
             gap: 12px;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 191, 255, 0.28) transparent;
+        }
+        .settings-card-body::-webkit-scrollbar {
+            width: 5px;
+        }
+        .settings-card-body::-webkit-scrollbar-thumb {
+            background: rgba(139, 191, 255, 0.22);
+            border-radius: 999px;
+        }
+        .settings-card-body::-webkit-scrollbar-track {
+            background: transparent;
         }
         .settings-row-label {
             font-size: 13px;
@@ -690,6 +724,10 @@
             top: auto;
             right: auto;
             z-index: auto;
+            width: fit-content;
+            max-width: 100%;
+            justify-self: start;
+            display: block;
         }
         .settings-card .theme-toggle-label {
             color: rgba(255, 255, 255, 0.92);
@@ -1032,8 +1070,8 @@
             font-size: 28px;
             font-weight: 700;
             color: #333;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            font-family: var(--font-timer);
+            letter-spacing: 1px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1053,6 +1091,8 @@
             box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
             font-weight: 700;
             margin: 0 3px;
+            font-variant-numeric: tabular-nums;
+            box-sizing: border-box;
         }
 
         .countdown-timer .time-label {
@@ -1971,6 +2011,17 @@
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
         }
 
+        /* Balance absolute close button so title reads visually centered */
+        .modal-box.modal-about > .modal-title {
+            width: 100%;
+            box-sizing: border-box;
+            padding-left: 52px;
+            padding-right: 52px;
+            text-align: center;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
         .modal-favorites {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
@@ -2843,73 +2894,981 @@
             background: transparent !important;
             box-shadow: none !important;
             border: none !important;
+            max-width: min(720px, 96vw) !important;
+            min-height: auto !important;
+            overflow: visible !important;
         }
 
-        .clock-soon-card {
-            padding: 18px 20px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(148, 163, 184, 0.6);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+        #clockModal .modal-box.modal-clock {
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .clock-modal-shell {
+            position: relative;
+            margin: 0 auto;
+            width: min(100%, 380px);
+            max-width: 380px;
+        }
+
+        #clockModal .modal-content.clock-modal-content {
+            width: 100%;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            overflow: visible !important;
+            overscroll-behavior: none;
+            max-height: 100vh;
+            max-height: 100dvh;
+            padding: 28px 28px 12px !important;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .clock-modal-shell:has(.clock-app.clock-landscape) {
+            width: min(96vw, 760px);
+            max-width: 760px;
+        }
+
+        #clockModal.modal-overlay.active {
+            overflow: visible !important;
+        }
+
+        #clockModal .modal-content::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+
+        .clock-app {
+            width: 100%;
+            margin: 0;
+            border-radius: 28px;
+            overflow: hidden;
+            background: linear-gradient(165deg, #0f172a 0%, #1e1b4b 42%, #312e81 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow:
+                0 28px 70px rgba(15, 23, 42, 0.55),
+                0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+                0 0 80px rgba(99, 102, 241, 0.25);
+            color: #f8fafc;
+            position: relative;
+            transition: box-shadow 0.35s ease;
+        }
+
+        .clock-app::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(129, 140, 248, 0.22), transparent 55%);
+            pointer-events: none;
+        }
+
+        .clock-app-close {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            z-index: 30;
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(30, 27, 75, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f1f5f9;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .clock-app-close:hover {
+            background: rgba(49, 46, 129, 0.95);
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .clock-status {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(226, 232, 240, 0.85);
+        }
+
+        .clock-status-title {
+            flex: 1;
+            text-align: left;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+        }
+
+        .clock-status-time {
+            font-family: var(--font-timer);
+            font-size: 11px;
+            font-variant-numeric: tabular-nums;
+            opacity: 0.9;
+        }
+
+        .clock-battery-wrap {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .clock-battery {
+            display: inline-flex;
+            align-items: stretch;
+            width: 40px;
+            height: 15px;
+            border: 1.5px solid rgba(226, 232, 240, 0.75);
+            border-radius: 3px;
+            padding: 1.5px;
+            position: relative;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.65);
+        }
+
+        .clock-battery::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 4px;
+            width: 2px;
+            height: 6px;
+            background: rgba(226, 232, 240, 0.75);
+            border-radius: 0 1px 1px 0;
+        }
+
+        .clock-battery-fill {
+            display: block;
+            height: 100%;
+            min-width: 0;
+            width: 0%;
+            border-radius: 1px;
+            background: linear-gradient(180deg, #86efac 0%, #22c55e 55%, #16a34a 100%);
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.55);
+            transition: width 0.35s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .clock-battery-fill.clock-battery-fill--charging {
+            background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 50%, #22c55e 100%);
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.75);
+        }
+
+        .clock-battery-pct {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-timer);
+            font-size: 8px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            color: #f8fafc;
+            text-shadow:
+                0 0 4px rgba(0, 0, 0, 0.95),
+                0 1px 2px rgba(0, 0, 0, 0.85);
+            pointer-events: none;
+        }
+
+        .clock-battery-pct.clock-battery-pct--unknown {
+            color: rgba(203, 213, 225, 0.85);
+            font-size: 6px;
+        }
+
+        .clock-main {
+            position: relative;
+            z-index: 1;
+            padding: 8px 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .clock-face-wrap {
+            display: block;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+        }
+
+        .clock-analog-svg {
+            width: min(72vw, 260px);
+            height: min(72vw, 260px);
+            display: block;
+        }
+
+        .clock-dial-bg {
+            fill: url(#clockDialGradient);
+            stroke: rgba(199, 210, 254, 0.35);
+            stroke-width: 2;
+        }
+
+        .clock-tick-major {
+            stroke: rgba(199, 210, 254, 0.75);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+
+        .clock-tick-minor {
+            stroke: rgba(148, 163, 184, 0.45);
+            stroke-width: 1.2;
+            stroke-linecap: round;
+        }
+
+        .clock-num {
+            fill: #e2e8f0;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .clock-hands-layer {
+            pointer-events: none;
+        }
+
+        .clock-hand-hub {
+            fill: #818cf8;
+            stroke: #e0e7ff;
+            stroke-width: 2.5;
+        }
+
+        .clock-hand-cap {
+            fill: #f8fafc;
+        }
+
+        .clock-digital-block {
+            text-align: center;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .clock-digital {
+            font-family: var(--font-timer);
+            font-size: clamp(28px, 7vw, 36px);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            font-variant-numeric: tabular-nums;
+            color: #f1f5f9;
+            text-shadow: 0 0 24px rgba(129, 140, 248, 0.5);
+        }
+
+        .clock-digital .clock-sep {
+            opacity: 0.45;
+            animation: clockColonPulse 1s step-end infinite;
+        }
+
+        @keyframes clockColonPulse {
+            0%, 45% { opacity: 0.45; }
+            50%, 100% { opacity: 0.15; }
+        }
+
+        .clock-date {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(199, 210, 254, 0.85);
+        }
+
+        .clock-nav {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(8px);
+        }
+
+        .clock-nav-btn {
+            border: none;
+            background: transparent;
+            color: rgba(203, 213, 225, 0.65);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 14px 4px 16px;
+            cursor: pointer;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+
+        .clock-nav-btn:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .clock-nav-btn.active {
+            color: #c7d2fe;
+        }
+
+        .clock-nav-btn.active::after {
+            content: '';
+            display: block;
+            width: 28px;
+            height: 2px;
+            margin: 6px auto 0;
+            background: linear-gradient(90deg, #818cf8, #a78bfa);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
+        }
+
+        body.dark-mode .clock-app {
+            box-shadow:
+                0 28px 70px rgba(0, 0, 0, 0.65),
+                0 0 80px rgba(99, 102, 241, 0.15);
+        }
+
+        @media (max-width: 400px) {
+            .clock-nav-btn {
+                font-size: 8px;
+                padding: 12px 2px 14px;
+            }
+        }
+
+        /* Portrait: stack analog above digital (phones upright) */
+        .clock-app.clock-portrait .clock-main {
+            flex-direction: column;
+        }
+
+        .clock-panel {
+            width: 100%;
+        }
+
+        /* Landscape: side-by-side (tilted phone or desktop) */
+        .clock-app.clock-landscape {
+            width: 100%;
+        }
+
+        .clock-app.clock-landscape #clockPanelClock .clock-main {
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            padding: 12px 28px 18px;
+        }
+
+        .clock-app.clock-landscape .clock-analog-svg {
+            width: min(38vh, 300px);
+            height: min(38vh, 300px);
+        }
+
+        .clock-app.clock-landscape .clock-digital-block {
+            text-align: left;
+            flex-shrink: 0;
+        }
+
+        @media (orientation: landscape), (min-width: 768px) {
+            .clock-app:not(.clock-portrait) {
+                width: min(94vw, 680px);
+            }
+        }
+
+        .clock-body {
+            position: relative;
+            z-index: 1;
+            min-height: min(72vw, 260px);
+            min-height: max(320px, min(72vw, 260px) + 72px);
+        }
+
+        .clock-panel {
+            display: none;
+        }
+
+        .clock-panel--active {
+            display: block;
+        }
+
+        /* —— Timer (uses .clock-main like clock tab) —— */
+        .timer-panel-main {
+            width: 100%;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-run-main {
+            justify-content: center;
+        }
+
+        /* Landscape timer: stack pickers then controls below; scale up */
+        .clock-app.clock-landscape .timer-panel-main {
+            flex-direction: column;
+            gap: 20px;
+            padding: 14px 20px 20px;
+            width: 100%;
+        }
+
+        .clock-app.clock-landscape .timer-picker-row {
+            width: 100%;
+            max-width: none;
+            gap: clamp(12px, 3vw, 24px);
+            margin-bottom: 0;
+            padding: 0 4px;
+        }
+
+        .clock-app.clock-landscape .timer-picker-col {
+            max-width: none;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .clock-app.clock-landscape .timer-picker-label {
+            display: none !important;
+        }
+
+        .clock-app.clock-landscape .timer-picker-shell {
+            height: min(58vh, 300px);
+        }
+
+        .clock-app.clock-landscape .timer-picker-item {
+            height: clamp(56px, 11vh, 72px);
+            font-size: clamp(34px, 9vmin, 52px);
+        }
+
+        .clock-app.clock-landscape .timer-picker-item--selected {
+            font-size: clamp(40px, 10.5vmin, 60px);
+        }
+
+        .clock-app.clock-landscape .timer-controls-row {
+            width: 100%;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .timer-picker-row {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .timer-picker-col {
+            flex: 1;
+            max-width: 88px;
             text-align: center;
         }
 
-        body.dark-mode .clock-soon-card {
-            background: rgba(0, 0, 0, 0.85);
-            border-color: rgba(255, 255, 255, 0.16);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        .clock-app.clock-portrait .timer-picker-label {
+            font-size: 11px;
+            margin-bottom: 8px;
         }
 
-        body.dark-mode .clock-soon-title,
-        body.dark-mode .clock-soon-sub,
-        body.dark-mode .clock-timer {
-            color: rgba(255, 255, 255, 0.92);
+        .clock-app.clock-portrait .timer-picker-row {
+            gap: clamp(8px, 3vw, 18px);
+            width: 100%;
+            max-width: 100%;
+            padding: 0 6px;
         }
 
-        .clock-soon-title {
-            margin: 0;
-            font-size: 16px;
+        .clock-app.clock-portrait .timer-picker-col {
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: min(34vw, 168px);
+        }
+
+        .clock-app.clock-portrait .timer-picker-shell {
+            height: min(48vh, 340px);
+            min-height: 240px;
+        }
+
+        .clock-app.clock-portrait .timer-picker-item {
+            height: 64px;
+            font-size: clamp(30px, 8.5vw, 44px);
+        }
+
+        .timer-picker-label {
+            font-size: 9px;
             font-weight: 800;
-            color: #0f172a;
+            letter-spacing: 0.14em;
+            color: rgba(148, 163, 184, 0.8);
+            margin-bottom: 6px;
         }
 
-        .clock-soon-sub {
-            margin-top: 8px;
-            font-size: 13px;
-            line-height: 1.55;
-            color: #334155;
+        .timer-picker-shell {
+            position: relative;
+            height: 156px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            overflow: visible;
         }
 
-        .clock-timer-row {
-            margin-top: 8px;
-            display: inline-flex;
+        .timer-picker-viewport {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            border-radius: 13px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+        }
+
+        .timer-picker-viewport::-webkit-scrollbar {
+            display: none;
+        }
+
+        .timer-picker-wheel {
+            padding: 0;
+        }
+
+        .timer-picker-item {
+            height: 48px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+            font-family: var(--font-timer);
+            font-size: 22px;
+            font-weight: 600;
             font-variant-numeric: tabular-nums;
+            color: rgba(148, 163, 184, 0.38);
+            transition: color 0.12s ease, opacity 0.12s ease;
+            padding: 0 clamp(20px, 14%, 28px) 0 0;
+            box-sizing: border-box;
+            width: 100%;
+            text-align: center;
         }
 
-        .clock-hourglass {
-            font-size: 18px;
-            display: inline-block;
-            transform-origin: 50% 60%;
-            animation: clockHourglassFlip 2.5s infinite ease-in-out;
-            will-change: transform;
+        .timer-picker-item--selected {
+            color: #f1f5f9;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(129, 140, 248, 0.6);
         }
 
-        .clock-timer {
-            font-size: 16px;
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            color: #0f172a;
+        .timer-picker-item--spacer {
+            visibility: hidden;
+            pointer-events: none;
         }
 
-        @keyframes clockHourglassFlip {
-            0% { transform: rotate(0deg); }
-            40% { transform: rotate(180deg); }
-            60% { transform: rotate(180deg); } /* ~0.5s pause (2.5s * 20%) */
-            95% { transform: rotate(360deg); }
-            100% { transform: rotate(360deg); }
+        .timer-picker-unit {
+            pointer-events: none;
+            position: absolute;
+            right: clamp(6px, 3.5%, 14px);
+            top: 50%;
+            left: auto;
+            transform: translateY(-50%);
+            z-index: 8;
+            font-family: var(--font-timer);
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: #eef2ff;
+            text-shadow:
+                0 0 2px rgba(15, 23, 42, 1),
+                0 0 8px rgba(15, 23, 42, 0.95),
+                0 0 14px rgba(99, 102, 241, 0.9);
+            line-height: 1;
+        }
+
+        .clock-app.clock-portrait .timer-picker-unit {
+            font-size: clamp(18px, 5vw, 24px);
+            right: clamp(4px, 2.5%, 12px);
+        }
+
+        .clock-app.clock-landscape .timer-picker-unit {
+            font-size: clamp(17px, 4vmin, 26px);
+            right: clamp(6px, 2.5%, 14px);
+        }
+
+        .timer-controls-row,
+        .timer-controls-row.timer-controls-run {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .timer-controls-row {
+            padding: 8px 0 4px;
+        }
+
+        .timer-controls-run {
+            flex-direction: row;
+            gap: 18px;
+        }
+
+        .timer-ctrl-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .timer-ctrl-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: scale(1.06);
+        }
+
+        .timer-ctrl-btn:active {
+            transform: scale(0.94);
+        }
+
+        .timer-ctrl-btn:disabled,
+        .timer-ctrl-btn.timer-ctrl-btn--disabled {
+            opacity: 0.32;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none;
+        }
+
+        .timer-ctrl-btn--play {
+            width: 58px;
+            height: 58px;
+            background: linear-gradient(145deg, #6366f1, #4f46e5);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+        }
+
+        .timer-ctrl-btn--play:hover {
+            box-shadow: 0 10px 28px rgba(99, 102, 241, 0.55);
+        }
+
+        .timer-ctrl-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .timer-ctrl-btn--play svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .timer-view {
+            display: none;
+        }
+
+        .timer-view--active {
+            display: block;
+        }
+
+        .timer-run-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .timer-circle {
+            width: min(58vw, 220px);
+            height: min(58vw, 220px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 35% 30%, #3730a3 0%, #1e1b4b 50%, #0f172a 100%);
+            border: 2px solid rgba(129, 140, 248, 0.4);
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+                0 16px 40px rgba(0, 0, 0, 0.4),
+                0 0 60px rgba(99, 102, 241, 0.2);
+        }
+
+        .timer-run-display {
+            font-family: var(--font-timer);
+            font-size: clamp(28px, 8vw, 38px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.06em;
+            color: #f8fafc;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 0 0 28px rgba(129, 140, 248, 0.5);
+        }
+
+        /* Portrait: circle on top, play / pause row below */
+        .clock-app.clock-portrait .timer-run-layout {
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+        }
+
+        /* Landscape: circle on top, controls below (same stack) */
+        .clock-app.clock-landscape .timer-run-layout {
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            width: 100%;
+        }
+
+        .clock-app.clock-landscape .timer-circle {
+            width: min(34vh, 260px);
+            height: min(34vh, 260px);
+        }
+
+        .clock-app.clock-landscape .timer-run-display {
+            font-size: clamp(32px, 6vh, 44px);
+        }
+
+        /* —— Stopwatch: MM:SS.cs + laps + three controls —— */
+        .stopwatch-main {
+            width: 100%;
+            min-height: min(52vh, 440px);
+            padding: 10px 14px 18px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stopwatch-layout {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            gap: 12px;
+            min-height: min(48vh, 400px);
+            box-sizing: border-box;
+        }
+
+        /* Stopwatch tab: analog dial only, red second hand, centered */
+        .stopwatch-wall-clock {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-shrink: 0;
+            padding: 6px 0 4px;
+        }
+
+        .stopwatch-wall-analog {
+            flex: 0 0 auto;
+            width: min(42vw, 148px);
+            max-width: 148px;
+            margin: 0 auto;
+        }
+
+        .stopwatch-wall-analog .clock-analog-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+        }
+
+        .clock-analog-svg--sw .clock-dial-bg {
+            fill: url(#clockDialGradientSw);
+        }
+
+        .stopwatch-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .stopwatch-time {
+            font-family: var(--font-timer);
+            font-size: clamp(34px, 9vw, 52px);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+            color: #f8fafc;
+            text-shadow: 0 0 28px rgba(129, 140, 248, 0.5);
+            line-height: 1.15;
+            text-align: center;
+            width: 100%;
+            transition: transform 0.2s ease, text-shadow 0.25s ease;
+        }
+
+        .stopwatch-segment {
+            margin-top: 6px;
+            font-family: var(--font-timer);
+            font-size: clamp(14px, 3.8vw, 17px);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.06em;
+            color: #94a3b8;
+            line-height: 1.2;
+            transition: color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .stopwatch-laps-scroll {
+            flex: 1 1 auto;
+            min-height: 100px;
+            max-height: min(28vh, 220px);
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 2px 8px;
+            margin: 0 -2px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+        }
+
+        .stopwatch-laps-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .stopwatch-laps-scroll::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.35);
+            border-radius: 99px;
+        }
+
+        .stopwatch-laps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .stopwatch-lap-row {
+            display: grid;
+            grid-template-columns: minmax(36px, auto) 1fr auto;
+            align-items: center;
+            gap: 10px 12px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(30, 32, 42, 0.95), rgba(22, 24, 32, 0.92));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow:
+                0 4px 14px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+            font-family: var(--font-timer);
+            font-variant-numeric: tabular-nums;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s ease,
+                opacity 0.25s ease;
+        }
+
+        .stopwatch-lap-row--enter {
+            animation: stopwatchLapIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes stopwatchLapIn {
+            from {
+                opacity: 0;
+                transform: translateY(-14px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .stopwatch-lap-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: #cbd5e1;
+            letter-spacing: 0.02em;
+        }
+
+        .stopwatch-lap-diff {
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-align: center;
+            letter-spacing: 0.04em;
+        }
+
+        .stopwatch-lap-total {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: 0.03em;
+            text-shadow: 0 0 12px rgba(129, 140, 248, 0.25);
+        }
+
+        .stopwatch-controls-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            margin-top: auto;
+            padding-top: 8px;
+            flex-shrink: 0;
+            flex-wrap: nowrap;
+        }
+
+        .stopwatch-controls-row--three {
+            gap: 18px;
+        }
+
+        .stopwatch-ctrl-btn {
+            width: 52px;
+            height: 52px;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .stopwatch-play-btn {
+            width: 72px !important;
+            height: 72px !important;
+            background: linear-gradient(155deg, #3b82f6, #2563eb) !important;
+            box-shadow:
+                0 10px 28px rgba(37, 99, 235, 0.55),
+                0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+        }
+
+        .stopwatch-play-btn:hover {
+            box-shadow:
+                0 12px 32px rgba(37, 99, 235, 0.65),
+                0 0 0 1px rgba(255, 255, 255, 0.14) inset !important;
+        }
+
+        .stopwatch-play-btn svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .clock-app.clock-landscape .stopwatch-time {
+            font-size: clamp(32px, 5.5vmin, 48px);
+        }
+
+        .clock-app.clock-landscape .stopwatch-main {
+            min-height: min(42vh, 380px);
+        }
+
+        .clock-app.clock-landscape .stopwatch-layout {
+            min-height: min(38vh, 340px);
+        }
+
+        .clock-app.clock-landscape .stopwatch-laps-scroll {
+            max-height: min(24vh, 180px);
         }
 
         .myapps-app-box {
@@ -3714,17 +4673,42 @@
             padding: 10px 16px;
             font-size: 16px;
             font-weight: 600;
-            background: #808080;
+            background-color: #808080;
             color: white;
             border: 2px solid #666;
             border-radius: 8px;
+            cursor: default;
+            box-shadow: none;
+            /* Solid colors (no gradient) so green ↔ gray can interpolate smoothly */
+            transition:
+                background-color 0.38s ease-out,
+                border-color 0.38s ease-out,
+                box-shadow 0.38s ease-out,
+                color 0.28s ease-out,
+                transform 0.28s ease-out;
+        }
+
+        .otp-submit.otp-submit-ready {
+            background-color: #22c55e;
+            border-color: #15803d;
+            color: #fff;
             cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
         }
 
         .otp-submit:hover {
-            background: #707070;
+            background-color: #707070;
             transform: translateY(-2px);
+        }
+
+        .otp-submit.otp-submit-ready:hover {
+            background-color: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        body.dark-mode .otp-submit.otp-submit-ready {
+            border-color: rgba(74, 222, 128, 0.85);
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
         }
 
         .otp-feedback {
@@ -3947,6 +4931,18 @@
             box-shadow: 0 2px 10px rgba(255, 0, 0, 0.1);
         }
 
+        /* Stable width so "UPDATES IN" timer does not shift when seconds tick */
+        #warningTimer {
+            display: inline-block;
+            min-width: 12ch;
+            font-family: var(--font-timer);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.02em;
+            text-align: left;
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
         .favorite-title {
             font-size: 20px;
             font-weight: 600;
@@ -4004,9 +5000,23 @@
                 font-size: 15px;
             }
 
+            /* Loading: true vertical + horizontal center on phones/tablets (not desktop >768px) */
+            .loading-screen {
+                align-items: center;
+                justify-content: center;
+            }
             .progress-container {
-                width: 90%;
-                bottom: 25%;
+                position: relative;
+                bottom: auto;
+                top: auto;
+                left: auto;
+                right: auto;
+                transform: none;
+                width: min(90%, 420px);
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 0 16px;
+                box-sizing: border-box;
             }
 
             .loading-percentage {
@@ -4578,8 +5588,19 @@
                 -webkit-overflow-scrolling: touch;
             }
 
+            .loading-screen {
+                align-items: center;
+                justify-content: center;
+            }
             .progress-container {
-                bottom: 15%;
+                position: relative;
+                bottom: auto;
+                top: auto;
+                transform: none;
+                width: min(92%, 400px);
+                margin: 0 auto;
+                padding: 0 12px;
+                box-sizing: border-box;
             }
 
             .christmas-message-link {
@@ -5107,25 +6128,25 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     <!-- About Me Modal -->
     <div class="modal-overlay" id="aboutModal">
         <div class="modal-box modal-about">
-            <button class="close-button" onclick="closeModal('about')" title="Close">×</button>
-            <h1 class="modal-title">About Me</h1>
+            <button class="close-button" onclick="closeModal('about')" data-i18n-title="aria_close" title="Close">×</button>
+            <h1 class="modal-title" data-i18n="about_modal_title">About Me</h1>
             <div class="modal-content">
                 <div class="info-item name-item">
                     <div class="info-label name-with-button">
-                        <span>Personal Details</span>
-                        <button id="personalToggleBtn" class="info-toggle-button" title="Toggle access">▶</button>
+                        <span data-i18n="about_personal_details">Personal Details</span>
+                        <button id="personalToggleBtn" class="info-toggle-button" data-i18n-title="about_toggle_access" title="Toggle access">▶</button>
                     </div>
                 </div>
                 <div class="access-gate" id="personalAccessGate">
-                    <div class="access-gate-title">YOU CANNOT ACCESS THE PERSONAL DETAILS!</div>
+                    <div class="access-gate-title" data-i18n="about_access_denied">YOU CANNOT ACCESS THE PERSONAL DETAILS!</div>
                     <div class="access-gate-msg">
-                        Want to access personal details?
-                        <span class="access-gate-link" id="showOtpLink">Click here</span>
+                        <span data-i18n="about_access_q">Want to access personal details?</span>
+                        <span class="access-gate-link" id="showOtpLink" data-i18n="about_access_click">Click here</span>
                     </div>
                     <div class="otp-container" id="otpContainer">
                         <div class="otp-row">
                             <div class="otp-input-wrap">
-                                <button type="button" class="otp-eye-btn" id="otpEyeBtn" data-state="hidden" aria-label="Show PIN" title="Show PIN">
+                                <button type="button" class="otp-eye-btn" id="otpEyeBtn" data-state="hidden" data-i18n-aria="aria_show_pin" data-i18n-title="aria_show_pin" aria-label="Show PIN" title="Show PIN">
                                     <span class="otp-eye-icon otp-eye-icon-open" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path>
@@ -5147,11 +6168,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                     inputmode="numeric"
                                     pattern="[0-9]*"
                                     autocomplete="one-time-code"
+                                    data-i18n-placeholder="about_otp_placeholder"
                                     placeholder="Enter one-time PIN"
                                     maxlength="4"
                                 />
                             </div>
-                            <button class="otp-submit" id="otpSubmit">Submit</button>
+                            <button class="otp-submit" id="otpSubmit" data-i18n="about_otp_submit">Submit</button>
                         </div>
                         <div class="otp-feedback" id="otpFeedback"></div>
                     </div>
@@ -5159,27 +6181,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 <div class="personal-info-box" id="personalInfoBox">
                     <div class="personal-info-container">
                         <div class="info-item">
-                            <div class="info-label">Name</div>
-                            <div class="info-value">Leo Paul Yamaguchi</div>
+                            <div class="info-label" data-i18n="about_label_name">Name</div>
+                            <div class="info-value" data-i18n="about_name_value">Leo Paul Yamaguchi</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Age</div>
-                            <div class="info-value">18 Years Old</div>
+                            <div class="info-label" data-i18n="about_label_age">Age</div>
+                            <div class="info-value" data-i18n="about_age_value">18 Years Old</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Birth Date</div>
-                            <div class="info-value">March 15, 2008</div>
+                            <div class="info-label" data-i18n="about_label_birth_date">Birth Date</div>
+                            <div class="info-value" data-i18n="about_birth_date_value">March 15, 2008</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Birthplace</div>
-                            <div class="info-value">Dr. Rafael S. Tumbukon Memorial Hospital</div>
+                            <div class="info-label" data-i18n="about_label_birthplace">Birthplace</div>
+                            <div class="info-value" data-i18n="about_birthplace_value">Dr. Rafael S. Tumbukon Memorial Hospital</div>
                         </div>
                     </div>
                 </div>
                 <div class="message-for-me-box" id="messageForMeBox">
                     <div class="personal-info-container">
                         <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
-                            <div class="christmas-message-link" onclick="openModal('christmasMessage')">
+                            <div class="christmas-message-link" onclick="openModal('christmasMessage')" data-i18n="about_message_for_me">
                                 MESSAGE FOR ME
                             </div>
                         </div>
@@ -5187,24 +6209,24 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 </div>
                 <div class="info-item hobbies-item">
                     <div class="info-label hobbies-with-button">
-                        <span>Hobbies</span>
-                        <button class="info-toggle-button" onclick="toggleHobbies()" title="Click to view hobbies">▶</button>
+                        <span data-i18n="about_hobbies">Hobbies</span>
+                        <button class="info-toggle-button" onclick="toggleHobbies()" data-i18n-title="about_toggle_hobbies" title="Click to view hobbies">▶</button>
                     </div>
                 </div>
                 <div class="hobbies-box" id="hobbiesBox">
                     <div class="personal-info-container">
                         <div class="info-item">
-                            <div class="info-value">Playing Online Games</div>
+                            <div class="info-value" data-i18n="about_hobby_games">Playing Online Games</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-value">Listening to Music</div>
+                            <div class="info-value" data-i18n="about_hobby_music">Listening to Music</div>
                         </div>
                     </div>
                 </div>
                 <div class="info-item favorites-item">
                     <div class="info-label favorites-with-button">
-                        <span>My Favorites</span>
-                        <button class="info-toggle-button" onclick="toggleAboutFavorites()" title="Click to view favorites">▶</button>
+                        <span data-i18n="about_my_favorites">My Favorites</span>
+                        <button class="info-toggle-button" onclick="toggleAboutFavorites()" data-i18n-title="about_toggle_favorites" title="Click to view favorites">▶</button>
                     </div>
                 </div>
                 <div class="about-favorites-box" id="aboutFavoritesBox">
@@ -5212,96 +6234,96 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🐱</span>
-                                <span class="favorite-topic-title">Cats</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_cats_title">Cats</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
-                                <span class="description-full">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_cats_short">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
+                                <span class="description-full" data-i18n="about_fav_cats_full">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🎵</span>
-                                <span class="favorite-topic-title">Music</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_music_title">Music</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
-                                <span class="description-full">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_music_short">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
+                                <span class="description-full" data-i18n="about_fav_music_full">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🌅</span>
-                                <span class="favorite-topic-title">Sunsets</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_sunsets_title">Sunsets</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
-                                <span class="description-full">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_sunsets_short">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
+                                <span class="description-full" data-i18n="about_fav_sunsets_full">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🍽️</span>
-                                <span class="favorite-topic-title">Foods</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_foods_title">Foods</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
-                                <span class="description-full">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_foods_short">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
+                                <span class="description-full" data-i18n="about_fav_foods_full">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">👫</span>
-                                <span class="favorite-topic-title">My Friends</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_friends_title">My Friends</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
-                                <span class="description-full">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_friends_short">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
+                                <span class="description-full" data-i18n="about_fav_friends_full">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🎬</span>
-                                <span class="favorite-topic-title">Movies</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_movies_title">Movies</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
-                                <span class="description-full">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_movies_short">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
+                                <span class="description-full" data-i18n="about_fav_movies_full">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">📱</span>
-                                <span class="favorite-topic-title">Social Media</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_social_title">Social Media</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events.</span>
-                                <span class="description-full">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events. Through these platforms, I can connect with my family and friends, explore new ideas, and discover trends that match my interests. Social media also helps me stay updated with technology, entertainment, and news while providing a space to appreciate art, culture, and diverse communities. It is important in my daily life because it combines communication, learning, and self-expression in one digital environment.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_social_short">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events.</span>
+                                <span class="description-full" data-i18n="about_fav_social_full">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events. Through these platforms, I can connect with my family and friends, explore new ideas, and discover trends that match my interests. Social media also helps me stay updated with technology, entertainment, and news while providing a space to appreciate art, culture, and diverse communities. It is important in my daily life because it combines communication, learning, and self-expression in one digital environment.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">💻</span>
-                                <span class="favorite-topic-title">Why I Chose IT?</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_it_title">Why I Chose IT?</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
-                                <span class="description-full">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)">see more...</span>
+                                <span class="description-short" data-i18n="about_fav_it_short">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
+                                <span class="description-full" data-i18n="about_fav_it_full">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="back-button-box">
-                    <button class="modal-action-button btn-back small-button" onclick="closeModal('about')">Back to Main Menu</button>
-                    <button class="modal-action-button btn-exit small-button" onclick="exitPage()">Exit</button>
+                    <button class="modal-action-button btn-back small-button" onclick="closeModal('about')" data-i18n="btn_back_main">Back to Main Menu</button>
+                    <button class="modal-action-button btn-exit small-button" onclick="exitPage()" data-i18n="btn_exit">Exit</button>
                 </div>
             </div>
         </div>
@@ -5310,48 +6332,48 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     <!-- Others Modal (previously My Favorites) -->
     <div class="modal-overlay" id="favoritesModal">
         <div class="modal-box modal-favorites">
-            <button class="close-button" onclick="closeModal('favorites')" title="Close">×</button>
+            <button class="close-button" onclick="closeModal('favorites')" data-i18n-title="aria_close" title="Close">×</button>
             <div class="modal-content">
-                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Others</h2>
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">Others</h2>
                 <div class="favorites-grid">
                     <div class="favorite-card clickable" onclick="openModal('gaming')">
                         <div class="favorite-icon">🎮</div>
-                        <div class="favorite-title">Gaming</div>
-                        <div class="favorite-description">When i got so bored, i play this games.</div>
+                        <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
+                        <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('music')">
                         <div class="favorite-icon">🎵</div>
-                        <div class="favorite-title">Music</div>
-                        <div class="favorite-description">When I'm sleeping, eating, walking, etc., I play this music.</div>
+                        <div class="favorite-title" data-i18n="others_music">Music</div>
+                        <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('singer')">
                         <div class="favorite-icon">🎤</div>
-                        <div class="favorite-title">SINGER</div>
-                        <div class="favorite-description">i can't live without my fav singers😭.</div>
+                        <div class="favorite-title" data-i18n="others_singer">SINGER</div>
+                        <div class="favorite-description" data-i18n="others_singer_desc">i can't live without my fav singers😭.</div>
                     </div>
                     <div class="favorite-card clickable" id="myAppsCard" onclick="openModal('myApps')">
                         <div class="favorite-icon">📱</div>
-                        <div class="favorite-title">My Apps</div>
-                        <div class="favorite-description">This is my apps that i created right now</div>
+                        <div class="favorite-title" data-i18n="others_apps">My Apps</div>
+                        <div class="favorite-description" data-i18n="others_apps_desc">This is my apps that i created right now</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('comingSoonPreview')">
                         <div class="favorite-icon">⌛</div>
-                        <div class="favorite-title">COMING SOON</div>
-                        <div class="favorite-description">STAY TUNED</div>
+                        <div class="favorite-title" data-i18n="others_coming_title">COMING SOON</div>
+                        <div class="favorite-description" data-i18n="others_coming_desc">STAY TUNED</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
-                        <div class="favorite-icon">⌛</div>
-                        <div class="favorite-title">COMING SOON</div>
-                        <div class="favorite-description">STAY TUNED</div>
+                    <div class="favorite-card clickable" onclick="openModal('clock')">
+                        <div class="favorite-icon">🕒</div>
+                        <div class="favorite-title" data-i18n="others_clock">Clock</div>
+                        <div class="favorite-description" data-i18n="others_clock_desc">Live time with analog and digital display.</div>
                     </div>
                 </div>
                 <div id="christmasMessageDisplay" style="display:none; margin-top: 30px; padding: 20px; background: #fff5f5; border-radius: 12px; border: 2px solid #ffcdd2;">
-                    <h3 style="text-align: center; color: #b71c1c; margin-bottom: 15px;">Your Christmas Message</h3>
+                    <h3 style="text-align: center; color: #b71c1c; margin-bottom: 15px;" data-i18n="others_xmas_heading">Your Christmas Message</h3>
                     <div id="userChristmasMessage" class="christmas-message-display" style="min-height: 100px; max-height: 300px;"></div>
                 </div>
                 <div class="modal-buttons">
-                    <button class="modal-action-button btn-back" onclick="closeModal('favorites')">Back to Main Menu</button>
-                    <button class="modal-action-button btn-exit" onclick="exitPage()">Exit</button>
+                    <button class="modal-action-button btn-back" onclick="closeModal('favorites')" data-i18n="btn_back_main">Back to Main Menu</button>
+                    <button class="modal-action-button btn-exit" onclick="exitPage()" data-i18n="btn_exit">Exit</button>
                 </div>
             </div>
         </div>
@@ -5446,23 +6468,176 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     </div>
 
     <!-- Clock Modal -->
-    <div class="modal-overlay" id="clockModal">
+    <div class="modal-overlay" id="clockModal" onclick="closeModalOnOverlay(event, 'clock')">
         <div class="modal-box modal-clock" onclick="event.stopPropagation()">
-            <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
-                <div style="max-width:520px;margin:0 auto;">
-                    <div class="clock-soon-card">
-                        <p class="clock-soon-title">CLOCK WILL BE AVAILABLE SOON</p>
-                        <div class="clock-soon-sub">
-                            This clock will be available soon and I'm making it and improving it.
+            <div class="modal-content clock-modal-content">
+                <div class="clock-modal-shell">
+                    <button type="button" class="clock-app-close" onclick="closeModal('clock')" title="Close" aria-label="Close clock">×</button>
+                    <div id="clockApp" class="clock-app clock-portrait" role="application" aria-label="Clock">
+                    <header class="clock-status">
+                        <span class="clock-status-title">Clock</span>
+                        <span class="clock-status-time" id="clockStatusTime" aria-hidden="true">--:--</span>
+                        <span class="clock-battery-wrap" id="clockBatteryWrap" aria-label="Battery">
+                            <span class="clock-battery">
+                                <span class="clock-battery-fill" id="clockBatteryFill"></span>
+                                <span class="clock-battery-pct clock-battery-pct--unknown" id="clockBatteryPct">--</span>
+                            </span>
+                        </span>
+                    </header>
+                    <div class="clock-body">
+                    <section id="clockPanelClock" class="clock-panel clock-panel--active">
+                    <main class="clock-main">
+                        <div class="clock-analog-wrap">
+                            <div class="clock-face-wrap">
+                                <svg class="clock-analog-svg" id="clockAnalogSvg" viewBox="0 0 220 220" aria-hidden="true">
+                                    <defs>
+                                        <radialGradient id="clockDialGradient" cx="50%" cy="38%" r="65%">
+                                            <stop offset="0%" stop-color="#312e81"/>
+                                            <stop offset="55%" stop-color="#1e1b4b"/>
+                                            <stop offset="100%" stop-color="#0f172a"/>
+                                        </radialGradient>
+                                    </defs>
+                                    <circle class="clock-dial-bg" cx="110" cy="110" r="98"/>
+                                    <g id="clockTicks"></g>
+                                    <g id="clockNumbers"></g>
+                                    <g class="clock-hands-layer">
+                                        <g id="clockHandHour">
+                                            <line x1="110" y1="110" x2="110" y2="62" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+                                        </g>
+                                        <g id="clockHandMinute">
+                                            <line x1="110" y1="110" x2="110" y2="42" stroke="#c7d2fe" stroke-width="4" stroke-linecap="round"/>
+                                        </g>
+                                        <g id="clockHandSecond">
+                                            <line x1="110" y1="110" x2="110" y2="24" stroke="#f87171" stroke-width="2.5" stroke-linecap="round"/>
+                                        </g>
+                                    </g>
+                                    <circle class="clock-hand-hub" cx="110" cy="110" r="8"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="clock-timer-row" aria-label="Clock release countdown">
-                            <span id="clockHourglass" class="clock-hourglass" aria-hidden="true">⌛</span>
-                            <span id="clockTimer" class="clock-timer">--:--:--:--</span>
+                        <div class="clock-digital-block">
+                            <div class="clock-digital" id="clockDigital" aria-live="polite">-- : -- : --</div>
+                            <div class="clock-date" id="clockDate">———</div>
                         </div>
+                    </main>
+                    </section>
+
+                    <section id="clockPanelStopwatch" class="clock-panel">
+                        <main class="clock-main stopwatch-main">
+                            <div class="stopwatch-layout" aria-live="polite">
+                                <div class="stopwatch-wall-clock">
+                                    <div class="stopwatch-wall-analog">
+                                        <svg class="clock-analog-svg clock-analog-svg--sw" id="clockAnalogSvgSw" viewBox="0 0 220 220" aria-hidden="true">
+                                            <defs>
+                                                <radialGradient id="clockDialGradientSw" cx="50%" cy="38%" r="65%">
+                                                    <stop offset="0%" stop-color="#312e81"/>
+                                                    <stop offset="55%" stop-color="#1e1b4b"/>
+                                                    <stop offset="100%" stop-color="#0f172a"/>
+                                                </radialGradient>
+                                            </defs>
+                                            <circle class="clock-dial-bg" cx="110" cy="110" r="98"/>
+                                            <g id="clockTicksSw"></g>
+                                            <g id="clockNumbersSw"></g>
+                                            <g class="clock-hands-layer">
+                                                <g id="clockHandSecondSw">
+                                                    <line x1="110" y1="110" x2="110" y2="24" stroke="#f87171" stroke-width="2.5" stroke-linecap="round"/>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="stopwatch-top">
+                                    <div class="stopwatch-time" id="stopwatchDisplay">00:00.00</div>
+                                    <div class="stopwatch-segment" id="stopwatchSegment">+00:00.00</div>
+                                </div>
+                                <div class="stopwatch-laps-scroll">
+                                    <div class="stopwatch-laps" id="stopwatchLaps"></div>
+                                </div>
+                                <div class="stopwatch-controls-row stopwatch-controls-row--three">
+                                    <button type="button" class="timer-ctrl-btn stopwatch-ctrl-btn" id="swBtnReset" title="Reset" aria-label="Reset stopwatch">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                                    </button>
+                                    <button type="button" class="timer-ctrl-btn timer-ctrl-btn--play stopwatch-ctrl-btn stopwatch-play-btn" id="swBtnPlayPause" title="Start" aria-label="Start stopwatch">
+                                        <svg id="swPlayPauseIcon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <button type="button" class="timer-ctrl-btn stopwatch-ctrl-btn timer-ctrl-btn--disabled" id="swBtnLap" title="Lap" aria-label="Record lap" disabled>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 4l8 4-8 4V4zM4 22h2V2H4v20z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </main>
+                    </section>
+
+                    
+                    <section id="clockPanelTimer" class="clock-panel">
+                        <div class="timer-view timer-view--active" id="timerViewSetup">
+                            <main class="clock-main timer-panel-main">
+                                <div class="timer-picker-row">
+                                    <div class="timer-picker-col">
+                                        <div class="timer-picker-label">HRS</div>
+                                        <div class="timer-picker-shell">
+                                            <div class="timer-picker-viewport" id="timerPickerHViewport">
+                                                <div class="timer-picker-wheel" id="timerPickerH" data-min="0" data-max="23" data-suffix="h"></div>
+                                            </div>
+                                            <span class="timer-picker-unit" aria-hidden="true">h</span>
+                                        </div>
+                                    </div>
+                                    <div class="timer-picker-col">
+                                        <div class="timer-picker-label">MIN</div>
+                                        <div class="timer-picker-shell">
+                                            <div class="timer-picker-viewport" id="timerPickerMViewport">
+                                                <div class="timer-picker-wheel" id="timerPickerM" data-min="0" data-max="59" data-suffix="m"></div>
+                                            </div>
+                                            <span class="timer-picker-unit" aria-hidden="true">m</span>
+                                        </div>
+                                    </div>
+                                    <div class="timer-picker-col">
+                                        <div class="timer-picker-label">SEC</div>
+                                        <div class="timer-picker-shell">
+                                            <div class="timer-picker-viewport" id="timerPickerSViewport">
+                                                <div class="timer-picker-wheel" id="timerPickerS" data-min="0" data-max="59" data-suffix="s"></div>
+                                            </div>
+                                            <span class="timer-picker-unit" aria-hidden="true">s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timer-controls-row">
+                                    <button type="button" class="timer-ctrl-btn timer-ctrl-btn--disabled" id="timerRestartSetup" title="Restart" aria-label="Restart" disabled>
+                                        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                                    </button>
+                                    <button type="button" class="timer-ctrl-btn timer-ctrl-btn--play" id="timerPlaySetup" title="Start" aria-label="Start timer">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                </div>
+                            </main>
+                        </div>
+
+                        <div class="timer-view" id="timerViewRun">
+                            <main class="clock-main timer-panel-main timer-run-main">
+                                <div class="timer-run-layout">
+                                    <div class="timer-circle">
+                                        <div class="timer-run-display" id="timerRunDisplay">00:00:00</div>
+                                    </div>
+                                    <div class="timer-controls-row timer-controls-run">
+                                        <button type="button" class="timer-ctrl-btn timer-ctrl-btn--disabled" id="timerRestartRun" title="Restart" aria-label="Restart" disabled>
+                                            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                                        </button>
+                                        <button type="button" class="timer-ctrl-btn timer-ctrl-btn--play" id="timerPlayRun" title="Pause" aria-label="Pause timer">
+                                            <svg id="timerPlayRunIcon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </section>
                     </div>
-                    <div style="margin-top:18px;display:flex;justify-content:center;">
-                        <button class="modal-action-button" style="min-width:120px;" onclick="closeModal('clock')">OK</button>
-                    </div>
+
+                    <nav class="clock-nav" aria-label="Clock modes">
+                        <button type="button" class="clock-nav-btn" data-clock-tab="stopwatch">Stopwatch</button>
+                        <button type="button" class="clock-nav-btn active" data-clock-tab="clock">Clock</button>
+                        <button type="button" class="clock-nav-btn" data-clock-tab="timer">Timer</button>
+                    </nav>
+                </div>
                 </div>
             </div>
         </div>
@@ -5474,7 +6649,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
                 <div class="coming-soon-preview-card">
                     <p class="coming-soon-preview-title">
-                        NOT AVAILABLE RIGHT NOW
+                        COMING SOON
                     </p>
                     <div class="coming-soon-preview-sub">
                         Something big is coming... can you guess what it is?
@@ -6135,8 +7310,35 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 <div class="updates-scroll-body">
                     <p class="update14-heading" style="margin-top: 20px;">
                         <span class="update14-new-dot" aria-hidden="true"></span>
-                        <strong>UPDATE 1.4 (NEW)</strong>
+                        <strong>UPDATE 1.5 [FIXED]</strong>
                     </p>
+                    <p id="update15-summary" style="margin-bottom: 8px; font-style: italic;">
+                        In this update, I fixed some small issues on my website.
+                        <span id="update15-toggle-top" class="see-more-link" onclick="toggleUpdate15Details()">see more...</span>
+                    </p>
+                    <div id="update15-details" style="display:none; margin-bottom: 15px;">
+                        <p style="margin-top: 12px;"><strong>⚙️ Settings</strong></p>
+                        <p>Added “Reset to Default”</p>
+                        <p>Changed “Settings” to “System Settings”</p>
+                        <p>Added “Viewing” tab</p>
+                        <p>Fixed the eye icon (it is now clickable)</p>
+                        <p>Fixed the “!” in Language (now properly positioned)</p>
+                        <p>Fixed Day and Night Mode button bug</p>
+                        <p>Fixed incorrect grammar beside the version text</p>
+                        <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
+                        <p>Fixed timer on the clock</p>
+                        <p>Fixed music playback issue</p>
+                        <p>Fixed calculator calculation error</p>
+                        <p style="margin-top: 20px;"><strong>🐛 Bugs, Errors &amp; Suggestions</strong></p>
+                        <p>15 bugs have been fixed</p>
+                        <p>6 improvements have been added to the website</p>
+                        <p>This update includes minor fixes, and the clock feature will be released soon</p>
+                        <p>Please answer the form to be included here
+                            <span id="update15-toggle-bottom" class="see-more-link" onclick="toggleUpdate15Details()">see less...</span>
+                        </p>
+                    </div>
+
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.4</strong></p>
                     <p id="update14-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I've added many improvements to my website.
                         <span id="update14-toggle-top" class="see-more-link" onclick="toggleUpdate14Details()">see more...</span>
@@ -6145,29 +7347,34 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <p><strong>⏳ Loading Screen</strong></p>
                         <p>Added 6 new messages that appear randomly</p>
                         <p>Removed "My website is closed"</p>
-                        <p class="update14-fixed-line">Fixed the skip button not responding when clicked</p>
-                        <p class="update14-fixed-line">Fixed the loading bar getting stuck for 3 seconds</p>
+                        
+                        <p>Fixed the skip button not responding when clicked</p>
+                        <p>Fixed the loading bar getting stuck for 3 seconds</p>
 
                         <p style="margin-top: 20px;"><strong>🏠 Main Menu</strong></p>
                         <p>Adjusted the timer</p>
                         <p>Added Settings</p>
                         <p>Moved the (?) and replaced it with an open button in Settings</p>
                         <p>Moved Night and Day mode into Settings</p>
+                        <p>Added Language that supports 5 languages</p>
                         <p>Added volume and brightness controls</p>
                         <p>Added version info and a message below the brightness setting</p>
                         <p>Added a viewing tab to show how many people are visiting</p>
-                        <p class="update14-fixed-line">Fixed touch responsiveness in Settings</p>
-                        <p class="update14-fixed-line">Fixed the bug where the volume and brightness sliders could not be dragged</p>
-                        <p class="update14-fixed-line">Fixed the Night and Day mode bug</p>
-                        <p class="update14-fixed-line">Fixed the Personal Details section requiring a password</p>
+                       
+                        <p>Fixed touch responsiveness in Settings</p>
+                        <p>Fixed the bug where the volume and brightness sliders could not be dragged</p>
+                        <p>Fixed the Night and Day mode bug</p>
+                        <p>Fixed the Personal Details section requiring a password</p>
+                        <p>There is a bug on eye icon in Settings, it is not working properly, but I'm currently working on it</p>
 
                         <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
                         <p>Added a clock to my apps (coming soon)</p>
                         <p>Adjusted the timer on NovaAI</p>
                         <p>One more feature is coming soon—stay tuned</p>
-                        <p class="update14-fixed-line">Fixed music playback</p>
-                        <p class="update14-fixed-line">Fixed music volume issues</p>
-                        <p class="update14-fixed-line">Fixed singer links not being clickable</p>
+                     
+                        <p>Fixed music playback</p>
+                        <p>Fixed music volume issues</p>
+                        <p>Fixed singer links not being clickable</p>
 
                         <p style="margin-top: 20px;"><strong>🐛 Bugs, Errors, and Suggestions</strong></p>
                         <p>+40 bugs have been fixed</p>
@@ -6187,8 +7394,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     <div id="update13-details" style="display:none; margin-bottom: 15px;">
                         <p>Added Day and Night Mode</p>
                         <p>Added a timer on NovaAI, Schedule for the of release</p>
-                        <p>Fixed the password put inboX</p>
-                        <p>Fixed the tier when the website is closed/p>
+                        <p>Fixed the password put inbox</p>
+                        <p>Fixed the tier when the website is closed</p>
                         <p>+10 additional fixes and improvements</p>
                         <p>Day and Night mode added based on user requests (10 people asked for it)</p>
                             <span id="update13-toggle-bottom" class="see-more-link" onclick="toggleUpdate13Details()">see less...</span>
@@ -6487,15 +7694,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     <!-- Unavailable Message Box -->
     <div class="unavailable-overlay" id="unavailableOverlay"></div>
     <div class="unavailable-message" id="unavailableMessage">
-        <div>UNFORTUNATELY UNAVAILABLE AT THIS TIME!</div>
-        <button class="unavailable-close" onclick="closeUnavailable()">OK</button>
+        <div id="unavailableMessageText">UNFORTUNATELY UNAVAILABLE AT THIS TIME!</div>
+        <button class="unavailable-close" onclick="closeUnavailable()" data-i18n="btn_ok">OK</button>
     </div>
 
     <!-- Settings (white card box) -->
     <div class="settings-overlay" id="settingsOverlay" aria-hidden="true">
-        <div class="settings-card" role="dialog" aria-label="Settings">
+        <div class="settings-card" role="dialog" aria-labelledby="settingsCardHeading">
             <div class="settings-card-header">
-                <div class="settings-card-title" data-i18n="settings_title">SETTINGS</div>
+                <div id="settingsCardHeading" class="settings-card-title" data-i18n="settings_title">System Settings</div>
                 <div style="display:inline-flex; align-items:center; gap:8px;">
                     <button type="button" id="settingsEyeBtn" class="settings-eye-btn" aria-label="Visitors">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -6509,7 +7716,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="settings-card-body">
                 <div class="settings-row-label" data-i18n="settings_whats_new">What's New</div>
                 <button type="button" class="settings-open-btn" id="settingsOpenUpdatesBtn" data-i18n="settings_open">Open</button>
-                <div class="settings-row-label" data-i18n="settings_theme">Theme</div>
+                <div class="settings-lang-heading-row">
+                    <span class="settings-control-left">
+                        <span class="settings-row-label" data-i18n="settings_reset_default">Reset to Default</span>
+                        <button type="button" class="settings-warning-btn" id="settingsResetNoteBtn" data-i18n-aria="aria_reset_note" aria-label="Note about Reset to Default">!</button>
+                    </span>
+                </div>
+                <button type="button" class="settings-open-btn" id="settingsResetDefaultsBtn" data-i18n="settings_reset_btn">Reset</button>
+                <div class="settings-lang-heading-row">
+                    <span class="settings-control-left">
+                        <span class="settings-row-label" data-i18n="settings_theme">Theme</span>
+                        <button type="button" class="settings-warning-btn" id="settingsThemeNoteBtn" data-i18n-aria="aria_theme_note" aria-label="Note about theme">!</button>
+                    </span>
+                </div>
                 <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
                     <div class="theme-toggle-ui" aria-hidden="true">
                         <div class="theme-toggle-label" id="themeToggleLabel">DAY MODE</div>
@@ -6533,8 +7752,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     </div>
                 </button>
                 <div class="settings-lang-heading-row">
-                    <div class="settings-row-label" data-i18n="settings_language">Language</div>
-                    <button type="button" class="settings-warning-btn" id="settingsLangNoteBtn" data-i18n-aria="aria_lang_note" aria-label="Language note">!</button>
+                    <span class="settings-control-left">
+                        <span class="settings-row-label" data-i18n="settings_language">Language</span>
+                        <button type="button" class="settings-warning-btn" id="settingsLangNoteBtn" data-i18n-aria="aria_lang_note" aria-label="Language note">!</button>
+                    </span>
                 </div>
                 <div class="settings-lang-wrap">
                     <button type="button" id="settingsLangTrigger" class="settings-lang-trigger" aria-expanded="false" aria-haspopup="listbox">
@@ -6570,8 +7791,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 </div>
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version">v. 1.4</div>
-                    <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and can be drained your Mobile Load, highly recommended if you use Wi-Fi connection.</div>
+                    <div class="settings-version">v. 1.5</div>
+                    <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
             </div>
         </div>
@@ -6587,8 +7808,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="settings-caution-text" id="settingsVisitorsText">
                 <div class="settings-visitors-header">
                     <span class="settings-visitors-spacer" aria-hidden="true"></span>
-                    <div id="settingsVisitorsStatus" class="settings-visitors-status" data-i18n="visitors_checking">Checking...</div>
-                    <button type="button" id="settingsVisitorsRefreshBtn" data-i18n="visitors_refresh" style="border:none;background:transparent;color:rgba(223, 235, 255, 0.9);font-weight:900;cursor:pointer;padding:0;font-size:11px;text-decoration:underline;">Refresh</button>
+                    <div id="settingsVisitorsStatus" class="settings-visitors-status" data-i18n="visitors_viewing_tab">VIEWING TAB</div>
+                    <span class="settings-visitors-spacer" aria-hidden="true"></span>
                 </div>
                 <div style="font-weight:900; margin-bottom:6px;"><span data-i18n="visitors_viewing_now">Viewing Now:</span> <span id="settingsViewingNowCount">0</span></div>
                 <div style="font-weight:900;"><span data-i18n="visitors_visits">Visits:</span> <span id="settingsVisitorsCount">0</span></div>
@@ -6602,8 +7823,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <button type="button" class="settings-caution-ok" id="settingsLangNoteOkBtn" data-i18n="btn_ok">OK</button>
         </div>
     </div>
+    <div class="settings-caution-overlay" id="settingsInfoNoteOverlay" aria-hidden="true">
+        <div class="settings-caution-box" role="dialog" aria-labelledby="settingsInfoNoteTitle">
+            <div id="settingsInfoNoteTitle" class="settings-caution-text"></div>
+            <button type="button" class="settings-caution-ok" id="settingsInfoNoteOkBtn" data-i18n="btn_ok">OK</button>
+        </div>
+    </div>
 
     <script src="site-lang.js"></script>
+    <script src="about-others-lang.js"></script>
     <script>
         // Loading Screen with Percentage and Progress Bar
         window.addEventListener('load', function() {
@@ -6640,19 +7868,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const settingsLangNoteOverlay = document.getElementById('settingsLangNoteOverlay');
             const settingsLangNoteBtn = document.getElementById('settingsLangNoteBtn');
             const settingsLangNoteOkBtn = document.getElementById('settingsLangNoteOkBtn');
+            const settingsInfoNoteOverlay = document.getElementById('settingsInfoNoteOverlay');
+            const settingsInfoNoteTitle = document.getElementById('settingsInfoNoteTitle');
+            const settingsInfoNoteOkBtn = document.getElementById('settingsInfoNoteOkBtn');
+            const settingsResetNoteBtn = document.getElementById('settingsResetNoteBtn');
+            const settingsThemeNoteBtn = document.getElementById('settingsThemeNoteBtn');
             const settingsVisitorsOkBtn = document.getElementById('settingsVisitorsOkBtn');
-            const settingsVisitorsRefreshBtn = document.getElementById('settingsVisitorsRefreshBtn');
             const settingsVisitorsCount = document.getElementById('settingsVisitorsCount');
             const settingsVisitorsStatus = document.getElementById('settingsVisitorsStatus');
-            const settingsViewingNowCount = document.getElementById('settingsViewingNowCount');
             const settingsWarningBtns = document.querySelectorAll('[data-settings-caution="true"]');
             const SETTINGS_VOLUME_KEY = 'settingsVolumeLevel';
             const SETTINGS_BRIGHTNESS_KEY = 'settingsBrightnessLevel';
-            const VISIT_COUNT_SESSION_KEY = 'visitCountedThisSession';
-            const LOCAL_VISIT_COUNT_SESSION_KEY = 'localVisitCountedThisSession';
-            const LOCAL_VISIT_COUNT_KEY = 'localVisitCountTotal';
-            const LOCAL_ACTIVE_VIEWERS_KEY = 'localActiveViewers';
-            const LOCAL_VISITS_BASELINE = 102;
 
             function clamp(value, min, max) {
                 const num = Number(value);
@@ -6809,19 +8035,51 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 });
             }
 
-            function getVisitCounterIds() {
-                // Stable-ish key per site/page without setup.
-                const host = (location && location.hostname) ? location.hostname : 'local';
-                const path = (location && location.pathname) ? location.pathname.replace(/[^a-z0-9/_-]/gi, '') : 'index';
-                return {
-                    namespace: ('about-my-self-' + host).toLowerCase(),
-                    key: ('visits' + path).toLowerCase()
-                };
+            function openSettingsInfoNote(i18nKey) {
+                if (!settingsInfoNoteOverlay || !settingsInfoNoteTitle) return;
+                var msg = typeof window.t === 'function' ? window.t(i18nKey) : '';
+                if (!msg) msg = i18nKey;
+                settingsInfoNoteTitle.textContent = msg;
+                settingsInfoNoteOverlay.classList.add('show');
+                settingsInfoNoteOverlay.setAttribute('aria-hidden', 'false');
             }
-            function setVisitorsText(text) {
-                if (!settingsVisitorsCount) return;
-                settingsVisitorsCount.textContent = text;
+            function closeSettingsInfoNote() {
+                if (!settingsInfoNoteOverlay) return;
+                settingsInfoNoteOverlay.classList.remove('show');
+                settingsInfoNoteOverlay.setAttribute('aria-hidden', 'true');
             }
+            if (settingsResetNoteBtn) {
+                settingsResetNoteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSettingsInfoNote('settings_note_reset');
+                });
+                settingsResetNoteBtn.addEventListener('pointerdown', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            if (settingsThemeNoteBtn) {
+                settingsThemeNoteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSettingsInfoNote('settings_note_theme');
+                });
+                settingsThemeNoteBtn.addEventListener('pointerdown', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            if (settingsInfoNoteOkBtn) {
+                settingsInfoNoteOkBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeSettingsInfoNote();
+                });
+            }
+            if (settingsInfoNoteOverlay) {
+                settingsInfoNoteOverlay.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
             function setVisitorsStatus(text) {
                 if (!settingsVisitorsStatus) return;
                 settingsVisitorsStatus.textContent = text;
@@ -6829,130 +8087,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             window.__reapplyVisitorsStatusForLang = function() {
                 setVisitorsStatus(typeof window.t === 'function' ? window.t('visitors_viewing_tab') : 'VIEWING TAB');
             };
-            function setViewingNowText(text) {
-                if (!settingsViewingNowCount) return;
-                settingsViewingNowCount.textContent = text;
-            }
-            function getAndMaybeIncLocalVisits() {
-                let total = 0;
-                try {
-                    const raw = localStorage.getItem(LOCAL_VISIT_COUNT_KEY);
-                    if (raw !== null) {
-                        total = parseInt(raw, 10) || 0;
-                        // If older saved value exists (<baseline), bump to new baseline.
-                        if (total < LOCAL_VISITS_BASELINE) {
-                            total = LOCAL_VISITS_BASELINE;
-                            localStorage.setItem(LOCAL_VISIT_COUNT_KEY, String(total));
-                        }
-                    } else {
-                        total = LOCAL_VISITS_BASELINE;
-                        localStorage.setItem(LOCAL_VISIT_COUNT_KEY, String(total));
-                    }
-                } catch {}
-                // Count on every page open/load.
-                total += 1;
-                try { localStorage.setItem(LOCAL_VISIT_COUNT_KEY, String(total)); } catch {}
-                return total;
-            }
-            function getTabId() {
-                // Unique id per tab for local "viewing now"
-                try {
-                    let id = sessionStorage.getItem('localTabId');
-                    if (!id) {
-                        id = String(Date.now()) + '-' + Math.random().toString(16).slice(2);
-                        sessionStorage.setItem('localTabId', id);
-                    }
-                    return id;
-                } catch {
-                    return String(Date.now()) + '-' + Math.random().toString(16).slice(2);
-                }
-            }
-            const localTabId = getTabId();
-            function readActiveMap() {
-                try {
-                    const raw = localStorage.getItem(LOCAL_ACTIVE_VIEWERS_KEY);
-                    if (!raw) return {};
-                    const obj = JSON.parse(raw);
-                    return obj && typeof obj === 'object' ? obj : {};
-                } catch {
-                    return {};
-                }
-            }
-            function writeActiveMap(map) {
-                try { localStorage.setItem(LOCAL_ACTIVE_VIEWERS_KEY, JSON.stringify(map)); } catch {}
-            }
-            function cleanupAndCountActive(map) {
-                const now = Date.now();
-                const freshWithinMs = 30000; // consider active if pinged in last 30s
-                let count = 0;
-                Object.keys(map).forEach(function(id) {
-                    const ts = Number(map[id]);
-                    if (!Number.isFinite(ts) || now - ts > freshWithinMs) {
-                        delete map[id];
-                    } else {
-                        count += 1;
-                    }
-                });
-                return { map, count };
-            }
-            function pingViewingNow() {
-                const map = readActiveMap();
-                map[localTabId] = Date.now();
-                const res = cleanupAndCountActive(map);
-                writeActiveMap(res.map);
-                setViewingNowText(String(res.count));
-            }
-            function removeViewingNow() {
-                const map = readActiveMap();
-                if (map && map[localTabId]) {
-                    delete map[localTabId];
-                    const res = cleanupAndCountActive(map);
-                    writeActiveMap(res.map);
-                    setViewingNowText(String(res.count));
-                }
-            }
-            // Keep "viewing now" updated locally
-            pingViewingNow();
-            setInterval(pingViewingNow, 12000);
-            window.addEventListener('beforeunload', removeViewingNow);
-            window.addEventListener('pagehide', removeViewingNow);
-            function loadVisitorCount() {
-                if (!settingsVisitorsCount) return Promise.resolve();
-                // Keep local visits as the source of truth so it always increases reliably.
-                try {
-                    const raw = localStorage.getItem(LOCAL_VISIT_COUNT_KEY);
-                    const total = raw !== null ? (parseInt(raw, 10) || LOCAL_VISITS_BASELINE) : LOCAL_VISITS_BASELINE;
-                        setVisitorsStatus(typeof window.t === 'function' ? window.t('visitors_viewing_tab') : 'VIEWING TAB');
-                    setVisitorsText(String(total));
-                } catch {
-                    setVisitorsStatus(typeof window.t === 'function' ? window.t('visitors_viewing_tab') : 'VIEWING TAB');
-                    setVisitorsText(String(LOCAL_VISITS_BASELINE));
-                }
-                return Promise.resolve();
-            }
-            function countVisitOncePerSession() {
-                let countedOnlineThisSession = false;
-                try { countedOnlineThisSession = sessionStorage.getItem(VISIT_COUNT_SESSION_KEY) === 'true'; } catch {}
-                if (!countedOnlineThisSession) {
-                    try { sessionStorage.setItem(VISIT_COUNT_SESSION_KEY, 'true'); } catch {}
-                }
-                return loadVisitorCount();
-            }
-            // Always show local values immediately (never stuck at 0),
-            // then try to replace Visits with the online counter if available.
             setVisitorsStatus(typeof window.t === 'function' ? window.t('visitors_viewing_tab') : 'VIEWING TAB');
-            setVisitorsText(String(getAndMaybeIncLocalVisits()));
-            pingViewingNow();
-            countVisitOncePerSession();
-
-            if (settingsVisitorsRefreshBtn) {
-                settingsVisitorsRefreshBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Refresh local viewing now immediately, and re-check visits (online if available).
-                    pingViewingNow();
-                    loadVisitorCount();
-                });
-            }
 
             function openSettings() {
                 if (!settingsOverlay) return;
@@ -6962,6 +8097,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             function closeSettings() {
                 if (typeof closeSettingsLangMenu === 'function') closeSettingsLangMenu();
                 if (typeof closeSettingsLangNote === 'function') closeSettingsLangNote();
+                if (typeof closeSettingsInfoNote === 'function') closeSettingsInfoNote();
                 if (!settingsOverlay) return;
                 settingsOverlay.classList.remove('show');
                 settingsOverlay.setAttribute('aria-hidden', 'true');
@@ -7007,6 +8143,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             }
             document.addEventListener('keydown', function(e) {
                 if (e.key !== 'Escape') return;
+                if (settingsInfoNoteOverlay && settingsInfoNoteOverlay.classList.contains('show')) {
+                    closeSettingsInfoNote();
+                    return;
+                }
                 if (settingsLangNoteOverlay && settingsLangNoteOverlay.classList.contains('show')) {
                     closeSettingsLangNote();
                     return;
@@ -7047,6 +8187,36 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             // Prevent any parent click handlers from accidentally toggling theme
             if (themeToggle) {
                 themeToggle.addEventListener('pointerdown', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            const settingsResetDefaultsBtn = document.getElementById('settingsResetDefaultsBtn');
+            if (settingsResetDefaultsBtn) {
+                settingsResetDefaultsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyTheme('light');
+                    const defaultVol = 70;
+                    const defaultBright = 85;
+                    if (typeof window.applySiteLanguage === 'function') {
+                        window.applySiteLanguage('en');
+                    }
+                    if (typeof closeSettingsLangMenu === 'function') closeSettingsLangMenu();
+                    if (settingsVolumeSlider) {
+                        settingsVolumeSlider.value = String(defaultVol);
+                        updateVolumeText(defaultVol);
+                        applySiteVolume(defaultVol / 100);
+                        try { localStorage.setItem(SETTINGS_VOLUME_KEY, String(defaultVol)); } catch (err) {}
+                    }
+                    if (settingsBrightnessSlider) {
+                        settingsBrightnessSlider.value = String(defaultBright);
+                        updateBrightnessText(defaultBright);
+                        applySiteBrightness(defaultBright / 100);
+                        try { localStorage.setItem(SETTINGS_BRIGHTNESS_KEY, String(defaultBright)); } catch (err) {}
+                    }
+                });
+                settingsResetDefaultsBtn.addEventListener('pointerdown', function(e) {
                     e.stopPropagation();
                 });
             }
@@ -7167,7 +8337,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1_5';
             function hasSeenUpdatedSplashOnce() {
                 try {
                     return localStorage.getItem(UPDATED_SPLASH_SEEN_KEY) === '1';
@@ -7326,6 +8496,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const warningTimerEl = document.getElementById('warningTimer');
             const updatesButtonContainer = document.querySelector('.update-button-container');
             let warningCountdownInterval = null;
+            let mainCountdownInterval = null;
             let targetNov15 = null;
             let messageInterval = null;
             const COUNTDOWN_DONE_KEY = 'updatesCountdownDone';
@@ -7367,38 +8538,48 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
             // Countdown Timer Function
             function startCountdown() {
+                if (mainCountdownInterval) {
+                    clearTimeout(mainCountdownInterval);
+                    mainCountdownInterval = null;
+                }
                 // Target date: January 1, 2026 12:00 AM (midnight)
                 const targetDate = new Date('2026-01-01T00:00:00');
                 const countdownContainer = document.getElementById('countdownContainer');
-                
-                function updateCountdown() {
+
+                function msUntilNextSecondBoundary(remainingMs) {
+                    if (remainingMs <= 0) return 1000;
+                    var mod = remainingMs % 1000;
+                    return mod === 0 ? 1000 : mod;
+                }
+
+                function tick() {
                     const now = new Date();
                     const timeDifference = targetDate - now;
-                    
+
                     if (timeDifference <= 0) {
-                        // Countdown finished - hide the countdown container
                         if (countdownContainer) {
                             countdownContainer.style.display = 'none';
                         }
+                        mainCountdownInterval = null;
                         return;
                     }
-                    
+
                     const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-                    
+
                     document.getElementById('days').textContent = String(days).padStart(2, '0');
                     document.getElementById('hours').textContent = String(hours).padStart(2, '0');
                     document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
                     document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+
+                    var wait = msUntilNextSecondBoundary(timeDifference);
+                    if (wait < 50) wait = 50;
+                    mainCountdownInterval = setTimeout(tick, wait);
                 }
-                
-                // Update immediately
-                updateCountdown();
-                
-                // Update every second
-                setInterval(updateCountdown, 1000);
+
+                tick();
             }
             
             const LOADING_MSG_KEYS = ['load_m0','load_m1','load_m2','load_m3','load_m4','load_m5','load_m6','load_m7','load_m8','load_m9','load_m10','load_m11'];
@@ -7552,14 +8733,40 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     return;
                 }
                 if (!updatesCountdownTargetDate) updatesCountdownTargetDate = new Date(2026, 6, 31, 0, 0, 0);
+
+                function msUntilNextSecondBoundaryFromRemaining(remMs) {
+                    if (remMs <= 0) return 1000;
+                    var mod = remMs % 1000;
+                    return mod === 0 ? 1000 : mod;
+                }
+
+                function alignWarningDelay() {
+                    if (!updatesCountdownTargetDate) return 1000;
+                    var now = getCountdownNow() || new Date();
+                    var rem = updatesCountdownTargetDate.getTime() - now.getTime();
+                    var wait = msUntilNextSecondBoundaryFromRemaining(rem);
+                    return wait < 50 ? 50 : wait;
+                }
+
+                function scheduleWarningContinue(optMs) {
+                    if (countdownAlreadyDone) return;
+                    var d = typeof optMs === 'number' ? optMs : alignWarningDelay();
+                    if (d < 50) d = 50;
+                    if (warningCountdownInterval) clearTimeout(warningCountdownInterval);
+                    warningCountdownInterval = setTimeout(updateCountdown, d);
+                }
+
                 function updateCountdown() {
                     function setDiffFromNow(now) {
-                        if (!updatesCountdownTargetDate) return now;
+                        if (!updatesCountdownTargetDate) return true;
                         var diff = Math.floor((updatesCountdownTargetDate.getTime() - now.getTime()) / 1000);
                         if (diff < 0) diff = 0;
                         if (warningTimerEl) warningTimerEl.textContent = formatDhms(diff);
                         if (diff === 0) {
-                            if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+                            if (warningCountdownInterval) {
+                                clearTimeout(warningCountdownInterval);
+                                warningCountdownInterval = null;
+                            }
                             if (warningTimerLine) warningTimerLine.style.display = 'none';
                             if (updatingMsgEl) updatingMsgEl.style.display = 'block';
                             if (!countdownAlreadyDone) {
@@ -7568,13 +8775,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                 unlockChristmasFeatures();
                                 startPreviewTimer();
                             }
+                            return false;
                         }
-                        return now;
+                        return true;
                     }
                     if (updatesCountdownServerNow !== null && updatesCountdownFetchedAtPerformance !== null) {
                         var elapsedMs = (typeof performance !== 'undefined' && performance.now) ? (performance.now() - updatesCountdownFetchedAtPerformance) : 0;
                         if (elapsedMs > updatesCountdownRefreshMs) {
                             getServerTimeWithOffset().then(function(data) {
+                                if (countdownAlreadyDone) return;
                                 if (data) {
                                     updatesCountdownServerNow = data.now;
                                     updatesCountdownServerFetchedAt = Date.now();
@@ -7585,48 +8794,59 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                     }
                                 }
                                 var now = getCountdownNow();
-                                if (now) setDiffFromNow(now);
+                                if (now && !setDiffFromNow(now)) return;
+                                scheduleWarningContinue();
                             });
                             return;
                         }
                         var now = getCountdownNow();
-                        if (now) setDiffFromNow(now);
-                    } else {
-                        var pending = getCountdownNow();
-                        if (pending) setDiffFromNow(pending);
-                        getServerTimeWithOffset().then(function(data) {
-                            if (data) {
-                                updatesCountdownFailCount = 0;
-                                updatesCountdownServerNow = data.now;
-                                updatesCountdownServerFetchedAt = Date.now();
-                                updatesCountdownFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
-                                if (data.utcOffset) {
-                                    var targetStr = '2026-07-31T00:00:00' + data.utcOffset;
-                                    updatesCountdownTargetDate = new Date(targetStr);
-                                }
-                                var now = getCountdownNow();
-                                if (now) setDiffFromNow(now);
-                            } else {
-                                // If server time is unavailable, retry a few times,
-                                // then fall back to local time so it never gets stuck on CONNECTING...
-                                updatesCountdownFailCount += 1;
-                                if (updatesCountdownFailCount >= 3) {
-                                    if (warningTimerLine) warningTimerLine.style.display = '';
-                                    if (updatingMsgEl) updatingMsgEl.style.display = 'none';
-                                    setDiffFromNow(new Date());
-                                } else {
-                                    if (warningTimerEl) warningTimerEl.textContent = '--:--:--:--';
-                                    updatesCountdownServerNow = null;
-                                    updatesCountdownFetchedAtPerformance = null;
-                                    setTimeout(function() { updateCountdown(); }, 2500);
-                                }
+                        if (now && !setDiffFromNow(now)) return;
+                        scheduleWarningContinue();
+                        return;
+                    }
+                    var pending = getCountdownNow();
+                    if (pending && !setDiffFromNow(pending)) return;
+                    getServerTimeWithOffset().then(function(data) {
+                        if (countdownAlreadyDone) return;
+                        if (data) {
+                            updatesCountdownFailCount = 0;
+                            updatesCountdownServerNow = data.now;
+                            updatesCountdownServerFetchedAt = Date.now();
+                            updatesCountdownFetchedAtPerformance = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
+                            if (data.utcOffset) {
+                                var targetStr = '2026-07-31T00:00:00' + data.utcOffset;
+                                updatesCountdownTargetDate = new Date(targetStr);
                             }
-                        });
+                            var now = getCountdownNow();
+                            if (now && !setDiffFromNow(now)) return;
+                        } else {
+                            updatesCountdownFailCount += 1;
+                            if (updatesCountdownFailCount >= 3) {
+                                if (warningTimerLine) warningTimerLine.style.display = '';
+                                if (updatingMsgEl) updatingMsgEl.style.display = 'none';
+                                if (!setDiffFromNow(new Date())) return;
+                            } else {
+                                if (warningTimerEl) warningTimerEl.textContent = '--:--:--:--';
+                                updatesCountdownServerNow = null;
+                                updatesCountdownFetchedAtPerformance = null;
+                                scheduleWarningContinue(2500);
+                                return;
+                            }
+                        }
+                        scheduleWarningContinue();
+                    });
+                    if (!pending) {
+                        scheduleWarningContinue(1000);
+                    } else {
+                        scheduleWarningContinue();
                     }
                 }
+
+                if (warningCountdownInterval) {
+                    clearTimeout(warningCountdownInterval);
+                    warningCountdownInterval = null;
+                }
                 updateCountdown();
-                if (warningCountdownInterval) clearInterval(warningCountdownInterval);
-                warningCountdownInterval = setInterval(updateCountdown, 1000);
             }
         });
 
@@ -7667,6 +8887,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const details = document.getElementById('update13-details');
             const topToggle = document.getElementById('update13-toggle-top');
             const bottomToggle = document.getElementById('update13-toggle-bottom');
+            if (!details || !topToggle || !bottomToggle) return;
+            const isHidden = details.style.display === 'none' || details.style.display === '';
+            details.style.display = isHidden ? 'block' : 'none';
+            topToggle.style.display = isHidden ? 'none' : 'inline';
+            bottomToggle.style.display = isHidden ? 'inline' : 'none';
+        }
+
+        function toggleUpdate15Details() {
+            const details = document.getElementById('update15-details');
+            const topToggle = document.getElementById('update15-toggle-top');
+            const bottomToggle = document.getElementById('update15-toggle-bottom');
             if (!details || !topToggle || !bottomToggle) return;
             const isHidden = details.style.display === 'none' || details.style.display === '';
             details.style.display = isHidden ? 'block' : 'none';
@@ -7906,75 +9137,920 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             fetchAnchor();
         }
 
-        // Clock release countdown (May 30, 2026 00:00 UTC) + hourglass flip
-        let clockCountdownInterval = null;
-        let clockHourglassInterval = null;
-        let clockServerAnchor = null;
-        let clockPerfAnchor = null;
-        let clockLastSyncPerf = null;
-        const CLOCK_SYNC_MS = 60000;
-        const CLOCK_RELEASE_UTC_MS = Date.UTC(2026, 4, 30, 0, 0, 0, 0);
+        // Clock app — live analog + digital (sketch layout)
+        let clockAppRaf = null;
+        let clockDialBuilt = false;
 
-        function stopClockCountdown() {
-            if (clockCountdownInterval) {
-                clearInterval(clockCountdownInterval);
-                clockCountdownInterval = null;
+        function buildOneClockFace(ticksId, numsId) {
+            const ticks = document.getElementById(ticksId);
+            const nums = document.getElementById(numsId);
+            if (!ticks || !nums || nums.dataset.clockFaceBuilt === '1') return;
+            const cx = 110;
+            const cy = 110;
+            const rInMaj = 82;
+            const rInMin = 88;
+            for (let i = 0; i < 60; i++) {
+                const a = ((i * 6) - 90) * (Math.PI / 180);
+                const isMajor = i % 5 === 0;
+                const r0 = isMajor ? rInMaj : rInMin;
+                const len = isMajor ? 12 : 6;
+                const x1 = cx + r0 * Math.cos(a);
+                const y1 = cy + r0 * Math.sin(a);
+                const x2 = cx + (r0 + len) * Math.cos(a);
+                const y2 = cy + (r0 + len) * Math.sin(a);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', String(x1));
+                line.setAttribute('y1', String(y1));
+                line.setAttribute('x2', String(x2));
+                line.setAttribute('y2', String(y2));
+                line.setAttribute('class', isMajor ? 'clock-tick-major' : 'clock-tick-minor');
+                ticks.appendChild(line);
             }
-            // hourglass flip is CSS-based now
+            for (let n = 1; n <= 12; n++) {
+                const a = ((n * 30) - 90) * (Math.PI / 180);
+                const tx = cx + 74 * Math.cos(a);
+                const ty = cy + 74 * Math.sin(a);
+                const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                t.setAttribute('x', String(tx));
+                t.setAttribute('y', String(ty));
+                t.setAttribute('class', 'clock-num');
+                t.textContent = String(n);
+                nums.appendChild(t);
+            }
+            nums.dataset.clockFaceBuilt = '1';
         }
 
-        function startClockCountdown() {
-            const el = document.getElementById('clockTimer');
-            if (!el) return;
-            stopClockCountdown();
-            clockServerAnchor = null;
-            clockPerfAnchor = null;
-            clockLastSyncPerf = null;
-            el.textContent = '--:--:--:--';
+        function buildClockDial() {
+            if (clockDialBuilt) return;
+            buildOneClockFace('clockTicks', 'clockNumbers');
+            buildOneClockFace('clockTicksSw', 'clockNumbersSw');
+            clockDialBuilt = true;
+        }
 
-            function tick() {
-                if (!el) return;
-                if (!clockServerAnchor || clockPerfAnchor === null || typeof performance === 'undefined' || !performance.now) return;
-                const perfNow = performance.now();
-                const now = new Date(clockServerAnchor.getTime() + (perfNow - clockPerfAnchor));
-                const diffSec = Math.floor((CLOCK_RELEASE_UTC_MS - now.getTime()) / 1000);
-                el.textContent = formatDhmsFromSeconds(Math.max(0, diffSec));
+        function padClock2(n) {
+            return String(n).padStart(2, '0');
+        }
 
-                if (clockLastSyncPerf !== null && perfNow - clockLastSyncPerf > CLOCK_SYNC_MS) {
-                    clockLastSyncPerf = perfNow;
-                    getServerTimeNow().then(function(serverNow) {
-                        if (serverNow && typeof performance !== 'undefined' && performance.now) {
-                            clockServerAnchor = serverNow;
-                            clockPerfAnchor = performance.now();
-                        }
-                    });
+        /** 12-hour face value: 1–12 (midnight and noon both show 12). */
+        function getHours12(d) {
+            let h = d.getHours() % 12;
+            if (h === 0) h = 12;
+            return h;
+        }
+
+        function formatClockDigital(d) {
+            return (
+                padClock2(getHours12(d)) +
+                ' <span class="clock-sep">:</span> ' +
+                padClock2(d.getMinutes()) +
+                ' <span class="clock-sep">:</span> ' +
+                padClock2(d.getSeconds())
+            );
+        }
+
+        function formatClockDate(d) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+        }
+
+        const CLOCK_CX = 110;
+        const CLOCK_CY = 110;
+        const CLOCK_HAND_LEN = { hour: 48, minute: 68, second: 86 };
+
+        /** Place hand on dial; clockDeg = clockwise degrees from 12 (0–360). Matches tick math. */
+        function setClockHand(handId, clockDeg, length) {
+            const g = document.getElementById(handId);
+            if (!g) return;
+            const line = g.querySelector('line');
+            if (!line) return;
+            const rad = (clockDeg - 90) * (Math.PI / 180);
+            const x2 = CLOCK_CX + length * Math.cos(rad);
+            const y2 = CLOCK_CY + length * Math.sin(rad);
+            line.setAttribute('x1', String(CLOCK_CX));
+            line.setAttribute('y1', String(CLOCK_CY));
+            line.setAttribute('x2', String(x2));
+            line.setAttribute('y2', String(y2));
+        }
+
+        function applyClockLayout() {
+            const app = document.getElementById('clockApp');
+            if (!app) return;
+            const landscape = window.matchMedia('(orientation: landscape)').matches || window.innerWidth >= 768;
+            app.classList.toggle('clock-landscape', landscape);
+            app.classList.toggle('clock-portrait', !landscape);
+            refreshAllTimerPickerPadding();
+            ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                const w = document.getElementById(id);
+                if (w && w.dataset.built === '1') highlightPickerItems(w);
+            });
+        }
+
+        let clockLayoutBound = false;
+        function bindClockLayoutListener() {
+            if (clockLayoutBound) return;
+            clockLayoutBound = true;
+            window.addEventListener('resize', applyClockLayout);
+            window.addEventListener('orientationchange', applyClockLayout);
+        }
+
+        function updateClockDisplay(now) {
+            const s = now.getSeconds() + now.getMilliseconds() / 1000;
+            const m = now.getMinutes() + s / 60;
+            const h = (now.getHours() % 12) + m / 60;
+            setClockHand('clockHandSecond', s * 6, CLOCK_HAND_LEN.second);
+            setClockHand('clockHandMinute', m * 6, CLOCK_HAND_LEN.minute);
+            setClockHand('clockHandHour', h * 30, CLOCK_HAND_LEN.hour);
+            updateStopwatchMiniClockHand();
+            const digital = document.getElementById('clockDigital');
+            if (digital) digital.innerHTML = formatClockDigital(now);
+            const dateEl = document.getElementById('clockDate');
+            if (dateEl) dateEl.textContent = formatClockDate(now).toUpperCase();
+            const status = document.getElementById('clockStatusTime');
+            if (status) status.textContent = padClock2(getHours12(now)) + ':' + padClock2(now.getMinutes());
+        }
+
+        function clockAppLoop() {
+            updateClockDisplay(new Date());
+            clockAppRaf = requestAnimationFrame(clockAppLoop);
+        }
+
+        function stopClockApp() {
+            if (clockAppRaf) {
+                cancelAnimationFrame(clockAppRaf);
+                clockAppRaf = null;
+            }
+            stopTimerTick();
+            stopStopwatchRaf();
+            stopwatchReset(true);
+            stopClockBatteryListeners();
+        }
+
+        const swState = {
+            accumulatedMs: 0,
+            segmentStart: null,
+            running: false,
+            rafId: null,
+            laps: [],
+            lastLapTotalMs: 0,
+            highlightNewestLap: false
+        };
+
+        function getStopwatchTotalMs() {
+            if (!swState.running) return swState.accumulatedMs;
+            return swState.accumulatedMs + (performance.now() - swState.segmentStart);
+        }
+
+        function formatStopwatchMMSScs(ms) {
+            ms = Math.max(0, Math.floor(ms));
+            const totalSec = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSec / 60);
+            const seconds = totalSec % 60;
+            const cs = Math.floor((ms % 1000) / 10);
+            const mmStr = minutes < 100 ? padTimer2(minutes) : String(minutes);
+            return mmStr + ':' + padTimer2(seconds) + '.' + padTimer2(cs);
+        }
+
+        function formatStopwatchSignedDelta(ms) {
+            const v = Math.max(0, Math.floor(ms));
+            return '+' + formatStopwatchMMSScs(v);
+        }
+
+        function getStopwatchSegmentMs() {
+            return Math.max(0, getStopwatchTotalMs() - swState.lastLapTotalMs);
+        }
+
+        /** Mini dial red hand: stays at 12 when stopwatch is at 0; moves with elapsed time while running; freezes on pause. */
+        function updateStopwatchMiniClockHand() {
+            const totalMs = Math.max(0, getStopwatchTotalMs());
+            let clockDeg = 0;
+            if (swState.running || totalMs > 0) {
+                clockDeg = ((totalMs % 60000) / 1000) * 6;
+            }
+            setClockHand('clockHandSecondSw', clockDeg, CLOCK_HAND_LEN.second);
+        }
+
+        function updateStopwatchDisplay() {
+            const mainEl = document.getElementById('stopwatchDisplay');
+            const segEl = document.getElementById('stopwatchSegment');
+            const total = getStopwatchTotalMs();
+            if (mainEl) mainEl.textContent = formatStopwatchMMSScs(total);
+            if (segEl) segEl.textContent = formatStopwatchSignedDelta(getStopwatchSegmentMs());
+        }
+
+        function renderStopwatchLaps() {
+            const root = document.getElementById('stopwatchLaps');
+            if (!root) return;
+            const playEnterAnim = swState.highlightNewestLap;
+            root.innerHTML = '';
+            const n = swState.laps.length;
+            for (let i = n - 1; i >= 0; i--) {
+                const lap = swState.laps[i];
+                const row = document.createElement('div');
+                row.className = 'stopwatch-lap-row';
+                if (playEnterAnim && i === n - 1) {
+                    row.classList.add('stopwatch-lap-row--enter');
+                }
+                const num = document.createElement('span');
+                num.className = 'stopwatch-lap-num';
+                num.textContent = padTimer2(lap.lapIndex);
+                const diff = document.createElement('span');
+                diff.className = 'stopwatch-lap-diff';
+                diff.textContent = formatStopwatchSignedDelta(lap.diffMs);
+                const tot = document.createElement('span');
+                tot.className = 'stopwatch-lap-total';
+                tot.textContent = formatStopwatchMMSScs(lap.totalMs);
+                row.appendChild(num);
+                row.appendChild(diff);
+                row.appendChild(tot);
+                root.appendChild(row);
+            }
+            swState.highlightNewestLap = false;
+            if (playEnterAnim && root.firstElementChild) {
+                requestAnimationFrame(function () {
+                    root.firstElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+            }
+        }
+
+        function updateStopwatchLapButton() {
+            const lapBtn = document.getElementById('swBtnLap');
+            if (!lapBtn) return;
+            const on = swState.running;
+            lapBtn.disabled = !on;
+            lapBtn.classList.toggle('timer-ctrl-btn--disabled', !on);
+        }
+
+        function setStopwatchPlayPauseIcon(running) {
+            const icon = document.getElementById('swPlayPauseIcon');
+            const btn = document.getElementById('swBtnPlayPause');
+            if (!icon || !btn) return;
+            if (running) {
+                icon.innerHTML = '<path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                btn.setAttribute('title', 'Pause');
+                btn.setAttribute('aria-label', 'Pause stopwatch');
+            } else {
+                icon.innerHTML = '<path fill="currentColor" d="M8 5v14l11-7z"/>';
+                btn.setAttribute('title', 'Start');
+                btn.setAttribute('aria-label', 'Start stopwatch');
+            }
+        }
+
+        function stopwatchTogglePlayPause() {
+            if (swState.running) {
+                stopwatchStop();
+            } else {
+                stopwatchStart();
+            }
+        }
+
+        function stopwatchLap() {
+            if (!swState.running) return;
+            const total = getStopwatchTotalMs();
+            const diffMs = Math.max(0, total - swState.lastLapTotalMs);
+            const lapIndex = swState.laps.length + 1;
+            swState.laps.push({ lapIndex: lapIndex, diffMs: diffMs, totalMs: total });
+            swState.lastLapTotalMs = total;
+            swState.highlightNewestLap = true;
+            renderStopwatchLaps();
+        }
+
+        function stopwatchLoop() {
+            updateStopwatchDisplay();
+            updateStopwatchMiniClockHand();
+            if (swState.running) {
+                swState.rafId = requestAnimationFrame(stopwatchLoop);
+            } else {
+                swState.rafId = null;
+            }
+        }
+
+        function stopStopwatchRaf() {
+            if (swState.rafId) {
+                cancelAnimationFrame(swState.rafId);
+                swState.rafId = null;
+            }
+        }
+
+        function stopwatchStart() {
+            if (swState.running) return;
+            swState.segmentStart = performance.now();
+            swState.running = true;
+            setStopwatchPlayPauseIcon(true);
+            updateStopwatchLapButton();
+            if (!swState.rafId) {
+                swState.rafId = requestAnimationFrame(stopwatchLoop);
+            }
+        }
+
+        function stopwatchStop() {
+            if (!swState.running) return;
+            swState.accumulatedMs += performance.now() - swState.segmentStart;
+            swState.segmentStart = null;
+            swState.running = false;
+            stopStopwatchRaf();
+            updateStopwatchDisplay();
+            updateStopwatchMiniClockHand();
+            setStopwatchPlayPauseIcon(false);
+            updateStopwatchLapButton();
+        }
+
+        function stopwatchReset(updateUi) {
+            if (updateUi === undefined) updateUi = true;
+            stopStopwatchRaf();
+            swState.accumulatedMs = 0;
+            swState.segmentStart = null;
+            swState.running = false;
+            swState.laps = [];
+            swState.lastLapTotalMs = 0;
+            swState.highlightNewestLap = false;
+            if (updateUi) {
+                updateStopwatchDisplay();
+                updateStopwatchMiniClockHand();
+                renderStopwatchLaps();
+                setStopwatchPlayPauseIcon(false);
+                updateStopwatchLapButton();
+            }
+        }
+
+        function updateStopwatchButtons() {
+            setStopwatchPlayPauseIcon(swState.running);
+            updateStopwatchLapButton();
+        }
+
+        let stopwatchControlsBound = false;
+        function bindStopwatchControls() {
+            if (stopwatchControlsBound) return;
+            stopwatchControlsBound = true;
+            const reset = document.getElementById('swBtnReset');
+            const playPause = document.getElementById('swBtnPlayPause');
+            const lap = document.getElementById('swBtnLap');
+            if (reset) reset.addEventListener('click', function () {
+                stopwatchReset(true);
+            });
+            if (playPause) playPause.addEventListener('click', stopwatchTogglePlayPause);
+            if (lap) lap.addEventListener('click', stopwatchLap);
+        }
+
+        const TIMER_PICKER_ITEM_H = 48;
+        const TIMER_PICKER_PAD = 2;
+        const TIMER_PICKER_COPIES = 3;
+
+        const timerState = {
+            view: 'setup',
+            saved: { h: 0, m: 0, s: 0 },
+            remainingMs: 0,
+            running: false,
+            hasStarted: false,
+            tickInterval: null
+        };
+
+        let timerPickersBuilt = false;
+        let clockActiveTab = 'clock';
+
+        function padTimer2(n) {
+            return String(n).padStart(2, '0');
+        }
+
+        function formatTimerHms(h, m, s) {
+            return padTimer2(h) + ':' + padTimer2(m) + ':' + padTimer2(s);
+        }
+
+        function formatTimerMs(ms) {
+            ms = Math.max(0, Math.floor(ms));
+            const totalSec = Math.floor(ms / 1000);
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            return formatTimerHms(h, m, s);
+        }
+
+        function setPickerScrollTop(wheel, top) {
+            const viewport = getPickerScrollRoot(wheel);
+            if (!viewport || !wheel) return;
+            wheel._pickerJumping = true;
+            viewport.scrollTop = top;
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    wheel._pickerJumping = false;
+                });
+            });
+        }
+
+        function getPickerScrollRoot(wheel) {
+            return wheel && wheel.parentElement;
+        }
+
+        function getPickerTopPad(wheel) {
+            let pad = 0;
+            let el = wheel.firstElementChild;
+            while (el && el.classList.contains('timer-picker-item--spacer')) {
+                pad += el.offsetHeight;
+                el = el.nextElementSibling;
+            }
+            return pad;
+        }
+
+        function getPickerBlockMetrics(wheel) {
+            const viewport = getPickerScrollRoot(wheel);
+            const first = wheel.querySelector('.timer-picker-item[data-value]');
+            const itemH = first ? first.offsetHeight : TIMER_PICKER_ITEM_H;
+            const min = parseInt(wheel.dataset.min, 10);
+            const max = parseInt(wheel.dataset.max, 10);
+            const range = max - min + 1;
+            return {
+                viewport: viewport,
+                itemH: itemH,
+                min: min,
+                max: max,
+                range: range,
+                blockH: range * itemH,
+                padTop: getPickerTopPad(wheel)
+            };
+        }
+
+        function updatePickerWheelPadding(wheel) {
+            const viewport = getPickerScrollRoot(wheel);
+            if (!viewport || !wheel) return;
+            const first = wheel.querySelector('.timer-picker-item[data-value]');
+            const itemH = first ? first.offsetHeight : TIMER_PICKER_ITEM_H;
+            const pad = Math.max(0, (viewport.clientHeight - itemH) / 2);
+            wheel.style.paddingTop = pad + 'px';
+            wheel.style.paddingBottom = pad + 'px';
+        }
+
+        function refreshAllTimerPickerPadding() {
+            ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                const w = document.getElementById(id);
+                if (w && w.dataset.built === '1') updatePickerWheelPadding(w);
+            });
+        }
+
+        function setPickerItemLabel(item, value) {
+            if (!item) return;
+            item.textContent = padTimer2(value);
+        }
+
+        function buildTimerPickerWheel(wheel) {
+            if (!wheel || wheel.dataset.built === '1') return;
+            const min = parseInt(wheel.dataset.min, 10);
+            const max = parseInt(wheel.dataset.max, 10);
+            wheel.innerHTML = '';
+            for (let p = 0; p < TIMER_PICKER_PAD; p++) {
+                const sp = document.createElement('div');
+                sp.className = 'timer-picker-item timer-picker-item--spacer';
+                sp.textContent = '\u00a0';
+                wheel.appendChild(sp);
+            }
+            for (let c = 0; c < TIMER_PICKER_COPIES; c++) {
+                for (let v = min; v <= max; v++) {
+                    const item = document.createElement('div');
+                    item.className = 'timer-picker-item';
+                    item.dataset.value = String(v);
+                    item.textContent = padTimer2(v);
+                    wheel.appendChild(item);
                 }
             }
+            for (let p2 = 0; p2 < TIMER_PICKER_PAD; p2++) {
+                const sp2 = document.createElement('div');
+                sp2.className = 'timer-picker-item timer-picker-item--spacer';
+                sp2.textContent = '\u00a0';
+                wheel.appendChild(sp2);
+            }
+            wheel._lastSelected = null;
+            wheel.dataset.built = '1';
+            requestAnimationFrame(function () {
+                updatePickerWheelPadding(wheel);
+            });
+        }
 
-            function fetchAnchor() {
-                getServerTimeNow().then(function(now) {
-                    if (now && typeof performance !== 'undefined' && performance.now) {
-                        clockServerAnchor = now;
-                        clockPerfAnchor = performance.now();
-                        clockLastSyncPerf = clockPerfAnchor;
-                        tick();
-                        if (clockCountdownInterval) clearInterval(clockCountdownInterval);
-                        clockCountdownInterval = setInterval(tick, 1000);
+        function getPickerItemForValue(wheel, value) {
+            const middleCopy = Math.floor(TIMER_PICKER_COPIES / 2);
+            const items = wheel.querySelectorAll('.timer-picker-item[data-value="' + value + '"]');
+            return items[middleCopy] || items[0] || null;
+        }
+
+        function normalizeInfinitePickerScroll(wheel) {
+            const m = getPickerBlockMetrics(wheel);
+            if (!m.viewport || m.blockH <= 0) return false;
+            const rel = m.viewport.scrollTop - m.padTop;
+            const copyIndex = Math.max(0, Math.min(TIMER_PICKER_COPIES - 1, Math.floor(rel / m.blockH)));
+            if (copyIndex === 0) {
+                setPickerScrollTop(wheel, m.viewport.scrollTop + m.blockH);
+                return true;
+            }
+            if (copyIndex === TIMER_PICKER_COPIES - 1) {
+                setPickerScrollTop(wheel, m.viewport.scrollTop - m.blockH);
+                return true;
+            }
+            return false;
+        }
+
+        function scrollPickerToValue(wheel, value, smooth) {
+            if (!wheel) return;
+            const min = parseInt(wheel.dataset.min, 10);
+            const max = parseInt(wheel.dataset.max, 10);
+            value = Math.min(max, Math.max(min, value));
+            const viewport = getPickerScrollRoot(wheel);
+            const item = getPickerItemForValue(wheel, value);
+            if (!item || !viewport) return;
+            const target = item.offsetTop - (viewport.clientHeight - item.offsetHeight) / 2;
+            if (Math.abs(viewport.scrollTop - target) < 2) return;
+            wheel._pickerJumping = true;
+            if (smooth && viewport.scrollTo) {
+                viewport.scrollTo({ top: target, behavior: 'smooth' });
+            } else {
+                viewport.scrollTop = target;
+            }
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    wheel._pickerJumping = false;
+                });
+            });
+        }
+
+        function getPickerValue(wheel) {
+            if (!wheel) return 0;
+            const viewport = getPickerScrollRoot(wheel);
+            if (!viewport) return 0;
+            const min = parseInt(wheel.dataset.min, 10);
+            const max = parseInt(wheel.dataset.max, 10);
+            const center = viewport.scrollTop + viewport.clientHeight / 2;
+            let closest = min;
+            let closestDist = Infinity;
+            wheel.querySelectorAll('.timer-picker-item[data-value]').forEach(function (item) {
+                const mid = item.offsetTop + item.offsetHeight / 2;
+                const dist = Math.abs(mid - center);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = parseInt(item.dataset.value, 10);
+                }
+            });
+            return Math.min(max, Math.max(min, closest));
+        }
+
+        function highlightPickerItems(wheel) {
+            if (!wheel) return;
+            const viewport = getPickerScrollRoot(wheel);
+            if (!viewport) return;
+            const center = viewport.scrollTop + viewport.clientHeight / 2;
+            const items = wheel.querySelectorAll('.timer-picker-item[data-value]');
+            let selectedItem = null;
+            let closestDist = Infinity;
+            items.forEach(function (item) {
+                const mid = item.offsetTop + item.offsetHeight / 2;
+                const dist = Math.abs(mid - center);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    selectedItem = item;
+                }
+            });
+            if (wheel._lastSelected === selectedItem) return;
+            if (wheel._lastSelected) {
+                const prev = parseInt(wheel._lastSelected.dataset.value, 10);
+                wheel._lastSelected.classList.remove('timer-picker-item--selected');
+                setPickerItemLabel(wheel._lastSelected, prev);
+            }
+            if (selectedItem) {
+                const v = parseInt(selectedItem.dataset.value, 10);
+                selectedItem.classList.add('timer-picker-item--selected');
+                setPickerItemLabel(selectedItem, v);
+            }
+            wheel._lastSelected = selectedItem;
+        }
+
+        function snapPickerWheel(wheel) {
+            if (!wheel || wheel._pickerJumping) return;
+            const v = getPickerValue(wheel);
+            scrollPickerToValue(wheel, v, false);
+            if (normalizeInfinitePickerScroll(wheel)) {
+                scrollPickerToValue(wheel, v, false);
+            }
+            highlightPickerItems(wheel);
+        }
+
+        function getTimerPickerValues() {
+            return {
+                h: getPickerValue(document.getElementById('timerPickerH')),
+                m: getPickerValue(document.getElementById('timerPickerM')),
+                s: getPickerValue(document.getElementById('timerPickerS'))
+            };
+        }
+
+        function setTimerPickerValues(h, m, s) {
+            scrollPickerToValue(document.getElementById('timerPickerH'), h);
+            scrollPickerToValue(document.getElementById('timerPickerM'), m);
+            scrollPickerToValue(document.getElementById('timerPickerS'), s);
+            ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                highlightPickerItems(document.getElementById(id));
+            });
+        }
+
+        function initTimerPickers() {
+            if (!document.getElementById('timerPickerH')) return;
+            ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                const wheel = document.getElementById(id);
+                if (wheel) {
+                    delete wheel.dataset.built;
+                    wheel._lastSelected = null;
+                    buildTimerPickerWheel(wheel);
+                }
+            });
+            if (!timerPickersBuilt) {
+                timerPickersBuilt = true;
+                ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                    const wheel = document.getElementById(id);
+                    const viewport = wheel && wheel.parentElement;
+                    if (!viewport) return;
+                    let scrollRaf = null;
+                    let snapTimer = null;
+                    function onScroll() {
+                        if (wheel._pickerJumping) return;
+                        if (scrollRaf) return;
+                        scrollRaf = requestAnimationFrame(function () {
+                            scrollRaf = null;
+                            highlightPickerItems(wheel);
+                        });
+                    }
+                    function onScrollSettled() {
+                        if (wheel._pickerJumping) return;
+                        clearTimeout(snapTimer);
+                        snapTimer = setTimeout(function () {
+                            snapPickerWheel(wheel);
+                        }, 120);
+                    }
+                    viewport.addEventListener('scroll', onScroll, { passive: true });
+                    if ('onscrollend' in viewport) {
+                        viewport.addEventListener('scrollend', function () {
+                            clearTimeout(snapTimer);
+                            snapPickerWheel(wheel);
+                        }, { passive: true });
                     } else {
-                        // Fallback: anchor once using current Date, then use performance.now()
-                        // so changing device time later will NOT affect the countdown.
-                        clockServerAnchor = new Date();
-                        clockPerfAnchor = (typeof performance !== 'undefined' && performance.now) ? performance.now() : null;
-                        clockLastSyncPerf = clockPerfAnchor;
-                        tick();
-                        if (clockCountdownInterval) clearInterval(clockCountdownInterval);
-                        clockCountdownInterval = setInterval(tick, 1000);
+                        viewport.addEventListener('scroll', onScrollSettled, { passive: true });
                     }
                 });
             }
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    setTimerPickerValues(0, 0, 0);
+                    updateTimerRestartButtons();
+                });
+            });
+        }
 
-            // Fetch anchor (server time preferred)
-            fetchAnchor();
+        function timerPickerValuesToMs(v) {
+            return ((v.h * 3600) + (v.m * 60) + v.s) * 1000;
+        }
+
+        function showTimerView(view) {
+            timerState.view = view;
+            const setup = document.getElementById('timerViewSetup');
+            const run = document.getElementById('timerViewRun');
+            if (setup) setup.classList.toggle('timer-view--active', view === 'setup');
+            if (run) run.classList.toggle('timer-view--active', view === 'run');
+        }
+
+        function updateTimerRunDisplay() {
+            const el = document.getElementById('timerRunDisplay');
+            if (el) el.textContent = formatTimerMs(timerState.remainingMs);
+        }
+
+        function setTimerPlayRunIcon(paused) {
+            const icon = document.getElementById('timerPlayRunIcon');
+            if (!icon) return;
+            if (paused) {
+                icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                document.getElementById('timerPlayRun').setAttribute('title', 'Resume');
+                document.getElementById('timerPlayRun').setAttribute('aria-label', 'Resume timer');
+            } else {
+                icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                document.getElementById('timerPlayRun').setAttribute('title', 'Pause');
+                document.getElementById('timerPlayRun').setAttribute('aria-label', 'Pause timer');
+            }
+        }
+
+        function stopTimerTick() {
+            if (timerState.tickInterval) {
+                clearInterval(timerState.tickInterval);
+                timerState.tickInterval = null;
+            }
+            timerState.running = false;
+        }
+
+        function timerTick() {
+            if (!timerState.running) return;
+            timerState.remainingMs -= 100;
+            if (timerState.remainingMs <= 0) {
+                timerState.remainingMs = 0;
+                updateTimerRunDisplay();
+                stopTimerTick();
+                setTimerPlayRunIcon(true);
+                return;
+            }
+            updateTimerRunDisplay();
+        }
+
+        function startTimerTick() {
+            stopTimerTick();
+            timerState.running = true;
+            setTimerPlayRunIcon(false);
+            timerState.tickInterval = setInterval(timerTick, 100);
+        }
+
+        function timerStartFromSetup() {
+            timerState.hasStarted = true;
+            updateTimerRestartButtons();
+            const v = getTimerPickerValues();
+            timerState.saved = { h: v.h, m: v.m, s: v.s };
+            const ms = timerPickerValuesToMs(v);
+            if (ms <= 0) return;
+            timerState.remainingMs = ms;
+            showTimerView('run');
+            updateTimerRunDisplay();
+            startTimerTick();
+        }
+
+        function timerTogglePlayPause() {
+            if (timerState.remainingMs <= 0) return;
+            if (timerState.running) {
+                stopTimerTick();
+                setTimerPlayRunIcon(true);
+            } else {
+                startTimerTick();
+            }
+        }
+
+        function updateTimerRestartButtons() {
+            const disabled = !timerState.hasStarted;
+            ['timerRestartSetup', 'timerRestartRun'].forEach(function (id) {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.disabled = disabled;
+                    btn.classList.toggle('timer-ctrl-btn--disabled', disabled);
+                }
+            });
+        }
+
+        function timerRestart() {
+            stopTimerTick();
+            showTimerView('setup');
+            setTimerPickerValues(timerState.saved.h, timerState.saved.m, timerState.saved.s);
+            setTimerPlayRunIcon(true);
+        }
+
+        function switchClockTab(tab) {
+            clockActiveTab = tab;
+            document.querySelectorAll('.clock-nav-btn').forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-clock-tab') === tab);
+            });
+            const title = document.querySelector('.clock-status-title');
+            if (title) {
+                title.textContent = tab === 'clock' ? 'Clock' : tab === 'timer' ? 'Timer' : 'Stopwatch';
+            }
+            const panelClock = document.getElementById('clockPanelClock');
+            const panelTimer = document.getElementById('clockPanelTimer');
+            const panelSw = document.getElementById('clockPanelStopwatch');
+            if (panelClock) panelClock.classList.toggle('clock-panel--active', tab === 'clock');
+            if (panelTimer) panelTimer.classList.toggle('clock-panel--active', tab === 'timer');
+            if (panelSw) panelSw.classList.toggle('clock-panel--active', tab === 'stopwatch');
+
+            if (tab === 'clock') {
+                stopTimerTick();
+                stopwatchStop();
+                if (!clockAppRaf) {
+                    updateClockDisplay(new Date());
+                    clockAppRaf = requestAnimationFrame(clockAppLoop);
+                }
+            } else {
+                if (tab === 'timer') {
+                    stopwatchStop();
+                    initTimerPickers();
+                }
+                if (tab === 'stopwatch') {
+                    stopTimerTick();
+                    bindStopwatchControls();
+                    updateStopwatchDisplay();
+                    renderStopwatchLaps();
+                    updateStopwatchButtons();
+                    updateStopwatchMiniClockHand();
+                }
+                if (!clockAppRaf) {
+                    updateClockDisplay(new Date());
+                    clockAppRaf = requestAnimationFrame(clockAppLoop);
+                }
+            }
+        }
+
+        let timerControlsBound = false;
+        function bindTimerControls() {
+            if (timerControlsBound) return;
+            timerControlsBound = true;
+            const playSetup = document.getElementById('timerPlaySetup');
+            const playRun = document.getElementById('timerPlayRun');
+            const restartSetup = document.getElementById('timerRestartSetup');
+            const restartRun = document.getElementById('timerRestartRun');
+            if (playSetup) playSetup.addEventListener('click', timerStartFromSetup);
+            if (playRun) playRun.addEventListener('click', timerTogglePlayPause);
+            if (restartSetup) restartSetup.addEventListener('click', timerRestart);
+            if (restartRun) restartRun.addEventListener('click', timerRestart);
+        }
+
+        function initClockAppEvents() {
+            document.querySelectorAll('.clock-nav-btn').forEach(function (tab) {
+                if (tab.dataset.bound) return;
+                tab.dataset.bound = '1';
+                tab.addEventListener('click', function () {
+                    const t = tab.getAttribute('data-clock-tab');
+                    switchClockTab(t);
+                });
+            });
+            bindTimerControls();
+            bindStopwatchControls();
+        }
+
+        function showClockTabSoon() {
+            const msg = 'Stopwatch — coming soon!';
+            const overlay = document.getElementById('unavailableOverlay');
+            const message = document.getElementById('unavailableMessage');
+            if (overlay && message) {
+                const msgText = document.getElementById('unavailableMessageText');
+                if (msgText) msgText.textContent = msg;
+                overlay.classList.add('show');
+                message.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                document.documentElement.style.overflow = 'hidden';
+            } else {
+                alert(msg);
+            }
+        }
+
+        let clockBatteryManager = null;
+
+        function renderClockBattery(level, charging) {
+            const fill = document.getElementById('clockBatteryFill');
+            const pctEl = document.getElementById('clockBatteryPct');
+            const wrap = document.getElementById('clockBatteryWrap');
+            if (!fill || !pctEl) return;
+
+            if (level === null || typeof level !== 'number' || isNaN(level)) {
+                fill.style.width = '0%';
+                fill.classList.remove('clock-battery-fill--charging');
+                pctEl.textContent = '--';
+                pctEl.classList.add('clock-battery-pct--unknown');
+                if (wrap) wrap.setAttribute('aria-label', 'Battery level unavailable on this device');
+                return;
+            }
+
+            const percent = Math.min(100, Math.max(0, Math.round(level * 100)));
+            fill.style.width = percent + '%';
+            fill.classList.toggle('clock-battery-fill--charging', !!charging);
+            pctEl.textContent = percent + '%';
+            pctEl.classList.remove('clock-battery-pct--unknown');
+            if (wrap) {
+                wrap.setAttribute('aria-label', 'Battery ' + percent + ' percent' + (charging ? ', charging' : ''));
+            }
+        }
+
+        function stopClockBatteryListeners() {
+            if (clockBatteryManager) {
+                clockBatteryManager.battery.removeEventListener('levelchange', clockBatteryManager.sync);
+                clockBatteryManager.battery.removeEventListener('chargingchange', clockBatteryManager.sync);
+                clockBatteryManager = null;
+            }
+        }
+
+        function updateClockBattery() {
+            stopClockBatteryListeners();
+            if (!document.getElementById('clockBatteryFill')) return;
+
+            if (!navigator.getBattery) {
+                renderClockBattery(null);
+                return;
+            }
+
+            navigator.getBattery().then(function (battery) {
+                function sync() {
+                    renderClockBattery(battery.level, battery.charging);
+                }
+                sync();
+                battery.addEventListener('levelchange', sync);
+                battery.addEventListener('chargingchange', sync);
+                clockBatteryManager = { battery: battery, sync: sync };
+            }).catch(function () {
+                renderClockBattery(null);
+            });
+        }
+
+        function startClockApp() {
+            buildClockDial();
+            initClockAppEvents();
+            bindClockLayoutListener();
+            applyClockLayout();
+            updateClockBattery();
+            stopClockApp();
+            switchClockTab('clock');
+            updateClockDisplay(new Date());
+            clockAppRaf = requestAnimationFrame(clockAppLoop);
         }
 
         function openModal(type) {
@@ -8050,7 +10126,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     startComingSoonCountdown();
                 }
                 if (type === 'clock') {
-                    startClockCountdown();
+                    startClockApp();
                 }
             }
         }
@@ -8075,7 +10151,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 stopComingSoonCountdown();
             }
             if (type === 'clock') {
-                stopClockCountdown();
+                stopClockApp();
             }
         }
 
@@ -8110,62 +10186,63 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         function showNotAvailableNow() {
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
+            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
             if (overlay && message) {
-                const msgText = message.querySelector('div');
-                if (msgText) msgText.textContent = 'NOT AVAILABLE RIGHT NOW';
+                const msgText = document.getElementById('unavailableMessageText');
+                if (msgText) msgText.textContent = tfn('others_not_available_now');
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert('NOT AVAILABLE RIGHT NOW');
+                alert(tfn('others_not_available_now'));
             }
         }
 
         function closeUnavailable() {
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
+            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
             if (overlay && message) {
                 overlay.classList.remove('show');
                 message.classList.remove('show');
                 document.body.style.overflow = 'auto';
                 document.documentElement.style.overflow = 'auto';
-                // restore default message text
-                const msgText = message.querySelector('div');
-                if (msgText) msgText.textContent = 'UNFORTUNATELY UNAVAILABLE AT THIS TIME!';
+                const msgText = document.getElementById('unavailableMessageText');
+                if (msgText) msgText.textContent = tfn('unavailable_default');
             }
         }
 
         // Coming soon message using same overlay
         function showComingSoon() {
-            // Always show "stay tuned" message when clicking Coming Soon
+            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
             if (overlay && message) {
-                const msgText = message.querySelector('div');
-                if (msgText) msgText.textContent = 'stay tuned';
+                const msgText = document.getElementById('unavailableMessageText');
+                if (msgText) msgText.textContent = tfn('others_stay_tuned');
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert('stay tuned');
+                alert(tfn('others_stay_tuned'));
             }
         }
         
         function showStayTunedMessage() {
-            // Show "stay tuned" message with emoji when clicking Coming Soon in favorites
+            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
             if (overlay && message) {
-                const msgText = message.querySelector('div');
-                if (msgText) msgText.textContent = 'stay tuned ✨';
+                const msgText = document.getElementById('unavailableMessageText');
+                if (msgText) msgText.textContent = tfn('others_stay_tuned_sparkle');
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert('stay tuned ✨');
+                alert(tfn('others_stay_tuned_sparkle'));
             }
         }
         
@@ -9615,6 +11692,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const shortDesc = descriptionContainer.querySelector('.description-short');
             const fullDesc = descriptionContainer.querySelector('.description-full');
             const seeMoreLink = element;
+            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
 
             if (!shortDesc || !fullDesc) return;
 
@@ -9625,12 +11703,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 // Collapse - show short, hide full
                 shortDesc.classList.remove('expanded');
                 fullDesc.classList.remove('expanded');
-                seeMoreLink.textContent = 'see more...';
+                seeMoreLink.textContent = tfn('link_see_more');
             } else {
                 // Expand - hide short, show full
                 shortDesc.classList.add('expanded');
                 fullDesc.classList.add('expanded');
-                seeMoreLink.textContent = 'see less...';
+                seeMoreLink.textContent = tfn('link_see_less');
             }
         }
 
@@ -9638,6 +11716,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         function initializeDescriptions() {
             const descriptions = document.querySelectorAll('.description-short');
             descriptions.forEach(desc => {
+                var i18nKey = desc.getAttribute('data-i18n');
+                if (i18nKey && i18nKey.indexOf('about_fav_') === 0) {
+                    return;
+                }
                 // Get the original full text from data attribute or from description-full
                 const descriptionContainer = desc.parentElement;
                 const fullDesc = descriptionContainer.querySelector('.description-full');
@@ -9713,6 +11795,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
             if (!showLink || !otpContainer || !otpInput || !otpSubmit || !otpFeedback) return;
 
+            function updateOtpSubmitReadyState() {
+                var digits = (otpInput.value || '').replace(/\D/g, '');
+                if (digits.length === 4) otpSubmit.classList.add('otp-submit-ready');
+                else otpSubmit.classList.remove('otp-submit-ready');
+            }
+
             const validCodes = ['1298', '0912', '4643', '6464', '5382', '4638', '0047']; // 0047 is unlimited
 
             function getUsedCodes() {
@@ -9771,6 +11859,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         otpContainer.style.display = 'none';
                         otpInput.value = '';
                         otpFeedback.textContent = '';
+                        updateOtpSubmitReadyState();
                         if (otpEyeBtn) {
                             otpInput.type = 'password';
                             otpEyeBtn.setAttribute('data-state', 'hidden');
@@ -9803,7 +11892,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             // Also sanitize on input paste
             otpInput.addEventListener('input', function() {
                 otpInput.value = otpInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+                updateOtpSubmitReadyState();
             });
+            updateOtpSubmitReadyState();
 
             function unlockPersonalDetails() {
                 // Hide gate, show details
@@ -9916,6 +12007,130 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 });
             }
         });
+    </script>
+    <script type="module">
+        (async function () {
+            try {
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
+                const { getDatabase, ref, runTransaction, onValue, set, onDisconnect } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+
+                const firebaseConfig = {
+                    apiKey: 'AIzaSyBgnlOhQ_YOuQwP0_KFQa38_UFKehvJYkA',
+                    authDomain: 'my-website-6fe0d.firebaseapp.com',
+                    databaseURL: 'https://my-website-6fe0d-default-rtdb.firebaseio.com',
+                    projectId: 'my-website-6fe0d',
+                    appId: '1:106731880567:web:beb553fff430c16248c672'
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app);
+                const visitsRef = ref(db, 'visits');
+
+                var PRESENCE_STALE_MS = 45000;
+                var PRESENCE_HEARTBEAT_MS = 12000;
+                function getPresenceSessionId() {
+                    try {
+                        var id = sessionStorage.getItem('rtdbPresenceSid');
+                        if (!id) {
+                            id = 'p' + Date.now() + '_' + Math.random().toString(36).slice(2, 12);
+                            sessionStorage.setItem('rtdbPresenceSid', id);
+                        }
+                        return String(id).replace(/[.#$\[\]]/g, '_');
+                    } catch (e) {
+                        return 'p' + Date.now();
+                    }
+                }
+                var presenceSid = getPresenceSessionId();
+                var presenceRootRef = ref(db, 'presence');
+                var myPresenceRef = ref(db, 'presence/' + presenceSid);
+                var onDisconnectConfigured = false;
+
+                function updateViewingNowCountUi(count) {
+                    var el = document.getElementById('settingsViewingNowCount');
+                    if (el) el.textContent = String(count);
+                }
+                function countFreshPresence(val) {
+                    var now = Date.now();
+                    var n = 0;
+                    if (!val || typeof val !== 'object') return 0;
+                    Object.keys(val).forEach(function (key) {
+                        var node = val[key];
+                        var t =
+                            node && typeof node === 'object' && typeof node.t === 'number'
+                                ? node.t
+                                : typeof node === 'number'
+                                  ? node
+                                  : 0;
+                        if (now - t <= PRESENCE_STALE_MS) n++;
+                    });
+                    return n;
+                }
+                onValue(
+                    presenceRootRef,
+                    function (snap) {
+                        updateViewingNowCountUi(countFreshPresence(snap.val()));
+                    },
+                    function (err) {
+                        try {
+                            console.warn('[presence]', err);
+                        } catch (e2) {}
+                    }
+                );
+                async function presenceHeartbeat() {
+                    try {
+                        await set(myPresenceRef, { t: Date.now() });
+                        if (!onDisconnectConfigured) {
+                            await onDisconnect(myPresenceRef).remove();
+                            onDisconnectConfigured = true;
+                        }
+                    } catch (err) {
+                        try {
+                            console.warn('[presence] heartbeat:', err);
+                        } catch (e2) {}
+                    }
+                }
+                await presenceHeartbeat();
+                setInterval(function () {
+                    presenceHeartbeat();
+                }, PRESENCE_HEARTBEAT_MS);
+
+                function updateVisitUi(value) {
+                    var n = Number(value);
+                    if (!Number.isFinite(n) || n < 0) n = 0;
+                    var txt = String(Math.floor(n));
+                    var modalCountEl = document.getElementById('settingsVisitorsCount');
+                    if (modalCountEl) modalCountEl.textContent = txt;
+                }
+
+                onValue(
+                    visitsRef,
+                    function (snap) {
+                        var v = snap.val();
+                        if (v === null || v === undefined) updateVisitUi(0);
+                        else updateVisitUi(v);
+                    },
+                    function (err) {
+                        try { console.warn('[visits]', err); } catch (e2) {}
+                    }
+                );
+
+                try {
+                    await runTransaction(visitsRef, function (current) {
+                        var cur = 0;
+                        if (typeof current === 'number' && Number.isFinite(current) && current >= 0) cur = current;
+                        else if (typeof current === 'string' && current.trim() !== '') {
+                            var parsed = Number(current);
+                            if (Number.isFinite(parsed) && parsed >= 0) cur = Math.floor(parsed);
+                        }
+                        return cur + 1;
+                    });
+                } catch (err) {
+                    try { console.warn('[visits] transaction:', err); } catch (e2) {}
+                }
+            } catch (err) {
+                try { console.warn('[firebase]', err); } catch (e2) {}
+            }
+        })();
     </script>
 </body>
 </html>
