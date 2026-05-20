@@ -2904,14 +2904,21 @@
             margin-right: auto;
             display: flex;
             justify-content: center;
-            width: 100%;
+            align-items: center;
+            width: auto;
+            max-width: min(96vw, 420px);
+            padding: 0 !important;
         }
 
         .clock-modal-shell {
             position: relative;
-            margin: 0 auto;
-            width: min(100%, 380px);
-            max-width: 380px;
+            margin-left: auto;
+            margin-right: auto;
+            width: min(calc(100vw - 24px), 440px);
+            max-width: 440px;
+            box-sizing: border-box;
+            padding: 14px 14px 0 0;
+            overflow: visible;
         }
 
         #clockModal .modal-content.clock-modal-content {
@@ -2923,7 +2930,8 @@
             overscroll-behavior: none;
             max-height: 100vh;
             max-height: 100dvh;
-            padding: 28px 28px 12px !important;
+            padding: 20px 16px !important;
+            box-sizing: border-box;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -2933,8 +2941,18 @@
             max-width: 760px;
         }
 
+        #clockModal.modal-overlay {
+            background: rgba(0, 0, 0, 0.92) !important;
+            cursor: default;
+        }
+
         #clockModal.modal-overlay.active {
             overflow: visible !important;
+            pointer-events: auto;
+        }
+
+        #clockModal .modal-box.modal-clock {
+            pointer-events: auto;
         }
 
         #clockModal .modal-content::-webkit-scrollbar {
@@ -3093,6 +3111,24 @@
             font-size: 6px;
         }
 
+        .main-menu-battery-wrap {
+            position: fixed;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25000;
+            width: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .main-menu-battery {
+            min-width: 38px;
+        }
+
         .clock-main {
             position: relative;
             z-index: 1;
@@ -3103,9 +3139,17 @@
             gap: 14px;
         }
 
+        .clock-analog-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 0 auto;
+        }
+
         .clock-face-wrap {
             display: block;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
             line-height: 0;
         }
@@ -3292,16 +3336,25 @@
         .clock-body {
             position: relative;
             z-index: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             min-height: min(72vw, 260px);
             min-height: max(320px, min(72vw, 260px) + 72px);
+            box-sizing: border-box;
         }
 
         .clock-panel {
             display: none;
+            width: 100%;
         }
 
         .clock-panel--active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
 
         /* —— Timer (uses .clock-main like clock tab) —— */
@@ -3310,6 +3363,7 @@
             box-sizing: border-box;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
 
         .timer-run-main {
@@ -3338,13 +3392,8 @@
             min-width: 0;
         }
 
-        .timer-picker-label,
-        .timer-picker-unit {
-            display: none !important;
-        }
-
         .clock-app.clock-landscape .timer-picker-shell {
-            height: 108px;
+            height: 72px;
         }
 
         .clock-app.clock-landscape .timer-picker-item {
@@ -3362,40 +3411,100 @@
             flex-shrink: 0;
         }
 
+        .timer-setup-center {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex: 1;
+        }
+
+        #clockPanelTimer .timer-panel-main {
+            flex: 1;
+            min-height: 0;
+            justify-content: center;
+        }
+
+        #clockPanelTimer .timer-view--active {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
         .timer-picker-row {
             display: flex;
             justify-content: center;
-            align-items: stretch;
-            gap: 8px;
-            margin-bottom: 12px;
+            align-items: flex-end;
+            gap: 12px;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0 4px;
+            box-sizing: border-box;
         }
 
         .timer-picker-col {
-            flex: 1;
-            max-width: 88px;
+            flex: 1 1 0;
+            min-width: 96px;
+            max-width: 180px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-picker-field {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .timer-picker-block {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            flex: 1 1 auto;
+            min-width: 88px;
+            max-width: 100%;
         }
 
         .clock-app.clock-portrait .timer-picker-label {
             font-size: 11px;
             margin-bottom: 8px;
+            width: 100%;
+            text-align: center;
         }
 
         .clock-app.clock-portrait .timer-picker-row {
-            gap: clamp(8px, 3vw, 18px);
+            gap: clamp(10px, 2.5vw, 16px);
             width: 100%;
             max-width: 100%;
-            padding: 0 6px;
+            padding: 0 2px;
         }
 
         .clock-app.clock-portrait .timer-picker-col {
             flex: 1 1 0;
-            min-width: 0;
-            max-width: min(34vw, 168px);
+            min-width: min(28vw, 108px);
+            max-width: min(46vw, 175px);
+        }
+
+        .clock-app.clock-portrait .timer-setup-center {
+            max-width: 100%;
+            width: 100%;
         }
 
         .clock-app.clock-portrait .timer-picker-shell {
-            height: 108px;
+            height: 72px;
             min-height: 0;
         }
 
@@ -3409,35 +3518,45 @@
         }
 
         .timer-picker-label {
+            width: 100%;
+            text-align: center;
             font-size: 9px;
             font-weight: 800;
             letter-spacing: 0.14em;
             color: rgba(148, 163, 184, 0.8);
             margin-bottom: 6px;
+            box-sizing: border-box;
         }
 
         .timer-picker-shell {
             position: relative;
-            height: 108px;
+            height: 72px;
+            flex: 1 1 auto;
+            min-width: 88px;
+            width: 100%;
+            max-width: 100%;
             border-radius: 14px;
-            background: rgba(15, 23, 42, 0.45);
-            border: 1px solid rgba(129, 140, 248, 0.2);
-            overflow: visible;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
         }
 
         .timer-picker-viewport {
             position: relative;
             z-index: 1;
+            width: 100%;
             height: 100%;
-            border-radius: 13px;
+            border-radius: 0;
             overflow-y: auto;
             overflow-x: hidden;
-            scroll-snap-type: y mandatory;
+            scroll-snap-type: y proximity;
             scroll-behavior: auto;
+            overscroll-behavior-y: contain;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
         }
 
         .timer-picker-viewport::-webkit-scrollbar {
@@ -3454,14 +3573,14 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: center;
-            scroll-snap-stop: always;
+            scroll-snap-stop: normal;
             font-family: var(--font-timer);
             font-size: 20px;
             font-weight: 600;
             font-variant-numeric: tabular-nums;
             color: rgba(148, 163, 184, 0.38);
             transition: color 0.12s ease, opacity 0.12s ease;
-            padding: 0;
+            padding: 0 4px;
             box-sizing: border-box;
             width: 100%;
             text-align: center;
@@ -3477,36 +3596,33 @@
         .timer-picker-item--spacer {
             visibility: hidden;
             pointer-events: none;
+            scroll-snap-align: none;
+            scroll-snap-stop: normal;
         }
 
         .timer-picker-unit {
             pointer-events: none;
-            position: absolute;
-            right: clamp(6px, 3.5%, 14px);
-            top: 50%;
-            left: auto;
-            transform: translateY(-50%);
-            z-index: 8;
+            position: static;
+            flex: 0 0 auto;
+            transform: none;
+            z-index: 2;
             font-family: var(--font-timer);
-            font-size: 17px;
+            font-size: 15px;
             font-weight: 800;
             letter-spacing: 0.02em;
-            color: #eef2ff;
-            text-shadow:
-                0 0 2px rgba(15, 23, 42, 1),
-                0 0 8px rgba(15, 23, 42, 0.95),
-                0 0 14px rgba(99, 102, 241, 0.9);
+            color: rgba(199, 210, 254, 0.95);
             line-height: 1;
+            padding-bottom: 2px;
+            min-width: 14px;
+            text-align: left;
         }
 
         .clock-app.clock-portrait .timer-picker-unit {
-            font-size: clamp(18px, 5vw, 24px);
-            right: clamp(4px, 2.5%, 12px);
+            font-size: clamp(14px, 3.8vw, 18px);
         }
 
         .clock-app.clock-landscape .timer-picker-unit {
-            font-size: clamp(17px, 4vmin, 26px);
-            right: clamp(6px, 2.5%, 14px);
+            font-size: clamp(14px, 3.5vmin, 20px);
         }
 
         .timer-controls-row,
@@ -3514,11 +3630,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 28px;
+            width: auto;
+            margin: 0 auto;
         }
 
         .timer-controls-row {
-            padding: 8px 0 4px;
+            padding: 4px 0 0;
+        }
+
+        #timerViewSetup .timer-controls-row {
+            width: 152px;
+            justify-content: space-between;
+            gap: 0;
         }
 
         .timer-controls-run {
@@ -3624,10 +3748,19 @@
         }
 
         /* Portrait: circle on top, play / pause row below */
-        .clock-app.clock-portrait .timer-run-layout {
+        .clock-app.clock-portrait .timer-run-layout,
+        .timer-run-layout {
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 22px;
+            width: 100%;
+        }
+
+        .timer-run-main .timer-controls-row {
+            width: 152px;
+            justify-content: space-between;
+            gap: 0;
         }
 
         /* Landscape: circle on top, controls below (same stack) */
@@ -3948,6 +4081,194 @@
         .clock-app.clock-landscape .stopwatch-play-btn {
             width: 64px !important;
             height: 64px !important;
+        }
+
+        /* Phone rotated sideways: portrait-style stack, scaled to short viewport */
+        .clock-modal-shell:has(.clock-app.clock-phone-landscape) {
+            width: min(96vw, 520px);
+            max-width: 520px;
+        }
+
+        .clock-app.clock-phone-landscape .clock-body {
+            min-height: auto;
+        }
+
+        .clock-app.clock-phone-landscape #clockPanelClock .clock-main {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px 12px;
+        }
+
+        .clock-app.clock-phone-landscape .clock-analog-svg {
+            width: min(46vh, 72vw, 280px);
+            height: min(46vh, 72vw, 280px);
+        }
+
+        .clock-app.clock-phone-landscape .clock-digital-block {
+            text-align: center;
+        }
+
+        .clock-app.clock-phone-landscape .clock-digital {
+            font-size: clamp(18px, 4.8vh, 26px);
+        }
+
+        .clock-app.clock-phone-landscape .timer-panel-main {
+            padding: 8px 14px 12px;
+            gap: 10px;
+        }
+
+        .clock-app.clock-phone-landscape .timer-picker-shell {
+            height: 64px;
+        }
+
+        .clock-app.clock-phone-landscape .timer-picker-item {
+            height: 32px;
+            font-size: 18px;
+        }
+
+        .clock-app.clock-phone-landscape .timer-picker-item--selected {
+            font-size: 20px;
+        }
+
+        .clock-app.clock-phone-landscape .timer-run-layout {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clock-app.clock-phone-landscape .timer-circle {
+            width: min(40vh, 200px);
+            height: min(40vh, 200px);
+        }
+
+        .clock-app.clock-phone-landscape #clockPanelStopwatch .stopwatch-main {
+            min-height: 0;
+            padding: 8px 16px 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-layout {
+            max-width: min(100%, 420px);
+            width: 100%;
+            min-height: 0;
+            margin-left: auto;
+            margin-right: auto;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-wall-clock {
+            justify-content: center;
+            padding: 4px 0 2px;
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-wall-analog {
+            width: min(52vh, 72vw, 300px);
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-wall-analog .clock-analog-svg {
+            width: min(52vh, 72vw, 300px);
+            height: min(52vh, 72vw, 300px);
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-time {
+            font-size: clamp(22px, 5.5vh, 34px);
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-segment {
+            font-size: clamp(10px, 2.4vh, 13px);
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-laps-scroll.stopwatch-laps-scroll--scroll {
+            max-height: min(16vh, 88px);
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-controls-row {
+            justify-content: center;
+        }
+
+        .clock-app.clock-phone-landscape .stopwatch-play-btn {
+            width: 58px !important;
+            height: 58px !important;
+        }
+
+        @media (orientation: landscape) and (max-height: 520px) {
+            #clockModal .modal-box.modal-clock {
+                max-height: 96dvh;
+            }
+
+            #clockModal .modal-content {
+                max-height: calc(96dvh - 72px);
+                overflow-y: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #clockModal.modal-overlay.active {
+                justify-content: center;
+                align-items: center;
+            }
+
+            #clockModal .modal-box.modal-clock {
+                margin: 0 auto;
+            }
+
+            .clock-modal-shell {
+                width: min(calc(100vw - 20px), 440px);
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .clock-app {
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+
+            .clock-body {
+                min-height: auto;
+            }
+
+            .clock-main,
+            .timer-panel-main,
+            .stopwatch-main {
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+                align-items: center;
+            }
+
+            .clock-app.clock-portrait #clockPanelClock .clock-main,
+            .clock-app.clock-phone-landscape #clockPanelClock .clock-main {
+                align-items: center;
+            }
+
+            .clock-app.clock-portrait .clock-digital-block,
+            .clock-app.clock-phone-landscape .clock-digital-block {
+                width: 100%;
+                text-align: center;
+            }
+
+            .timer-setup-center {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .stopwatch-main {
+                min-height: auto;
+            }
+
+            .stopwatch-layout {
+                min-height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
 
         .myapps-app-box {
@@ -6140,6 +6461,12 @@
                 <span id="seconds">00</span><span class="time-label">S</span>
             </div>
         </div>
+        <div id="mainMenuBatteryWrap" class="main-menu-battery-wrap" aria-label="Battery" style="display: none;">
+            <span class="clock-battery main-menu-battery">
+                <span class="clock-battery-fill" id="mainBatteryFill"></span>
+                <span class="clock-battery-pct clock-battery-pct--unknown" id="mainBatteryPct">--</span>
+            </span>
+        </div>
         <div class="button-container" id="mainButtonContainer" style="display: none;">
             <button class="main-button btn-about" onclick="openModal('about')">
                 <span class="christmas-deco-left">🎁</span>
@@ -6435,9 +6762,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <div class="favorite-title" data-i18n="others_apps">My Apps</div>
                         <div class="favorite-description" data-i18n="others_apps_desc">This is my apps that i created right now</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
+                    <div class="favorite-card clickable" onclick="openModal('comingSoonPreview')">
                         <div class="favorite-icon">⌛</div>
                         <div class="favorite-title" data-i18n="others_coming_title">COMING SOON</div>
+                        <div class="favorite-description" data-i18n="others_coming_desc">STAY TUNED</div>
+                    </div>
+                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
+                        <div class="favorite-icon">⌛</div>
+                        <div class="favorite-title" data-i18n="others_coming2_title">COMING SOON</div>
                         <div class="favorite-description" data-i18n="others_coming_desc">STAY TUNED</div>
                     </div>
                 </div>
@@ -6494,6 +6826,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <span class="myapps-app-emoji">🤖</span>
                         <span class="myapps-app-label">NovaAI</span>
                     </div>
+                    <div class="myapps-app-box" onclick="openModal('calendarComingSoon')" title="Calendar">
+                        <span class="myapps-app-emoji">🗓️</span>
+                        <span class="myapps-app-label">Calendar</span>
+                    </div>
+                    <div class="myapps-app-box" onclick="openModal('mapsComingSoon')" title="Maps">
+                        <span class="myapps-app-emoji">🗾</span>
+                        <span class="myapps-app-label">Maps</span>
+                    </div>
                     <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
                         <span class="myapps-app-emoji">🕒</span>
                         <span class="myapps-app-label">Clock</span>
@@ -6542,7 +6882,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
     </div>
 
     <!-- Clock Modal -->
-    <div class="modal-overlay" id="clockModal" onclick="closeModalOnOverlay(event, 'clock')">
+    <div class="modal-overlay" id="clockModal">
         <div class="modal-box modal-clock" onclick="event.stopPropagation()">
             <div class="modal-content clock-modal-content">
                 <div class="clock-modal-shell">
@@ -6647,30 +6987,43 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     <section id="clockPanelTimer" class="clock-panel">
                         <div class="timer-view timer-view--active" id="timerViewSetup">
                             <main class="clock-main timer-panel-main">
+                                <div class="timer-setup-center">
                                 <div class="timer-picker-row">
                                     <div class="timer-picker-col">
-                                        <div class="timer-picker-label">HRS</div>
-                                        <div class="timer-picker-shell">
-                                            <div class="timer-picker-viewport" id="timerPickerHViewport">
-                                                <div class="timer-picker-wheel" id="timerPickerH" data-min="0" data-max="23" data-suffix="h"></div>
+                                        <div class="timer-picker-field">
+                                            <div class="timer-picker-block">
+                                                <div class="timer-picker-label">HRS</div>
+                                                <div class="timer-picker-shell">
+                                                    <div class="timer-picker-viewport" id="timerPickerHViewport">
+                                                        <div class="timer-picker-wheel" id="timerPickerH" data-min="0" data-max="23" data-suffix="h"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <span class="timer-picker-unit" aria-hidden="true">h</span>
                                         </div>
                                     </div>
                                     <div class="timer-picker-col">
-                                        <div class="timer-picker-label">MIN</div>
-                                        <div class="timer-picker-shell">
-                                            <div class="timer-picker-viewport" id="timerPickerMViewport">
-                                                <div class="timer-picker-wheel" id="timerPickerM" data-min="0" data-max="59" data-suffix="m"></div>
+                                        <div class="timer-picker-field">
+                                            <div class="timer-picker-block">
+                                                <div class="timer-picker-label">MIN</div>
+                                                <div class="timer-picker-shell">
+                                                    <div class="timer-picker-viewport" id="timerPickerMViewport">
+                                                        <div class="timer-picker-wheel" id="timerPickerM" data-min="0" data-max="59" data-suffix="m"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <span class="timer-picker-unit" aria-hidden="true">m</span>
                                         </div>
                                     </div>
                                     <div class="timer-picker-col">
-                                        <div class="timer-picker-label">SEC</div>
-                                        <div class="timer-picker-shell">
-                                            <div class="timer-picker-viewport" id="timerPickerSViewport">
-                                                <div class="timer-picker-wheel" id="timerPickerS" data-min="0" data-max="59" data-suffix="s"></div>
+                                        <div class="timer-picker-field">
+                                            <div class="timer-picker-block">
+                                                <div class="timer-picker-label">SEC</div>
+                                                <div class="timer-picker-shell">
+                                                    <div class="timer-picker-viewport" id="timerPickerSViewport">
+                                                        <div class="timer-picker-wheel" id="timerPickerS" data-min="0" data-max="59" data-suffix="s"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <span class="timer-picker-unit" aria-hidden="true">s</span>
                                         </div>
@@ -6683,6 +7036,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                     <button type="button" class="timer-ctrl-btn timer-ctrl-btn--play" id="timerPlaySetup" title="Start" aria-label="Start timer">
                                         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     </button>
+                                </div>
                                 </div>
                             </main>
                         </div>
@@ -6740,6 +7094,39 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         </div>
     </div>
 
+    <!-- Calendar Coming Soon Modal -->
+    <div class="modal-overlay" id="calendarComingSoonModal">
+        <div class="modal-box" style="max-width:560px; min-height:auto; padding:0; background:transparent; box-shadow:none; overflow:visible;">
+            <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
+                <div class="coming-soon-preview-card">
+                    <p class="coming-soon-preview-title">COMING SOON</p>
+                    <div class="coming-soon-preview-sub">Calendar has been added and will be available on</div>
+                    <div id="calendarComingSoonTimer" class="coming-soon-preview-timer">--:--:--:--</div>
+                    <div class="coming-soon-preview-sub" style="margin-top:10px;font-size:13px;opacity:0.85;"></div>
+                    <div style="margin-top:18px;display:flex;justify-content:center;">
+                        <button class="modal-action-button coming-soon-preview-ok" onclick="closeModal('calendarComingSoon')">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maps Coming Soon Modal -->
+    <div class="modal-overlay" id="mapsComingSoonModal">
+        <div class="modal-box" style="max-width:560px; min-height:auto; padding:0; background:transparent; box-shadow:none; overflow:visible;">
+            <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
+                <div class="coming-soon-preview-card">
+                    <p class="coming-soon-preview-title">COMING SOON</p>
+                    <div class="coming-soon-preview-sub">Maps has been added and is currently under development and will be available on</div>
+                    <div id="mapsComingSoonTimer" class="coming-soon-preview-timer">--:--:--:--</div>
+                    <div class="coming-soon-preview-sub" style="margin-top:10px;font-size:13px;opacity:0.85;"></div>
+                    <div style="margin-top:18px;display:flex;justify-content:center;">
+                        <button class="modal-action-button coming-soon-preview-ok" onclick="closeModal('mapsComingSoon')">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Music Modal -->
     <div class="modal-overlay" id="musicModal">
         <div class="modal-box modal-music">
@@ -7385,8 +7772,45 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 <div class="updates-scroll-body">
                     <p class="update14-heading" style="margin-top: 20px;">
                         <span class="update14-new-dot" aria-hidden="true"></span>
-                        <strong>UPDATE 1.5 [FIXED]</strong>
+                        <strong>UPDATE 1.6 [NEW]</strong>
                     </p>
+                    <p id="update16-summary" style="margin-bottom: 8px; font-style: italic;">
+                        In this update, I added Clock on my website.
+                        <span id="update16-toggle-top" class="see-more-link" onclick="toggleUpdate16Details()">see more...</span>
+                    </p>
+                    <div id="update16-details" style="display:none; margin-bottom: 15px;">
+                        <p style="margin-top: 12px;"><strong>🏠 Main Menu</strong></p>
+                        <p>Added a Battery Percentage display</p>
+                        <p>Fixed the button on About Me</p>
+                        <p>Fixed the button on Others</p>
+                        <p>Fixed the Enter one-time PIN</p>
+                        <p style="margin-top: 20px;"><strong>⚙️ System Settings</strong></p>
+                        <p>Fixed the count visits on viewing tab</p>
+                        <p>Fixed the Volume and Brightness controls</p>
+                        <p>Fixed the Reset to Default bug</p>
+                        <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
+                        <p>Added Clock on My Apps</p>
+                        <p>Added Clock</p>
+                        <p>Added Stopwatch</p>
+                        <p>Added Timer</p>
+                        <p>Added a Battery percentage display</p>
+                        <p>Fixed a bug on calculator where the "=" cannot be touch</p>
+                        <p>Fixed the Date on Clock</p>
+                        <p style="margin-top: 20px;"><strong>⏳ To Be Released Soon</strong></p>
+                        <p>Added Calendar</p>
+                        <p>Added Maps</p>
+                        <p style="margin-top: 20px;"><strong>🎵 Music</strong></p>
+                        <p>Fixed the progress bar</p>
+                        <p>Fixed the Play/Pause button</p>
+                        <p>Fixed the Audio on every music</p>
+                        <p style="margin-top: 20px;"><strong>🐛 Bugs and Errors</strong></p>
+                        <p>15+ bugs have been fixed</p>
+                        <p>10+ improvements have been implemented</p>
+                        <p>On this update I added a clock on my website and a lot more are coming soon!
+                            <span id="update16-toggle-bottom" class="see-more-link" onclick="toggleUpdate16Details()">see less...</span>
+                        </p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.5 [FIXED]</strong></p>
                     <p id="update15-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I fixed some small issues on my website.
                         <span id="update15-toggle-top" class="see-more-link" onclick="toggleUpdate15Details()">see more...</span>
@@ -8603,6 +9027,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     mainButtonContainer.style.zIndex = '100';
                     mainButtonContainer.style.position = ''; // Reset position to use CSS
                 }
+                if (typeof updateClockBattery === 'function') {
+                    updateClockBattery();
+                }
                 if (countdownContainer) {
                     countdownContainer.style.display = '';
                     startCountdown();
@@ -8980,6 +9407,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             bottomToggle.style.display = isHidden ? 'inline' : 'none';
         }
 
+        function toggleUpdate16Details() {
+            const details = document.getElementById('update16-details');
+            const topToggle = document.getElementById('update16-toggle-top');
+            const bottomToggle = document.getElementById('update16-toggle-bottom');
+            if (!details || !topToggle || !bottomToggle) return;
+            const isHidden = details.style.display === 'none' || details.style.display === '';
+            details.style.display = isHidden ? 'block' : 'none';
+            topToggle.style.display = isHidden ? 'none' : 'inline';
+            bottomToggle.style.display = isHidden ? 'inline' : 'none';
+        }
+
         function toggleUpdate14Details() {
             const details = document.getElementById('update14-details');
             const topToggle = document.getElementById('update14-toggle-top');
@@ -9158,6 +9596,53 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         let comingSoonLastSyncPerf = null;
         const COMING_SOON_SYNC_MS = 60000;
         const COMING_SOON_RELEASE_UTC_MS = Date.UTC(2026, 8, 1, 0, 0, 0, 0);
+        const CALENDAR_RELEASE_MS = Date.parse('2026-12-01T23:59:59+08:00');
+        const MAPS_RELEASE_MS = Date.parse('2027-04-01T23:59:59+08:00');
+        const appReleaseCountdowns = {};
+
+        function stopAppReleaseCountdown(key) {
+            const state = appReleaseCountdowns[key];
+            if (state && state.interval) {
+                clearInterval(state.interval);
+            }
+            appReleaseCountdowns[key] = null;
+        }
+
+        function startAppReleaseCountdown(key, timerElId, releaseMs) {
+            const el = document.getElementById(timerElId);
+            if (!el) return;
+            stopAppReleaseCountdown(key);
+            const state = { interval: null, serverAnchor: null, perfAnchor: null, lastSyncPerf: null };
+            appReleaseCountdowns[key] = state;
+            el.textContent = '--:--:--:--';
+
+            function tick() {
+                if (!state.serverAnchor || state.perfAnchor === null || typeof performance === 'undefined' || !performance.now) return;
+                const perfNow = performance.now();
+                const now = new Date(state.serverAnchor.getTime() + (perfNow - state.perfAnchor));
+                const diffSec = Math.floor((releaseMs - now.getTime()) / 1000);
+                el.textContent = formatDhmsFromSeconds(Math.max(0, diffSec));
+                if (state.lastSyncPerf !== null && perfNow - state.lastSyncPerf > COMING_SOON_SYNC_MS) {
+                    state.lastSyncPerf = perfNow;
+                    getServerTimeNow().then(function (serverNow) {
+                        if (serverNow && typeof performance !== 'undefined' && performance.now) {
+                            state.serverAnchor = serverNow;
+                            state.perfAnchor = performance.now();
+                        }
+                    });
+                }
+            }
+
+            getServerTimeNow().then(function (now) {
+                if (now && typeof performance !== 'undefined' && performance.now) {
+                    state.serverAnchor = now;
+                    state.perfAnchor = performance.now();
+                    state.lastSyncPerf = state.perfAnchor;
+                    tick();
+                    state.interval = setInterval(tick, 1000);
+                }
+            });
+        }
 
         function stopComingSoonCountdown() {
             if (comingSoonCountdownInterval) {
@@ -9311,9 +9796,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         function applyClockLayout() {
             const app = document.getElementById('clockApp');
             if (!app) return;
-            const landscape = window.matchMedia('(orientation: landscape)').matches || window.innerWidth >= 768;
+            const phoneLandscape = window.matchMedia('(orientation: landscape) and (max-height: 520px)').matches;
+            const landscape = !phoneLandscape && (window.matchMedia('(orientation: landscape)').matches || window.innerWidth >= 768);
             app.classList.toggle('clock-landscape', landscape);
             app.classList.toggle('clock-portrait', !landscape);
+            app.classList.toggle('clock-phone-landscape', phoneLandscape);
             refreshAllTimerPickerPadding();
             ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
                 const w = document.getElementById(id);
@@ -9350,20 +9837,51 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             clockAppRaf = requestAnimationFrame(clockAppLoop);
         }
 
-        function stopClockApp() {
+        const CLOCK_APP_STORAGE = 'clockAppBgState';
+
+        function hideClockAppUi() {
+            pauseStopwatchUi();
             if (clockAppRaf) {
                 cancelAnimationFrame(clockAppRaf);
                 clockAppRaf = null;
             }
-            stopTimerTick();
-            stopStopwatchRaf();
-            stopwatchReset(true);
             stopClockBatteryListeners();
+        }
+
+        function resumeClockAppUi() {
+            if (timerState.running && timerState.endAt) {
+                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                if (timerState.remainingMs > 0 && !timerState.tickInterval) {
+                    timerState.tickInterval = setInterval(timerTick, 100);
+                }
+            }
+            resumeStopwatchUi();
+            if (!clockAppRaf) {
+                updateClockDisplay(new Date());
+                clockAppRaf = requestAnimationFrame(clockAppLoop);
+            }
+            updateClockBattery();
+            updateTimerRunDisplay();
+            updateStopwatchDisplay();
+            updateStopwatchMiniClockHand();
+            refreshAllTimerPickerPadding();
+        }
+
+        function stopClockApp() {
+            hideClockAppUi();
+            if (timerState.tickInterval) {
+                clearInterval(timerState.tickInterval);
+                timerState.tickInterval = null;
+            }
+            timerState.running = false;
+            stopwatchReset(true);
+            try { sessionStorage.removeItem(CLOCK_APP_STORAGE); } catch (e) {}
         }
 
         const swState = {
             accumulatedMs: 0,
             segmentStart: null,
+            bgWallStart: null,
             running: false,
             rafId: null,
             laps: [],
@@ -9373,7 +9891,140 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
         function getStopwatchTotalMs() {
             if (!swState.running) return swState.accumulatedMs;
-            return swState.accumulatedMs + (performance.now() - swState.segmentStart);
+            if (swState.segmentStart != null) {
+                return swState.accumulatedMs + (performance.now() - swState.segmentStart);
+            }
+            if (swState.bgWallStart != null) {
+                return swState.accumulatedMs + (Date.now() - swState.bgWallStart);
+            }
+            return swState.accumulatedMs;
+        }
+
+        function pauseStopwatchUi() {
+            if (swState.running && swState.segmentStart != null) {
+                swState.accumulatedMs += performance.now() - swState.segmentStart;
+                swState.segmentStart = null;
+                swState.bgWallStart = Date.now();
+            }
+            stopStopwatchRaf();
+        }
+
+        function resumeStopwatchUi() {
+            if (swState.running && swState.bgWallStart != null) {
+                swState.accumulatedMs += Date.now() - swState.bgWallStart;
+                swState.bgWallStart = null;
+                swState.segmentStart = performance.now();
+            } else if (swState.running && swState.segmentStart == null && swState.bgWallStart == null) {
+                swState.segmentStart = performance.now();
+            }
+            if (swState.running && !swState.rafId) {
+                swState.rafId = requestAnimationFrame(stopwatchLoop);
+            }
+        }
+
+        function pauseTimerBackground() {
+            if (timerState.running && timerState.tickInterval) {
+                timerState.endAt = Date.now() + timerState.remainingMs;
+                clearInterval(timerState.tickInterval);
+                timerState.tickInterval = null;
+                ensureTimerBackgroundTick();
+            }
+        }
+
+        function resumeTimerBackground() {
+            if (timerState.running && timerState.endAt) {
+                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                if (timerState.remainingMs <= 0) {
+                    timerState.remainingMs = 0;
+                    timerState.running = false;
+                    timerState.endAt = null;
+                    if (timerState.tickInterval) {
+                        clearInterval(timerState.tickInterval);
+                        timerState.tickInterval = null;
+                    }
+                    return;
+                }
+                if (!timerState.tickInterval) {
+                    timerState.tickInterval = setInterval(timerTick, 100);
+                }
+            }
+        }
+
+        function ensureTimerBackgroundTick() {
+            if (!timerState.running || !timerState.endAt) return;
+            if (timerState.tickInterval) return;
+            timerState.tickInterval = setInterval(function () {
+                if (!timerState.running || !timerState.endAt) return;
+                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                if (timerState.remainingMs <= 0) {
+                    timerState.remainingMs = 0;
+                    timerState.running = false;
+                    timerState.endAt = null;
+                    clearInterval(timerState.tickInterval);
+                    timerState.tickInterval = null;
+                    setTimerPlayRunIcon(true);
+                }
+            }, 100);
+        }
+
+        function persistClockAppState() {
+            try {
+                var snap = {
+                    timer: {
+                        remainingMs: timerState.remainingMs,
+                        running: timerState.running,
+                        endAt: timerState.endAt,
+                        hasStarted: timerState.hasStarted,
+                        saved: timerState.saved,
+                        view: timerState.view
+                    },
+                    sw: {
+                        accumulatedMs: swState.accumulatedMs,
+                        bgWallStart: swState.bgWallStart,
+                        running: swState.running,
+                        laps: swState.laps,
+                        lastLapTotalMs: swState.lastLapTotalMs
+                    }
+                };
+                sessionStorage.setItem(CLOCK_APP_STORAGE, JSON.stringify(snap));
+            } catch (e) {}
+        }
+
+        function restoreClockAppState() {
+            try {
+                var raw = sessionStorage.getItem(CLOCK_APP_STORAGE);
+                if (!raw) return;
+                var d = JSON.parse(raw);
+                if (d.sw) {
+                    swState.accumulatedMs = d.sw.accumulatedMs || 0;
+                    if (d.sw.running && d.sw.bgWallStart) {
+                        swState.accumulatedMs += (Date.now() - d.sw.bgWallStart);
+                    }
+                    swState.running = !!d.sw.running;
+                    swState.laps = d.sw.laps || [];
+                    swState.lastLapTotalMs = d.sw.lastLapTotalMs || 0;
+                    swState.segmentStart = null;
+                    swState.bgWallStart = null;
+                }
+                if (d.timer) {
+                    timerState.hasStarted = !!d.timer.hasStarted;
+                    timerState.saved = d.timer.saved || { h: 0, m: 0, s: 0 };
+                    timerState.view = d.timer.view || 'setup';
+                    timerState.running = !!d.timer.running;
+                    if (timerState.running && d.timer.endAt) {
+                        timerState.endAt = d.timer.endAt;
+                        timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                        if (timerState.remainingMs <= 0) {
+                            timerState.remainingMs = 0;
+                            timerState.running = false;
+                            timerState.endAt = null;
+                        }
+                    } else {
+                        timerState.remainingMs = d.timer.remainingMs || 0;
+                        timerState.endAt = null;
+                    }
+                }
+            } catch (e) {}
         }
 
         function formatStopwatchMMSScs(ms) {
@@ -9418,7 +10069,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const scrollEl = document.getElementById('stopwatchLapsScroll');
             if (!root) return;
             if (scrollEl) {
-                scrollEl.classList.toggle('stopwatch-laps-scroll--scroll', swState.laps.length >= 3);
+                scrollEl.classList.toggle('stopwatch-laps-scroll--scroll', swState.laps.length >= 2);
             }
             const playEnterAnim = swState.highlightNewestLap;
             root.innerHTML = '';
@@ -9513,6 +10164,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
         function stopwatchStart() {
             if (swState.running) return;
+            swState.bgWallStart = null;
             swState.segmentStart = performance.now();
             swState.running = true;
             setStopwatchPlayPauseIcon(true);
@@ -9539,6 +10191,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             stopStopwatchRaf();
             swState.accumulatedMs = 0;
             swState.segmentStart = null;
+            swState.bgWallStart = null;
             swState.running = false;
             swState.laps = [];
             swState.lastLapTotalMs = 0;
@@ -9572,8 +10225,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         }
 
         const TIMER_PICKER_ITEM_H = 36;
-        const TIMER_PICKER_PAD = 2;
         const TIMER_PICKER_COPIES = 3;
+        const TIMER_PICKER_SNAP_DELAY_MS = 280;
 
         const timerState = {
             view: 'setup',
@@ -9581,7 +10234,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             remainingMs: 0,
             running: false,
             hasStarted: false,
-            tickInterval: null
+            tickInterval: null,
+            endAt: null
         };
 
         let timerPickersBuilt = false;
@@ -9621,13 +10275,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         }
 
         function getPickerTopPad(wheel) {
-            let pad = 0;
-            let el = wheel.firstElementChild;
-            while (el && el.classList.contains('timer-picker-item--spacer')) {
-                pad += el.offsetHeight;
-                el = el.nextElementSibling;
-            }
-            return pad;
+            if (!wheel) return 0;
+            const inlinePad = parseFloat(wheel.style.paddingTop);
+            if (!isNaN(inlinePad) && inlinePad > 0) return inlinePad;
+            const viewport = getPickerScrollRoot(wheel);
+            const first = wheel.querySelector('.timer-picker-item[data-value]');
+            const itemH = first ? first.offsetHeight : TIMER_PICKER_ITEM_H;
+            const vh = viewport ? viewport.clientHeight : 72;
+            return Math.max(0, (vh - itemH) / 2);
         }
 
         function getPickerBlockMetrics(wheel) {
@@ -9654,8 +10309,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const first = wheel.querySelector('.timer-picker-item[data-value]');
             const itemH = first ? first.offsetHeight : TIMER_PICKER_ITEM_H;
             const pad = Math.max(0, (viewport.clientHeight - itemH) / 2);
+            const hadValue = wheel.dataset.built === '1';
+            const value = hadValue ? getPickerValue(wheel) : null;
             wheel.style.paddingTop = pad + 'px';
             wheel.style.paddingBottom = pad + 'px';
+            if (hadValue && value !== null) {
+                scrollPickerToValue(wheel, value, false);
+                highlightPickerItems(wheel);
+            }
         }
 
         function refreshAllTimerPickerPadding() {
@@ -9675,12 +10336,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             const min = parseInt(wheel.dataset.min, 10);
             const max = parseInt(wheel.dataset.max, 10);
             wheel.innerHTML = '';
-            for (let p = 0; p < TIMER_PICKER_PAD; p++) {
-                const sp = document.createElement('div');
-                sp.className = 'timer-picker-item timer-picker-item--spacer';
-                sp.textContent = '\u00a0';
-                wheel.appendChild(sp);
-            }
             for (let c = 0; c < TIMER_PICKER_COPIES; c++) {
                 for (let v = min; v <= max; v++) {
                     const item = document.createElement('div');
@@ -9690,17 +10345,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                     wheel.appendChild(item);
                 }
             }
-            for (let p2 = 0; p2 < TIMER_PICKER_PAD; p2++) {
-                const sp2 = document.createElement('div');
-                sp2.className = 'timer-picker-item timer-picker-item--spacer';
-                sp2.textContent = '\u00a0';
-                wheel.appendChild(sp2);
-            }
             wheel._lastSelected = null;
             wheel.dataset.built = '1';
-            requestAnimationFrame(function () {
-                updatePickerWheelPadding(wheel);
-            });
+            updatePickerWheelPadding(wheel);
         }
 
         function getPickerItemForValue(wheel, value) {
@@ -9825,6 +10472,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             });
         }
 
+        function centerAllTimerPickers() {
+            refreshAllTimerPickerPadding();
+            ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
+                const wheel = document.getElementById(id);
+                if (!wheel || wheel.dataset.built !== '1') return;
+                const v = getPickerValue(wheel);
+                scrollPickerToValue(wheel, v, false);
+                snapPickerWheel(wheel);
+            });
+        }
+
         function initTimerPickers() {
             if (!document.getElementById('timerPickerH')) return;
             ['timerPickerH', 'timerPickerM', 'timerPickerS'].forEach(function (id) {
@@ -9855,14 +10513,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         if (wheel._pickerJumping) return;
                         clearTimeout(snapTimer);
                         snapTimer = setTimeout(function () {
-                            snapPickerWheel(wheel);
-                        }, 120);
+                            if (!wheel._pickerJumping) snapPickerWheel(wheel);
+                        }, TIMER_PICKER_SNAP_DELAY_MS);
                     }
                     viewport.addEventListener('scroll', onScroll, { passive: true });
-                    if ('onscrollend' in viewport) {
+                    if ('onscrollend' in window) {
                         viewport.addEventListener('scrollend', function () {
                             clearTimeout(snapTimer);
-                            snapPickerWheel(wheel);
+                            if (!wheel._pickerJumping) snapPickerWheel(wheel);
                         }, { passive: true });
                     } else {
                         viewport.addEventListener('scroll', onScrollSettled, { passive: true });
@@ -9872,6 +10530,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             requestAnimationFrame(function () {
                 requestAnimationFrame(function () {
                     setTimerPickerValues(0, 0, 0);
+                    centerAllTimerPickers();
                     updateTimerRestartButtons();
                 });
             });
@@ -9914,11 +10573,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 timerState.tickInterval = null;
             }
             timerState.running = false;
+            timerState.endAt = null;
         }
 
         function timerTick() {
             if (!timerState.running) return;
-            timerState.remainingMs -= 100;
+            if (timerState.endAt) {
+                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+            } else {
+                timerState.remainingMs -= 100;
+            }
             if (timerState.remainingMs <= 0) {
                 timerState.remainingMs = 0;
                 updateTimerRunDisplay();
@@ -9930,8 +10594,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         }
 
         function startTimerTick() {
-            stopTimerTick();
+            if (timerState.tickInterval) {
+                clearInterval(timerState.tickInterval);
+                timerState.tickInterval = null;
+            }
             timerState.running = true;
+            timerState.endAt = Date.now() + timerState.remainingMs;
             setTimerPlayRunIcon(false);
             timerState.tickInterval = setInterval(timerTick, 100);
         }
@@ -9952,7 +10620,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         function timerTogglePlayPause() {
             if (timerState.remainingMs <= 0) return;
             if (timerState.running) {
-                stopTimerTick();
+                if (timerState.endAt) {
+                    timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                }
+                if (timerState.tickInterval) {
+                    clearInterval(timerState.tickInterval);
+                    timerState.tickInterval = null;
+                }
+                timerState.running = false;
+                timerState.endAt = null;
                 setTimerPlayRunIcon(true);
             } else {
                 startTimerTick();
@@ -9994,19 +10670,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             if (panelSw) panelSw.classList.toggle('clock-panel--active', tab === 'stopwatch');
 
             if (tab === 'clock') {
-                stopTimerTick();
-                stopwatchStop();
                 if (!clockAppRaf) {
                     updateClockDisplay(new Date());
                     clockAppRaf = requestAnimationFrame(clockAppLoop);
                 }
             } else {
                 if (tab === 'timer') {
-                    stopwatchStop();
                     initTimerPickers();
+                    centerAllTimerPickers();
                 }
                 if (tab === 'stopwatch') {
-                    stopTimerTick();
                     bindStopwatchControls();
                     updateStopwatchDisplay();
                     renderStopwatchLaps();
@@ -10045,6 +10718,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             });
             bindTimerControls();
             bindStopwatchControls();
+            if (!window._clockAppPageHideBound) {
+                window._clockAppPageHideBound = true;
+                window.addEventListener('pagehide', function () {
+                    pauseStopwatchUi();
+                    if (timerState.running && timerState.endAt) {
+                        timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                    }
+                    persistClockAppState();
+                });
+            }
         }
 
         function showClockTabSoon() {
@@ -10065,10 +10748,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
         let clockBatteryManager = null;
 
-        function renderClockBattery(level, charging) {
-            const fill = document.getElementById('clockBatteryFill');
-            const pctEl = document.getElementById('clockBatteryPct');
-            const wrap = document.getElementById('clockBatteryWrap');
+        function renderBatteryWidget(fillId, pctId, wrapId, level, charging) {
+            const fill = document.getElementById(fillId);
+            const pctEl = document.getElementById(pctId);
+            const wrap = wrapId ? document.getElementById(wrapId) : null;
             if (!fill || !pctEl) return;
 
             if (level === null || typeof level !== 'number' || isNaN(level)) {
@@ -10076,7 +10759,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 fill.classList.remove('clock-battery-fill--charging');
                 pctEl.textContent = '--';
                 pctEl.classList.add('clock-battery-pct--unknown');
-                if (wrap) wrap.setAttribute('aria-label', 'Battery level unavailable on this device');
+                if (wrap) {
+                    wrap.setAttribute('aria-label', 'Battery level unavailable on this device');
+                    if (wrapId === 'mainMenuBatteryWrap') wrap.style.display = 'none';
+                }
                 return;
             }
 
@@ -10087,7 +10773,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             pctEl.classList.remove('clock-battery-pct--unknown');
             if (wrap) {
                 wrap.setAttribute('aria-label', 'Battery ' + percent + ' percent' + (charging ? ', charging' : ''));
+                if (wrapId === 'mainMenuBatteryWrap') wrap.style.display = 'flex';
             }
+        }
+
+        function renderClockBattery(level, charging) {
+            renderBatteryWidget('clockBatteryFill', 'clockBatteryPct', 'clockBatteryWrap', level, charging);
+            renderBatteryWidget('mainBatteryFill', 'mainBatteryPct', 'mainMenuBatteryWrap', level, charging);
         }
 
         function stopClockBatteryListeners() {
@@ -10100,7 +10792,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
 
         function updateClockBattery() {
             stopClockBatteryListeners();
-            if (!document.getElementById('clockBatteryFill')) return;
+            if (!document.getElementById('clockBatteryFill') && !document.getElementById('mainBatteryFill')) return;
 
             if (!navigator.getBattery) {
                 renderClockBattery(null);
@@ -10125,11 +10817,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             initClockAppEvents();
             bindClockLayoutListener();
             applyClockLayout();
-            updateClockBattery();
-            stopClockApp();
-            switchClockTab('clock');
-            updateClockDisplay(new Date());
-            clockAppRaf = requestAnimationFrame(clockAppLoop);
+            restoreClockAppState();
+            resumeClockAppUi();
+            switchClockTab(clockActiveTab || 'clock');
+            if (timerState.view === 'run') {
+                showTimerView('run');
+            }
+            try { sessionStorage.removeItem(CLOCK_APP_STORAGE); } catch (e) {}
         }
 
         function openModal(type) {
@@ -10204,6 +10898,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 if (type === 'comingSoonPreview') {
                     startComingSoonCountdown();
                 }
+                if (type === 'calendarComingSoon') {
+                    startAppReleaseCountdown('calendar', 'calendarComingSoonTimer', CALENDAR_RELEASE_MS);
+                }
+                if (type === 'mapsComingSoon') {
+                    startAppReleaseCountdown('maps', 'mapsComingSoonTimer', MAPS_RELEASE_MS);
+                }
                 if (type === 'clock') {
                     startClockApp();
                 }
@@ -10229,8 +10929,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             if (type === 'comingSoonPreview') {
                 stopComingSoonCountdown();
             }
+            if (type === 'calendarComingSoon') {
+                stopAppReleaseCountdown('calendar');
+            }
+            if (type === 'mapsComingSoon') {
+                stopAppReleaseCountdown('maps');
+            }
             if (type === 'clock') {
-                stopClockApp();
+                hideClockAppUi();
             }
         }
 
