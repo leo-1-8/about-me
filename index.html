@@ -4979,7 +4979,7 @@
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            z-index: 10003;
+            z-index: 100050;
             text-align: center;
             font-size: 18px;
             font-weight: 600;
@@ -5001,7 +5001,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 10002;
+            z-index: 100049;
             display: none;
         }
 
@@ -6962,7 +6962,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     </div>
                     <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⌛</div>
-                        <div class="favorite-title" data-i18n="others_coming2_title">COMING SOON</div>
+                        <div class="favorite-title" data-i18n="others_coming_title">COMING SOON</div>
                         <div class="favorite-description" data-i18n="others_coming_desc">STAY TUNED</div>
                     </div>
                 </div>
@@ -11195,66 +11195,74 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
+        function getI18nText(key, fallback) {
+            if (typeof window.t === 'function') {
+                var s = window.t(key);
+                if (s && s !== key) return s;
+            }
+            if (window.I18N && window.I18N.en && window.I18N.en[key]) return window.I18N.en[key];
+            return fallback || key;
+        }
+
         function showNotAvailableNow() {
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
-            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
+            var msg = getI18nText('others_not_available_now', 'NOT YET AVAILABLE');
             if (overlay && message) {
                 const msgText = document.getElementById('unavailableMessageText');
-                if (msgText) msgText.textContent = tfn('others_not_available_now');
+                if (msgText) msgText.textContent = msg;
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert(tfn('others_not_available_now'));
+                alert(msg);
             }
         }
 
         function closeUnavailable() {
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
-            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
             if (overlay && message) {
                 overlay.classList.remove('show');
                 message.classList.remove('show');
                 document.body.style.overflow = 'auto';
                 document.documentElement.style.overflow = 'auto';
                 const msgText = document.getElementById('unavailableMessageText');
-                if (msgText) msgText.textContent = tfn('unavailable_default');
+                if (msgText) msgText.textContent = getI18nText('unavailable_default', 'UNFORTUNATELY UNAVAILABLE AT THIS TIME!');
             }
         }
 
         // Coming soon message using same overlay
         function showComingSoon() {
-            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
+            var msg = getI18nText('others_stay_tuned', 'stay tuned');
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
             if (overlay && message) {
                 const msgText = document.getElementById('unavailableMessageText');
-                if (msgText) msgText.textContent = tfn('others_stay_tuned');
+                if (msgText) msgText.textContent = msg;
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert(tfn('others_stay_tuned'));
+                alert(msg);
             }
         }
         
         function showStayTunedMessage() {
-            var tfn = typeof window.t === 'function' ? window.t : function (k) { return k; };
+            var msg = getI18nText('others_stay_tuned_sparkle', 'stay tuned ✨');
             const overlay = document.getElementById('unavailableOverlay');
             const message = document.getElementById('unavailableMessage');
             if (overlay && message) {
                 const msgText = document.getElementById('unavailableMessageText');
-                if (msgText) msgText.textContent = tfn('others_stay_tuned_sparkle');
+                if (msgText) msgText.textContent = msg;
                 overlay.classList.add('show');
                 message.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
             } else {
-                alert(tfn('others_stay_tuned_sparkle'));
+                alert(msg);
             }
         }
         

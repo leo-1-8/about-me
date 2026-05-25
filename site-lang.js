@@ -85,9 +85,25 @@
             load_m9: 'Decoding your personalized device...',
             load_m10: 'Aligning digital coordinates...',
             load_m11: 'Initiating advanced system protocols...',
-            visitors_checking: 'Checking...'
+            visitors_checking: 'Checking...',
+            others_coming_title: 'COMING SOON',
+            others_coming_desc: 'STAY TUNED',
+            others_coming2_title: 'COMING SOON',
+            others_coming2_desc: 'NOT YET AVAILABLE',
+            others_not_available_now: 'NOT YET AVAILABLE',
+            unavailable_default: 'UNFORTUNATELY UNAVAILABLE AT THIS TIME!',
+            others_stay_tuned: 'stay tuned',
+            others_stay_tuned_sparkle: 'stay tuned ✨'
         };
     }
+
+    var I18N_FALLBACK = {
+        others_not_available_now: 'NOT YET AVAILABLE',
+        others_coming2_desc: 'NOT YET AVAILABLE',
+        unavailable_default: 'UNFORTUNATELY UNAVAILABLE AT THIS TIME!',
+        others_stay_tuned: 'stay tuned',
+        others_stay_tuned_sparkle: 'stay tuned ✨'
+    };
 
     window.I18N = {
         en: base(),
@@ -142,7 +158,13 @@
             load_m9: 'Dine-decode ang device mo...',
             load_m10: 'Inaayos ang digital coordinates...',
             load_m11: 'Sinisimulan ang advanced protocols...',
-            visitors_checking: 'Sinusuri...'
+            visitors_checking: 'Sinusuri...',
+            others_coming_desc: 'MANATILING NAKAANTAY',
+            others_coming2_desc: 'HINDI AVAILABLE SA NGAYON',
+            others_not_available_now: 'HINDI AVAILABLE SA NGAYON',
+            unavailable_default: 'HINDI AVAILABLE SA NGAYON!',
+            others_stay_tuned: 'manatiling nakaantay',
+            others_stay_tuned_sparkle: 'manatiling nakaantay ✨'
         }),
         id: Object.assign(base(), {
             settings_title: 'Pengaturan Sistem',
@@ -195,7 +217,13 @@
             load_m9: 'Membaca perangkat Anda...',
             load_m10: 'Menyelaraskan koordinat digital...',
             load_m11: 'Memulai protokol lanjutan...',
-            visitors_checking: 'Memeriksa...'
+            visitors_checking: 'Memeriksa...',
+            others_coming_desc: 'NANTIKAN SAJA',
+            others_coming2_desc: 'TIDAK TERSEDIA SAAT INI',
+            others_not_available_now: 'TIDAK TERSEDIA SAAT INI',
+            unavailable_default: 'SAYANGNYA TIDAK TERSEDIA SAAT INI!',
+            others_stay_tuned: 'nantikan saja',
+            others_stay_tuned_sparkle: 'nantikan saja ✨'
         }),
         ja: Object.assign(base(), {
             settings_title: 'システム設定',
@@ -248,7 +276,13 @@
             load_m9: '端末情報を読み取り中…',
             load_m10: '座標を合わせています…',
             load_m11: '高度なプロトコルを開始中…',
-            visitors_checking: '確認中…'
+            visitors_checking: '確認中…',
+            others_coming_desc: 'お楽しみに',
+            others_coming2_desc: '現在はご利用いただけません',
+            others_not_available_now: '現在はご利用いただけません',
+            unavailable_default: '現在はご利用いただけません！',
+            others_stay_tuned: 'お楽しみに',
+            others_stay_tuned_sparkle: 'お楽しみに ✨'
         }),
         ko: Object.assign(base(), {
             settings_title: '시스템 설정',
@@ -301,7 +335,13 @@
             load_m9: '기기 정보 읽는 중…',
             load_m10: '디지털 좌표 맞추는 중…',
             load_m11: '고급 프로토콜 시작 중…',
-            visitors_checking: '확인 중…'
+            visitors_checking: '확인 중…',
+            others_coming_desc: '기대해 주세요',
+            others_coming2_desc: '지금은 이용할 수 없습니다',
+            others_not_available_now: '지금은 이용할 수 없습니다',
+            unavailable_default: '지금은 이용할 수 없습니다!',
+            others_stay_tuned: '기대해 주세요',
+            others_stay_tuned_sparkle: '기대해 주세요 ✨'
         })
     };
 
@@ -327,7 +367,10 @@
         var b = window.I18N[code] || window.I18N.en;
         var s = b[key];
         if (s !== undefined && s !== '') return s;
-        return window.I18N.en[key] || key;
+        s = window.I18N.en[key];
+        if (s !== undefined && s !== '') return s;
+        if (I18N_FALLBACK[key]) return I18N_FALLBACK[key];
+        return key;
     };
 
     window.applySiteLanguage = function (code) {
@@ -342,7 +385,8 @@
             if (!k) return;
             var v = bundle[k];
             if (v === undefined || v === '') v = window.I18N.en[k];
-            if (v !== undefined) el.textContent = v;
+            if ((v === undefined || v === '') && I18N_FALLBACK[k]) v = I18N_FALLBACK[k];
+            if (v !== undefined && v !== '') el.textContent = v;
         });
         document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
             var k = el.getAttribute('data-i18n-aria');
