@@ -974,7 +974,7 @@
 
         /* Dark mode: force What's New (updates) modal text readable */
         body.dark-mode #updatesModal .modal-content,
-        body.dark-mode #updatesModal .modal-content * {
+        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title) {
             color: rgba(255, 255, 255, 0.92) !important;
         }
         body.dark-mode #updatesModal .see-more-link {
@@ -2146,6 +2146,51 @@
 
         .update16-heading-first {
             margin-top: 6px !important;
+        }
+
+        .update16-rainbow-title {
+            display: inline-block;
+            font-weight: 800;
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+            background-image: linear-gradient(
+                90deg,
+                #ff0000 0%,
+                #ff7f00 14%,
+                #ffdd00 28%,
+                #00e676 42%,
+                #00b0ff 56%,
+                #304ffe 70%,
+                #d500f9 84%,
+                #ff0000 100%
+            ) !important;
+            background-size: 400% 100% !important;
+            background-repeat: repeat-x !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: background-position;
+        }
+
+        body.dark-mode #updatesModal .modal-content strong.update16-rainbow-title,
+        body.dark-mode #updatesModal .updates-scroll-body .update16-rainbow-title {
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+            background-image: linear-gradient(
+                90deg,
+                #ff0000 0%,
+                #ff7f00 14%,
+                #ffdd00 28%,
+                #00e676 42%,
+                #00b0ff 56%,
+                #304ffe 70%,
+                #d500f9 84%,
+                #ff0000 100%
+            ) !important;
+            background-size: 400% 100% !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
         }
 
         .boxdash-modal-content {
@@ -7991,7 +8036,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div class="updates-scroll-body">
                     <p class="update14-heading update16-heading-first">
                         <span class="update14-new-dot" aria-hidden="true"></span>
-                        <strong>UPDATE 1.6 [NEW]</strong>
+                        <strong class="update16-rainbow-title">UPDATE 1.6 [NEW]</strong>
                     </p>
                     <p id="update16-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I added Clock on my website.
@@ -11047,6 +11092,34 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             try { sessionStorage.removeItem(CLOCK_APP_STORAGE); } catch (e) {}
         }
 
+        let update16RainbowRafId = null;
+        const UPDATE16_RAINBOW_MS = 4500;
+        const UPDATE16_RAINBOW_RANGE = 400;
+
+        function startUpdate16RainbowAnim() {
+            stopUpdate16RainbowAnim();
+            const el = document.querySelector('.update16-rainbow-title');
+            if (!el) return;
+            let startTs = null;
+            function frame(ts) {
+                if (startTs === null) startTs = ts;
+                const elapsed = (ts - startTs) % UPDATE16_RAINBOW_MS;
+                const pos = UPDATE16_RAINBOW_RANGE - (elapsed / UPDATE16_RAINBOW_MS) * UPDATE16_RAINBOW_RANGE;
+                el.style.backgroundPosition = pos + '% 50%';
+                update16RainbowRafId = requestAnimationFrame(frame);
+            }
+            update16RainbowRafId = requestAnimationFrame(frame);
+        }
+
+        function stopUpdate16RainbowAnim() {
+            if (update16RainbowRafId != null) {
+                cancelAnimationFrame(update16RainbowRafId);
+                update16RainbowRafId = null;
+            }
+            const el = document.querySelector('.update16-rainbow-title');
+            if (el) el.style.backgroundPosition = '';
+        }
+
         function openModal(type) {
             const modal = document.getElementById(type + 'Modal');
             if (modal) {
@@ -11131,6 +11204,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (type === 'clock') {
                     startClockApp();
                 }
+                if (type === 'updates') {
+                    startUpdate16RainbowAnim();
+                }
             }
         }
 
@@ -11164,6 +11240,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             if (type === 'clock') {
                 hideClockAppUi();
+            }
+            if (type === 'updates') {
+                stopUpdate16RainbowAnim();
             }
         }
 
