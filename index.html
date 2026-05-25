@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -2142,6 +2143,82 @@
             align-items: center;
             gap: 10px;
         }
+
+        .update16-heading-first {
+            margin-top: 6px !important;
+        }
+
+        .boxdash-modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(90vh - 180px);
+            padding: 12px 16px;
+        }
+
+        .boxdash-modal-title {
+            margin: 0 0 14px;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            font-size: clamp(18px, 4.5vw, 22px);
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: #38bdf8;
+            text-align: center;
+        }
+
+        .boxdash-info-box {
+            max-width: 480px;
+            width: 100%;
+            padding: 18px 20px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.65);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.75);
+        }
+
+        .boxdash-info-box p {
+            margin: 0;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.65;
+            color: #38bdf8;
+            text-align: center;
+        }
+
+        .boxdash-timer-wrap {
+            margin-top: 14px;
+            text-align: center;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            color: #38bdf8;
+        }
+
+        .boxdash-timer-label {
+            font-size: 12px;
+            letter-spacing: 0.18em;
+            opacity: 0.9;
+        }
+
+        .boxdash-timer {
+            margin-top: 6px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .boxdash-ok-btn {
+            margin-top: 18px;
+            min-width: 120px;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            background: transparent;
+            border: 2px solid #38bdf8;
+            color: #38bdf8;
+        }
+
+        .boxdash-ok-btn:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
         .update14-new-dot {
             width: 9px;
             height: 9px;
@@ -2889,6 +2966,14 @@
             background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
         }
 
+        .modal-myapps .modal-content {
+            text-align: center;
+        }
+
+        .modal-myapps .modal-text {
+            margin-bottom: 4px;
+        }
+
         .modal-clock {
             background: transparent !important;
             box-shadow: none !important;
@@ -2916,7 +3001,7 @@
             width: min(calc(100vw - 24px), 440px);
             max-width: 440px;
             box-sizing: border-box;
-            padding: 14px 14px 0 0;
+            padding: 0;
             overflow: visible;
         }
 
@@ -2985,12 +3070,14 @@
         }
 
         .clock-app-close {
-            position: absolute;
-            top: -14px;
-            right: -14px;
-            z-index: 30;
-            width: 36px;
-            height: 36px;
+            grid-column: 3;
+            justify-self: end;
+            align-self: center;
+            z-index: 3;
+            width: 34px;
+            height: 34px;
+            margin: 0;
+            padding: 0;
             border: none;
             border-radius: 50%;
             background: rgba(30, 27, 75, 0.92);
@@ -3012,10 +3099,12 @@
         .clock-status {
             position: relative;
             z-index: 1;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            gap: 10px;
-            padding: 14px 18px 10px;
+            gap: 8px;
+            min-height: 48px;
+            padding: 12px 14px 10px;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -3024,23 +3113,48 @@
         }
 
         .clock-status-title {
-            flex: 1;
+            grid-column: 1;
+            justify-self: start;
             text-align: left;
             font-size: 13px;
             letter-spacing: 0.08em;
         }
 
-        .clock-status-time {
-            font-family: var(--font-timer);
-            font-size: 11px;
-            font-variant-numeric: tabular-nums;
-            opacity: 0.9;
+        .clock-status-center {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
 
-        .clock-battery-wrap {
+        .clock-status-time {
+            font-family: var(--font-timer);
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+            opacity: 0.95;
+            letter-spacing: 0.06em;
+        }
+
+        .clock-battery-wrap,
+        .main-menu-battery-wrap {
             display: inline-flex;
             align-items: center;
             flex-shrink: 0;
+            gap: 2px;
+        }
+
+        .clock-battery-wrap::after,
+        .main-menu-battery-wrap::after {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 9px;
+            flex-shrink: 0;
+            align-self: center;
+            background: rgba(226, 232, 240, 0.75);
+            border-radius: 0 2px 2px 0;
+            box-sizing: border-box;
         }
 
         .clock-battery {
@@ -3054,17 +3168,11 @@
             position: relative;
             box-sizing: border-box;
             background: rgba(15, 23, 42, 0.65);
+            flex-shrink: 0;
         }
 
         .clock-battery::after {
-            content: '';
-            position: absolute;
-            right: -4px;
-            top: 4px;
-            width: 2px;
-            height: 6px;
-            background: rgba(226, 232, 240, 0.75);
-            border-radius: 0 1px 1px 0;
+            display: none;
         }
 
         .clock-battery-fill {
@@ -3459,9 +3567,10 @@
         }
 
         .timer-picker-field {
+            --picker-shell-h: 72px;
             display: flex;
             flex-direction: row;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
             gap: 6px;
             width: 100%;
@@ -3529,7 +3638,7 @@
 
         .timer-picker-shell {
             position: relative;
-            height: 72px;
+            height: var(--picker-shell-h, 72px);
             flex: 1 1 auto;
             min-width: 88px;
             width: 100%;
@@ -3608,12 +3717,19 @@
             font-family: var(--font-timer);
             font-size: 15px;
             font-weight: 800;
-            letter-spacing: 0.02em;
+            letter-spacing: 0;
             color: rgba(199, 210, 254, 0.95);
             line-height: 1;
-            padding-bottom: 2px;
-            min-width: 14px;
-            text-align: left;
+            height: var(--picker-shell-h, 72px);
+            min-width: 1.15em;
+            width: 1.15em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0;
+            box-sizing: border-box;
+            align-self: flex-end;
         }
 
         .clock-app.clock-portrait .timer-picker-unit {
@@ -3639,9 +3755,10 @@
         }
 
         #timerViewSetup .timer-controls-row {
-            width: 152px;
-            justify-content: space-between;
-            gap: 0;
+            width: auto;
+            min-width: 0;
+            justify-content: center;
+            gap: 28px;
         }
 
         .timer-controls-run {
@@ -4118,9 +4235,13 @@
             gap: 10px;
         }
 
-        .clock-app.clock-phone-landscape .timer-picker-shell {
-            height: 64px;
-        }
+            .clock-app.clock-phone-landscape .timer-picker-field {
+                --picker-shell-h: 64px;
+            }
+
+            .clock-app.clock-phone-landscape .timer-picker-shell {
+                height: var(--picker-shell-h);
+            }
 
         .clock-app.clock-phone-landscape .timer-picker-item {
             height: 32px;
@@ -4268,22 +4389,85 @@
                 margin-left: auto;
                 margin-right: auto;
             }
+
+            .clock-app.clock-portrait .timer-picker-col {
+                min-width: 0;
+                max-width: none;
+            }
+
+            .clock-app.clock-portrait .timer-picker-block,
+            .clock-app.clock-portrait .timer-picker-shell,
+            .timer-picker-shell {
+                min-width: 0;
+            }
+
+            .clock-app.clock-portrait .timer-picker-row {
+                gap: 6px;
+                padding: 0;
+            }
+
+            .clock-app.clock-portrait .timer-picker-unit {
+                font-size: 11px;
+                min-width: 1.1em;
+                width: 1.1em;
+                height: var(--picker-shell-h, 72px);
+                padding: 0;
+            }
+
+            .clock-app.clock-portrait .timer-picker-label {
+                font-size: 8px;
+                margin-bottom: 4px;
+            }
+
+            .clock-app.clock-portrait .timer-picker-item {
+                font-size: clamp(16px, 4.5vw, 20px);
+            }
+
+            .clock-app.clock-portrait .timer-picker-item--selected {
+                font-size: clamp(18px, 5vw, 22px);
+            }
+
+            #clockModal .modal-content.clock-modal-content {
+                padding: 14px 8px !important;
+            }
+
+            .clock-modal-shell {
+                width: min(calc(100vw - 12px), 440px);
+            }
+
+        }
+
+        .myapps-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: clamp(8px, 2vw, 14px);
+            width: 100%;
+            max-width: 780px;
+            margin: 16px auto 8px;
+            justify-items: stretch;
+            align-items: stretch;
+            box-sizing: border-box;
         }
 
         .myapps-app-box {
-            display: inline-flex;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 10px 16px;
-            margin: 20px 0;
+            gap: 6px;
+            padding: clamp(10px, 2.5vw, 14px) clamp(6px, 1.5vw, 10px);
+            margin: 0;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             cursor: pointer;
             border: 2px solid rgba(99, 102, 241, 0.3);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            width: auto;
+            width: 100%;
+            min-width: 0;
+            min-height: clamp(72px, 18vw, 92px);
+            box-sizing: border-box;
+            text-align: center;
         }
 
         .myapps-app-box:hover {
@@ -4292,13 +4476,36 @@
         }
 
         .myapps-app-emoji {
-            font-size: 24px;
+            font-size: clamp(22px, 5.5vw, 28px);
+            line-height: 1;
+            flex-shrink: 0;
         }
 
         .myapps-app-label {
-            font-size: 14px;
+            font-size: clamp(10px, 2.4vw, 13px);
             font-weight: 600;
             color: #333;
+            line-height: 1.2;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        @media (max-width: 640px) {
+            .myapps-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .myapps-grid {
+                gap: 8px;
+                max-width: 100%;
+            }
+
+            .myapps-app-box {
+                min-height: 70px;
+                padding: 10px 4px;
+            }
         }
 
         
@@ -6512,7 +6719,7 @@
                 <span class="update14-new-dot" aria-hidden="true"></span>
                 <span id="updatedSplashHeadingText" data-i18n="updated_title">UPDATED</span>
             </h2>
-            <p class="updated-splash-text" id="updatedSplashBody" data-i18n="updated_body">Thank you for patiently waiting while my website was being updated. The new version has now been successfully applied.</p>
+            <p class="updated-splash-text" id="updatedSplashBody" data-i18n="updated_body">Thank you for patiently waiting while my website is updating. The new version has now been successfully applied.</p>
             <button type="button" id="updatedSplashOk" class="updated-splash-ok" data-i18n="btn_ok">OK</button>
         </div>
     </div>
@@ -6524,9 +6731,7 @@
 
 THIS IS WHERE YOU'LL GET TO KNOW A LITTLE MORE ABOUT ME <span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span> ESPECIALLY MY HOBBIES, AND MY FAVORITES.
 
-FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
-        
-            !KIDLY ROTATE YOUR PHONE TO LANDSCAPE, FOR BETTER EXPERIENCE!</div>
+FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         <button id="introSkip" class="intro-skip" title="Skip" onclick="if(window.skipIntroNow){window.skipIntroNow(event);}" data-i18n="intro_skip">Skip</button>
     </div>
 
@@ -6713,17 +6918,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
-                        <div class="favorite-topic-box">
-                            <div class="favorite-topic-header">
-                                <span class="favorite-topic-emoji">💻</span>
-                                <span class="favorite-topic-title" data-i18n="about_fav_it_title">Why I Chose IT?</span>
-                            </div>
-                            <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_it_short">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
-                                <span class="description-full" data-i18n="about_fav_it_full">I chose Information Technology (IT) because I've always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won't always be easy, but I'm ready to face the challenges because it's something I'm truly passionate about.</span>
-                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="back-button-box">
@@ -6816,26 +7010,30 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <h1 class="modal-title">My Apps</h1>
             <div class="modal-content">
                 <p class="modal-text">This is my apps that i created right now</p>
-                <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                <div class="myapps-grid">
+                    <div class="myapps-app-box" onclick="openModal('boxDash')" title="Box Dash">
+                        <span class="myapps-app-emoji">📦</span>
+                        <span class="myapps-app-label">Box Dash</span>
+                    </div>
                     <div class="myapps-app-box" onclick="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
                         <span class="myapps-app-emoji">🧮</span>
                         <span class="myapps-app-label">Calculator</span>
-                    </div>
-                    <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
-                        <span class="myapps-app-emoji">🤖</span>
-                        <span class="myapps-app-label">NovaAI</span>
                     </div>
                     <div class="myapps-app-box" onclick="openModal('calendarComingSoon')" title="Calendar">
                         <span class="myapps-app-emoji">🗓️</span>
                         <span class="myapps-app-label">Calendar</span>
                     </div>
+                    <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
+                        <span class="myapps-app-emoji">🕒</span>
+                        <span class="myapps-app-label">Clock</span>
+                    </div>
                     <div class="myapps-app-box" onclick="openModal('mapsComingSoon')" title="Maps">
                         <span class="myapps-app-emoji">🗾</span>
                         <span class="myapps-app-label">Maps</span>
                     </div>
-                    <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
-                        <span class="myapps-app-emoji">🕒</span>
-                        <span class="myapps-app-label">Clock</span>
+                    <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
+                        <span class="myapps-app-emoji">🤖</span>
+                        <span class="myapps-app-label">NovaAI</span>
                     </div>
                 </div>
                 <div class="modal-buttons">
@@ -6851,6 +7049,26 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content modal-calculator-content">
                 <button type="button" class="calculator-close-btn" onclick="closeModal('calculator')" title="Close">×</button>
                 <iframe src="calculator.html" class="calculator-iframe" title="Scientific Calculator"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Box Dash Modal -->
+    <div class="modal-overlay" id="boxDashModal">
+        <div class="modal-box modal-boxdash">
+            <div class="modal-content boxdash-modal-content">
+                <div style="max-width:480px;margin:0 auto;width:100%;">
+                    <p class="boxdash-modal-title">BOX DASH</p>
+                    <div class="boxdash-info-box">
+                        <p>This is my first game I've ever created, and I'm still working on it. This game will be available on</p>
+                    </div>
+                    <div class="boxdash-timer-wrap">
+                        <div id="boxDashTimer" class="boxdash-timer">--:--:--:--</div>
+                    </div>
+                    <div style="display:flex;justify-content:center;">
+                        <button type="button" class="modal-action-button boxdash-ok-btn" onclick="closeModal('boxDash')">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -6885,17 +7103,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         <div class="modal-box modal-clock" onclick="event.stopPropagation()">
             <div class="modal-content clock-modal-content">
                 <div class="clock-modal-shell">
-                    <button type="button" class="clock-app-close" onclick="closeModal('clock')" title="Close" aria-label="Close clock">×</button>
                     <div id="clockApp" class="clock-app clock-portrait" role="application" aria-label="Clock">
                     <header class="clock-status">
                         <span class="clock-status-title">Clock</span>
-                        <span class="clock-status-time" id="clockStatusTime" aria-hidden="true">--:--</span>
-                        <span class="clock-battery-wrap" id="clockBatteryWrap" aria-label="Battery">
-                            <span class="clock-battery">
-                                <span class="clock-battery-fill" id="clockBatteryFill"></span>
-                                <span class="clock-battery-pct clock-battery-pct--unknown" id="clockBatteryPct">--</span>
+                        <div class="clock-status-center">
+                            <span class="clock-status-time" id="clockStatusTime" aria-hidden="true">--:--</span>
+                            <span class="clock-battery-wrap" id="clockBatteryWrap" aria-label="Battery">
+                                <span class="clock-battery">
+                                    <span class="clock-battery-fill" id="clockBatteryFill"></span>
+                                    <span class="clock-battery-pct clock-battery-pct--unknown" id="clockBatteryPct">--</span>
+                                </span>
                             </span>
-                        </span>
+                        </div>
+                        <button type="button" class="clock-app-close" onclick="closeModal('clock')" title="Close" aria-label="Close clock">×</button>
                     </header>
                     <div class="clock-body">
                     <section id="clockPanelClock" class="clock-panel clock-panel--active">
@@ -7099,7 +7319,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content" style="display:flex;align-items:center;justify-content:center;min-height:calc(90vh - 180px);">
                 <div class="coming-soon-preview-card">
                     <p class="coming-soon-preview-title">COMING SOON</p>
-                    <div class="coming-soon-preview-sub">Calendar has been added and I'm working hard on it, will be available on</div>
+                    <div class="coming-soon-preview-sub">Calendar has been added and I'm working hard for it, will be available on</div>
                     <div id="calendarComingSoonTimer" class="coming-soon-preview-timer">--:--:--:--</div>
                     <div class="coming-soon-preview-sub" style="margin-top:10px;font-size:13px;opacity:0.85;"></div>
                     <div style="margin-top:18px;display:flex;justify-content:center;">
@@ -7769,7 +7989,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             <div class="modal-content">
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
                 <div class="updates-scroll-body">
-                    <p class="update14-heading" style="margin-top: 20px;">
+                    <p class="update14-heading update16-heading-first">
                         <span class="update14-new-dot" aria-hidden="true"></span>
                         <strong>UPDATE 1.6 [NEW]</strong>
                     </p>
@@ -7798,6 +8018,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                         <p style="margin-top: 20px;"><strong>⏳ To Be Released Soon</strong></p>
                         <p>Added Calendar</p>
                         <p>Added Maps</p>
+                        <p>Added my first ever game "Box Dash"</p>
                         <p style="margin-top: 20px;"><strong>🎵 Music</strong></p>
                         <p>Fixed the progress bar</p>
                         <p>Fixed the Play/Pause button</p>
@@ -7809,7 +8030,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                             <span id="update16-toggle-bottom" class="see-more-link" onclick="toggleUpdate16Details()">see less...</span>
                         </p>
                     </div>
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.5 [FIXED]</strong></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.5</strong></p>
                     <p id="update15-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I fixed some small issues on my website.
                         <span id="update15-toggle-top" class="see-more-link" onclick="toggleUpdate15Details()">see more...</span>
@@ -8835,7 +9056,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1_5';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1_6';
             function hasSeenUpdatedSplashOnce() {
                 try {
                     return localStorage.getItem(UPDATED_SPLASH_SEEN_KEY) === '1';
@@ -9597,6 +9818,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
         const COMING_SOON_RELEASE_UTC_MS = Date.UTC(2026, 8, 1, 0, 0, 0, 0);
         const CALENDAR_RELEASE_MS = Date.parse('2026-12-01T23:59:59+08:00');
         const MAPS_RELEASE_MS = Date.parse('2027-04-01T23:59:59+08:00');
+        const BOX_DASH_RELEASE_MS = Date.parse('2027-06-30T23:59:59+08:00');
         const appReleaseCountdowns = {};
 
         function stopAppReleaseCountdown(key) {
@@ -10903,6 +11125,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
                 if (type === 'mapsComingSoon') {
                     startAppReleaseCountdown('maps', 'mapsComingSoonTimer', MAPS_RELEASE_MS);
                 }
+                if (type === 'boxDash') {
+                    startAppReleaseCountdown('boxDash', 'boxDashTimer', BOX_DASH_RELEASE_MS);
+                }
                 if (type === 'clock') {
                     startClockApp();
                 }
@@ -10933,6 +11158,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!
             }
             if (type === 'mapsComingSoon') {
                 stopAppReleaseCountdown('maps');
+            }
+            if (type === 'boxDash') {
+                stopAppReleaseCountdown('boxDash');
             }
             if (type === 'clock') {
                 hideClockAppUi();

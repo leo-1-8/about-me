@@ -6,27 +6,27 @@
     var introEn =
         'HELLO THERE! I\'M SO GLAD YOU DROPPED BY🥰🫶🏻\n\n' +
         'THIS IS WHERE YOU\'LL GET TO KNOW A LITTLE MORE ABOUT ME <span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span> ESPECIALLY MY HOBBIES, AND MY FAVORITES.\n\n' +
-        'FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!\n        \n            !KIDLY ROTATE YOUR PHONE TO LANDSCAPE, FOR BETTER EXPERIENCE!';
+        'FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!';
 
     var introFil =
         'KAMUSTA! NATUTUWA AKONG NARITO KA🥰🫶🏻\n\n' +
         'DITO MO MALALAMAN ANG KONTI TUNGKOL SA AKIN <span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span> LALO NA ANG MGA HOBBY AT PABORITO KO.\n\n' +
-        'LIBRENG MAGLIBOT AT ENJOY!\n        \n            PAKI-ROTATE ANG TELEPONO SA LANDSCAPE PARA MAS MAGANDA ANG EXPERIENCE!';
+        'LIBRENG MAGLIBOT AT ENJOY!';
 
     var introId =
         'HAI! SENANG KAMU BERKUNJUNG🥰🫶🏻\n\n' +
         'DI SINI KAMU BISA MENGENAL AKU LEBIH JAUH <span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span> TERUTAMA HOBI DAN KESUKAANKU.\n\n' +
-        'SILAKAN JELAJAHI DAN SELAMAT MENIKMATI!\n        \n            MOHON PUTAR PONSEL KE MODE LANDSCAPE UNTUK PENGALAMAN LEBIH BAIK!';
+        'SILAKAN JELAJAHI DAN SELAMAT MENIKMATI!';
 
     var introJa =
         'こんにちは！来てくれてうれしいです🥰🫶🏻\n\n' +
         'ここでは私のこと、<span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span>特に趣味や好きなものについて少し知ってもらえます。\n\n' +
-        'ゆっくり見て楽しんでください！\n        \n            より良い体験のため、スマホを横（ランドスケープ）向きにしてください！';
+        'ゆっくり見て楽しんでください！';
 
     var introKo =
         '안녕! 와줘서 정말 기뻐🥰🫶🏻\n\n' +
         '여기서 나에 대해 조금 더 알 수 있어요 <span id="introUpdatedResetDash" class="intro-updated-reset-dash" title="">—</span> 특히 취미와 좋아하는 것들!\n\n' +
-        '편하게 둘러보고 즐겨 줘!\n        \n            더 좋은 화면을 위해 휴대폰을 가로(랜드스케이프)로 돌려 주세요!';
+        '편하게 둘러보고 즐겨 줘!';
 
     function base() {
         return {
@@ -69,7 +69,7 @@
             intro_message_html: introEn,
             updated_title: 'UPDATED',
             updated_body:
-                'Thank you for patiently waiting while my website was being updated. The new version has now been successfully applied.',
+                'Thank you for patiently waiting while my website is updating. The new version has now been successfully applied.',
             loading_prefix: 'Loading',
             loading_done: 'Done!',
             aria_settings: 'Open settings',

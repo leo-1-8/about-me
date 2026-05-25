@@ -84,11 +84,6 @@
                 'Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world.',
             about_fav_social_full:
                 'Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events. Through these platforms, I can connect with my family and friends, explore new ideas, and discover trends that match my interests. Social media also helps me stay updated with technology, entertainment, and news while providing a space to appreciate art, culture, and diverse communities. It is important in my daily life because it combines communication, learning, and self-expression in one digital environment.',
-            about_fav_it_title: 'Why I Chose IT?',
-            about_fav_it_short:
-                'I chose Information Technology (IT) because I\'ve always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people.',
-            about_fav_it_full:
-                'I chose Information Technology (IT) because I\'ve always been interested in computers and how technology works. I want to learn how to create programs, fix problems, and use technology to make life easier for people. I believe IT has a big role in the future, and being part of it makes me excited. I know it won\'t always be easy, but I\'m ready to face the challenges because it\'s something I\'m truly passionate about.',
             others_stay_tuned: 'stay tuned',
             others_stay_tuned_sparkle: 'stay tuned ✨'
         }
@@ -185,11 +180,6 @@
             'Paborito ko ang social media dahil nakikipag-usap ako, nagbabahagi, at natututo mula sa iba\'t ibang tao sa mundo.',
         about_fav_social_full:
             'Paborito ko ang social media dahil nakikipag-usap ako, nagbabahagi, at natututo mula sa iba\'t ibang tao sa mundo. Sa iba\'t ibang platform makapag-express ako at manatiling updated. Nakakakonekta sa pamilya at kaibigan, nakakadiskubre ng ideya at trends. Mahalaga sa araw-araw ko dahil pinagsasama ang komunikasyon, pag-aaral, at pagpapahayag.',
-        about_fav_it_title: 'Bakit IT?',
-        about_fav_it_short:
-            'Pinili ko ang IT dahil interesado ako sa computer at teknolohiya. Gusto kong matutong gumawa ng programa, ayusin ang problema, at gawing mas madali ang buhay ng tao.',
-        about_fav_it_full:
-            'Pinili ko ang IT dahil interesado ako sa computer at teknolohiya. Gusto kong matutong gumawa ng programa, ayusin ang problema, at gawing mas malapit ang kinabukasan. Alam kong hindi laging madali pero handa akong harapin dahil ito ang passion ko.',
         others_stay_tuned: 'abangan',
         others_stay_tuned_sparkle: 'abangan ✨'
     });
@@ -276,11 +266,6 @@
             'Media sosial favorit karena saya bisa berkomunikasi, berbagi, dan belajar dari orang di seluruh dunia.',
         about_fav_social_full:
             'Media sosial memungkinkan komunikasi, berbagi, dan belajar. Saya bisa berkreasi dan tetap mengikuti berita. Terhubung dengan keluarga dan teman, menemukan ide dan tren. Penting dalam hidup saya karena menggabungkan komunikasi, belajar, dan ekspresi diri.',
-        about_fav_it_title: 'Mengapa IT?',
-        about_fav_it_short:
-            'Saya memilih IT karena tertarik pada komputer dan teknologi. Ingin belajar membuat program, memperbaiki masalah, dan mempermudah hidup orang.',
-        about_fav_it_full:
-            'Saya memilih IT karena tertarik pada komputer dan teknologi. IT punya peran besar di masa depan. Tidak selalu mudah, tetapi saya siap menghadapi tantangan karena ini passion saya.',
         others_stay_tuned: 'nantikan',
         others_stay_tuned_sparkle: 'nantikan ✨'
     });
@@ -367,11 +352,6 @@
             'SNSは世界中の人とつながり、学べるのが好きです。',
         about_fav_social_full:
             '創作の表現やニュースのチェックにも使っています。家族や友だちともつながれます。コミュニケーションと学びと自己表現が一つの場所にあります。',
-        about_fav_it_title: 'なぜITを選んだか',
-        about_fav_it_short:
-            'コンピューターとテクノロジーにずっと興味がありました。プログラムを作り、問題を直し、人の生活を楽にしたいです。',
-        about_fav_it_full:
-            'ITは未来に大きな役割があります。簡単ではないこともわかっていますが、本当に好きだからこそ挑戦したいです。',
         others_stay_tuned: 'お楽しみに',
         others_stay_tuned_sparkle: 'お楽しみに ✨'
     });
@@ -458,11 +438,6 @@
             '전 세계 사람들과 소통하고 배울 수 있어서 좋아요.',
         about_fav_social_full:
             '창작 표현과 소식 확인에도 쓰고 있어요. 가족·친구와도 연결되고 새로운 아이디어와 트렌드를 발견해요. 일상에서 소통·학습·표현이 한곳에 모여 있어요.',
-        about_fav_it_title: '왜 IT를 선택했나요',
-        about_fav_it_short:
-            '컴퓨터와 기술에 늘 관심이 있었어요. 프로그램을 만들고 문제를 고치며 사람들의 삶을 편하게 하고 싶어요.',
-        about_fav_it_full:
-            'IT는 미래에 큰 역할을 한다고 믿어요. 쉽지만은 않겠지만 정말 좋아하는 일이라 도전할 준비가 되어 있어요.',
         others_stay_tuned: '기대해 주세요',
         others_stay_tuned_sparkle: '기대해 주세요 ✨'
     });
