@@ -18,7 +18,7 @@
             about_age_value: '18 Years Old',
             about_birth_date_value: 'March 15, 2008',
             about_birthplace_value: 'Dr. Rafael S. Tumbukon Memorial Hospital',
-            about_message_for_me: 'MESSAGE FOR ME',
+            about_message_for_me: 'MESSAGE ME',
             about_hobbies: 'Hobbies',
             about_my_favorites: 'My Favorites',
             about_hobby_games: 'Playing Online Games',
