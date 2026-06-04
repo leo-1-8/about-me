@@ -3851,11 +3851,15 @@
             transform: translateX(-50%);
             z-index: 25000;
             width: auto;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             margin: 0;
             flex-shrink: 0;
+        }
+
+        .main-menu-battery-wrap.active {
+            display: flex;
         }
 
         .main-menu-battery {
@@ -7334,7 +7338,7 @@
                 <span id="seconds">00</span><span class="time-label">S</span>
             </div>
         </div>
-        <div id="mainMenuBatteryWrap" class="main-menu-battery-wrap" aria-label="Battery" style="display: none;">
+        <div id="mainMenuBatteryWrap" class="main-menu-battery-wrap" aria-label="Battery">
             <span class="clock-battery main-menu-battery">
                 <span class="clock-battery-fill" id="mainBatteryFill"></span>
                 <span class="clock-battery-pct clock-battery-pct--unknown" id="mainBatteryPct">--</span>
@@ -8734,7 +8738,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     <p class="update14-heading update16-heading-first">
                         <span class="update14-new-dot" aria-hidden="true"></span>
                         <strong class="update16-rainbow-title">UPDATE 1.7 [IMPROVED]</strong>
-                        <span style="font-size: 0.9em; color: #90EE90 !important;">6/10/26, 12:00PM</span>
+                        <span style="font-size: 0.75em; color: #90EE90 !important;">6/10/26, 12:00PM</span>
                     </p>
                     <p id="update17-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I improved a bit on my website.
@@ -8759,7 +8763,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.6 [NEW]</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">5/25/26, 8:00AM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.6 [NEW]</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">5/25/26, 8:00AM</span></p>
                     <p id="update16-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I added Clock on my website.
                         <span id="update16-toggle-top" class="see-more-link" onclick="toggleUpdate16Details()">see more...</span>
@@ -8797,7 +8801,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span id="update16-toggle-bottom" class="see-more-link" onclick="toggleUpdate16Details()">see less...</span>
                         </p>
                     </div>
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.5</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">4/20/26, 8:00AM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.5</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">4/20/26, 8:00AM</span></p>
                     <p id="update15-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I fixed some small issues on my website.
                         <span id="update15-toggle-top" class="see-more-link" onclick="toggleUpdate15Details()">see more...</span>
@@ -8824,7 +8828,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.4</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">3/15/26, 8:00AM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.4</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">3/15/26, 8:00AM</span></p>
                     <p id="update14-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I've added many improvements to my website.
                         <span id="update14-toggle-top" class="see-more-link" onclick="toggleUpdate14Details()">see more...</span>
@@ -8872,7 +8876,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.3</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">1/1/26, 12:00PM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.3</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">1/1/26, 12:00PM</span></p>
                     <p id="update13-summary" style="margin-bottom: 8px; font-style: italic;">
                         This Version Is Fixed
                         <span id="update13-toggle-top" class="see-more-link" onclick="toggleUpdate13Details()">see more...</span>
@@ -8888,7 +8892,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.2</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">11/5/25, 12:00PM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.2</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">11/5/25, 12:00PM</span></p>
                     <p id="update12-summary" style="margin-bottom: 8px;">
                         <span style="font-style: italic;">These are the updates and fixes</span>
                         <span id="update12-toggle-top" class="see-more-link" onclick="toggleUpdate12Details()">see more...</span>
@@ -8926,7 +8930,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.1</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">9/30/25, 12:00PM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.1</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">9/30/25, 12:00PM</span></p>
                     <p id="update11-summary" style="font-style: italic; font-size: 16px; margin-bottom: 10px; color: #555;">
                         These fixes are now applied in this version
                         <span id="update11-toggle-top" class="see-more-link" onclick="toggleUpdate11Details()">see more...</span>
@@ -8940,7 +8944,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.0</strong> <span style="font-size: 0.9em; color: #FF6B6B !important;">7/25/25, 10:00AM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.0</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">7/25/25, 10:00AM</span></p>
                     <p id="update1-summary" style="margin-bottom: 8px;">
                         UI REFORGE + MUSIC SYSTEM UPGRADE
                         <span id="update1-toggle-top" class="see-more-link" onclick="toggleUpdateDetails()">see more...</span>
@@ -9895,6 +9899,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }, true);
 
             const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1_6';
+            
+            // Reset UPDATED message to show again on page load
+            try {
+                localStorage.removeItem(UPDATED_SPLASH_SEEN_KEY);
+            } catch (e) {}
             function hasSeenUpdatedSplashOnce() {
                 try {
                     return localStorage.getItem(UPDATED_SPLASH_SEEN_KEY) === '1';
@@ -9931,6 +9940,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         enableMusicMiniButton();
                         showUpdatesButton();
                         showMainButtons();
+                        updateClockBattery();
                         setTimeout(function() { try { startBgMusic(); } catch {} }, 100);
                         if (introBox) {
                             introBox.classList.add('fade-out');
@@ -9949,6 +9959,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     enableMusicMiniButton();
                     showUpdatesButton();
                     showMainButtons();
+                    updateClockBattery();
                     startBgMusic();
                 }
             }
@@ -10225,6 +10236,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             enableMusicMiniButton();
                             showUpdatesButton();
                             showMainButtons();
+                            updateClockBattery();
                             startBgMusic();
                         }
                     }, 300);
@@ -11808,7 +11820,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 pctEl.classList.add('clock-battery-pct--unknown');
                 if (wrap) {
                     wrap.setAttribute('aria-label', 'Battery level unavailable on this device');
-                    if (wrapId === 'mainMenuBatteryWrap') wrap.style.display = 'none';
+                    if (wrapId === 'mainMenuBatteryWrap') wrap.classList.remove('active');
                 }
                 return;
             }
@@ -11820,7 +11832,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             pctEl.classList.remove('clock-battery-pct--unknown');
             if (wrap) {
                 wrap.setAttribute('aria-label', 'Battery ' + percent + ' percent' + (charging ? ', charging' : ''));
-                if (wrapId === 'mainMenuBatteryWrap') wrap.style.display = 'flex';
+                if (wrapId === 'mainMenuBatteryWrap') wrap.classList.add('active');
             }
         }
 
@@ -11841,7 +11853,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (!document.getElementById('mainBatteryFill')) return;
 
             if (!navigator.getBattery) {
-                renderClockBattery(null);
+                // Fallback: show 100% battery if API not available
+                renderClockBattery(1, false);
                 return;
             }
 
@@ -11854,7 +11867,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 battery.addEventListener('chargingchange', sync);
                 clockBatteryManager = { battery: battery, sync: sync };
             }).catch(function () {
-                renderClockBattery(null);
+                // Fallback on error: show 100% battery
+                renderClockBattery(1, false);
             });
         }
 
@@ -12704,10 +12718,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function isInboxUnlocked() {
-            return (
-                localStorage.getItem(INBOX_UNLOCK_KEY) === 'true' ||
-                localStorage.getItem(ADMIN_ACCESS_KEY) === 'true'
-            );
+            // Check if immediate unlock is set
+            if (localStorage.getItem(INBOX_UNLOCK_KEY) === 'true' || localStorage.getItem(ADMIN_ACCESS_KEY) === 'true') {
+                return true;
+            }
+            
+            // Check if 1-hour session is still valid
+            const stored = localStorage.getItem(SECRET_SESSION_EXPIRES_KEY);
+            const expireAt = stored ? parseInt(stored, 10) : null;
+            if (expireAt && expireAt > Date.now()) {
+                return true;
+            }
+            
+            return false;
         }
 
         function openMessageInboxGate() {
