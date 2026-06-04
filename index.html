@@ -1497,9 +1497,197 @@
             cursor: pointer;
             user-select: none;
         }
+
+        /* F opens inbox — looks like normal text (not obviously clickable) */
+        .christmas-modal-title span.clickable-f {
+            cursor: inherit;
+            user-select: auto;
+            opacity: 1;
+        }
         
         .christmas-modal-title span.clickable-e:hover {
             opacity: 0.7;
+        }
+
+        .pm-inbox-list {
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .pm-inbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #ffcdd2;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pm-inbox-item:hover {
+            background: #fff5f5;
+            box-shadow: 0 2px 8px rgba(183, 28, 28, 0.12);
+        }
+
+        .pm-inbox-item.unread {
+            border-left: 4px solid #c62828;
+        }
+
+        .pm-inbox-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pm-inbox-preview {
+            font-size: 14px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .pm-inbox-meta {
+            font-size: 11px;
+            color: #777;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+        }
+
+        .pm-inbox-device-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #b71c1c;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pm-inbox-device {
+            color: #888;
+            font-weight: 500;
+        }
+
+        .pm-unread-badge {
+            display: none;
+        }
+
+        .pm-conversation-thread {
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 8px 4px;
+            margin-bottom: 12px;
+        }
+
+        .pm-msg-bubble {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ffe0e0;
+        }
+
+        .pm-msg-bubble.from-owner {
+            background: #fff5f5;
+            border-left: 4px solid #c62828;
+        }
+
+        .pm-msg-bubble.from-sender {
+            border-left: 4px solid #90a4ae;
+        }
+
+        .pm-msg-time {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .pm-msg-text {
+            font-size: 14px;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .pm-reply-btn {
+            margin-top: 8px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            background: #c62828;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .pm-reply-btn:hover {
+            background: #b71c1c;
+        }
+
+        .pm-reply-compose {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .pm-reply-compose.show {
+            display: block;
+        }
+
+        .pm-reply-compose textarea {
+            width: 100%;
+            min-height: 72px;
+            border: 2px solid #ffcdd2;
+            border-radius: 8px;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .pm-reply-send {
+            margin-top: 6px;
+            padding: 8px 16px;
+            background: #c62828;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .pm-inbox-empty {
+            text-align: center;
+            padding: 24px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pm-inbox-gate {
+            padding: 8px 0 16px;
+        }
+
+        body.dark-mode .pm-inbox-item,
+        body.dark-mode .pm-msg-bubble {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #eee;
+        }
+
+        body.dark-mode .pm-inbox-preview,
+        body.dark-mode .pm-msg-text {
+            color: #eee;
+        }
+
+        body.dark-mode .pm-inbox-device-title {
+            color: #ef9a9a;
         }
 
 
@@ -3213,12 +3401,12 @@
         }
 
         .clock-app-close {
-            grid-column: 3;
-            justify-self: end;
-            align-self: center;
-            z-index: 3;
-            width: 34px;
-            height: 34px;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 4;
+            width: 32px;
+            height: 32px;
             margin: 0;
             padding: 0;
             border: none;
@@ -3226,7 +3414,7 @@
             background: rgba(30, 27, 75, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #f1f5f9;
-            font-size: 22px;
+            font-size: 20px;
             line-height: 1;
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -3242,12 +3430,10 @@
         .clock-status {
             position: relative;
             z-index: 1;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
             align-items: center;
-            gap: 8px;
             min-height: 48px;
-            padding: 12px 14px 10px;
+            padding: 12px 40px 10px 14px;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -3256,27 +3442,33 @@
         }
 
         .clock-status-title {
-            grid-column: 1;
-            justify-self: start;
+            flex-shrink: 0;
             text-align: left;
             font-size: 13px;
             letter-spacing: 0.08em;
+            position: relative;
+            z-index: 2;
         }
 
         .clock-status-center {
-            grid-column: 2;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            z-index: 1;
+            pointer-events: none;
         }
 
         .clock-status-time {
             font-family: var(--font-timer);
-            font-size: 13px;
+            font-size: 14px;
             font-variant-numeric: tabular-nums;
             opacity: 0.95;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
+            text-align: center;
         }
 
         .clock-battery-wrap,
@@ -6959,15 +7151,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </div>
                     </div>
                 </div>
-                <div class="message-for-me-box" id="messageForMeBox">
-                    <div class="personal-info-container">
-                        <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
-                            <div class="christmas-message-link" onclick="openModal('christmasMessage')" data-i18n="about_message_for_me">
-                                MESSAGE FOR ME
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="info-item hobbies-item">
                     <div class="info-label hobbies-with-button">
                         <span data-i18n="about_hobbies">Hobbies</span>
@@ -7067,6 +7250,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="description-short" data-i18n="about_fav_social_short">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events.</span>
                                 <span class="description-full" data-i18n="about_fav_social_full">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events. Through these platforms, I can connect with my family and friends, explore new ideas, and discover trends that match my interests. Social media also helps me stay updated with technology, entertainment, and news while providing a space to appreciate art, culture, and diverse communities. It is important in my daily life because it combines communication, learning, and self-expression in one digital environment.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="message-for-me-box show" id="messageForMeBox">
+                    <div class="personal-info-container">
+                        <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
+                            <div class="christmas-message-link" onclick="openModal('christmasMessage')" data-i18n="about_message_for_me">
+                                MESSAGE FOR ME
                             </div>
                         </div>
                     </div>
@@ -7259,12 +7451,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <span class="clock-status-title">Clock</span>
                         <div class="clock-status-center">
                             <span class="clock-status-time" id="clockStatusTime" aria-hidden="true">--:--</span>
-                            <span class="clock-battery-wrap" id="clockBatteryWrap" aria-label="Battery">
-                                <span class="clock-battery">
-                                    <span class="clock-battery-fill" id="clockBatteryFill"></span>
-                                    <span class="clock-battery-pct clock-battery-pct--unknown" id="clockBatteryPct">--</span>
-                                </span>
-                            </span>
                         </div>
                         <button type="button" class="clock-app-close" onclick="closeModal('clock')" title="Close" aria-label="Close clock">×</button>
                     </header>
@@ -8102,7 +8288,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <button class="close-button" onclick="closeModal('christmasMessage')" title="Close">×</button>
             <div class="christmas-modal-title">
                 <span class="christmas-warning-btn" onclick="toggleChristmasWarning(event); event.stopPropagation();">!</span>
-                MESSAG<span class="clickable-e" onclick="christmasEClickHandler();">E</span> FOR ME
+                Message <span class="clickable-f" onclick="christmasFClickHandler();">F</span>or M<span class="clickable-e" onclick="christmasEClickHandler();">e</span>
             </div>
             <textarea
                 id="christmasMessageInput"
@@ -8130,6 +8316,47 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <button class="close-button" onclick="closeModal('allMessages')" title="Close">×</button>
             <div class="christmas-modal-title">ALL MESSAGES</div>
             <div id="allMessagesContent" class="christmas-messages-list" style="max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- Inbox password gate (F section) -->
+    <div class="modal-overlay" id="messageInboxGateModal" onclick="closeModalOnOverlay(event, 'messageInboxGate')">
+        <div class="christmas-modal-box">
+            <button class="close-button" onclick="closeModal('messageInboxGate')" title="Close">×</button>
+            <div class="christmas-modal-title">INBOX</div>
+            <div class="pm-inbox-gate">
+                <div class="otp-row">
+                    <div class="otp-input-wrap">
+                        <button type="button" class="otp-eye-btn" id="inboxPinEyeBtn" data-state="hidden" aria-label="Show PIN" title="Show PIN">
+                            <span class="otp-eye-icon otp-eye-icon-open" aria-hidden="true">👁</span>
+                            <span class="otp-eye-icon otp-eye-icon-closed" aria-hidden="true">👁‍🗨</span>
+                        </button>
+                        <input id="inboxPinInput" class="otp-input" type="password" inputmode="numeric" maxlength="4" placeholder="Enter inbox PIN" autocomplete="off">
+                    </div>
+                    <button type="button" class="otp-submit" id="inboxPinSubmit">Submit</button>
+                </div>
+                <div class="otp-feedback" id="inboxPinFeedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inbox list (F section) -->
+    <div class="modal-overlay" id="messageInboxModal" onclick="closeModalOnOverlay(event, 'messageInbox')">
+        <div class="christmas-modal-box">
+            <button class="close-button" onclick="closeModal('messageInbox')" title="Close">×</button>
+            <div class="christmas-modal-title">INBOX</div>
+            <div id="messageInboxList" class="pm-inbox-list">
+                <div class="pm-inbox-empty">Loading conversations…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversation thread (owner inbox) -->
+    <div class="modal-overlay" id="messageConversationModal" onclick="closeModalOnOverlay(event, 'messageConversation')">
+        <div class="christmas-modal-box">
+            <button class="close-button" onclick="closeMessageConversation()" title="Close">×</button>
+            <div class="christmas-modal-title" id="messageConversationTitle">CONVERSATION</div>
+            <div id="messageConversationThread" class="pm-conversation-thread"></div>
         </div>
     </div>
 
@@ -11208,7 +11435,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function renderClockBattery(level, charging) {
-            renderBatteryWidget('clockBatteryFill', 'clockBatteryPct', 'clockBatteryWrap', level, charging);
             renderBatteryWidget('mainBatteryFill', 'mainBatteryPct', 'mainMenuBatteryWrap', level, charging);
         }
 
@@ -11222,7 +11448,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function updateClockBattery() {
             stopClockBatteryListeners();
-            if (!document.getElementById('clockBatteryFill') && !document.getElementById('mainBatteryFill')) return;
+            if (!document.getElementById('mainBatteryFill')) return;
 
             if (!navigator.getBattery) {
                 renderClockBattery(null);
@@ -11398,6 +11624,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             if (type === 'mapsComingSoon') {
                 stopAppReleaseCountdown('maps');
+            }
+            if (type === 'messageInbox') {
+                stopInboxListener();
+            }
+            if (type === 'messageConversation') {
+                stopThreadListener();
+                activeConversationSenderId = null;
             }
             if (type === 'boxDash') {
                 stopAppReleaseCountdown('boxDash');
@@ -11668,28 +11901,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         const christmasEClickHandler = createEClickHandler(function() {
             clearMessagesAndResetSubmission();
         }, 4);
+
+        const christmasFClickHandler = createClickableLetterHandler(function() {
+            openMessageInboxGate();
+        });
         
         function viewAllMessagesViaE() {
-            const list = loadChristmasMessages();
-            const allMessagesModal = document.getElementById('allMessagesModal');
-            const allMessagesContent = document.getElementById('allMessagesContent');
-            
-            if (!allMessagesModal || !allMessagesContent) return;
-            
-            // Show all messages WITH date/time in separate modal
-            if (list.length > 0) {
-                let messagesHtml = '';
-                list.forEach((msg, index) => {
-                    const date = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : 'Unknown date';
-                    messagesHtml += `<div class="christmas-message-item"><time>${date}</time><div>${(msg.text || 'No text').replace(/\n/g, '<br>')}</div></div>`;
-                });
-                allMessagesContent.innerHTML = messagesHtml;
+            if (isInboxUnlocked()) {
+                openMessageInbox();
             } else {
-                allMessagesContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No messages found.</div>';
+                openMessageInboxGate();
             }
-            
-            // Open the modal
-            openModal('allMessages');
         }
         
         function clearMessagesAndResetSubmission() {
@@ -11776,36 +11998,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
         
         function showAdminPanel() {
-            // Check if admin access is granted
             const adminAccess = localStorage.getItem(ADMIN_ACCESS_KEY) === 'true';
             if (!adminAccess) {
-                alert('Admin access required. Click the S in CHRISTMAS 10 times quickly to gain access.');
+                alert('Admin access required. Click the S in MESSAGE FOR ME 10 times quickly to gain access.');
                 return;
             }
-            
-            const list = loadChristmasMessages();
-            let adminHtml = '<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:10010;max-width:600px;max-height:80vh;overflow-y:auto;"><h2 style="color:#c62828;margin-bottom:20px;">ADMIN - All Messages (' + list.length + ')</h2>';
-            
-            if (list.length === 0) {
-                adminHtml += '<p>No messages yet.</p>';
-            } else {
-                list.forEach(function(msg, index) {
-                    adminHtml += '<div style="background:#f5f5f5;padding:15px;margin-bottom:10px;border-radius:8px;border-left:4px solid #b71c1c;"><p style="margin:0 0 5px 0;font-weight:600;">Message ' + (index + 1) + '</p><p style="margin:0 0 5px 0;white-space:pre-wrap;">' + (msg.text || 'No text') + '</p><small style="color:#666;">User: ' + (msg.userId || 'Unknown') + ' | Date: ' + (msg.createdAt ? new Date(msg.createdAt).toLocaleString() : 'Unknown') + '</small></div>';
-                });
+            if (window.PrivateMessaging && window.PrivateMessaging.ready) {
+                openMessageInbox();
+                return;
             }
-            
-            adminHtml += '<button onclick="closeAdminPanel()" style="margin-top:20px;padding:10px 20px;background:#c62828;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Close</button></div>';
-            
-            // Remove existing admin panel if any
-            const existingPanel = document.getElementById('adminPanel');
-            if (existingPanel) {
-                existingPanel.remove();
-            }
-            
-            const adminPanel = document.createElement('div');
-            adminPanel.id = 'adminPanel';
-            adminPanel.innerHTML = adminHtml;
-            document.body.appendChild(adminPanel);
+            alert('Messaging is still connecting. Please try again in a moment.');
         }
         
         function closeAdminPanel() {
@@ -11819,22 +12021,43 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const displayArea = document.getElementById('userChristmasMessage');
             const displayContainer = document.getElementById('christmasMessageDisplay');
             if (!displayArea || !displayContainer) return;
-            
-            const userId = getUserId();
-            const list = loadChristmasMessages();
-            const userMessages = list.filter(msg => msg.userId === userId);
-            
-            if (userMessages.length > 0) {
-                // Show the most recent message
-                const mostRecent = userMessages[userMessages.length - 1];
-                const date = mostRecent.createdAt ? new Date(mostRecent.createdAt).toLocaleString() : 'Unknown date';
-                displayArea.innerHTML = `<div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600;">${date}</div><div style="white-space: pre-wrap; word-wrap: break-word;">${mostRecent.text}</div>`;
-                displayContainer.style.display = 'block';
-                displayArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
                 displayArea.textContent = 'No message found.';
                 displayContainer.style.display = 'block';
+                return;
             }
+            var stopThread = null;
+            var gotSnapshot = false;
+            stopThread = window.PrivateMessaging.listenMyThread(function(messages, ownerUid) {
+                if (gotSnapshot) return;
+                gotSnapshot = true;
+                if (stopThread) stopThread();
+                if (!messages.length) {
+                    displayArea.textContent = 'No message found.';
+                } else {
+                    let html = '';
+                    messages.forEach(function(msg) {
+                        const fromOwner = msg.senderId === ownerUid;
+                        const time = formatMessageTime(msg.timestamp);
+                        const text = escapeHtmlPm(msg.message || '').replace(/\n/g, '<br>');
+                        html +=
+                            '<div style="margin-bottom:12px;padding:8px;background:' +
+                            (fromOwner ? '#fff0f0' : '#f9f9f9') +
+                            ';border-radius:8px;border-left:3px solid ' +
+                            (fromOwner ? '#c62828' : '#ccc') +
+                            ';">' +
+                            '<div style="font-size:11px;color:#666;margin-bottom:6px;">' +
+                            time +
+                            (fromOwner ? ' · Author replies' : '') +
+                            '</div><div style="white-space:pre-wrap;">' +
+                            text +
+                            '</div></div>';
+                    });
+                    displayArea.innerHTML = html;
+                }
+                displayContainer.style.display = 'block';
+                displayArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
         }
         
         function unlockChristmasFeatures() {
@@ -11866,15 +12089,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             openModal('favorites');
         }
 
-        // Christmas Message storage
+        // Private messaging (Firebase Realtime Database — same as visit counter)
         const CHRISTMAS_MESSAGES_KEY = 'christmasMessages';
         const CHRISTMAS_SUBMITTED_KEY = 'christmasMessageSubmitted';
         const USER_ID_KEY = 'christmasUserId';
         const PREVIEW_UNLOCK_KEY = 'christmasPreviewUnlock';
         const PREVIEW_UNLOCK_TIME_KEY = 'christmasPreviewUnlockTime';
         const ADMIN_ACCESS_KEY = 'adminAccessGranted';
-        
-        // Generate or retrieve user ID for privacy
+        const INBOX_UNLOCK_KEY = 'messageInboxUnlocked';
+        const INBOX_PIN_CODES = ['0047'];
+        const MESSAGE_RECEIVER_ID = 'site-owner';
+        let pmInboxUnsubscribe = null;
+        let pmThreadUnsubscribe = null;
+        let pmSenderThreadUnsubscribe = null;
+        let activeConversationSenderId = null;
+
         function getUserId() {
             let userId = localStorage.getItem(USER_ID_KEY);
             if (!userId) {
@@ -11889,40 +12118,348 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function loadChristmasMessages() {
-            try {
-                const raw = localStorage.getItem(CHRISTMAS_MESSAGES_KEY);
-                if (!raw) return [];
-                const parsed = JSON.parse(raw);
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (e) {
-                return [];
+            return [];
+        }
+
+        function saveChristmasMessages() {}
+
+        function clearChristmasMessages() {}
+
+        function escapeHtmlPm(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function getMessageDeviceName() {
+            const ua = navigator.userAgent || '';
+            const platform = navigator.platform || '';
+            if (/iPhone/i.test(ua)) {
+                const m = ua.match(/iPhone OS (\d+[_\d]*)/i);
+                return m ? 'iPhone (iOS ' + m[1].replace(/_/g, '.') + ')' : 'iPhone';
+            }
+            if (/iPad/i.test(ua)) return 'iPad';
+            if (/Android/i.test(ua)) {
+                const buildMatch = ua.match(/;\s*([^;)]+)\s*Build\//i);
+                const raw = buildMatch && buildMatch[1] ? buildMatch[1].trim() : '';
+                if (/tecno/i.test(raw) || /tecno/i.test(ua)) {
+                    return raw.replace(/^TECNO\s*/i, 'Tecno ') || 'Tecno';
+                }
+                if (/infinix/i.test(raw) || /infinix/i.test(ua)) {
+                    return raw.replace(/^INFINIX\s*/i, 'Infinix ') || 'Infinix';
+                }
+                if (/samsung/i.test(raw) || /SM-/i.test(raw) || /samsung/i.test(ua)) {
+                    if (/SM-/i.test(raw)) return 'Samsung ' + raw;
+                    return raw || 'Samsung';
+                }
+                if (/redmi|xiaomi/i.test(raw) || /redmi|xiaomi/i.test(ua)) {
+                    return raw.replace(/^Xiaomi\s*/i, 'Xiaomi ') || 'Xiaomi';
+                }
+                if (/huawei|honor/i.test(raw) || /huawei|honor/i.test(ua)) {
+                    return raw || (/honor/i.test(ua) ? 'Honor' : 'Huawei');
+                }
+                if (/oppo/i.test(raw) || /oppo/i.test(ua)) return raw || 'Oppo';
+                if (/vivo/i.test(raw) || /vivo/i.test(ua)) return raw || 'Vivo';
+                if (/realme/i.test(raw) || /realme/i.test(ua)) return raw || 'Realme';
+                if (/nokia/i.test(raw) || /nokia/i.test(ua)) return raw || 'Nokia';
+                if (/motorola|moto/i.test(raw) || /motorola|moto/i.test(ua)) return raw || 'Motorola';
+                if (/pixel/i.test(raw) || /pixel/i.test(ua)) return raw || 'Google Pixel';
+                if (raw) return raw;
+                return 'Android phone';
+            }
+            if (/Windows/i.test(ua)) {
+                if (/Edg\//i.test(ua)) return 'Windows Edge';
+                if (/Chrome/i.test(ua)) return 'Windows Chrome';
+                if (/Firefox/i.test(ua)) return 'Windows Firefox';
+                return 'Windows PC';
+            }
+            if (/Macintosh|Mac OS/i.test(ua)) {
+                if (/Chrome/i.test(ua)) return 'Mac Chrome';
+                if (/Safari/i.test(ua)) return 'Mac Safari';
+                return 'Mac';
+            }
+            if (/Linux/i.test(platform) || /Linux/i.test(ua)) return 'Linux';
+            return platform || 'Unknown device';
+        }
+
+        function formatInboxDeviceLabel(deviceName) {
+            const name = String(deviceName || '').trim();
+            if (!name) return 'Unknown device';
+            if (/^iphone/i.test(name)) return 'iPhone';
+            if (/^ipad/i.test(name)) return 'iPad';
+            if (/^samsung/i.test(name)) {
+                const model = name.replace(/^Samsung\s*/i, '').trim();
+                if (model && !/^SM-/i.test(model)) return 'Samsung · ' + model;
+                return 'Samsung';
+            }
+            if (/^tecno/i.test(name)) return name.replace(/^tecno/i, 'Tecno');
+            if (/^infinix/i.test(name)) return name.replace(/^infinix/i, 'Infinix');
+            if (/^xiaomi|^redmi/i.test(name)) return name.replace(/^xiaomi/i, 'Xiaomi');
+            if (/^huawei|^honor/i.test(name)) return name;
+            if (/^oppo|^vivo|^realme|^nokia|^motorola|^pixel|^google pixel/i.test(name)) return name;
+            if (/windows chrome/i.test(name)) return 'Windows · Chrome';
+            if (/windows edge/i.test(name)) return 'Windows · Edge';
+            if (/windows firefox/i.test(name)) return 'Windows · Firefox';
+            if (/windows pc/i.test(name)) return 'Windows PC';
+            if (/mac chrome/i.test(name)) return 'Mac · Chrome';
+            if (/mac safari/i.test(name)) return 'Mac · Safari';
+            if (/^mac$/i.test(name)) return 'Mac';
+            if (/android phone/i.test(name)) return 'Android phone';
+            return name.length > 28 ? name.slice(0, 26) + '…' : name;
+        }
+
+        function formatMessageTime(value) {
+            let d;
+            if (value && typeof value.toDate === 'function') d = value.toDate();
+            else if (value && typeof value === 'object' && typeof value.seconds === 'number') {
+                d = new Date(value.seconds * 1000);
+            } else d = new Date(value);
+            if (!d || isNaN(d.getTime())) return '';
+            const now = new Date();
+            const sameDay =
+                d.getFullYear() === now.getFullYear() &&
+                d.getMonth() === now.getMonth() &&
+                d.getDate() === now.getDate();
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+            const isYesterday =
+                d.getFullYear() === yesterday.getFullYear() &&
+                d.getMonth() === yesterday.getMonth() &&
+                d.getDate() === yesterday.getDate();
+            const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            if (sameDay) return timeStr;
+            if (isYesterday) return 'Yesterday ' + timeStr;
+            return (
+                d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + timeStr
+            );
+        }
+
+        function isInboxUnlocked() {
+            return (
+                localStorage.getItem(INBOX_UNLOCK_KEY) === 'true' ||
+                localStorage.getItem(ADMIN_ACCESS_KEY) === 'true'
+            );
+        }
+
+        function openMessageInboxGate() {
+            if (isInboxUnlocked()) {
+                openMessageInbox();
+                return;
+            }
+            openModal('messageInboxGate');
+            const input = document.getElementById('inboxPinInput');
+            if (input) {
+                input.value = '';
+                setTimeout(function() { input.focus(); }, 200);
             }
         }
 
-        function saveChristmasMessages(list) {
-            // Save messages to localStorage - messages persist permanently
-            // This function only saves, never clears existing messages
-            try {
-                localStorage.setItem(CHRISTMAS_MESSAGES_KEY, JSON.stringify(list));
-            } catch (e) {
-                // ignore
+        function openMessageInbox() {
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                alert('Messaging is still connecting. Please try again in a moment.');
+                return;
+            }
+            openModal('messageInbox');
+            startInboxListener();
+        }
+
+        function closeMessageConversation() {
+            stopThreadListener();
+            activeConversationSenderId = null;
+            closeModal('messageConversation');
+            if (document.getElementById('messageInboxModal').classList.contains('active')) {
+                startInboxListener();
             }
         }
 
-        // Clear all saved Christmas messages (only used for admin/testing purposes)
-        // IMPORTANT: This function should NEVER be called automatically on page load or update
-        // Messages are stored permanently and should persist across all code updates
-        function clearChristmasMessages() {
-            try {
-                localStorage.removeItem(CHRISTMAS_MESSAGES_KEY);
-            } catch (e) {
-                // ignore
+        function stopInboxListener() {
+            if (pmInboxUnsubscribe) {
+                pmInboxUnsubscribe();
+                pmInboxUnsubscribe = null;
             }
         }
 
-        // Messages now persist forever - removed auto-clear on page load for privacy
-        // Messages are NEVER cleared on page load, refresh, or code updates
-        // They remain in localStorage until manually cleared by admin function only
+        function stopThreadListener() {
+            if (pmThreadUnsubscribe) {
+                pmThreadUnsubscribe();
+                pmThreadUnsubscribe = null;
+            }
+        }
+
+        function stopSenderThreadListener() {
+            if (pmSenderThreadUnsubscribe) {
+                pmSenderThreadUnsubscribe();
+                pmSenderThreadUnsubscribe = null;
+            }
+        }
+
+        function startInboxListener() {
+            stopInboxListener();
+            const listEl = document.getElementById('messageInboxList');
+            if (!listEl || !window.PrivateMessaging) return;
+            listEl.innerHTML = '<div class="pm-inbox-empty">Loading conversations…</div>';
+            pmInboxUnsubscribe = window.PrivateMessaging.listenInbox(function(conversations) {
+                renderInboxList(conversations);
+            });
+        }
+
+        function renderInboxList(conversations) {
+            const listEl = document.getElementById('messageInboxList');
+            if (!listEl) return;
+            if (!conversations.length) {
+                listEl.innerHTML = '<div class="pm-inbox-empty">No messages yet.</div>';
+                return;
+            }
+            let html = '';
+            conversations.forEach(function(conv) {
+                const unread = Number(conv.unreadCount) || 0;
+                const preview = escapeHtmlPm(conv.lastMessage || 'No message');
+                const time = formatMessageTime(conv.lastTimestamp);
+                const deviceLabel = escapeHtmlPm(formatInboxDeviceLabel(conv.lastDeviceName));
+                html +=
+                    '<div class="pm-inbox-item' +
+                    (unread > 0 ? ' unread' : '') +
+                    '" data-sender-id="' +
+                    escapeHtmlPm(conv.senderId) +
+                    '" onclick="openOwnerConversation(this.getAttribute(\'data-sender-id\'))">' +
+                    '<div class="pm-inbox-body">' +
+                    '<div class="pm-inbox-device-title">' +
+                    deviceLabel +
+                    '</div>' +
+                    '<div class="pm-inbox-preview">' +
+                    preview +
+                    '</div>' +
+                    '<div class="pm-inbox-meta">' +
+                    '<span>' +
+                    time +
+                    '</span>' +
+                    '</div></div></div>';
+            });
+            listEl.innerHTML = html;
+        }
+
+        function openOwnerConversation(senderId) {
+            if (!senderId || !window.PrivateMessaging) return;
+            activeConversationSenderId = senderId;
+            stopInboxListener();
+            const titleEl = document.getElementById('messageConversationTitle');
+            if (titleEl) {
+                titleEl.textContent = 'CONVERSATION';
+            }
+            const threadEl = document.getElementById('messageConversationThread');
+            if (threadEl) threadEl.innerHTML = '<div class="pm-inbox-empty">Loading…</div>';
+            openModal('messageConversation');
+            window.PrivateMessaging.markConversationRead(senderId);
+            stopThreadListener();
+            pmThreadUnsubscribe = window.PrivateMessaging.listenThread(senderId, function(messages, ownerUid) {
+                renderOwnerConversationThread(senderId, messages, ownerUid);
+            });
+        }
+
+        function renderOwnerConversationThread(senderId, messages, ownerUid) {
+            const threadEl = document.getElementById('messageConversationThread');
+            if (!threadEl) return;
+            if (!messages.length) {
+                threadEl.innerHTML = '<div class="pm-inbox-empty">No messages in this conversation.</div>';
+                return;
+            }
+            let html = '';
+            messages.forEach(function(msg, index) {
+                const fromOwner = msg.senderId === ownerUid;
+                const time = formatMessageTime(msg.timestamp);
+                const text = escapeHtmlPm(msg.message || '').replace(/\n/g, '<br>');
+                html +=
+                    '<div class="pm-msg-bubble ' +
+                    (fromOwner ? 'from-owner' : 'from-sender') +
+                    '">' +
+                    '<div class="pm-msg-time">' +
+                    time +
+                    '</div>' +
+                    '<div class="pm-msg-text">' +
+                    text +
+                    '</div>' +
+                    '<button type="button" class="pm-reply-btn" onclick="toggleOwnerReply(' +
+                    index +
+                    ')">Reply</button>' +
+                    '<div class="pm-reply-compose" id="ownerReplyCompose' +
+                    index +
+                    '">' +
+                    '<textarea maxlength="1000" placeholder="Write a reply…" id="ownerReplyText' +
+                    index +
+                    '"></textarea>' +
+                    '<button type="button" class="pm-reply-send" onclick="sendOwnerReply(\'' +
+                    String(senderId).replace(/'/g, "\\'") +
+                    "', " +
+                    index +
+                    ')">Send</button></div></div>';
+            });
+            threadEl.innerHTML = html;
+        }
+
+        function toggleOwnerReply(index) {
+            const box = document.getElementById('ownerReplyCompose' + index);
+            if (box) box.classList.toggle('show');
+        }
+
+        async function sendOwnerReply(senderId, index) {
+            const ta = document.getElementById('ownerReplyText' + index);
+            if (!ta || !window.PrivateMessaging) return;
+            const text = (ta.value || '').trim();
+            if (!text) return;
+            ta.disabled = true;
+            try {
+                await window.PrivateMessaging.sendReply(senderId, text);
+                ta.value = '';
+                const box = document.getElementById('ownerReplyCompose' + index);
+                if (box) box.classList.remove('show');
+            } catch (e) {
+                alert('Could not send reply. Please try again.');
+            }
+            ta.disabled = false;
+        }
+
+        function renderSenderThread(messages, ownerUid) {
+            const messageContent = document.getElementById('christmasMessageContent');
+            const viewArea = document.getElementById('christmasViewArea');
+            if (!messageContent || !viewArea) return;
+            const userId = getUserId();
+            if (!messages.length) {
+                messageContent.textContent = 'No message found.';
+                viewArea.style.display = 'block';
+                return;
+            }
+            let html = '';
+            messages.forEach(function(msg) {
+                const fromOwner = msg.senderId === ownerUid;
+                const time = formatMessageTime(msg.timestamp);
+                const text = escapeHtmlPm(msg.message || '').replace(/\n/g, '<br>');
+                html +=
+                    '<div style="margin-bottom:15px;padding:10px;background:' +
+                    (fromOwner ? '#fff0f0' : '#f5f5f5') +
+                    ';border-radius:8px;border-left:4px solid ' +
+                    (fromOwner ? '#c62828' : '#90a4ae') +
+                    ';">' +
+                    '<div style="font-size:11px;color:#666;margin-bottom:8px;font-weight:600;">' +
+                    time +
+                    (fromOwner ? ' · Author replies' : ' · Your message') +
+                    '</div>' +
+                    '<p style="margin:0;white-space:pre-wrap;word-wrap:break-word;">' +
+                    text +
+                    '</p></div>';
+            });
+            messageContent.innerHTML = html;
+            viewArea.style.display = 'block';
+        }
+
+        function startSenderThreadListener() {
+            stopSenderThreadListener();
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) return;
+            pmSenderThreadUnsubscribe = window.PrivateMessaging.listenMyThread(function(messages, ownerUid) {
+                renderSenderThread(messages, ownerUid);
+            });
+        }
 
         function handleChristmasMessageInput() {
             const textarea = document.getElementById('christmasMessageInput');
@@ -11938,102 +12475,66 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             counterEl.textContent = charCount + ' / 1000';
         }
 
-        function submitChristmasMessage() {
+        async function submitChristmasMessage() {
             const textarea = document.getElementById('christmasMessageInput');
             const viewBtn = document.getElementById('christmasViewBtn');
             const viewArea = document.getElementById('christmasViewArea');
             const messageContent = document.getElementById('christmasMessageContent');
             const counterEl = document.getElementById('christmasWordCounter');
             const errorMsg = document.getElementById('christmasErrorMsg');
-            const submitBtn = document.querySelector('.christmas-submit-btn');
-            
+            const submitBtn = document.querySelector('#christmasMessageModal .christmas-submit-btn');
+
             if (!textarea || !viewBtn || !viewArea) return;
-            
-            // Check if user has already submitted
-            const hasSubmitted = localStorage.getItem(CHRISTMAS_SUBMITTED_KEY) === 'true';
-            if (hasSubmitted) {
-                return;
-            }
-            
+
             let text = textarea.value.trim();
-            if (!text || text.length === 0) return;
+            if (!text) return;
             if (text.length > 1000) {
                 text = text.substring(0, 1000);
                 textarea.value = text;
             }
-            const list = loadChristmasMessages();
-            const userId = getUserId();
-            
-            // Always add a new message (don't update/replace existing ones)
-            // This allows multiple messages from the same user
-            list.push({
-                text,
-                userId: userId,
-                createdAt: new Date().toISOString()
-            });
-            saveChristmasMessages(list);
-            
-            // Mark as submitted
-            localStorage.setItem(CHRISTMAS_SUBMITTED_KEY, 'true');
-            
-            // Clear textarea and show placeholder
-            textarea.value = '';
-            textarea.placeholder = 'Insert message here...';
-            if (counterEl) counterEl.textContent = '0 / 1000';
-            
-            // Disable textarea and submit button (permanently disabled after submission)
-            textarea.disabled = true;
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.style.pointerEvents = 'none';
-                submitBtn.style.opacity = '0.6';
-                submitBtn.style.cursor = 'not-allowed';
+
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                alert('Messaging is still connecting. Please try again in a moment.');
+                return;
             }
-            
-            // Keep view button always visible (don't hide it)
-            if (viewBtn) viewBtn.style.display = 'block';
-            
-            // Pre-load user's own message (private view - show most recent)
-            if (viewArea && messageContent) {
-                const updatedList = loadChristmasMessages();
-                const userMessages = updatedList.filter(msg => msg.userId === userId);
-                if (userMessages.length > 0) {
-                    // Show the most recent message (last one in array)
-                    const mostRecent = userMessages[userMessages.length - 1];
-                    const date = mostRecent.createdAt ? new Date(mostRecent.createdAt).toLocaleString() : 'Unknown date';
-                    messageContent.innerHTML = `<div style="margin-bottom: 15px; padding: 10px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #b71c1c;"><div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600;">${date}</div><p style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">${(mostRecent.text || 'No text').replace(/\n/g, '<br>')}</p></div>`;
-                } else {
-                    messageContent.textContent = '';
+
+            if (submitBtn) submitBtn.disabled = true;
+            try {
+                await window.PrivateMessaging.sendMessage(text, getMessageDeviceName());
+                textarea.value = '';
+                textarea.placeholder = 'Insert message here…';
+                if (counterEl) counterEl.textContent = '0 / 1000';
+                if (viewBtn) viewBtn.style.display = 'block';
+                if (viewArea && messageContent) {
+                    viewArea.style.display = 'none';
+                    messageContent.innerHTML = '';
                 }
-                viewArea.style.display = 'none';
+                localStorage.setItem(CHRISTMAS_SUBMITTED_KEY, 'true');
+                startSenderThreadListener();
+            } catch (e) {
+                alert('Could not send your message. Please try again.');
             }
+            if (submitBtn) submitBtn.disabled = false;
             if (errorMsg) errorMsg.style.display = 'none';
         }
 
         function viewLatestChristmasMessage() {
-            const list = loadChristmasMessages();
             const viewArea = document.getElementById('christmasViewArea');
             const messageContent = document.getElementById('christmasMessageContent');
-            const userId = getUserId();
+            const viewBtn = document.getElementById('christmasViewBtn');
             if (!viewArea || !messageContent) return;
-            
-            // Toggle display
+
             if (viewArea.style.display === 'none' || viewArea.style.display === '') {
-                // Get all messages from this user and show the most recent one
-                const userMessages = list.filter(msg => msg.userId === userId);
-                if (userMessages.length > 0) {
-                    // Show the most recent message (last one in array)
-                    const mostRecent = userMessages[userMessages.length - 1];
-                    const date = mostRecent.createdAt ? new Date(mostRecent.createdAt).toLocaleString() : 'Unknown date';
-                    messageContent.innerHTML = `<div style="margin-bottom: 15px; padding: 10px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #b71c1c;"><div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600;">${date}</div><p style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">${(mostRecent.text || 'No text').replace(/\n/g, '<br>')}</p></div>`;
+                if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                    messageContent.textContent = 'Connecting…';
                     viewArea.style.display = 'block';
-                } else {
-                    messageContent.textContent = 'No message found.';
-                    viewArea.style.display = 'block';
+                    return;
                 }
+                if (viewBtn) viewBtn.style.display = 'block';
+                startSenderThreadListener();
             } else {
-                // Hide message
                 viewArea.style.display = 'none';
+                stopSenderThreadListener();
             }
         }
         
@@ -12049,43 +12550,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const textarea = document.getElementById('christmasMessageInputFavorites');
             const viewBtn = document.getElementById('christmasViewBtnFavorites');
             const viewArea = document.getElementById('christmasViewAreaFavorites');
-            const messageContent = document.getElementById('christmasMessageContentFavorites');
             const submitBtn = document.querySelector('#christmasMessageBoxInFavorites .christmas-submit-btn');
             const errorMsg = document.getElementById('christmasErrorMsgFavorites');
-            
+
             if (!textarea) return;
-            
-            // Check if user has already submitted
-            const hasSubmitted = localStorage.getItem(CHRISTMAS_SUBMITTED_KEY) === 'true';
-            if (hasSubmitted) {
-                if (textarea) textarea.disabled = true;
-                if (submitBtn) submitBtn.disabled = true;
-                if (errorMsg) errorMsg.style.display = 'none';
-                
-                // Load and show user's message
-                if (viewBtn && viewArea && messageContent) {
-                    const userId = getUserId();
-                    const list = loadChristmasMessages();
-                    const userMessages = list.filter(msg => msg.userId === userId);
-                    
-                    if (userMessages.length > 0) {
-                        // Show the most recent message
-                        const mostRecent = userMessages[userMessages.length - 1];
-                        messageContent.textContent = mostRecent.text;
-                        viewBtn.style.display = 'block';
-                        viewArea.style.display = 'none';
-                    } else {
-                        viewBtn.style.display = 'block';
-                        viewArea.style.display = 'none';
-                    }
-                }
-            } else {
-                if (textarea) textarea.disabled = false;
-                if (submitBtn) submitBtn.disabled = false;
-                if (errorMsg) errorMsg.style.display = 'none';
-                if (viewBtn) viewBtn.style.display = 'none';
-                if (viewArea) viewArea.style.display = 'none';
+            if (textarea) textarea.disabled = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.style.opacity = '1';
             }
+            if (errorMsg) errorMsg.style.display = 'none';
+            if (localStorage.getItem(CHRISTMAS_SUBMITTED_KEY) === 'true' && viewBtn) {
+                viewBtn.style.display = 'block';
+            }
+            if (viewArea) viewArea.style.display = 'none';
         }
 
         function handleChristmasMessageInputFavorites() {
@@ -12102,119 +12581,31 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             counterEl.textContent = charCount + ' / 1000';
         }
 
-        function submitChristmasMessageFromFavorites() {
+        async function submitChristmasMessageFromFavorites() {
             const textarea = document.getElementById('christmasMessageInputFavorites');
-            const viewBtn = document.getElementById('christmasViewBtnFavorites');
-            const viewArea = document.getElementById('christmasViewAreaFavorites');
-            const messageContent = document.getElementById('christmasMessageContentFavorites');
-            const counterEl = document.getElementById('christmasWordCounterFavorites');
-            const errorMsg = document.getElementById('christmasErrorMsgFavorites');
-            const submitBtn = document.querySelector('#christmasMessageBoxInFavorites .christmas-submit-btn');
-            
-            if (!textarea || !viewBtn || !viewArea) return;
-            
-            // Prevent double submission - check if already submitted
-            const hasSubmitted = localStorage.getItem(CHRISTMAS_SUBMITTED_KEY) === 'true';
-            if (hasSubmitted) {
-                // Ensure button is disabled
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.style.pointerEvents = 'none';
-                    submitBtn.style.opacity = '0.6';
-                }
-                return;
-            }
-            
+            if (!textarea) return;
             let text = textarea.value.trim();
-            if (!text || text.length === 0) return;
+            if (!text) return;
             if (text.length > 1000) {
                 text = text.substring(0, 1000);
                 textarea.value = text;
             }
-            const list = loadChristmasMessages();
-            const userId = getUserId();
-            
-            // Check if user already has a message and update it, otherwise create new one
-            const existingMessageIndex = list.findIndex(msg => msg.userId === userId);
-            if (existingMessageIndex !== -1) {
-                // Update existing message
-                list[existingMessageIndex] = {
-                    text,
-                    userId: userId,
-                    createdAt: list[existingMessageIndex].createdAt,
-                    updatedAt: new Date().toISOString()
-                };
-            } else {
-                // Create new message
-                list.push({
-                    text,
-                    userId: userId,
-                    createdAt: new Date().toISOString()
-                });
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                alert('Messaging is still connecting. Please try again in a moment.');
+                return;
             }
-            saveChristmasMessages(list);
-            
-            // Mark as submitted
-            localStorage.setItem(CHRISTMAS_SUBMITTED_KEY, 'true');
-            
-            // Clear textarea and show placeholder
-            textarea.value = '';
-            textarea.placeholder = 'Insert message here...';
-            if (counterEl) counterEl.textContent = '0 / 1000';
-            
-            // Disable textarea and submit button (permanently disabled after submission)
-            textarea.disabled = true;
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.style.pointerEvents = 'none';
-                submitBtn.style.opacity = '0.6';
-                submitBtn.style.cursor = 'not-allowed';
+            try {
+                await window.PrivateMessaging.sendMessage(text, getMessageDeviceName());
+                textarea.value = '';
+                localStorage.setItem(CHRISTMAS_SUBMITTED_KEY, 'true');
+                displayUserChristmasMessage();
+            } catch (e) {
+                alert('Could not send your message. Please try again.');
             }
-            
-            // Show view button and pre-load message
-            if (viewBtn) viewBtn.style.display = 'block';
-            if (viewArea && messageContent) {
-                const userId = getUserId();
-                const updatedList = loadChristmasMessages();
-                const userMessages = updatedList.filter(msg => msg.userId === userId);
-                if (userMessages.length > 0) {
-                    // Show the most recent message
-                    const mostRecent = userMessages[userMessages.length - 1];
-                    const date = mostRecent.createdAt ? new Date(mostRecent.createdAt).toLocaleString() : 'Unknown date';
-                    messageContent.innerHTML = `<div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600;">${date}</div><div style="white-space: pre-wrap; word-wrap: break-word;">${mostRecent.text}</div>`;
-                }
-                viewArea.style.display = 'none';
-            }
-            if (errorMsg) errorMsg.style.display = 'none';
-            
-            // Update the "Your Christmas Message" display in favorites
-            displayUserChristmasMessage();
         }
 
         function viewLatestChristmasMessageFromFavorites() {
-            const list = loadChristmasMessages();
-            const viewArea = document.getElementById('christmasViewAreaFavorites');
-            const messageContent = document.getElementById('christmasMessageContentFavorites');
-            const userId = getUserId();
-            if (!viewArea || !messageContent) return;
-            
-            // Toggle display
-            if (viewArea.style.display === 'none' || viewArea.style.display === '') {
-                // Get all messages from this user and show the most recent one
-                const userMessages = list.filter(msg => msg.userId === userId);
-                if (userMessages.length > 0) {
-                    // Show the most recent message (last one in array)
-                    const mostRecent = userMessages[userMessages.length - 1];
-                    messageContent.innerHTML = `<div style="margin-bottom: 15px; padding: 10px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #b71c1c;"><p style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">${(mostRecent.text || 'No text').replace(/\n/g, '<br>')}</p></div>`;
-                    viewArea.style.display = 'block';
-                } else {
-                    messageContent.textContent = 'No message found.';
-                    viewArea.style.display = 'block';
-                }
-            } else {
-                // Hide message
-                viewArea.style.display = 'none';
-            }
+            viewLatestChristmasMessage();
         }
 
 
@@ -12273,9 +12664,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 popup.id = 'christmasWarningPopup';
                 popup.className = 'christmas-warning-popup';
                 popup.innerHTML = `
-                    <p>YOU CAN ONLY SEE YOUR OWN MESSAGE</p>
-                    <p style="margin-top: 10px; font-size: 14px;">YOU CAN SEE YOUR MESSAGE AGAIN NEXT YEAR</p>
-                    <p style="margin-top: 10px; font-size: 14px;">YOU CAN ONLY SEND 1 MESSAGE</p>
+                    <p>YOUR CONVERSATION IS PRIVATE — ONLY YOU AND I CAN SEE IT</p>
+                    <p style="margin-top: 10px; font-size: 14px;">USE VIEW YOUR MESSAGE TO SEE THE FULL THREAD AND ANY REPLIES</p>
+                    <p style="margin-top: 10px; font-size: 14px;">YOU CAN SEND MORE THAN ONE MESSAGE IN THE SAME CONVERSATION</p>
                     <button class="close-warning-btn" onclick="closeChristmasWarning()">×</button>
                 `;
                 document.body.appendChild(popup);
@@ -13137,9 +13528,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     }
                     // Do not auto-show personal details here
                     if (personalBox) personalBox.classList.remove('show');
-                    // Hide message for me box
-                    const messageForMeBox = document.getElementById('messageForMeBox');
-                    if (messageForMeBox) messageForMeBox.classList.remove('show');
                 });
             }
 
@@ -13163,9 +13551,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // Hide gate, show details
                 if (accessGate) accessGate.style.display = 'none';
                 if (personalBox) personalBox.classList.add('show');
-                // Show message for me box
-                const messageForMeBox = document.getElementById('messageForMeBox');
-                if (messageForMeBox) messageForMeBox.classList.add('show');
                 // Show welcome toast for 4 seconds
                 showWelcomeToast();
                 if (personalToggleBtn) personalToggleBtn.classList.remove('rotated');
@@ -13207,6 +13592,50 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     submitCode();
                 }
             });
+
+            // Inbox PIN (F section)
+            const inboxPinInput = document.getElementById('inboxPinInput');
+            const inboxPinSubmit = document.getElementById('inboxPinSubmit');
+            const inboxPinFeedback = document.getElementById('inboxPinFeedback');
+            const inboxPinEyeBtn = document.getElementById('inboxPinEyeBtn');
+
+            function submitInboxPin() {
+                if (!inboxPinInput || !inboxPinFeedback) return;
+                const code = (inboxPinInput.value || '').trim();
+                inboxPinFeedback.style.color = '#cc0000';
+                if (!/^[0-9]{4}$/.test(code)) {
+                    inboxPinFeedback.textContent = 'WRONG CODE';
+                    setTimeout(function() { inboxPinFeedback.textContent = ''; }, 3000);
+                    return;
+                }
+                if (INBOX_PIN_CODES.indexOf(code) === -1 && localStorage.getItem(ADMIN_ACCESS_KEY) !== 'true') {
+                    inboxPinFeedback.textContent = 'WRONG CODE';
+                    setTimeout(function() { inboxPinFeedback.textContent = ''; }, 3000);
+                    return;
+                }
+                localStorage.setItem(INBOX_UNLOCK_KEY, 'true');
+                inboxPinFeedback.style.color = '#2e7d32';
+                inboxPinFeedback.textContent = 'Unlocked';
+                closeModal('messageInboxGate');
+                setTimeout(function() {
+                    inboxPinFeedback.textContent = '';
+                    openMessageInbox();
+                }, 300);
+            }
+
+            if (inboxPinEyeBtn && inboxPinInput) {
+                inboxPinEyeBtn.addEventListener('click', function() {
+                    const isHidden = inboxPinInput.type === 'password';
+                    inboxPinInput.type = isHidden ? 'text' : 'password';
+                    inboxPinEyeBtn.setAttribute('data-state', isHidden ? 'shown' : 'hidden');
+                });
+            }
+            if (inboxPinSubmit) inboxPinSubmit.addEventListener('click', submitInboxPin);
+            if (inboxPinInput) {
+                inboxPinInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') submitInboxPin();
+                });
+            }
 
             // Welcome toast helper
             function showWelcomeToast() {
@@ -13275,7 +13704,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         (async function () {
             try {
                 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
-                const { getDatabase, ref, runTransaction, onValue, set, onDisconnect } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                const { getDatabase, ref, runTransaction, onValue, set, onDisconnect, push, update } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
 
                 const firebaseConfig = {
                     apiKey: 'AIzaSyBgnlOhQ_YOuQwP0_KFQa38_UFKehvJYkA',
@@ -13287,6 +13716,155 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 const app = initializeApp(firebaseConfig);
                 const db = getDatabase(app);
+                const PM_OWNER_ID = 'site-owner';
+                const PM_USER_KEY = 'christmasUserId';
+
+                function pmSafeKey(id) {
+                    return String(id || '').replace(/[.#$\[\]/]/g, '_');
+                }
+
+                function pmGetSenderId() {
+                    try {
+                        var userId = localStorage.getItem(PM_USER_KEY);
+                        if (!userId) {
+                            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                            localStorage.setItem(PM_USER_KEY, userId);
+                        }
+                        return userId;
+                    } catch (e) {
+                        return 'user_' + Date.now();
+                    }
+                }
+
+                function pmMetaRef(senderId) {
+                    return ref(db, 'privateMessages/' + pmSafeKey(senderId) + '/meta');
+                }
+
+                function pmMessagesRef(senderId) {
+                    return ref(db, 'privateMessages/' + pmSafeKey(senderId) + '/messages');
+                }
+
+                window.PrivateMessaging = {
+                    ready: false,
+                    getUid: function () {
+                        return pmGetSenderId();
+                    },
+                    sendMessage: async function (text, deviceName) {
+                        var senderId = pmGetSenderId();
+                        var now = Date.now();
+                        var msgRef = push(pmMessagesRef(senderId));
+                        await set(msgRef, {
+                            senderId: senderId,
+                            receiverId: PM_OWNER_ID,
+                            message: text,
+                            timestamp: now,
+                            deviceName: deviceName || 'Unknown device'
+                        });
+                        await runTransaction(pmMetaRef(senderId), function (cur) {
+                            if (!cur) cur = {};
+                            cur.senderId = senderId;
+                            cur.receiverId = PM_OWNER_ID;
+                            cur.lastMessage = text;
+                            cur.lastTimestamp = now;
+                            cur.lastDeviceName = deviceName || 'Unknown device';
+                            if (!cur.senderDeviceName) {
+                                cur.senderDeviceName = deviceName || 'Unknown device';
+                            }
+                            cur.unreadCount = (Number(cur.unreadCount) || 0) + 1;
+                            return cur;
+                        });
+                    },
+                    sendReply: async function (senderId, text) {
+                        var now = Date.now();
+                        var msgRef = push(pmMessagesRef(senderId));
+                        await set(msgRef, {
+                            senderId: PM_OWNER_ID,
+                            receiverId: senderId,
+                            message: text,
+                            timestamp: now,
+                            deviceName: ''
+                        });
+                        await update(pmMetaRef(senderId), {
+                            lastMessage: text,
+                            lastTimestamp: now,
+                            unreadCount: 0
+                        });
+                    },
+                    markConversationRead: async function (senderId) {
+                        await update(pmMetaRef(senderId), { unreadCount: 0 });
+                    },
+                    listenInbox: function (callback) {
+                        return onValue(ref(db, 'privateMessages'), function (snap) {
+                            var val = snap.val();
+                            var list = [];
+                            if (val && typeof val === 'object') {
+                                Object.keys(val).forEach(function (key) {
+                                    var meta = val[key] && val[key].meta;
+                                    if (meta) {
+                                        list.push({
+                                            senderId: meta.senderId || key,
+                                            lastMessage: meta.lastMessage,
+                                            lastTimestamp: meta.lastTimestamp,
+                                            lastDeviceName: meta.senderDeviceName || meta.lastDeviceName,
+                                            unreadCount: meta.unreadCount
+                                        });
+                                    }
+                                });
+                            }
+                            list.sort(function (a, b) {
+                                return (Number(b.lastTimestamp) || 0) - (Number(a.lastTimestamp) || 0);
+                            });
+                            callback(list);
+                        });
+                    },
+                    listenThread: function (senderId, callback) {
+                        return onValue(pmMessagesRef(senderId), function (snap) {
+                            var val = snap.val();
+                            var messages = [];
+                            if (val && typeof val === 'object') {
+                                Object.keys(val).forEach(function (id) {
+                                    var data = val[id];
+                                    messages.push({
+                                        id: id,
+                                        senderId: data.senderId,
+                                        receiverId: data.receiverId,
+                                        message: data.message,
+                                        timestamp: data.timestamp
+                                    });
+                                });
+                                messages.sort(function (a, b) {
+                                    return (Number(a.timestamp) || 0) - (Number(b.timestamp) || 0);
+                                });
+                            }
+                            callback(messages, PM_OWNER_ID);
+                        });
+                    },
+                    listenMyThread: function (callback) {
+                        var senderId = pmGetSenderId();
+                        return onValue(pmMessagesRef(senderId), function (snap) {
+                            var val = snap.val();
+                            var messages = [];
+                            if (val && typeof val === 'object') {
+                                Object.keys(val).forEach(function (id) {
+                                    var data = val[id];
+                                    messages.push({
+                                        id: id,
+                                        senderId: data.senderId,
+                                        receiverId: data.receiverId,
+                                        message: data.message,
+                                        timestamp: data.timestamp
+                                    });
+                                });
+                                messages.sort(function (a, b) {
+                                    return (Number(a.timestamp) || 0) - (Number(b.timestamp) || 0);
+                                });
+                            }
+                            callback(messages, PM_OWNER_ID);
+                        });
+                    }
+                };
+
+                window.PrivateMessaging.ready = true;
                 const visitsRef = ref(db, 'visits');
 
                 var PRESENCE_STALE_MS = 45000;

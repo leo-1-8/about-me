@@ -7,6 +7,10 @@
     "presence": {
       ".read": true,
       ".write": true
+    },
+    "privateMessages": {
+      ".read": true,
+      ".write": true
     }
   }
 }
