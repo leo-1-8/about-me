@@ -501,7 +501,7 @@
             align-items: center;
             justify-content: center;
             padding: 0;
-            color: #eaf3ff;
+            color: #ffffff;
         }
         .settings-eye-btn svg {
             width: 18px;
@@ -1986,7 +1986,8 @@
 
         .pm-inbox-device-title {
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             color: #b71c1c;
             margin-bottom: 4px;
             white-space: nowrap;
@@ -2054,13 +2055,20 @@
             font-size: 11px;
             color: #888;
             margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .pm-msg-text {
             font-size: 14px;
-            color: #333;
+            color: #6b7280;
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 600;
+            font-style: italic;
+            line-height: 1.8;
         }
 
         .pm-reply-btn {
@@ -2153,11 +2161,13 @@
 
         body.dark-mode .pm-inbox-preview,
         body.dark-mode .pm-msg-text {
-            color: #eee;
+            color: #808080;
         }
 
         body.dark-mode .pm-inbox-device-title {
             color: #ef9a9a;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 600;
         }
 
 
@@ -2419,6 +2429,266 @@
             background: #f5f5f5;
             cursor: not-allowed;
             opacity: 0.7;
+        }
+
+        /* Message Edit Button and Modals */
+        .msg-edit-btn {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 0;
+            background: transparent;
+            color: #3399ff;
+            border: none;
+            border-radius: 0;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .msg-edit-btn:hover {
+            background: transparent;
+            color: #0078d4;
+            text-decoration: underline;
+        }
+
+        .msg-edit-btn:disabled {
+            background: transparent;
+            color: #ccc;
+            border: none;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pm-edits-btn {
+            display: inline-block;
+            padding: 0;
+            background: transparent;
+            color: #ff9800;
+            border: none;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            text-decoration: underline;
+            white-space: nowrap;
+        }
+
+        .pm-edits-btn:hover {
+            color: #ff7700;
+        }
+
+        .edit-modal-black-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .edit-modal-content {
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .edit-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .edit-modal-title .edit-info-icon {
+            position: absolute;
+            left: 0;
+        }
+        
+        .edit-modal-title-text {
+            flex: 1;
+            text-align: center;
+        }
+
+        .edit-info-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #666;
+            color: #bbb;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+            padding: 0;
+        }
+
+        .edit-info-icon:hover {
+            background: #777;
+        }
+
+        .edit-modal-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #2a2a2a;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        .edit-modal-textarea:focus {
+            outline: none;
+            border-color: #3399ff;
+            box-shadow: 0 0 5px rgba(51, 153, 255, 0.3);
+        }
+
+        .edit-modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .edit-modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-back-btn {
+            background: #555;
+            color: #fff;
+        }
+
+        .edit-back-btn:hover {
+            background: #666;
+        }
+
+        .edit-done-btn {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .edit-done-btn:hover {
+            background: #16a34a;
+        }
+
+        .edit-confirm-timer {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin: 15px 0;
+            color: #ef4444;
+        }
+
+        .edit-confirm-ok-btn {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .edit-confirm-ok-btn:hover {
+            background: #16a34a;
+        }
+
+        .edit-note-modal-black-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            padding: 20px;
+        }
+
+        .edit-note-modal-content {
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .edit-note-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-note-modal-text {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+
+        .edit-note-remaining-time {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+        }
+        
+        .edit-note-remaining-time #editNoteRemainingTime {
+            color: #ef4444;
+        }
+
+        .edit-note-ok-btn {
+            background: #3399ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.2s ease;
+        }
+
+        .edit-note-ok-btn:hover {
+            background: #0078d4;
         }
 
         .christmas-view-btn {
@@ -2818,7 +3088,7 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            z-index: 10003 !important;
+            z-index: 1 !important;
             opacity: 1 !important;
             visibility: visible !important;
         }
@@ -2929,6 +3199,7 @@
         .update16-rainbow-title {
             display: inline-block;
             font-weight: 800;
+            font-size: 0.85em;
             color: transparent !important;
             -webkit-text-fill-color: transparent !important;
             background-image: linear-gradient(
@@ -6050,12 +6321,13 @@
         }
         body.dark-mode .otp-eye-btn {
             background: rgba(255, 255, 255, 0.10);
+            color: #000000;
         }
         body.dark-mode .otp-eye-btn:hover {
             background: rgba(255, 255, 255, 0.16);
         }
         body.dark-mode .otp-eye-icon {
-            color: rgba(255, 255, 255, 0.88);
+            color: #000000 !important;
         }
 
         /* Hide browser built-in password reveal/clear icons (prevents duplicate eye on the right) */
@@ -6117,7 +6389,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: rgba(0, 0, 0, 0.75);
+            color: #000000 !important;
         }
 
         /* Default state is hidden (password) => show closed-eye icon */
@@ -7787,7 +8059,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </div>
                     </div>
                 </div>
-                <div class="message-for-me-box show" id="messageForMeBox">
+                <div class="message-for-me-box" id="messageForMeBox">
                     <div class="personal-info-container">
                         <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
                             <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me">
@@ -8831,6 +9103,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         type="text"
                         placeholder="Name or Nickname"
                         maxlength="50"
+                        onkeypress="if(event.key==='Enter') proceedToMessage()"
                     />
                 </div>
                 <button type="button" class="name-submit-btn" onclick="proceedToMessage()">Submit</button>
@@ -8852,17 +9125,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Final Name Confirmation Modal -->
     <div class="modal-overlay" id="nameFinalConfirmModal">
         <div class="message-confirmation-box" onclick="event.stopPropagation();">
-            <button class="close-button" onclick="closeModal('nameFinalConfirm')" title="Close">×</button>
             <div class="confirmation-header">
                 <h3 class="confirmation-title">LAST CONFIRMATION</h3>
             </div>
-            <div class="confirmation-body" style="margin-bottom: 12px;">
+            <div class="confirmation-body" style="margin-bottom: 0;">
                 <p id="confirmNameQuestion" style="margin: 0; font-size: 14px; text-align: center; line-height: 1.6; font-weight: 500;"></p>
                 <p style="margin: 6px 0 0 0; font-size: 14px; text-align: center; line-height: 1.6;">If not, please click 'Edit' and double-check it.</p>
             </div>
+            <div class="edit-confirm-timer" style="margin: 12px 0 15px 0; display: flex; justify-content: center;"><span id="nameConfirmCountdown">10</span>s</div>
             <div style="display: flex; gap: 10px; margin-top: 12px;">
                 <button type="button" class="name-submit-btn" style="flex: 1;" onclick="goBackToEditName()">Edit</button>
-                <button type="button" class="name-submit-btn" style="flex: 1;" onclick="confirmFinalName()">Submit</button>
+                <button type="button" class="name-submit-btn" id="nameFinalConfirmSubmitBtn" style="flex: 1; opacity: 0.5; cursor: not-allowed;" onclick="confirmFinalName()" disabled>Submit</button>
             </div>
         </div>
     </div>
@@ -8892,13 +9165,53 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <span>Letter Limit: 1000</span>
                 <span id="christmasWordCounter" class="christmas-word-counter">0 / 1000</span>
             </div>
-            <button type="button" class="christmas-submit-btn" onclick="submitChristmasMessage()">Submit</button>
+            <button type="button" class="christmas-submit-btn" onclick="submitChristmasMessage()">SUBMIT</button>
             <button type="button" id="christmasViewBtn" class="christmas-view-btn" onclick="viewLatestChristmasMessage()">
-                VIEW YOUR MESSAGE
+                <span id="christmasViewBtnText">VIEW YOUR MESSAGE</span>
             </button>
             <div id="christmasViewArea" class="christmas-message-display" style="margin-top:12px; display:none; position: relative;">
                 <div id="christmasMessageContent"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Message Edit Modal -->
+    <div id="editMessageModal" class="edit-modal-black-box" style="display: none;">
+        <div class="edit-modal-content">
+            <div class="edit-modal-title">
+                <button type="button" class="edit-info-icon" onclick="showEditNoteModal()">!</button>
+                <span class="edit-modal-title-text">EDIT YOUR MESSAGE</span>
+            </div>
+            <textarea id="editMessageTextarea" class="edit-modal-textarea" placeholder="Edit your message here..." oninput="updateEditDoneButtonState()"></textarea>
+            <div class="edit-remaining-time" style="text-align: center; font-size: 12px; font-weight: 600; font-family: 'Poppins', sans-serif; margin-bottom: 15px;">REMAINING TIME: <span id="editRemainingTimeDisplay" style="color: #ef4444;">15:00</span></div>
+            <div class="edit-modal-buttons">
+                <button type="button" class="edit-modal-btn edit-back-btn" onclick="closeEditModal()">BACK</button>
+                <button type="button" class="edit-modal-btn edit-done-btn" id="editDoneBtn" onclick="submitEditMessage()" disabled style="opacity: 0.5; cursor: not-allowed;">DONE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Edit Confirmation Modal -->
+    <div id="editConfirmationModal" class="edit-modal-black-box" style="display: none;">
+        <div class="edit-modal-content">
+            <div class="edit-modal-title">ARE YOU SURE YOU WANT TO MAKE CHANGES TO YOUR MESSAGE?</div>
+            <div class="edit-confirm-timer"><span id="editConfirmCountdown">3</span>s</div>
+            <div class="edit-modal-buttons">
+                <button type="button" class="edit-modal-btn edit-back-btn" onclick="backFromConfirmation()">BACK</button>
+                <button type="button" class="edit-modal-btn edit-confirm-ok-btn" id="editConfirmOkBtn" onclick="confirmEditMessage()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Note Modal -->
+    <div id="editNoteModal" class="edit-note-modal-black-box" style="display: none;">
+        <div class="edit-note-modal-content">
+            <div class="edit-note-modal-title">NOTE</div>
+            <div class="edit-note-modal-text">YOU CAN ONLY EDIT YOUR MESSAGE ONCE.</div>
+            <div class="edit-note-modal-text">YOU CANNOT UNDO YOUR CHANGES.</div>
+            <div class="edit-note-modal-text">YOU ONLY HAVE 15 MINUTES TO EDIT YOUR MESSAGE.</div>
+            <div class="edit-note-remaining-time">REMAINING TIME: <span id="editNoteRemainingTime">00:00</span></div>
+            <button type="button" class="edit-note-ok-btn" onclick="closeEditNoteModal()">OK</button>
         </div>
     </div>
 
@@ -8936,7 +9249,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </button>
                         <input id="inboxPinInput" class="otp-input" type="text" inputmode="text" maxlength="32" placeholder="Input Password" autocomplete="off">
                     </div>
-                    <button type="button" class="otp-submit" id="inboxPinSubmit">Submit</button>
+                    <button type="button" class="otp-submit" id="inboxPinSubmit">SUBMIT</button>
                 </div>
                 <div class="otp-feedback" id="inboxPinFeedback"></div>
                 <div class="otp-feedback" id="inboxLockoutTimer" style="min-height:22px;margin-top:8px;color:#444;font-size:0.95rem;"></div>
@@ -8947,7 +9260,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
     <div class="modal-overlay" id="secretQuizModal">
         <div class="christmas-modal-box">
-            <button class="close-button" onclick="closeModal('secretQuiz')" title="Close">×</button>
             <div class="christmas-modal-title">UNKNOWN</div>
             <div class="pm-inbox-gate" style="padding:20px; gap:18px;">
                 <div>
@@ -8955,7 +9267,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     <div id="secretQuizStepCaption" style="font-size:0.95rem;color:#d0d0d0;margin-bottom:18px;"></div>
                 </div>
                 <div id="secretQuizOptions" style="display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:10px; width:100%;"></div>
-                <button type="button" class="otp-submit" id="secretQuizSubmit" onclick="submitSecretQuiz()" style="width:100%;margin-top:12px;">Submit</button>
+                <button type="button" class="otp-submit" id="secretQuizSubmit" onclick="submitSecretQuiz()" style="width:100%;margin-top:12px;">SUBMIT</button>
                 <div class="otp-feedback" id="secretQuizFeedback" style="min-height:22px;margin-top:6px;"></div>
                 <div class="otp-feedback" id="secretQuizTimer" style="min-height:22px;margin-top:8px;color:#cc0000;font-weight:600;font-size:0.95rem;"></div>
             </div>
@@ -8963,7 +9275,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Inbox list (F section) -->
-    <div class="modal-overlay" id="messageInboxModal" onclick="closeModalOnOverlay(event, 'messageInbox')">
+    <div class="modal-overlay" id="messageInboxModal">
         <div class="christmas-modal-box">
             <button class="close-button" onclick="closeModal('messageInbox')" title="Close">×</button>
             <div style="text-align:center;">
@@ -8972,14 +9284,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div id="messageInboxList" class="pm-inbox-list">
                 <div class="pm-inbox-empty">Loading conversations…</div>
             </div>
-            <div style="text-align:center; padding: 15px; border-top: 1px solid #ddd; color: #666; font-size: 14px;">
-                Remaining time: <span id="sessionTimerDisplay">00:00:00</span>
+            <div style="text-align:center; padding: 15px; border-top: 1px solid #ddd; color: #666; font-size: 14px; font-family: 'Poppins', 'Segoe UI', sans-serif; font-weight: 600;">
+                Remaining time: <span id="sessionTimerDisplay" style="color: #22c55e;">00:00:00</span>
             </div>
         </div>
     </div>
 
     <!-- Conversation thread (owner inbox) -->
-    <div class="modal-overlay" id="messageConversationModal" onclick="closeModalOnOverlay(event, 'messageConversation')">
+    <div class="modal-overlay" id="messageConversationModal">
         <div class="christmas-modal-box">
             <button class="close-button" onclick="closeMessageConversation()" title="Close">×</button>
             <div class="christmas-modal-title" id="messageConversationTitle">CONVERSATION</div>
@@ -8996,7 +9308,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div class="updates-scroll-body">
                     <p class="update14-heading update16-heading-first">
                         <strong class="update16-rainbow-title">UPDATE 1.7 [IMPROVED]</strong>
-                        <span class="update14-new-dot" aria-hidden="true"></span>
                         <span style="font-size: 0.75em; color: #90EE90 !important;">6/10/26, 12:00PM</span>
                     </p>
                     <p id="update17-summary" style="margin-bottom: 8px; font-style: italic;">
@@ -9972,13 +10283,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             // Fetch real time from API so device time changes are ignored (updates countdown, etc.)
             function getServerTimeWithOffset() {
-                return fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
-                    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-                    .then(function(data) {
-                        if (!data || !data.datetime) return null;
-                        return { now: new Date(data.datetime), utcOffset: data.utc_offset || '' };
-                    })
-                    .catch(function() { return null; });
+                // WorldTimeAPI is unreliable - use device time as fallback
+                return Promise.resolve({ now: new Date(), utcOffset: '' });
             }
 
             // Function to start loading when clicked
@@ -10801,25 +11107,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // Server time helper (global) for countdowns that must ignore device time.
         // Uses multiple providers + timeouts, returns Date or null.
         function getServerTimeNow() {
-            function fetchJsonWithTimeout(url, timeoutMs) {
-                const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-                const t = setTimeout(function() { try { ctrl && ctrl.abort(); } catch {} }, timeoutMs);
-                return fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-                    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-                    .finally(function() { clearTimeout(t); });
-            }
-            // 1) WorldTimeAPI
-            return fetchJsonWithTimeout('https://worldtimeapi.org/api/ip', 4500)
-                .then(function(data) { return data && data.datetime ? new Date(data.datetime) : null; })
-                .catch(function() {
-                    // 2) TimeAPI.io fallback (UTC)
-                    return fetchJsonWithTimeout('https://timeapi.io/api/Time/current/zone?timeZone=Etc/UTC', 4500)
-                        .then(function(data) {
-                            // timeapi.io returns dateTime like "2026-03-19T10:23:00.0000000"
-                            return data && data.dateTime ? new Date(data.dateTime + 'Z') : null;
-                        })
-                        .catch(function() { return null; });
-                });
+            // Skip API calls - use device time directly for reliable timer performance
+            return Promise.resolve(new Date());
         }
 
         // NovaAI release countdown (Jan 1, 2027 00:00 UTC)
@@ -12201,17 +12490,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function handleMessageMeClick() {
             const storedName = localStorage.getItem('userNameForMessage');
             
-            // If name is already stored, go directly to MESSAGE ME
+            // If name is already stored, go directly to MESSAGE ME modal
             if (storedName && storedName.trim()) {
                 openModal('christmasMessage');
-                
-                // Show the view your message area
-                const viewArea = document.getElementById('christmasViewArea');
-                if (viewArea) {
-                    viewArea.style.display = 'block';
-                    localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
-                    startSenderThreadListener();
-                }
+                // Do NOT automatically open the view your message area
+                // User must manually click the "View Your Message" button
                 return;
             }
             
@@ -12245,12 +12528,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 questionEl.innerHTML = 'Is this <span style="color: #4ade80; font-weight: 700;">' + escapeHtmlPm(nameValue) + '</span> correct?';
             }
             
+            // Make sure timer is visible (in case it was hidden from previous countdown)
+            const timerDiv = document.querySelector('.edit-confirm-timer');
+            if (timerDiv) timerDiv.style.display = 'flex';
+            
             // Close confirmation modal and show final confirmation
             closeModal('messageConfirmation');
             openModal('nameFinalConfirm');
+            
+            // Start the countdown timer
+            startNameConfirmCountdown();
         }
 
         function goBackToEditName() {
+            if (nameConfirmCountdownId) clearInterval(nameConfirmCountdownId);
+            nameConfirmCountdownId = null;
             const errorMsg = document.getElementById('nameErrorMessage');
             if (errorMsg) {
                 errorMsg.style.display = 'none';
@@ -12263,25 +12555,145 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             openModal('messageConfirmation');
         }
 
+        function startNameConfirmCountdown() {
+            let seconds = 10;
+            const countdownEl = document.getElementById('nameConfirmCountdown');
+            const timerDiv = countdownEl ? countdownEl.parentElement : null;
+            const submitBtn = document.getElementById('nameFinalConfirmSubmitBtn');
+            
+            if (countdownEl) countdownEl.textContent = seconds;
+            if (timerDiv) timerDiv.style.display = 'flex';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+            
+            if (nameConfirmCountdownId) clearInterval(nameConfirmCountdownId);
+            
+            nameConfirmCountdownId = setInterval(function() {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(nameConfirmCountdownId);
+                    nameConfirmCountdownId = null;
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.style.opacity = '1';
+                        submitBtn.style.cursor = 'pointer';
+                    }
+                    // Hide timer when countdown completes
+                    if (timerDiv) timerDiv.style.display = 'none';
+                }
+            }, 1000);
+        }
+
         function confirmFinalName() {
             const nameInput = document.getElementById('userNameInput');
             const nameValue = nameInput ? nameInput.value.trim() : '';
+            const errorMsg = document.getElementById('nameErrorMessage');
             
             if (!nameValue) return;
             
-            // Store the name permanently
-            localStorage.setItem('userNameForMessage', nameValue);
+            // Check if name is already in use
+            checkIfNameIsInUse(nameValue, function(isInUse, existingName) {
+                if (isInUse) {
+                // Show error message with existing name in bold
+                    if (errorMsg) {
+                        errorMsg.innerHTML = 'This <strong style="font-weight: 700;">' + escapeHtmlPm(existingName) + '</strong> is already in use by another user.';
+                        errorMsg.style.display = 'block';
+                        errorMsg.style.color = '#ef4444';
+                        errorMsg.style.fontWeight = '600';
+                        errorMsg.style.padding = '10px';
+                        errorMsg.style.marginTop = '10px';
+                        console.log('Showing error message for duplicate name:', existingName);
+                        
+                        // Auto-hide after 5 seconds
+                        setTimeout(function() {
+                            if (errorMsg) {
+                                errorMsg.style.display = 'none';
+                            }
+                        }, 5000);
+                    }
+                    // Close final confirm modal to let user edit
+                    closeModal('nameFinalConfirm');
+                    openModal('messageConfirmation');
+                    return;
+                }
+                
+                // Name is available, proceed
+                localStorage.setItem('userNameForMessage', nameValue);
+                
+                // Close final confirmation and open message modal with view area visible
+                closeModal('nameFinalConfirm');
+                openModal('christmasMessage');
+                
+                // Show the view your message area
+                const viewArea = document.getElementById('christmasViewArea');
+                if (viewArea) {
+                    viewArea.style.display = 'block';
+                    localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
+                    startSenderThreadListener();
+                }
+            });
+        }
+
+        function checkIfNameIsInUse(nameToCheck, callback) {
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                callback(false, null);
+                return;
+            }
             
-            // Close final confirmation and open message modal with view area visible
-            closeModal('nameFinalConfirm');
-            openModal('christmasMessage');
+            // Check both inbox display names and Firebase metadata
+            checkInboxForName(nameToCheck, function(foundName) {
+                if (foundName) {
+                    console.log('Found duplicate name:', foundName);
+                    callback(true, foundName);
+                } else {
+                    console.log('Name is available:', nameToCheck);
+                    callback(false, null);
+                }
+            });
+        }
+        
+        function checkInboxForName(nameToCheck, callback) {
+            const inboxListEl = document.getElementById('messageInboxList');
+            if (!inboxListEl) {
+                callback(null);
+                return;
+            }
             
-            // Show the view your message area
-            const viewArea = document.getElementById('christmasViewArea');
-            if (viewArea) {
-                viewArea.style.display = 'block';
-                localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
-                startSenderThreadListener();
+            // Get all displayed names in the current inbox view
+            const inboxItems = inboxListEl.querySelectorAll('.pm-inbox-device-title');
+            for (let i = 0; i < inboxItems.length; i++) {
+                const titleText = inboxItems[i].textContent;
+                // Extract name (remove the number prefix like "1. ")
+                const nameMatch = titleText.replace(/^\d+\.\s+/, '').trim();
+                console.log('Checking inbox title:', titleText, '-> extracted:', nameMatch);
+                
+                if (nameMatch.toLowerCase() === nameToCheck.toLowerCase()) {
+                    callback(nameMatch);
+                    return;
+                }
+            }
+            
+            // Also check metadata senderName as fallback
+            if (window.PrivateMessaging && window.PrivateMessaging.ready) {
+                const unsubscribe = window.PrivateMessaging.listenInbox(function(conversations) {
+                    unsubscribe();
+                    
+                    for (let i = 0; i < conversations.length; i++) {
+                        if (conversations[i].senderName && conversations[i].senderName.toLowerCase() === nameToCheck.toLowerCase()) {
+                            callback(conversations[i].senderName);
+                            return;
+                        }
+                    }
+                    
+                    callback(null);
+                });
+            } else {
+                callback(null);
             }
         }
 
@@ -13088,8 +13500,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function isInboxUnlocked() {
-            // Check if immediate unlock is set
-            if (localStorage.getItem(INBOX_UNLOCK_KEY) === 'true' || localStorage.getItem(ADMIN_ACCESS_KEY) === 'true') {
+            // Check if immediate unlock is set (only the password can unlock, no admin bypass)
+            if (localStorage.getItem(INBOX_UNLOCK_KEY) === 'true') {
                 return true;
             }
             
@@ -13103,22 +13515,71 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             return false;
         }
 
+        function clearInboxPinFeedback() {
+            const feedback = document.getElementById('inboxPinFeedback');
+            if (!feedback) return;
+            feedback.textContent = '';
+            feedback.innerHTML = '';
+            feedback.innerText = '';
+            feedback.style.display = 'none !important';
+            feedback.style.visibility = 'hidden !important';
+            feedback.style.minHeight = '0 !important';
+            feedback.style.height = '0 !important';
+            feedback.style.padding = '0 !important';
+            feedback.style.margin = '0 !important';
+            feedback.style.opacity = '0 !important';
+        }
+        
+        function showInboxPinFeedback(message, color) {
+            const feedback = document.getElementById('inboxPinFeedback');
+            if (!feedback) return;
+            feedback.style.display = 'block !important';
+            feedback.style.visibility = 'visible !important';
+            feedback.style.minHeight = '18px !important';
+            feedback.style.height = 'auto !important';
+            feedback.style.padding = '8px 0 !important';
+            feedback.style.margin = '8px 0 0 0 !important';
+            feedback.style.opacity = '1 !important';
+            feedback.style.color = color;
+            feedback.textContent = message;
+        }
+
         function openMessageInboxGate() {
             quizStepIndex = 0;
             quizSelectedChoice = null;
+            
+            // Check if there's a valid session still active BEFORE clearing anything
+            const stored = localStorage.getItem(SECRET_SESSION_EXPIRES_KEY);
+            const expireAt = stored ? parseInt(stored, 10) : null;
+            const hasValidSession = expireAt && expireAt > Date.now();
+            
+            // Clear unlock key
+            localStorage.removeItem(INBOX_UNLOCK_KEY);
+            // Only clear session if it's actually expired (not if still valid)
+            if (!hasValidSession) {
+                localStorage.removeItem(SECRET_SESSION_EXPIRES_KEY);
+            }
+            localStorage.removeItem(ADMIN_ACCESS_KEY);  // Remove admin bypass
+            
             if (isInboxUnlocked()) {
                 openMessageInbox();
                 return;
             }
             openModal('messageInboxGate');
+            
+            // AGGRESSIVELY clear the feedback element
+            clearInboxPinFeedback();
+            
             const input = document.getElementById('inboxPinInput');
-            const feedback = document.getElementById('inboxPinFeedback');
-            if (feedback) {
-                feedback.textContent = '';
-            }
             if (input) {
                 input.value = '';
                 input.type = 'text';
+            }
+            
+            // Hide Message Me box when opening password gate
+            const messageForMeBox = document.getElementById('messageForMeBox');
+            if (messageForMeBox) {
+                messageForMeBox.classList.remove('show');
             }
             
             // Check if inbox lockout has remaining time from localStorage
@@ -13131,32 +13592,41 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     inboxLockoutAttempts = parseInt(storedAttempts, 10);
                     inboxLockoutExpireTime = expireTime;
                     if (input) input.disabled = true;
+                    const submitBtn = document.getElementById('inboxPinSubmit');
+                    if (submitBtn) submitBtn.disabled = true;
                     const timerEl = document.getElementById('inboxLockoutTimer');
-                    let timeLeft = remaining;
-                    updateInboxLockoutTimerDisplay(timeLeft);
+                    updateInboxLockoutTimerDisplay(remaining);
                     if (inboxLockoutTimeoutId !== null) clearInterval(inboxLockoutTimeoutId);
                     inboxLockoutTimeoutId = setInterval(function() {
-                        timeLeft -= 1;
-                        updateInboxLockoutTimerDisplay(timeLeft);
+                        const timeLeft = Math.ceil((inboxLockoutExpireTime - Date.now()) / 1000);
                         if (timeLeft <= 0) {
-                            clearInterval(inboxLockoutTimeoutId);
-                            inboxLockoutTimeoutId = null;
+                            // Timer expired naturally - reset timer display but preserve attempts
+                            if (inboxLockoutTimeoutId !== null) {
+                                clearInterval(inboxLockoutTimeoutId);
+                                inboxLockoutTimeoutId = null;
+                            }
                             localStorage.removeItem(INBOX_LOCKOUT_ATTEMPTS_KEY);
                             localStorage.removeItem(INBOX_LOCKOUT_EXPIRES_KEY);
-                            inboxLockoutAttempts = 0;
                             inboxLockoutExpireTime = null;
-                            if (input) input.disabled = false;
+                            const inputEl = document.getElementById('inboxPinInput');
+                            const submitBtn = document.getElementById('inboxPinSubmit');
+                            if (inputEl) {
+                                inputEl.disabled = false;
+                                inputEl.focus();
+                            }
+                            if (submitBtn) submitBtn.disabled = false;
                             updateInboxLockoutTimerDisplay(0);
+                        } else {
+                            updateInboxLockoutTimerDisplay(timeLeft);
                         }
                     }, 1000);
                 } else {
-                    localStorage.removeItem(INBOX_LOCKOUT_ATTEMPTS_KEY);
-                    localStorage.removeItem(INBOX_LOCKOUT_EXPIRES_KEY);
-                    inboxLockoutAttempts = 0;
-                    resetInboxLockout();
+                    // Stored lockout has expired - clear state completely
+                    clearInboxLockoutState();
                 }
             } else {
-                resetInboxLockout();
+                // No stored lockout - clear state completely
+                clearInboxLockoutState();
             }
             
             // Check if quiz lockout has remaining time
@@ -13164,12 +13634,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (quizLockoutExpireTime !== null) {
                 const remaining = Math.ceil((quizLockoutExpireTime - Date.now()) / 1000);
                 if (remaining > 0) {
+                    const submitBtn = document.getElementById('inboxPinSubmit');
                     input.disabled = true;
-                    // Ensure timer element is visible
+                    if (submitBtn) submitBtn.disabled = true;
+                    // Ensure timer element is visible in password area
                     if (timerEl) {
                         timerEl.style.display = 'block !important';
                         timerEl.style.visibility = 'visible !important';
                         timerEl.style.opacity = '1 !important';
+                        timerEl.style.color = '#cc0000';
+                        timerEl.style.fontWeight = '600';
                     }
                     // Restart the timer countdown
                     if (quizLockoutTimeoutId !== null) {
@@ -13184,15 +13658,23 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             clearInterval(quizLockoutTimeoutId);
                             quizLockoutTimeoutId = null;
                             quizLockoutExpireTime = null;
-                            if (input) input.disabled = false;
+                            if (input) {
+                                input.disabled = false;
+                                input.focus();
+                            }
+                            const submitBtn = document.getElementById('inboxPinSubmit');
+                            if (submitBtn) submitBtn.disabled = false;
                             updateQuizLockoutTimerDisplay(0);
                         }
                     }, 1000);
                 } else {
                     quizLockoutExpireTime = null;
                     input.disabled = false;
+                    const submitBtn = document.getElementById('inboxPinSubmit');
+                    if (submitBtn) submitBtn.disabled = false;
                     if (timerEl) {
                         timerEl.textContent = '';
+                        timerEl.style.display = 'none';
                     }
                 }
             } else {
@@ -13208,10 +13690,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function getInboxLockoutSeconds(attempt) {
+            // Lockout pattern: no lockout for attempt 1
+            // Then: 5s, 15s (×3), 30s (×2), 60s (×2), 120s (×2)...
             if (attempt <= 1) return 0;
             if (attempt === 2) return 5;
             if (attempt === 3) return 15;
-            return 15 * Math.pow(2, attempt - 3);
+            // For attempt 4+, double the previous lockout
+            return 30 * Math.pow(2, attempt - 4);
         }
 
         function inboxLockoutActive() {
@@ -13221,27 +13706,51 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function updateInboxLockoutTimerDisplay(seconds) {
             const timerEl = document.getElementById('inboxLockoutTimer');
             if (!timerEl) return;
-            timerEl.textContent = seconds > 0 ? 'Try again in ' + seconds + 's' : '';
+            if (seconds > 0) {
+                timerEl.textContent = 'Try again in ' + seconds + 's';
+                timerEl.style.display = 'block !important';
+                timerEl.style.visibility = 'visible !important';
+                timerEl.style.color = '#cc0000';
+                timerEl.style.fontWeight = 'bold';
+            } else {
+                timerEl.textContent = '';
+                timerEl.style.display = 'none !important';
+                timerEl.style.visibility = 'hidden !important';
+            }
         }
 
         function startInboxLockout(seconds) {
+            // CLEAR any existing lockout interval first
+            if (inboxLockoutTimeoutId !== null) {
+                clearInterval(inboxLockoutTimeoutId);
+                inboxLockoutTimeoutId = null;
+            }
+            
             const inputEl = document.getElementById('inboxPinInput');
             const submitBtn = document.getElementById('inboxPinSubmit');
             if (inputEl) inputEl.disabled = true;
             if (submitBtn) submitBtn.disabled = true;
-            let remaining = seconds;
+            
+            // Set expiration time in the future
             inboxLockoutExpireTime = Date.now() + (seconds * 1000);
             localStorage.setItem(INBOX_LOCKOUT_ATTEMPTS_KEY, String(inboxLockoutAttempts));
             localStorage.setItem(INBOX_LOCKOUT_EXPIRES_KEY, String(inboxLockoutExpireTime));
-            updateInboxLockoutTimerDisplay(remaining);
-            if (inboxLockoutTimeoutId !== null) clearInterval(inboxLockoutTimeoutId);
+            
+            console.log('Lockout started - expires at:', inboxLockoutExpireTime, 'attempts:', inboxLockoutAttempts, 'duration seconds:', seconds);
+            
+            // Show initial time immediately
+            updateInboxLockoutTimerDisplay(seconds);
+            
+            // Start fresh interval that calculates remaining time from expireTime
             inboxLockoutTimeoutId = setInterval(function() {
-                remaining -= 1;
-                if (remaining <= 0) {
+                const timeLeft = Math.ceil((inboxLockoutExpireTime - Date.now()) / 1000);
+                console.log('Lockout timer - timeLeft:', timeLeft);
+                if (timeLeft <= 0) {
+                    console.log('Lockout expired');
                     resetInboxLockout();
                     return;
                 }
-                updateInboxLockoutTimerDisplay(remaining);
+                updateInboxLockoutTimerDisplay(timeLeft);
             }, 1000);
         }
 
@@ -13252,7 +13761,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             localStorage.removeItem(INBOX_LOCKOUT_ATTEMPTS_KEY);
             localStorage.removeItem(INBOX_LOCKOUT_EXPIRES_KEY);
-            inboxLockoutAttempts = 0;
+            // DO NOT reset inboxLockoutAttempts here - it should persist for next lockout cycle
             inboxLockoutExpireTime = null;
             const inputEl = document.getElementById('inboxPinInput');
             const submitBtn = document.getElementById('inboxPinSubmit');
@@ -13266,11 +13775,68 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             updateInboxLockoutTimerDisplay(0);
         }
 
+        function clearInboxLockoutState() {
+            // FULL reset - clears attempts and lockout (used when correct password or gate opens)
+            if (inboxLockoutTimeoutId !== null) {
+                clearInterval(inboxLockoutTimeoutId);
+                inboxLockoutTimeoutId = null;
+            }
+            localStorage.removeItem(INBOX_LOCKOUT_ATTEMPTS_KEY);
+            localStorage.removeItem(INBOX_LOCKOUT_EXPIRES_KEY);
+            inboxLockoutAttempts = 0;
+            inboxLockoutExpireTime = null;
+            const inputEl = document.getElementById('inboxPinInput');
+            const submitBtn = document.getElementById('inboxPinSubmit');
+            if (inputEl) inputEl.disabled = false;
+            if (submitBtn) submitBtn.disabled = false;
+            updateInboxLockoutTimerDisplay(0);
+        }
+
         function startSecretQuiz() {
             quizStepIndex = 0;
             quizSelectedChoice = null;
             renderSecretQuizStep();
             openModal('secretQuiz');
+            
+            // Check if there's an active quiz lockout from a previous wrong answer
+            if (quizLockoutExpireTime !== null) {
+                const remaining = Math.ceil((quizLockoutExpireTime - Date.now()) / 1000);
+                if (remaining > 0) {
+                    // Show timer in quiz modal and disable submit button
+                    const timerEl = document.getElementById('secretQuizTimer');
+                    const submitBtn = document.getElementById('secretQuizSubmit');
+                    if (submitBtn) submitBtn.disabled = true;
+                    
+                    // Show the timer
+                    if (timerEl) {
+                        timerEl.style.display = 'block !important';
+                        timerEl.style.visibility = 'visible !important';
+                    }
+                    
+                    // Restart the countdown
+                    if (quizLockoutTimeoutId !== null) {
+                        clearInterval(quizLockoutTimeoutId);
+                    }
+                    let timeLeft = remaining;
+                    updateQuizLockoutTimerDisplay(timeLeft);
+                    quizLockoutTimeoutId = setInterval(function() {
+                        timeLeft -= 1;
+                        updateQuizLockoutTimerDisplay(timeLeft);
+                        if (timeLeft <= 0) {
+                            clearInterval(quizLockoutTimeoutId);
+                            quizLockoutTimeoutId = null;
+                            quizLockoutExpireTime = null;
+                            if (submitBtn) submitBtn.disabled = false;
+                            updateQuizLockoutTimerDisplay(0);
+                        }
+                    }, 1000);
+                } else {
+                    // Timer expired
+                    quizLockoutExpireTime = null;
+                    const timerEl = document.getElementById('secretQuizTimer');
+                    if (timerEl) timerEl.textContent = '';
+                }
+            }
         }
 
         const SECRET_QUIZ_STEPS = [
@@ -13332,30 +13898,38 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function getQuizLockoutSeconds(attempt) {
-            if (attempt <= 1) return 0;
-            if (attempt === 2) return 60; // 1 minute
-            if (attempt === 3) return 180; // 3 minutes
-            return 60 * Math.pow(2, attempt - 2); // Doubles: 1, 3, 6, 12, 24... minutes
+            if (attempt <= 0) return 0;
+            if (attempt === 1) return 60; // 1st wrong answer: 1 minute
+            if (attempt === 2) return 180; // 2nd wrong answer: 3 minutes
+            // 3rd+: doubles each time (4min, 8min, 16min...)
+            return 60 * Math.pow(2, attempt - 1);
         }
 
         function quizLockoutActive() {
-            return quizLockoutTimeoutId !== null;
+            return quizLockoutTimeoutId !== null && quizLockoutExpireTime !== null && quizLockoutExpireTime > Date.now();
         }
 
         function updateQuizLockoutTimerDisplay(seconds) {
             const timerEl = document.getElementById('quizLockoutTimer');
             if (!timerEl) {
-                // Element not found, create it or wait
                 return;
             }
             if (seconds > 0) {
-                const minutes = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                const secStr = secs < 10 ? '0' + secs : secs;
-                timerEl.textContent = 'Try again in ' + minutes + 'm ' + secStr + 's';
+                let displayText;
+                if (seconds < 60) {
+                    displayText = 'Try again in ' + seconds + 's';
+                } else {
+                    const minutes = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    const secStr = secs < 10 ? '0' + secs : secs;
+                    displayText = 'Try again in ' + minutes + 'm ' + secStr + 's';
+                }
+                timerEl.textContent = displayText;
                 timerEl.style.display = 'block !important';
                 timerEl.style.visibility = 'visible !important';
                 timerEl.style.opacity = '1 !important';
+                timerEl.style.color = '#cc0000';
+                timerEl.style.fontWeight = '600';
             } else {
                 timerEl.textContent = '';
                 timerEl.style.display = 'none';
@@ -13364,14 +13938,25 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function startQuizTimer(seconds) {
             const timerEl = document.getElementById('secretQuizTimer');
+            const submitBtn = document.getElementById('secretQuizSubmit');
             let remaining = seconds;
             
             function updateDisplay() {
                 if (timerEl) {
-                    const minutes = Math.floor(remaining / 60);
-                    const secs = remaining % 60;
-                    const secStr = secs < 10 ? '0' + secs : secs;
-                    timerEl.textContent = 'Try again in ' + minutes + 'm ' + secStr + 's';
+                    let displayText;
+                    if (remaining < 60) {
+                        displayText = 'Try again in ' + remaining + 's';
+                    } else {
+                        const minutes = Math.floor(remaining / 60);
+                        const secs = remaining % 60;
+                        const secStr = secs < 10 ? '0' + secs : secs;
+                        displayText = 'Try again in ' + minutes + 'm ' + secStr + 's';
+                    }
+                    timerEl.textContent = displayText;
+                    timerEl.style.display = 'block !important';
+                    timerEl.style.visibility = 'visible !important';
+                    timerEl.style.color = '#cc0000';
+                    timerEl.style.fontWeight = '600';
                 }
             }
             
@@ -13384,6 +13969,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     clearInterval(quizLockoutTimeoutId);
                     quizLockoutTimeoutId = null;
                     if (timerEl) timerEl.textContent = '';
+                    if (submitBtn) submitBtn.disabled = false;
+                    // Re-enable password input
+                    const inboxPinInput = document.getElementById('inboxPinInput');
+                    if (inboxPinInput) inboxPinInput.disabled = false;
                     // Close quiz and go to password gate
                     closeModal('secretQuiz');
                     openMessageInboxGate();
@@ -13433,17 +14022,35 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     quizAnswers = [null, null, null];
                     quizLockoutAttempts += 1;
                     
+                    // Hide the Message Me box on wrong answer
+                    const messageForMeBox = document.getElementById('messageForMeBox');
+                    if (messageForMeBox) {
+                        messageForMeBox.classList.remove('show');
+                    }
+                    
+                    // Disable quiz submit button during lockout
+                    const quizSubmitBtn = document.getElementById('secretQuizSubmit');
+                    if (quizSubmitBtn) quizSubmitBtn.disabled = true;
+                    
                     // Start lockout timer in quiz
                     const lockSeconds = getQuizLockoutSeconds(quizLockoutAttempts);
                     if (lockSeconds > 0) {
                         quizLockoutExpireTime = Date.now() + (lockSeconds * 1000);
-                        startQuizTimer(lockSeconds);
+                        // Disable password input while quiz is locked
+                        const inboxPinInput = document.getElementById('inboxPinInput');
+                        if (inboxPinInput) inboxPinInput.disabled = true;
+                        // Immediately redirect to password gate and start timer there
+                        setTimeout(function() {
+                            closeModal('secretQuiz');
+                            openMessageInboxGate();
+                        }, 300);
+                    } else {
+                        // No lockout, redirect immediately
+                        setTimeout(function() {
+                            closeModal('secretQuiz');
+                            openMessageInboxGate();
+                        }, 500);
                     }
-                    // Immediately redirect to password gate
-                    setTimeout(function() {
-                        closeModal('secretQuiz');
-                        openMessageInboxGate();
-                    }, 500);
                     return;
                 }
                 
@@ -13494,6 +14101,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 feedback.textContent = 'Session expired. Please re-enter your password.';
             }
             resetInboxLockout();
+            // Hide the Message Me box when session expires
+            const messageForMeBox = document.getElementById('messageForMeBox');
+            if (messageForMeBox) {
+                messageForMeBox.classList.remove('show');
+            }
         }
 
         function checkSecretSessionOnLoad() {
@@ -13562,6 +14174,28 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         checkSecretSessionOnLoad();
+
+        // Check if Message Me box should be visible on page load
+        function checkMessageMeBoxVisibility() {
+            const messageForMeBox = document.getElementById('messageForMeBox');
+            if (!messageForMeBox) return;
+            
+            // MESSAGE ME button should ALWAYS be visible as an entry point
+            messageForMeBox.classList.add('show');
+        }
+        
+        checkMessageMeBoxVisibility();
+        
+        // Keep MESSAGE ME button visible at all times
+        setInterval(function() {
+            const messageForMeBox = document.getElementById('messageForMeBox');
+            if (!messageForMeBox) return;
+            
+            // Ensure MESSAGE ME button is always visible
+            if (!messageForMeBox.classList.contains('show')) {
+                messageForMeBox.classList.add('show');
+            }
+        }, 500);
 
         // Handle page visibility - restart timer when user comes back to site
         if (typeof document !== 'undefined') {
@@ -13680,12 +14314,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             
             filteredConversations.forEach(function(conv) {
-                // Use stored user name if available, otherwise use device name
-                let displayLabel = storedUserName || formatInboxDeviceLabel(conv.lastDeviceName);
+                // Use sender's name if available, otherwise use device name
+                let displayLabel = conv.senderName || formatInboxDeviceLabel(conv.lastDeviceName);
                 displayLabel = escapeHtmlPm(displayLabel);
                 
                 // Increment number for each message
                 messageNumber += 1;
+                
+                // Check if last message is from sender (lastSenderId equals senderId)
+                const lastMessageFromSender = conv.lastSenderId === conv.senderId;
+                const newTag = lastMessageFromSender ? ' <span style="color: #4ade80; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '';
                 
                 const unread = Number(conv.unreadCount) || 0;
                 const preview = escapeHtmlPm(conv.lastMessage || 'No message');
@@ -13699,6 +14337,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     '<div class="pm-inbox-body">' +
                     '<div class="pm-inbox-device-title">' +
                     messageNumber + '. ' + displayLabel +
+                    newTag +
                     '</div>' +
                     '<div class="pm-inbox-preview">' +
                     preview +
@@ -13738,6 +14377,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 return;
             }
             
+            // Get stored sender name
+            const storedSenderName = localStorage.getItem('userNameForMessage');
+            
             // Find the last message from the sender (not from owner)
             let lastSenderMessageIndex = -1;
             for (let i = messages.length - 1; i >= 0; i--) {
@@ -13747,19 +14389,47 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
             
+            // Check if there's an owner reply after the last sender message
+            let hasOwnerReplyAfterLastSender = false;
+            if (lastSenderMessageIndex !== -1) {
+                for (let i = lastSenderMessageIndex + 1; i < messages.length; i++) {
+                    if (messages[i].senderId === ownerUid) {
+                        hasOwnerReplyAfterLastSender = true;
+                        break;
+                    }
+                }
+            }
+            
             let html = '';
             messages.forEach(function(msg, index) {
                 const fromOwner = msg.senderId === ownerUid;
-                const time = formatMessageTime(msg.timestamp);
+                const displayTimestamp = msg.isEdited && msg.editedAt ? msg.editedAt : msg.timestamp;
+                const time = formatMessageTime(displayTimestamp);
                 const text = escapeHtmlPm(msg.message || '').replace(/\n/g, '<br>');
+                const isLatestSenderMessage = !fromOwner && index === lastSenderMessageIndex;
+                const senderLabel = fromOwner ? 'Your message' : (storedSenderName || 'Visitor');
+                const labelColor = fromOwner ? '#3b82f6' : '#eab308';
+                const newTag = (isLatestSenderMessage && !hasOwnerReplyAfterLastSender) ? ' <span style="color: #4ade80; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '';
                 // Only show reply button on the last message from sender
                 const showReplyButton = !fromOwner && index === lastSenderMessageIndex;
+                
+                // Add Edits button if message was edited - use original timestamp for BEFORE EDIT modal
+                const originalTime = formatMessageTime(msg.timestamp);
+                const editsButton = msg.isEdited && msg.originalMessage ? '<button type="button" class="pm-edits-btn" onclick="showOriginalMessage(\'' + escapeHtmlPm(msg.originalMessage || '').replace(/'/g, "\\'") + '\', \'' + originalTime + '\')">Edits</button>' : '';
+                
                 html +=
                     '<div class="pm-msg-bubble ' +
                     (fromOwner ? 'from-owner' : 'from-sender') +
                     '">' +
                     '<div class="pm-msg-time">' +
+                    '<span>' +
                     time +
+                    ' · <span style="color: ' + labelColor + '; font-weight: 600;">' +
+                    senderLabel +
+                    '</span>' +
+                    newTag +
+                    '</span>' +
+                    (editsButton ? editsButton : '') +
                     '</div>' +
                     '<div class="pm-msg-text">' +
                     text +
@@ -13810,6 +14480,390 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             ta.disabled = false;
         }
 
+        // Edit message globals
+        let currentEditingMessageId = null;
+        let currentEditingMessageIndex = null;
+        let currentMessageTimestamp = null; // Store message timestamp for accurate timer
+        let editConfirmCountdownId = null;
+        let nameConfirmCountdownId = null;
+        let pendingEditText = null;
+        let originalMessageBeforeEdit = null;
+        let editModalOpenedTime = null;
+        let editNoteCountdownId = null;
+        let messageEditTimers = {}; // Track timers for each message: { messageId: intervalId }
+
+        // Initialize edit modal time from localStorage on page load
+        function initializeEditModalTime() {
+            const storedTime = localStorage.getItem('EDIT_MODAL_OPENED_TIME');
+            const storedMessageId = localStorage.getItem('EDITING_MESSAGE_ID');
+            
+            if (storedTime && storedMessageId) {
+                const openedTime = parseInt(storedTime);
+                const fifteenMinutesMs = 15 * 60 * 1000;
+                const elapsedTime = Date.now() - openedTime;
+                
+                // If time has expired, clear it
+                if (elapsedTime >= fifteenMinutesMs) {
+                    localStorage.removeItem('EDIT_MODAL_OPENED_TIME');
+                    localStorage.removeItem('EDITING_MESSAGE_ID');
+                    editModalOpenedTime = null;
+                    currentEditingMessageId = null;
+                } else {
+                    // Time hasn't expired, restore both time and message ID
+                    editModalOpenedTime = openedTime;
+                    currentEditingMessageId = storedMessageId;
+                }
+            }
+        }
+        
+        // Run on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeEditModalTime);
+        } else {
+            initializeEditModalTime();
+        }
+
+        function isMessageEditableNow(timestamp) {
+            if (!timestamp) return false;
+            const now = Date.now();
+            const messageAge = now - timestamp;
+            const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
+            return messageAge < fifteenMinutes;
+        }
+
+        // Format remaining time as MM:SS
+        function formatRemainingTime(timestamp) {
+            const now = Date.now();
+            const messageAge = now - timestamp;
+            const fifteenMinutesMs = 15 * 60 * 1000;
+            const remainingMs = Math.max(0, fifteenMinutesMs - messageAge);
+            const seconds = Math.floor(remainingMs / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return minutes + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+
+        function showOriginalMessage(originalText, timestamp) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10001;padding:20px;';
+            modal.innerHTML = '<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:30px;max-width:500px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.8);"><div style="font-size:20px;font-weight:700;margin-bottom:10px;font-family:Poppins,sans-serif;">BEFORE EDIT</div><div style="font-size:12px;margin-bottom:15px;color:#ff9800;font-style:italic;">Original message sent at ' + timestamp + '</div><div style="background:#2a2a2a;padding:15px;border-radius:6px;margin-bottom:20px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word;font-family:Poppins,sans-serif;font-weight:600;font-style:italic;color:#d0d0d0;">' + escapeHtmlPm(originalText) + '</div><button type="button" style="width:100%;padding:10px;background:#3399ff;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;" onclick="this.parentElement.parentElement.remove()">CLOSE</button></div>';
+            document.body.appendChild(modal);
+            modal.onclick = function(e) {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        function openEditModal(messageId, messageText, messageIndex, messageTimestamp) {
+            // Check if this is a different message being edited
+            const isDifferentMessage = currentEditingMessageId !== messageId;
+            
+            currentEditingMessageId = messageId;
+            currentEditingMessageIndex = messageIndex;
+            currentMessageTimestamp = messageTimestamp; // Store the message timestamp
+            originalMessageBeforeEdit = messageText;
+            
+            // Always store the current message ID so it persists across reloads
+            localStorage.setItem('EDITING_MESSAGE_ID', messageId);
+            
+            // If editing a different message, always reset the timer to 15 minutes
+            if (isDifferentMessage) {
+                editModalOpenedTime = Date.now();
+                localStorage.setItem('EDIT_MODAL_OPENED_TIME', editModalOpenedTime.toString());
+            } else if (!editModalOpenedTime) {
+                // Same message, but editModalOpenedTime not in memory - restore from localStorage
+                const storedTime = localStorage.getItem('EDIT_MODAL_OPENED_TIME');
+                if (storedTime) {
+                    editModalOpenedTime = parseInt(storedTime);
+                } else {
+                    // No stored time, create a new session
+                    editModalOpenedTime = Date.now();
+                    localStorage.setItem('EDIT_MODAL_OPENED_TIME', editModalOpenedTime.toString());
+                }
+            }
+            
+            const textarea = document.getElementById('editMessageTextarea');
+            if (textarea) {
+                textarea.value = messageText;
+                textarea.focus();
+            }
+            const modal = document.getElementById('editMessageModal');
+            if (modal) modal.style.display = 'flex';
+            
+            // Initialize button state as disabled
+            updateEditDoneButtonState();
+            
+            // Start remaining time countdown
+            if (editNoteCountdownId) clearInterval(editNoteCountdownId);
+            updateEditRemainingTime();
+            editNoteCountdownId = setInterval(updateEditRemainingTime, 1000);
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editMessageModal');
+            if (modal) modal.style.display = 'none';
+            // Don't clear currentEditingMessageId here - we need it for confirmEditMessage
+            currentEditingMessageIndex = null;
+            // Clear the remaining time countdown
+            if (editNoteCountdownId) {
+                clearInterval(editNoteCountdownId);
+                editNoteCountdownId = null;
+            }
+            // Note: Do NOT clear EDITING_MESSAGE_ID or EDIT_MODAL_OPENED_TIME
+            // so they persist across page reloads for the same message
+        }
+        
+        function updateEditDoneButtonState() {
+            const textarea = document.getElementById('editMessageTextarea');
+            const doneBtn = document.getElementById('editDoneBtn');
+            if (!textarea || !doneBtn) return;
+            
+            // Check if content is changed and not empty
+            const currentText = textarea.value.trim();
+            const originalText = originalMessageBeforeEdit ? originalMessageBeforeEdit.trim() : '';
+            const isChanged = currentText !== originalText;
+            const isNotEmpty = currentText.length > 0;
+            
+            // Button is enabled only if content changed AND is not empty
+            const shouldEnable = isChanged && isNotEmpty;
+            
+            doneBtn.disabled = !shouldEnable;
+            doneBtn.style.opacity = shouldEnable ? '1' : '0.5';
+            doneBtn.style.cursor = shouldEnable ? 'pointer' : 'not-allowed';
+        }
+        
+        function updateEditRemainingTime() {
+            const timeDisplay = document.getElementById('editRemainingTimeDisplay');
+            if (!timeDisplay) return;
+            
+            const fifteenMinutesMs = 15 * 60 * 1000;
+            // Use message timestamp for accurate countdown (same as timer outside)
+            const messageTimestamp = currentMessageTimestamp || Date.now();
+            const elapsedTime = Date.now() - messageTimestamp;
+            const remainingMs = Math.max(0, fifteenMinutesMs - elapsedTime);
+            
+            // Convert to MM:SS format
+            const totalSeconds = Math.floor(remainingMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            timeDisplay.textContent = timeStr;
+            
+            // Also update note modal display if it's open
+            const noteDisplay = document.getElementById('editNoteRemainingTime');
+            if (noteDisplay) {
+                noteDisplay.textContent = timeStr;
+            }
+            
+            // If time reached 0 while modal is open, auto-close and teleport back
+            if (remainingMs <= 0 && currentEditingMessageId) {
+                closeEditModal();
+                closeEditNoteModal();
+                if (editConfirmCountdownId) clearInterval(editConfirmCountdownId);
+                const confirmModal = document.getElementById('editConfirmationModal');
+                if (confirmModal) confirmModal.style.display = 'none';
+                const viewArea = document.getElementById('christmasViewArea');
+                if (viewArea) viewArea.style.display = 'block';
+                currentEditingMessageId = null;
+                editModalOpenedTime = null;
+                localStorage.removeItem('EDIT_MODAL_OPENED_TIME');
+                localStorage.removeItem('EDITING_MESSAGE_ID');
+            }
+        }
+
+        function submitEditMessage() {
+            const textarea = document.getElementById('editMessageTextarea');
+            if (!textarea) return;
+            const newText = textarea.value.trim();
+            if (!newText) {
+                alert('Message cannot be empty');
+                return;
+            }
+            pendingEditText = newText;
+            closeEditModal();
+            openEditConfirmationModal();
+        }
+
+        function openEditConfirmationModal() {
+            const modal = document.getElementById('editConfirmationModal');
+            if (modal) modal.style.display = 'flex';
+            startEditConfirmCountdown();
+        }
+
+        function startEditConfirmCountdown() {
+            let seconds = 3;
+            const countdownEl = document.getElementById('editConfirmCountdown');
+            const okBtn = document.getElementById('editConfirmOkBtn');
+            
+            if (countdownEl) countdownEl.textContent = seconds;
+            if (okBtn) {
+                okBtn.disabled = true;
+                okBtn.style.opacity = '0.5';
+                okBtn.style.cursor = 'not-allowed';
+            }
+            
+            if (editConfirmCountdownId) clearInterval(editConfirmCountdownId);
+            
+            editConfirmCountdownId = setInterval(function() {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(editConfirmCountdownId);
+                    editConfirmCountdownId = null;
+                    if (okBtn) {
+                        okBtn.disabled = false;
+                        okBtn.style.opacity = '1';
+                        okBtn.style.cursor = 'pointer';
+                    }
+                }
+            }, 1000);
+        }
+
+        function backFromConfirmation() {
+            if (editConfirmCountdownId) clearInterval(editConfirmCountdownId);
+            editConfirmCountdownId = null;
+            pendingEditText = null;
+            const confirmModal = document.getElementById('editConfirmationModal');
+            const editModal = document.getElementById('editMessageModal');
+            if (confirmModal) confirmModal.style.display = 'none';
+            if (editModal) editModal.style.display = 'flex';
+        }
+
+        async function confirmEditMessage() {
+            if (!currentEditingMessageId || !pendingEditText) {
+                console.error('Missing messageId or text:', { currentEditingMessageId, pendingEditText });
+                alert('No message to update');
+                return;
+            }
+            
+            const newText = pendingEditText.trim();
+            if (!newText) {
+                alert('Message cannot be empty');
+                return;
+            }
+            
+            try {
+                if (window.PrivateMessaging && window.PrivateMessaging.ready) {
+                    console.log('Updating message:', currentEditingMessageId, 'with text:', newText);
+                    await window.PrivateMessaging.updateMessage(currentEditingMessageId, newText, originalMessageBeforeEdit);
+                    console.log('Message updated successfully');
+                    pendingEditText = null;
+                    originalMessageBeforeEdit = null;
+                    currentEditingMessageId = null;
+                    editModalOpenedTime = null;
+                    localStorage.removeItem('EDIT_MODAL_OPENED_TIME');
+                    localStorage.removeItem('EDITING_MESSAGE_ID');
+                    
+                    // Close both modals
+                    const confirmModal = document.getElementById('editConfirmationModal');
+                    const editModal = document.getElementById('editMessageModal');
+                    if (confirmModal) confirmModal.style.display = 'none';
+                    if (editModal) editModal.style.display = 'none';
+                    
+                    // Stop timer for this message since it's now edited
+                    stopMessageEditTimer(currentEditingMessageId);
+                    
+                    // Refresh and show message view
+                    const viewArea = document.getElementById('christmasViewArea');
+                    if (viewArea) viewArea.style.display = 'block';
+                    startSenderThreadListener();
+                } else {
+                    console.error('PrivateMessaging not ready');
+                    alert('Messaging service not ready. Please try again.');
+                }
+            } catch (e) {
+                console.error('Update error:', e);
+                alert('Could not update message: ' + e.message);
+            }
+        }
+
+        function showEditNoteModal() {
+            const noteModal = document.getElementById('editNoteModal');
+            if (!noteModal) return;
+            
+            noteModal.style.display = 'flex';
+        }
+
+        function closeEditNoteModal() {
+            const noteModal = document.getElementById('editNoteModal');
+            if (noteModal) noteModal.style.display = 'none';
+            if (editNoteCountdownId) {
+                clearInterval(editNoteCountdownId);
+                editNoteCountdownId = null;
+            }
+        }
+
+        // Start automatic countdown timer for a message's edit window
+        function startMessageEditTimer(messageId, messageTimestamp) {
+            // Clear existing timer for this message if any
+            if (messageEditTimers[messageId]) {
+                clearInterval(messageEditTimers[messageId]);
+            }
+            
+            const fifteenMinutesMs = 15 * 60 * 1000;
+            
+            messageEditTimers[messageId] = setInterval(function() {
+                const now = Date.now();
+                const messageAge = now - messageTimestamp;
+                const remainingMs = Math.max(0, fifteenMinutesMs - messageAge);
+                
+                // Update the countdown display
+                const countdownEl = document.getElementById('editCountdown-' + messageId);
+                if (countdownEl) {
+                    const seconds = Math.floor(remainingMs / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    countdownEl.textContent = minutes + ':' + (secs < 10 ? '0' : '') + secs;
+                }
+                
+                // Time expired - remove the edit button and close modal if editing
+                if (remainingMs <= 0) {
+                    // Clear the timer
+                    clearInterval(messageEditTimers[messageId]);
+                    delete messageEditTimers[messageId];
+                    
+                    // Hide countdown display
+                    if (countdownEl && countdownEl.parentElement) countdownEl.parentElement.style.display = 'none';
+                    
+                    // If this message is currently being edited, close modal and teleport
+                    if (currentEditingMessageId === messageId) {
+                        closeEditModal();
+                        if (editConfirmCountdownId) clearInterval(editConfirmCountdownId);
+                        const confirmModal = document.getElementById('editConfirmationModal');
+                        if (confirmModal) confirmModal.style.display = 'none';
+                        const viewArea = document.getElementById('christmasViewArea');
+                        if (viewArea) viewArea.style.display = 'block';
+                        currentEditingMessageId = null;
+                        editModalOpenedTime = null;
+                        localStorage.removeItem('EDIT_MODAL_OPENED_TIME');
+                        localStorage.removeItem('EDITING_MESSAGE_ID');
+                    }
+                    
+                    // Re-render messages to remove the Edit button
+                    if (window.PrivateMessaging && window.PrivateMessaging.ready) {
+                        startSenderThreadListener();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Stop timer for a message
+        function stopMessageEditTimer(messageId) {
+            if (messageEditTimers[messageId]) {
+                clearInterval(messageEditTimers[messageId]);
+                delete messageEditTimers[messageId];
+            }
+        }
+
+        // Clear all message timers
+        function clearAllMessageEditTimers() {
+            Object.keys(messageEditTimers).forEach(function(messageId) {
+                clearInterval(messageEditTimers[messageId]);
+            });
+            messageEditTimers = {};
+        }
+
         function renderSenderThread(messages, ownerUid) {
             const messageContent = document.getElementById('christmasMessageContent');
             const viewArea = document.getElementById('christmasViewArea');
@@ -13822,6 +14876,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Check if there are any messages at all
             if (!messages || !messages.length) {
                 // No messages - allow sending
+                updateChristmasViewBtnText(false);
                 if (textarea) {
                     textarea.disabled = false;
                     textarea.placeholder = 'Insert message here…';
@@ -13854,6 +14909,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     }
                 }
                 
+                // Update button text based on whether there's an author reply
+                updateChristmasViewBtnText(hasOwnerReplyAfter);
+                
                 if (!hasOwnerReplyAfter) {
                     // No owner reply yet - LOCK textarea
                     if (textarea) {
@@ -13877,6 +14935,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             } else {
                 // No waiting message - allow sending
+                updateChristmasViewBtnText(false);
                 if (textarea) {
                     textarea.disabled = false;
                     textarea.placeholder = 'Insert message here…';
@@ -13888,29 +14947,80 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             
             let html = '';
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const fontColor = isDarkMode ? '#d0d0d0' : '#6b7280';
             messages.forEach(function(msg, index) {
                 const fromOwner = msg.senderId === ownerUid;
-                const time = formatMessageTime(msg.timestamp);
+                const displayTimestamp = msg.isEdited && msg.editedAt ? msg.editedAt : msg.timestamp;
+                const time = formatMessageTime(displayTimestamp);
                 const text = escapeHtmlPm(msg.message || '').replace(/\n/g, '<br>');
                 // Check if this is the latest message
                 const isLatest = index === messages.length - 1;
                 const newTag = isLatest ? ' <span style="color: #22c55e; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '';
+                
+                // Check if message is editable (user message within 15 minutes AND not already edited)
+                // Also check if owner has replied - if they have, disable editing
+                let hasOwnerReplyAfter = false;
+                if (!fromOwner) {
+                    for (let i = index + 1; i < messages.length; i++) {
+                        if (messages[i].senderId === ownerUid) {
+                            hasOwnerReplyAfter = true;
+                            break;
+                        }
+                    }
+                }
+                
+                const isEditable = !fromOwner && !msg.isEdited && isMessageEditableNow(msg.timestamp) && !hasOwnerReplyAfter;
+                const messageStatus = !fromOwner ? '<span style="color: #eab308; font-weight: 700;">Your message</span>' : '';
+                let editButton = '';
+                if (isEditable) {
+                    const msgId = String(msg.id || '').replace(/'/g, "\\'");
+                    const msgText = escapeHtmlPm(msg.message || '').replace(/'/g, "\\'");
+                    const msgTimestamp = msg.timestamp || Date.now();
+                    const initialTime = formatRemainingTime(msg.timestamp);
+                    editButton = '<span style="display:flex;align-items:center;gap:8px;"><button type="button" class="msg-edit-btn" onclick="openEditModal(\'' + msgId + '\', \'' + msgText + '\', ' + index + ', ' + msgTimestamp + ')">Edit</button><span id="editCountdown-' + msgId + '" style="color: #ef4444; font-weight: 600; font-size: 11px;">' + initialTime + '</span></span>';
+                } else if (msg.isEdited && !fromOwner) {
+                    editButton = '<span style="color: #ef4444; font-weight: 600; font-style: italic;">Edited</span>';
+                }
+                
+                let headerDiv = '<div style="font-size:11px;margin-bottom:8px;font-weight:600;color:#999;display:flex;align-items:center;gap:6px;">' +
+                    '<span>' + time +
+                    (fromOwner ? ' · <span class="author-replies-label" style="color: #3399ff;">Author replies</span>' : ' · ' + messageStatus) +
+                    (isLatest ? ' <span style="color: #4ade80; font-weight: 700;">[NEW]</span>' : '') +
+                    '</span>';
+                if (!fromOwner && editButton) {
+                    headerDiv += '<span style="margin-left:auto;">' + editButton + '</span>';
+                }
+                headerDiv += '</div>';
+                
                 html +=
                     '<div style="margin-bottom:15px;padding:10px;background:' +
                     (fromOwner ? '#fff0f0' : '#f5f5f5') +
                     ';border-radius:8px;border-left:4px solid ' +
                     (fromOwner ? '#c62828' : '#90a4ae') +
                     ';">' +
-                    '<div style="font-size:11px;margin-bottom:8px;font-weight:600;color:#999;">' +
-                    time +
-                    (fromOwner ? ' · <span class="author-replies-label" style="color: #3399ff;">Author replies</span>' : ' · Your message') +
-                    (isLatest ? ' <span style="color: #4ade80; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '') +
-                    '</div>' +
-                    '<p style="margin:0;white-space:pre-wrap;word-wrap:break-word;">' +
+                    headerDiv +
+                    '<p style="margin:0;white-space:pre-wrap;word-wrap:break-word;line-height:1.8;font-size:14px;font-family:\'Poppins\', \'Segoe UI\', sans-serif;font-weight:600;font-style:italic;color:' + fontColor + ';text-shadow:0 1px 2px rgba(0,0,0,0.2);">' +
                     text +
                     '</p></div>';
             });
             messageContent.innerHTML = html;
+            
+            // Start or maintain automatic timers for editable messages
+            messages.forEach(function(msg, index) {
+                const fromOwner = msg.senderId === ownerUid;
+                if (!fromOwner && !msg.isEdited) {
+                    const msgId = String(msg.id || '');
+                    // Start timer if it doesn't already exist for this message
+                    if (!messageEditTimers[msgId]) {
+                        startMessageEditTimer(msgId, msg.timestamp);
+                    }
+                } else if (msg.isEdited) {
+                    // Stop timer for edited messages
+                    const msgId = String(msg.id || '');
+                    stopMessageEditTimer(msgId);
+                }
+            });
             
             // Keep the view area open if it was already open when a new message arrives
             if (localStorage.getItem('VIEW_YOUR_MESSAGE_OPEN') === 'true') {
@@ -14011,6 +15121,23 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         alert(e.message || 'Could not send your message. Please try again.');
                     }
                     if (submitBtn) submitBtn.disabled = false;
+                }
+            }
+        }
+
+        function updateChristmasViewBtnText(hasAuthorReply) {
+            const btnTextEl = document.getElementById('christmasViewBtnText');
+            if (btnTextEl) {
+                btnTextEl.textContent = hasAuthorReply ? 'AUTHOR REPLIED TO YOUR MESSAGE!' : 'VIEW YOUR MESSAGE';
+                
+                // Change color based on mode and whether author replied
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                if (hasAuthorReply) {
+                    // Green for dark mode, dark red for day mode
+                    btnTextEl.style.color = isDarkMode ? '#4ade80' : '#d32f2f';
+                } else {
+                    // Reset to default
+                    btnTextEl.style.color = isDarkMode ? 'rgba(255, 255, 255, 0.95)' : '#1b5e20';
                 }
             }
         }
@@ -15118,50 +16245,123 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             function submitInboxPin() {
                 if (!inboxPinInput || !inboxPinFeedback) return;
-                if (quizLockoutActive()) {
-                    inboxPinFeedback.style.color = '#cc0000';
-                    inboxPinFeedback.textContent = 'Please try the quiz again after the timer.';
-                    return;
-                }
+                
+                // Clear feedback immediately to prevent stale messages
+                clearInboxPinFeedback();
+                
+                // Check if currently in lockout - if so, increment the penalty
                 if (inboxLockoutActive()) {
-                    inboxPinFeedback.style.color = '#cc0000';
-                    inboxPinFeedback.textContent = 'Please wait for the timer to finish.';
-                    return;
-                }
-                const password = (inboxPinInput.value || '').trim();
-                if (!password) {
-                    inboxPinFeedback.style.color = '#cc0000';
-                    inboxPinFeedback.textContent = 'Wrong password';
-                    setTimeout(function() {
-                        inboxPinFeedback.textContent = '';
-                    }, 3000);
-                    return;
-                }
-                if (password === SECRET_PASSWORD || localStorage.getItem(ADMIN_ACCESS_KEY) === 'true') {
-                    inboxLockoutAttempts = 0;
-                    resetInboxLockout();
-                    localStorage.setItem(INBOX_UNLOCK_KEY, 'true');
-                    inboxPinFeedback.style.color = '#2e7d32';
-                    inboxPinFeedback.style.textAlign = 'center';
-                    inboxPinFeedback.textContent = 'Unlocked';
-                    setTimeout(function() {
-                        inboxPinFeedback.textContent = '';
-                        closeModal('messageInboxGate');
-                        startSecretQuiz();
-                    }, 300);
-                    return;
-                }
-                inboxLockoutAttempts += 1;
-                inboxPinFeedback.style.color = '#cc0000';
-                inboxPinFeedback.textContent = 'Wrong password';
-                setTimeout(function() {
-                    inboxPinFeedback.textContent = '';
-                }, 3000);
-                if (inboxLockoutAttempts >= 2) {
+                    console.log('Lockout active, attempts:', inboxLockoutAttempts);
+                    // They tried again during lockout - increment attempts and increase the timer
+                    inboxLockoutAttempts += 1;
+                    console.log('New attempts:', inboxLockoutAttempts);
                     const lockSeconds = getInboxLockoutSeconds(inboxLockoutAttempts);
+                    console.log('New lock seconds:', lockSeconds);
                     if (lockSeconds > 0) {
                         startInboxLockout(lockSeconds);
+                        showInboxPinFeedback('Wrong password', '#cc0000');
+                        // Clear the feedback message after delay, but keep the timer display visible
+                        setTimeout(function() {
+                            const feedback = document.getElementById('inboxPinFeedback');
+                            if (feedback) {
+                                feedback.textContent = '';
+                                feedback.innerHTML = '';
+                            }
+                        }, 2000);
                     }
+                    inboxPinInput.value = '';
+                    return;
+                }
+                
+                if (quizLockoutActive()) {
+                    showInboxPinFeedback('Please try the quiz again after the timer.', '#cc0000');
+                    return;
+                }
+                
+                const password = (inboxPinInput.value || '').trim();
+                
+                // Empty password check
+                if (!password) {
+                    inboxLockoutAttempts += 1;
+                    console.log('Empty password, attempts now:', inboxLockoutAttempts);
+                    showInboxPinFeedback('Insert a Password', '#cc0000');
+                    // Ensure Message Me box is hidden on wrong password
+                    const messageForMeBox = document.getElementById('messageForMeBox');
+                    if (messageForMeBox) {
+                        messageForMeBox.classList.remove('show');
+                    }
+                    
+                    // START LOCKOUT ON EMPTY PASSWORD IF NEEDED
+                    if (inboxLockoutAttempts >= 2) {
+                        const lockSeconds = getInboxLockoutSeconds(inboxLockoutAttempts);
+                        console.log('Starting lockout with seconds:', lockSeconds);
+                        if (lockSeconds > 0) {
+                            startInboxLockout(lockSeconds);
+                        }
+                    }
+                    
+                    setTimeout(function() {
+                        const feedback = document.getElementById('inboxPinFeedback');
+                        if (feedback) {
+                            feedback.textContent = '';
+                            feedback.innerHTML = '';
+                        }
+                    }, 3000);
+                    inboxPinInput.value = '';
+                    return;
+                }
+                
+                // Check if password is correct - ONLY "Leopauls1" works, no admin bypass
+                const isCorrectPassword = password === SECRET_PASSWORD;
+                
+                if (isCorrectPassword) {
+                    // Correct password - ONLY THIS PASSWORD WORKS
+                    clearInboxLockoutState();
+                    localStorage.setItem(INBOX_UNLOCK_KEY, 'true');
+                    showInboxPinFeedback('Unlocked', '#2e7d32');
+                    inboxPinInput.value = '';
+                    setTimeout(function() {
+                        clearInboxPinFeedback();
+                        closeModal('messageInboxGate');
+                        startSecretQuiz();
+                        // Show the Message Me box when password is correct
+                        const messageForMeBox = document.getElementById('messageForMeBox');
+                        if (messageForMeBox) {
+                            messageForMeBox.classList.add('show');
+                        }
+                    }, 300);
+                    return;
+                } else {
+                    // Wrong password - ANYTHING ELSE IS WRONG
+                    inboxLockoutAttempts += 1;
+                    console.log('Wrong password, attempts now:', inboxLockoutAttempts);
+                    showInboxPinFeedback('Wrong password', '#cc0000');
+                    // Ensure Message Me box is hidden on wrong password
+                    const messageForMeBox = document.getElementById('messageForMeBox');
+                    if (messageForMeBox) {
+                        messageForMeBox.classList.remove('show');
+                    }
+                    
+                    // START THE LOCKOUT IMMEDIATELY if needed (don't wait for feedback to clear)
+                    if (inboxLockoutAttempts >= 2) {
+                        const lockSeconds = getInboxLockoutSeconds(inboxLockoutAttempts);
+                        console.log('Starting lockout with seconds:', lockSeconds);
+                        if (lockSeconds > 0) {
+                            startInboxLockout(lockSeconds);
+                        }
+                    }
+                    
+                    // Clear the feedback message after delay, but keep the timer display visible
+                    setTimeout(function() {
+                        // Only clear the feedback, not the timer
+                        const feedback = document.getElementById('inboxPinFeedback');
+                        if (feedback) {
+                            feedback.textContent = '';
+                            feedback.innerHTML = '';
+                        }
+                    }, 3000);
+                    
+                    inboxPinInput.value = '';
                 }
             }
 
@@ -15418,8 +16618,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             cur.lastMessage = text;
                             cur.lastTimestamp = now;
                             cur.lastDeviceName = deviceName || 'Unknown device';
+                            cur.lastSenderId = senderId;
                             if (!cur.senderDeviceName) {
                                 cur.senderDeviceName = deviceName || 'Unknown device';
+                            }
+                            // Store the sender's name from localStorage
+                            const senderName = localStorage.getItem('userNameForMessage');
+                            if (senderName && !cur.senderName) {
+                                cur.senderName = senderName;
                             }
                             cur.unreadCount = (Number(cur.unreadCount) || 0) + 1;
                             return cur;
@@ -15462,8 +16668,31 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         await update(pmMetaRef(senderId), {
                             lastMessage: text,
                             lastTimestamp: now,
+                            lastSenderId: PM_OWNER_ID,
                             unreadCount: 0
                         });
+                    },
+                    updateMessage: async function (messageId, newText, originalMessage) {
+                        var senderId = pmGetSenderId();
+                        var { get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                        
+                        // Find the message and update it
+                        var snap = await get(pmMessagesRef(senderId));
+                        var messages = snap.val() || {};
+                        
+                        if (messages[messageId]) {
+                            var updateData = {
+                                message: newText,
+                                isEdited: true,
+                                editedAt: Date.now()
+                            };
+                            if (originalMessage) {
+                                updateData.originalMessage = originalMessage;
+                            }
+                            await update(ref(db, 'privateMessages/' + pmSafeKey(senderId) + '/messages/' + messageId), updateData);
+                        } else {
+                            throw new Error('Message not found');
+                        }
                     },
                     markConversationRead: async function (senderId) {
                         await update(pmMetaRef(senderId), { unreadCount: 0 });
@@ -15481,7 +16710,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                             lastMessage: meta.lastMessage,
                                             lastTimestamp: meta.lastTimestamp,
                                             lastDeviceName: meta.senderDeviceName || meta.lastDeviceName,
-                                            unreadCount: meta.unreadCount
+                                            lastSenderId: meta.lastSenderId,
+                                            unreadCount: meta.unreadCount,
+                                            senderName: meta.senderName
                                         });
                                     }
                                 });
@@ -15504,7 +16735,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                         senderId: data.senderId,
                                         receiverId: data.receiverId,
                                         message: data.message,
-                                        timestamp: data.timestamp
+                                        timestamp: data.timestamp,
+                                        isEdited: data.isEdited || false,
+                                        editedAt: data.editedAt || null,
+                                        originalMessage: data.originalMessage || null
                                     });
                                 });
                                 messages.sort(function (a, b) {
@@ -15528,7 +16762,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                         receiverId: data.receiverId,
                                         message: data.message,
                                         timestamp: data.timestamp,
-                                        status: data.status
+                                        status: data.status,
+                                        isEdited: data.isEdited || false,
+                                        editedAt: data.editedAt || null,
+                                        originalMessage: data.originalMessage || null
                                     });
                                 });
                                 messages.sort(function (a, b) {
