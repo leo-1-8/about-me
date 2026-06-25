@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profanity Filter Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-check {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-censor {
+            background: #764ba2;
+            color: white;
+        }
+
+        .btn-censor:hover {
+            background: #6a3f91;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-box.success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+        }
+
+        .result-box.error {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+        }
+
+        .result-box.warning {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+        }
+
+        .result-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .result-box.success .result-title {
+            color: #065f46;
+        }
+
+        .result-box.error .result-title {
+            color: #991b1b;
+        }
+
+        .result-box.warning .result-title {
+            color: #92400e;
+        }
+
+        .result-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .result-box.success .result-content {
+            color: #065f46;
+        }
+
+        .result-box.error .result-content {
+            color: #991b1b;
+        }
+
+        .result-box.warning .result-content {
+            color: #92400e;
+        }
+
+        .censored-text {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .detected-words {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 6px;
+        }
+
+        .detected-words strong {
+            color: #991b1b;
+        }
+
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .info-box h3 {
+            color: #3730a3;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #4338ca;
+            font-size: 13px;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profanity Filter Demo</h1>
+        <p class="subtitle">Test the profanity detection and censoring system</p>
+
+        <form id="profanityForm">
+            <div class="form-group">
+                <label for="language">Language:</label>
+                <select id="language">
+                    <option value="en">English</option>
+                    <option value="es">Spanish (Español)</option>
+                    <option value="fr">French (Français)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Name or Nickname:</label>
+                <input type="text" id="username" placeholder="Enter your name" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" placeholder="Type your message here... Try using profanity to test the filter!"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-check" onclick="checkProfanity()">Check for Profanity</button>
+                <button type="button" class="btn-censor" onclick="censorText()">Censor Text</button>
+                <button type="submit" class="btn-submit">Submit Form</button>
+            </div>
+        </form>
+
+        <div id="resultBox" class="result-box"></div>
+
+        <div class="info-box">
+            <h3>What this filter detects:</h3>
+            <ul>
+                <li>Basic profanity words and phrases</li>
+                <li>Spaced letters (e.g., "f u c k")</li>
+                <li>Symbol replacements (e.g., "f*ck")</li>
+                <li>Leetspeak (e.g., "f7ck", "f@ck")</li>
+                <li>Repeated characters for emphasis</li>
+                <li>Common misspellings and variations</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Include the ProfanityFilter class -->
+    <script src="profanityFilter.js"></script>
+
+    <script>
+        // Initialize the profanity filter with default settings
+        const profanityFilter = new ProfanityFilter({
+            lang: 'en',           // Default language
+            censorChar: '*',      // Character to replace profanity with
+            throwOnDetection: false // Don't throw errors, just return results
+        });
+
+        // Function to check for profanity
+        function checkProfanity() {
+            const language = document.getElementById('language').value;
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('message').value;
+            const resultBox = document.getElementById('resultBox');
+
+            // Set the language for detection
+            profanityFilter.setLanguage(language);
+
+            // Combine username and message for checking
+            const textToCheck = `${username} ${message}`.trim();
+
+            if (!textToCheck) {
+                showResult('warning', 'Please enter some text to check.');
+                return;
+            }
+
+            // Use comprehensive detection (both basic and pattern-based)
+            const detection = profanityFilter.detectProfanity(textToCheck, language);
+
+            if (detection.hasProfanity) {
+                let resultHTML = `
+                    <div class="result-title">⚠️ Profanity Detected!</div>
+                    <div class="result-content">
+                        <p>Method: ${detection.method}</p>
+                        <div class="detected-words">
+                            <strong>Detected words/phrases:</strong><br>
+                            ${detection.detectedWords.join(', ')}
+                        </div>
+                    </div>
+                `;
+                showResult('error', resultHTML);
+            } else {
+                showResult('success', '✅ No profanity detected! Your message is clean.');
+            }
+        }
+
+        // Function to censor profanity in text
+        function censorText() {
+            const language = document.getElementById('language').value;
+            const message = document.getElementById('message').value;
+            const resultBox = document.getElementById('resultBox');
+
+            if (!message.trim()) {
+                showResult('warning', 'Please enter a message to censor.');
+                return;
+            }
+
+            // Set the language
+            profanityFilter.setLanguage(language);
+
+            // Censor the text
+            const censored = profanityFilter.censor(message, language);
+
+            if (censored !== message) {
+                let resultHTML = `
+                    <div class="result-title">🔒 Text Censored</div>
+                    <div class="result-content">
+                        <p>Profanity has been replaced with asterisks (*).</p>
+                        <div class="censored-text">${censored}</div>
+                    </div>
+                `;
+                showResult('warning', resultHTML);
+            } else {
+                showResult('success', '✅ No censoring needed - your message is already clean!');
+            }
+        }
+
+        // Function to display results
+        function showResult(type, content) {
+            const resultBox = document.getElementById('resultBox');
+            resultBox.className = 'result-box ' + type;
+            resultBox.innerHTML = content;
+            resultBox.style.display = 'block';
+        }
+
+        // Form submission handler
+        document.getElementById('profanityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const language = document.getElementById('language').value;
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('message').value;
+
+            // Set the language
+            profanityFilter.setLanguage(language);
+
+            // Validate the form
+            const textToCheck = `${username} ${message}`.trim();
+
+            if (!textToCheck) {
+                showResult('warning', 'Please fill in all fields.');
+                return;
+            }
+
+            // Check for profanity before submitting
+            const detection = profanityFilter.detectProfanity(textToCheck, language);
+
+            if (detection.hasProfanity) {
+                let resultHTML = `
+                    <div class="result-title">❌ Form Submission Blocked</div>
+                    <div class="result-content">
+                        <p>Your message contains inappropriate language and cannot be submitted.</p>
+                        <div class="detected-words">
+                            <strong>Detected words/phrases:</strong><br>
+                            ${detection.detectedWords.join(', ')}
+                        </div>
+                        <p style="margin-top: 10px;">Please remove the profanity and try again.</p>
+                    </div>
+                `;
+                showResult('error', resultHTML);
+            } else {
+                showResult('success', '✅ Form submitted successfully! (This is a demo, no actual submission occurred)');
+            }
+        });
+
+        // Example: Adding custom words to the filter
+        // You can add custom bad words, phrases, or regex patterns
+        // profanityFilter.addBadWords('en', ['custombadword', 'anotherbadword']);
+        // profanityFilter.addToxicPhrases('en', ['toxic phrase here']);
+        // profanityFilter.addRegexPatterns('en', [/custom\s*pattern/gi]);
+
+        // Example: Removing words from the filter
+        // profanityFilter.removeBadWords('en', ['damn', 'hell']);
+
+        console.log('Profanity Filter initialized successfully!');
+        console.log('Supported languages:', Object.keys(profanityFilter.wordLists));
+    </script>
+</body>
+</html>
