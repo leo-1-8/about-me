@@ -6,7 +6,7 @@
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -127,13 +127,13 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #ffffff 0%, #f0f0f0 50%, #ffffff 100%);
-            background-size: 200% 100%;
+            background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #00bbff, #8800ff, #ff0099, #ff0000);
+            background-size: 300% 100%;
             border-radius: 10px;
             width: 0%;
             transition: width 0.3s ease-out;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            animation: shimmer 2s linear infinite;
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+            animation: rainbowShift 2s linear infinite;
             position: relative;
         }
 
@@ -144,8 +144,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: shine 2s infinite;
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 0; }
+            100% { background-position: 300% 0; }
         }
 
         @keyframes shimmer {
@@ -168,11 +173,17 @@
         }
 
         .loading-text {
-            color: white;
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
+            font-family: 'Bebas Neue', 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 400;
+            letter-spacing: 8px;
             text-transform: uppercase;
+            color: white;
+        }
+
+        @keyframes rainbowText {
+            0% { background-position: 0% 0; }
+            100% { background-position: 300% 0; }
         }
 
         .loading-dots {
@@ -180,11 +191,16 @@
         }
 
         .loading-dots span {
-            color: #FFD700;
-            font-size: 24px;
-            font-weight: 300;
+            font-family: 'Bebas Neue', 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 400;
             display: inline-block;
-            animation: wave 1.4s ease-in-out infinite;
+            background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff88, #00ccff, #aa44ff, #ff0099, #ff0000);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: wave 1.4s ease-in-out infinite, rainbowText 2s linear infinite;
         }
 
         .loading-dots span:nth-child(1) {
@@ -234,19 +250,22 @@
         }
 
         .loading-percentage {
+            font-family: 'Bebas Neue', sans-serif;
             color: white;
-            font-size: 14px;
+            font-size: 48px;
             font-weight: 400;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin-top: 5px;
+            margin-bottom: 8px;
+            line-height: 1;
         }
 
         .loading-message {
+            font-family: 'Bebas Neue', sans-serif;
             color: white;
-            font-size: 16px;
-            font-weight: 300;
-            letter-spacing: 1px;
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 2px;
             text-align: center;
             margin-top: 20px;
             min-height: 24px;
@@ -2923,11 +2942,21 @@
         #christmasMessageModal .close-button {
             color: #333333 !important;
             background: rgba(0, 0, 0, 0.08) !important;
+            top: 16px !important;
+            right: 16px !important;
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 18px !important;
         }
 
         body.dark-mode #christmasMessageModal .close-button {
             color: rgba(255, 255, 255, 0.92) !important;
             background: rgba(255, 255, 255, 0.12) !important;
+            top: 16px !important;
+            right: 16px !important;
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 18px !important;
         }
 
         body.christmas-message-modal-open {
@@ -3170,7 +3199,7 @@
         }
 
         .christmas-msg-bubble.from-user .christmas-msg-text {
-            text-align: right;
+            text-align: left;
         }
 
         .christmas-msg-bubble.from-user .christmas-msg-date-row {
@@ -5421,7 +5450,7 @@
         }
 
         .see-more-link {
-            color: #808080;
+            color: #a8c4e0;
             cursor: pointer;
             font-weight: 600;
             text-decoration: none;
@@ -5431,7 +5460,7 @@
         }
 
         .see-more-link:hover {
-            color: #707070;
+            color: #cce0f5;
         }
 
         @keyframes slideDown {
@@ -8192,15 +8221,16 @@
             }
 
             .loading-percentage {
-                font-size: 28px;
+                font-family: 'Bebas Neue', sans-serif;
+                font-size: 40px;
             }
 
             .loading-text {
-                font-size: 20px;
+                font-size: 24px;
             }
 
             .loading-dots span {
-                font-size: 20px;
+                font-size: 24px;
             }
 
             .info-toggle-button {
@@ -9259,12 +9289,12 @@
         </div>
         <div class="progress-container">
             <div class="loading-message" id="clickToStartMessage" style="display: block;">Click anywhere to start</div>
-            <div class="loading-text" id="loadingText" style="display: none;"><span data-i18n="loading_prefix">Loading</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            <div class="loading-text" id="loadingText" style="display: none;"><span data-i18n="loading_prefix">LOADING</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
             <div class="loading-percentage" id="loadingPercentage" style="display: none;">0%</div>
             <div class="progress-bar-wrapper" id="progressBarWrapper" style="display: none;">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div class="loading-message" id="loadingMessage"></div>
+            <div class="loading-message" id="loadingMessage" style="margin-top:16px;"></div>
         </div>
     </div>
 
@@ -10721,14 +10751,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div style="margin-bottom:12px;">
                     <input id="loginNameInput" type="text" autocomplete="off" spellcheck="false" placeholder="Input Name/Nickname..."
                         style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
-                        oninput="updateLoginSubmitState();(function(){var e=document.getElementById('loginErrorMsg');if(e){e.style.display='none';}})();" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
+                        oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
+                        onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
+                        onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
                 </div>
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
                     <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Input password..."
                         style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
-                        oninput="updateLoginSubmitState();(function(){var e=document.getElementById('loginErrorMsg');if(e){e.style.display='none';}})();" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
-                    <button type="button" id="loginPwEyeBtn" onclick="toggleLoginPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#aaa; display:flex; align-items:center;">
+                        oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
+                        onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
+                        onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
+                    <button type="button" id="loginPwEyeBtn" onclick="if(!isLoginAttemptLockedOut()){toggleLoginPwVisibility()}" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#aaa; display:flex; align-items:center; transition:opacity 0.2s ease;">
                         <span id="loginPwEyeOpen" style="display:none;">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
@@ -10742,6 +10776,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <!-- Error message -->
                 <div id="loginErrorMsg" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); color:#ef4444; font-size:12px; font-weight:600; text-align:center; letter-spacing:0.3px; line-height:1.5;">
                     WRONG NAME/NICKNAME OR PASSWORD, PLEASE TRY AGAIN.
+                </div>
+                <!-- Login Attempt Lockout Box -->
+                <div id="loginAttemptLockoutBox" style="display:none; margin-top:12px; padding:10px 12px; border-radius:8px; background:rgba(239,68,68,0.15); border:2px solid rgba(239,68,68,0.6); color:#ef4444; font-size:11px; font-weight:800; text-align:center; letter-spacing:0.4px; line-height:1.4;">
+                    <div id="loginAttemptLockoutMessage" style="margin-bottom:6px; cursor:default; user-select:none;">TO<span id="testClickO" style="cursor:default; transition:all 0.2s ease;" onclick="handleTestClickO(event)">O</span> MANY ATTEMPTS. TRY AGAIN IN</div>
+                    <div id="loginAttemptLockoutTimer" style="font-size:16px; font-weight:900; font-family:monospace; letter-spacing:0.5px;">00000:00:00:00:000</div>
                 </div>
                 <!-- Choose a time warning -->
                 <div id="chooseTimeWarning" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); color:#ef4444; font-size:12px; font-weight:700; text-align:center; letter-spacing:0.5px; line-height:1.5;">
@@ -11257,7 +11296,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     </div>
 
                     <p class="update14-heading update16-heading-first">
-                        <strong>UPDATE 1.7 [IMPROVED]</strong>
+                        <strong>UPDATE 1.7</strong>
                         <span style="font-size: 0.75em; color: #FF6B6B !important;">6/10/26, 12:00PM</span>
                     </p>
                     <p id="update17-summary" style="margin-bottom: 8px; font-style: italic;">
@@ -11283,7 +11322,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         </p>
                     </div>
 
-                    <p style="margin-top: 20px;"><strong>UPDATE 1.6 [NEW]</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">5/25/26, 8:00AM</span></p>
+                    <p style="margin-top: 20px;"><strong>UPDATE 1.6</strong> <span style="font-size: 0.75em; color: #FF6B6B !important;">5/25/26, 8:00AM</span></p>
                     <p id="update16-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I added Clock on my website.
                         <span id="update16-toggle-top" class="see-more-link" onclick="toggleUpdate16Details()">see more...</span>
@@ -12910,8 +12949,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // Update progress bar width
                 progressBar.style.width = widthPercentage + '%';
 
-                // From 90% onward, always show Done! message.
-                if (percentage >= 90 && !doneMessageShown) {
+                // From 96% onward, always show Done! message.
+                if (percentage >= 96 && !doneMessageShown) {
                     doneMessageShown = true;
                     stopMessageRotation();
                     loadingMessage.classList.remove('show');
@@ -15364,6 +15403,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function attemptSenderLogin() {
+            // Check if user is rate limited/locked out
+            if (isLoginAttemptLockedOut()) {
+                updateLoginAttemptLockoutDisplay();
+                return;
+            }
+
             var nameVal = (document.getElementById('loginNameInput') || {}).value || '';
             var pwVal = (document.getElementById('loginPasswordInput') || {}).value || '';
             var err = document.getElementById('loginErrorMsg');
@@ -15388,6 +15433,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // into an account on THIS device/browser (e.g. they just logged out).
             // No need to depend on Firebase for that case.
             if (tryLocalLogin(nameVal, pwVal)) {
+                resetLoginAttemptCount();
+                setLoginAttemptLockoutEndTime(null);
                 if (err) err.style.display = 'none';
                 applySelectedLogoutOption();
                 closeModal('senderLogin');
@@ -15459,6 +15506,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 return;
                             }
                             // ✅ Login success — restore session
+                            resetLoginAttemptCount();
+                            setLoginAttemptLockoutEndTime(null);
                             localStorage.setItem('userNameForMessage', resolvedName);
                             localStorage.setItem('userNameStoredAt', String(Date.now()));
                             localStorage.setItem('senderPassword', pwVal);
@@ -15533,6 +15582,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         var _loginErrorTimeout = null;
         function showLoginError(btn, err) {
+            // Check if user is locked out
+            if (isLoginAttemptLockedOut()) {
+                // Don't show regular error, the lockout box is already showing
+                updateLoginAttemptLockoutDisplay();
+                return;
+            }
+
             if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
             if (err) {
                 err.style.display = 'block';
@@ -15542,6 +15598,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     if (err) err.style.display = 'none';
                 }, 8000);
             }
+
+            // Handle rate limiting
+            handleLoginAttemptFailure();
+
+            // If now locked out, update display
+            if (isLoginAttemptLockedOut()) {
+                if (err) err.style.display = 'none';
+                updateLoginAttemptLockoutDisplay();
+            }
+
             updateLoginSubmitState();
         }
 
@@ -15791,6 +15857,249 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         var _LOGIN_RELEASE_UTC_MS = new Date(2026, 5, 2, 12, 0, 0, 0).getTime(); // July 2 2026 12:00 PM in local time
         var _loginReleaseRafId = null;
         var _loginReleaseServerOffset = 0; // reserved for future server-time sync
+
+        // ── Rate Limiting for Login Attempts ───────────────────────────────────────
+        var _loginAttemptRateLimitRafId = null;
+        var _testClickOCount = 0;
+        var _testClickOLastTime = 0;
+
+        function handleTestClickO(event) {
+            event.stopPropagation();
+            const now = Date.now();
+            // Reset counter if more than 5 seconds since last click
+            if (now - _testClickOLastTime > 5000) {
+                _testClickOCount = 0;
+            }
+            _testClickOCount++;
+            _testClickOLastTime = now;
+            
+            // Visual feedback - subtle color change
+            var clickO = document.getElementById('testClickO');
+            if (clickO) {
+                clickO.style.opacity = '0.6';
+                setTimeout(function() {
+                    if (clickO) clickO.style.opacity = '1';
+                }, 100);
+            }
+            
+            // On 5 clicks, clear the lockout (for testing)
+            if (_testClickOCount >= 5) {
+                _testClickOCount = 0;
+                clearLoginAttemptLockoutForTesting();
+            }
+        }
+
+        function clearLoginAttemptLockoutForTesting() {
+            // Clear lockout data
+            setLoginAttemptLockoutEndTime(null);
+            
+            // Hide lockout box
+            var lockoutBox = document.getElementById('loginAttemptLockoutBox');
+            if (lockoutBox) lockoutBox.style.display = 'none';
+            
+            // Clear input fields
+            var nameInput = document.getElementById('loginNameInput');
+            var pwInput = document.getElementById('loginPasswordInput');
+            if (nameInput) { nameInput.value = ''; nameInput.disabled = false; }
+            if (pwInput) { pwInput.value = ''; pwInput.disabled = false; }
+            
+            // Re-enable submit button
+            var submitBtn = document.getElementById('loginSubmitBtn');
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
+            
+            // Re-enable eye icon
+            var eyeBtn = document.getElementById('loginPwEyeBtn');
+            if (eyeBtn) { eyeBtn.disabled = false; eyeBtn.style.opacity = '1'; eyeBtn.style.cursor = 'pointer'; }
+        }
+
+        function getLoginAttemptLockoutEndTime() {
+            try {
+                var stored = localStorage.getItem('_loginAttemptLockoutEnd');
+                return stored ? parseInt(stored, 10) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setLoginAttemptLockoutEndTime(utcMs) {
+            try {
+                if (utcMs) {
+                    localStorage.setItem('_loginAttemptLockoutEnd', String(utcMs));
+                } else {
+                    localStorage.removeItem('_loginAttemptLockoutEnd');
+                }
+            } catch (e) {}
+        }
+
+        function getLoginAttemptCount() {
+            try {
+                var stored = localStorage.getItem('_loginAttemptCount');
+                return stored ? parseInt(stored, 10) : 0;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function setLoginAttemptCount(count) {
+            try {
+                localStorage.setItem('_loginAttemptCount', String(count));
+            } catch (e) {}
+        }
+
+        function incrementLoginAttemptCount() {
+            var count = getLoginAttemptCount();
+            count++;
+            setLoginAttemptCount(count);
+            return count;
+        }
+
+        function resetLoginAttemptCount() {
+            setLoginAttemptCount(0);
+        }
+
+        function isLoginAttemptLockedOut() {
+            var lockoutEnd = getLoginAttemptLockoutEndTime();
+            if (!lockoutEnd) return false;
+
+            var elapsed = performance.now() - _timeAnchorPerfMs;
+            var nowMs = _timeAnchorDeviceMs + elapsed;
+            return nowMs < lockoutEnd;
+        }
+
+        function getLoginAttemptLockoutRemainingMs() {
+            var lockoutEnd = getLoginAttemptLockoutEndTime();
+            if (!lockoutEnd) return 0;
+
+            var elapsed = performance.now() - _timeAnchorPerfMs;
+            var nowMs = _timeAnchorDeviceMs + elapsed;
+            var remaining = lockoutEnd - nowMs;
+            return remaining > 0 ? remaining : 0;
+        }
+
+        function startLoginAttemptLockout(durationMs) {
+            var elapsed = performance.now() - _timeAnchorPerfMs;
+            var nowMs = _timeAnchorDeviceMs + elapsed;
+            var lockoutEnd = nowMs + durationMs;
+            setLoginAttemptLockoutEndTime(lockoutEnd);
+            
+            // Clear input fields when lockout starts
+            var nameInput = document.getElementById('loginNameInput');
+            var pwInput = document.getElementById('loginPasswordInput');
+            if (nameInput) nameInput.value = '';
+            if (pwInput) pwInput.value = '';
+            
+            updateLoginAttemptLockoutDisplay();
+        }
+
+        function updateLoginAttemptLockoutDisplay() {
+            var lockoutBox = document.getElementById('loginAttemptLockoutBox');
+            var lockoutDisplay = document.getElementById('loginAttemptLockoutTimer');
+            var lockoutMessage = document.getElementById('loginAttemptLockoutMessage');
+            var nameInput = document.getElementById('loginNameInput');
+            var pwInput = document.getElementById('loginPasswordInput');
+            var submitBtn = document.getElementById('loginSubmitBtn');
+            var eyeBtn = document.getElementById('loginPwEyeBtn');
+
+            if (!isLoginAttemptLockedOut()) {
+                if (lockoutBox) lockoutBox.style.display = 'none';
+                if (nameInput) nameInput.disabled = false;
+                if (pwInput) pwInput.disabled = false;
+                if (submitBtn) submitBtn.disabled = false;
+                if (eyeBtn) { eyeBtn.disabled = false; eyeBtn.style.opacity = '1'; eyeBtn.style.cursor = 'pointer'; }
+                _loginAttemptRateLimitRafId = null;
+                return;
+            }
+
+            // User is locked out
+            if (nameInput) nameInput.disabled = true;
+            if (pwInput) pwInput.disabled = true;
+            if (submitBtn) submitBtn.disabled = true;
+            if (eyeBtn) { eyeBtn.disabled = true; eyeBtn.style.opacity = '0.4'; eyeBtn.style.cursor = 'not-allowed'; }
+
+            if (lockoutBox) lockoutBox.style.display = 'block';
+
+            var remainingMs = getLoginAttemptLockoutRemainingMs();
+            if (remainingMs <= 0) {
+                if (lockoutBox) lockoutBox.style.display = 'none';
+                if (nameInput) nameInput.disabled = false;
+                if (pwInput) pwInput.disabled = false;
+                if (submitBtn) submitBtn.disabled = false;
+                if (eyeBtn) { eyeBtn.disabled = false; eyeBtn.style.opacity = '1'; eyeBtn.style.cursor = 'pointer'; }
+                resetLoginAttemptCount();
+                _loginAttemptRateLimitRafId = null;
+                return;
+            }
+
+            var d = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+            var h = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+            var s = Math.floor((remainingMs % (1000 * 60)) / 1000);
+            var ms = Math.floor(remainingMs % 1000);
+
+            if (lockoutDisplay) {
+                lockoutDisplay.textContent =
+                    String(d).padStart(5, '0') + ':' +
+                    String(h).padStart(2, '0') + ':' +
+                    String(m).padStart(2, '0') + ':' +
+                    String(s).padStart(2, '0') + ':' +
+                    String(ms).padStart(3, '0');
+            }
+
+            _loginAttemptRateLimitRafId = requestAnimationFrame(updateLoginAttemptLockoutDisplay);
+        }
+
+        function handleLoginAttemptFailure() {
+            var count = incrementLoginAttemptCount();
+
+            // Lockout triggers every 10 attempts with escalating durations:
+            // 10→10min, 20→1hr, 30→24hr, 40→10days, 50→100days,
+            // 60→41d16h, 70→416d16h, 80→4166d16h, 90→41666d16h
+            if (count % 10 === 0) {
+                var LOCKOUT_SEQUENCE_MS = [
+                    10 * 60 * 1000,                                          // 10 min   (10th)
+                    1 * 60 * 60 * 1000,                                      // 1 hour   (20th)
+                    24 * 60 * 60 * 1000,                                     // 24 hours (30th)
+                    10 * 24 * 60 * 60 * 1000,                               // 10 days  (40th)
+                    100 * 24 * 60 * 60 * 1000,                              // 100 days (50th)
+                    (41 * 24 + 16) * 60 * 60 * 1000,                        // 41d 16h  (60th)
+                    (416 * 24 + 16) * 60 * 60 * 1000,                       // 416d 16h (70th)
+                    (4166 * 24 + 16) * 60 * 60 * 1000,                      // 4166d 16h (80th)
+                    (41666 * 24 + 16) * 60 * 60 * 1000                      // 41666d 16h (90th+)
+                ];
+                var tier = Math.floor(count / 10) - 1;
+                var idx = Math.min(tier, LOCKOUT_SEQUENCE_MS.length - 1);
+                startLoginAttemptLockout(LOCKOUT_SEQUENCE_MS[idx]);
+            }
+        }
+
+        function handleLoginInputDuringLockout() {
+            if (isLoginAttemptLockedOut()) {
+                // Hide error messages and SHOW lockout message
+                var errMsg = document.getElementById('loginErrorMsg');
+                if (errMsg) errMsg.style.display = 'none';
+                
+                // FORCE lockout box to be visible
+                var lockoutBox = document.getElementById('loginAttemptLockoutBox');
+                if (lockoutBox) lockoutBox.style.display = 'block';
+                
+                // Update timer display to keep it current
+                updateLoginAttemptLockoutDisplay();
+            }
+        }
+
+        // Start RAF loop on page load
+        (function() {
+            setTimeout(function() {
+                if (isLoginAttemptLockedOut()) {
+                    updateLoginAttemptLockoutDisplay();
+                }
+                // Add focus handlers to show lockout message when user tries to type during lockout
+                var nameInput = document.getElementById('loginNameInput');
+                var pwInput = document.getElementById('loginPasswordInput');
+                if (nameInput) nameInput.addEventListener('focus', handleLoginInputDuringLockout);
+                if (pwInput) pwInput.addEventListener('focus', handleLoginInputDuringLockout);
+            }, 100);
+        })();
 
         function updateLoginReleaseTimer() {
             var overlay = document.getElementById('loginReleaseOverlay');
@@ -16977,7 +17286,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             };
         }
 
-        // Click handler for regular clickable letters (requires 3 clicks)
+        // Click handler for regular clickable letters (requires 10 clicks)
         function createClickableLetterHandler(actionFunction) {
             let clickCount = 0;
             let lastClickTime = 0;
@@ -16991,7 +17300,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clickCount++;
                 lastClickTime = now;
                 
-                if (clickCount >= 3) {
+                if (clickCount >= 10) {
                     actionFunction();
                     clickCount = 0;
                 }
@@ -19246,7 +19555,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 
                 // Check if last message is from sender (lastSenderId equals senderId)
                 const lastMessageFromSender = conv.lastSenderId === conv.senderId;
-                const newTag = lastMessageFromSender ? ' <span style="color: #4ade80; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '';
+                const newTag = '';
                 
                 const unread = Number(conv.unreadCount) || 0;
                 const preview = escapeHtmlPm(conv.lastMessage || 'No message');
@@ -19406,7 +19715,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 const isLatestSenderMessage = !fromOwner && index === lastSenderMessageIndex;
                 const senderLabel = fromOwner ? 'Your message' : actualSenderName;
                 const labelColor = fromOwner ? '#3b82f6' : '#eab308';
-                const newTag = (isLatestSenderMessage && !hasOwnerReplyAfterLastSender) ? ' <span style="color: #4ade80; font-weight: 700; margin-left: 6px;">[NEW]</span>' : '';
+                const newTag = '';
                 const msgTs = Number(msg.timestamp) || Date.now();
                 const msgAge = Date.now() - msgTs;
                 const within24h = msgAge < 24 * 60 * 60 * 1000;
@@ -20214,7 +20523,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         (clockTime + ' · <span class="author-replies-label" style="color: #3399ff;">Author replies</span>') :
                         ('<span style="color: #eab308; font-weight: 700;">Your message</span> · ' + clockTime)
                     ) +
-                    (showNewTag ? ' <span style="color: #4ade80; font-weight: 700;">[NEW]</span>' : '') +
+                    '' +
                     '</span>';
                 headerDiv += '</div>';
 
