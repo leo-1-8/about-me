@@ -1100,18 +1100,19 @@
             border-color: rgba(255, 255, 255, 0.15) !important;
         }
         body.dark-mode .pm-msg-bubble {
-            background: rgba(40, 50, 70, 0.95) !important;
+            background: rgba(180, 190, 200, 0.55) !important;
             border-color: rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
         }
         body.dark-mode .pm-msg-bubble.from-owner {
-            background: rgba(40, 70, 110, 0.9) !important;
+            background: rgba(180, 190, 200, 0.55) !important;
             border-left: none !important;
             border-right: 4px solid #3399ff !important;
         }
         body.dark-mode .pm-msg-bubble.from-sender {
-            background: rgba(40, 90, 60, 0.95) !important;
+            background: rgba(180, 190, 200, 0.55) !important;
             border-left: 4px solid #2ecc71 !important;
+            border-right: none !important;
         }
         body.dark-mode .pm-msg-time {
             color: #ffffff !important;
@@ -2581,7 +2582,7 @@
 
         /* Author's own message (right side) */
         .pm-msg-bubble.from-owner {
-            background: #f5f9ff;
+            background: #f0f2f5;
             border-left: none;
             border-right: 4px solid #3399ff;
             margin-left: auto;
@@ -2590,8 +2591,9 @@
 
         /* Sender's message (left side) */
         .pm-msg-bubble.from-sender {
-            background: #f5fff7;
+            background: #f0f2f5;
             border-left: 4px solid #2ecc71;
+            border-right: none;
             margin-right: auto;
             margin-left: 0;
         }
@@ -2732,11 +2734,15 @@
             user-select: none;
         }
 
-        body.dark-mode .pm-inbox-item,
-        body.dark-mode .pm-msg-bubble {
+        body.dark-mode .pm-inbox-item {
             background: #2a2a2a;
             border-color: #444;
             color: #eee;
+        }
+        body.dark-mode .pm-msg-bubble {
+            background: rgba(180, 190, 200, 0.55);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
         }
 
         body.dark-mode .pm-inbox-preview,
@@ -3274,7 +3280,7 @@
 
         /* Author's reply (left side) */
         .christmas-msg-bubble.from-owner {
-            background: #fff0f0;
+            background: #f0f2f5;
             border-left: 4px solid #3399ff;
             margin-right: auto;
             margin-left: 0;
@@ -3282,7 +3288,7 @@
 
         /* Sender's own message (right side) */
         .christmas-msg-bubble.from-user {
-            background: #f5f5f5;
+            background: #f0f2f5;
             border-left: none;
             border-right: 4px solid #2ecc71;
             margin-left: auto;
@@ -3313,14 +3319,14 @@
         }
 
         /* Accent lines stay fixed (green/blue) even when a custom message theme is applied —
-           only the bubble background follows the theme. */
-        #christmasViewArea.custom-themed .christmas-msg-bubble.from-user {
+           only the bubble background follows the theme. Light mode only. */
+        body:not(.dark-mode) #christmasViewArea.custom-themed .christmas-msg-bubble.from-user {
             background: var(--msg-theme-bubble-user) !important;
             border-left: none !important;
             border-right: 4px solid #2ecc71 !important;
         }
 
-        #christmasViewArea.custom-themed .christmas-msg-bubble.from-owner {
+        body:not(.dark-mode) #christmasViewArea.custom-themed .christmas-msg-bubble.from-owner {
             background: var(--msg-theme-bubble-owner) !important;
             border-left: 4px solid #3399ff !important;
             border-right: none !important;
@@ -3340,14 +3346,20 @@
             color: var(--msg-theme-text) !important;
         }
 
-        body.dark-mode #christmasViewArea.custom-themed .christmas-msg-bubble,
+        body.dark-mode #christmasViewArea.custom-themed .christmas-msg-bubble {
+            background: rgba(180, 190, 200, 0.55) !important;
+        }
         body.dark-mode #christmasViewArea.custom-themed .christmas-msg-text {
-            background: inherit;
             color: var(--msg-theme-text) !important;
         }
 
-        body.dark-mode #christmasMessageModal #christmasViewArea:not(.custom-themed) .christmas-msg-bubble.from-owner {
-            background: rgba(40, 70, 110, 0.9) !important;
+        body.dark-mode #christmasViewArea.custom-themed .christmas-msg-bubble.from-owner,
+        body.dark-mode #christmasViewArea.custom-themed .christmas-msg-bubble.from-user {
+            background: rgba(180, 190, 200, 0.55) !important;
+        }
+
+                body.dark-mode #christmasMessageModal #christmasViewArea:not(.custom-themed) .christmas-msg-bubble.from-owner {
+            background: rgba(180, 190, 200, 0.55) !important;
             border-left: 4px solid rgba(80, 170, 255, 0.85) !important;
             border-right: none !important;
             margin-right: auto !important;
@@ -3355,7 +3367,7 @@
         }
 
         body.dark-mode #christmasMessageModal #christmasViewArea:not(.custom-themed) .christmas-msg-bubble.from-user {
-            background: rgba(40, 90, 60, 0.95) !important;
+            background: rgba(180, 190, 200, 0.55) !important;
             border-left: none !important;
             border-right: 4px solid rgba(80, 220, 140, 0.75) !important;
             margin-left: auto !important;
@@ -11154,8 +11166,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div id="userSettingsActionsSection">
                 <div class="user-settings-label">Actions</div>
                 <div class="user-settings-ban-row">
-                    <button type="button" class="pm-conversation-ban-btn" id="userSettingsBanBtn" onclick="banFromSettings()">🔴 Ban</button>
-                    <button type="button" class="pm-conversation-unban-btn" id="userSettingsUnbanBtn" onclick="unbanFromSettings()">🟢 Unban</button>
+                    <button type="button" class="pm-conversation-ban-btn" id="userSettingsBanBtn" onclick="banFromSettings()">Ban</button>
+                    <button type="button" class="pm-conversation-unban-btn" id="userSettingsUnbanBtn" onclick="unbanFromSettings()">Unban</button>
                 </div>
             </div>
 
@@ -11203,7 +11215,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Unban Confirmation Modal -->
     <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
-            <div style="font-size:36px; margin-bottom:14px;">⚠️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO UNBAN THIS PERSON?</div>
             <div id="unbanCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
             <div style="display:flex; gap:12px;">
@@ -11215,7 +11226,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
     <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
-            <div style="font-size:36px; margin-bottom:14px;">🚫</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO BAN THIS PERSON?</div>
             <div id="banCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
             <div style="display:flex; gap:12px;">
@@ -11274,7 +11284,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <p style="margin-top: 20px;"><strong>💬 Message Me</strong></p>
                         <p>Added a Theme button.</p>
                         <p>Added a Log Out button.</p>
-                        <p>Added a Log In button.</p>
+                        <p>Added a Log in interface.</p>
                         <p>Added a Create an Account option.</p>
                         <p>Added profanity filter, sending messages or names containing prohibited words will result in a permanent violation up to 10 points reaching 0 points may result in a permanently ban.</p>
                         <p>Added message timestamps that automatically convert to your local time zone.</p>
@@ -16463,6 +16473,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }).catch(function() {});
             }
 
+            // New accounts always start in dark mode with the default (no custom) theme
+            if (typeof applyTheme === 'function') applyTheme('dark');
+            if (typeof resetMessageTheme === 'function') resetMessageTheme();
+
             // Close password modal and open message modal
             closeModal('senderPassword');
             openModal('christmasMessage');
@@ -19477,6 +19491,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
 
                 closeMessageConversation();
+                showAuthorResetNotice();
                 openModal('messageConfirmation');
             } catch (e) {
                 alert("Could not reset this conversation: " + e.message);
@@ -19738,7 +19753,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     '</span>' +
                     (editsButton ? editsButton : '') +
                     '</div>' +
-                    '<div class="pm-msg-text" style="' + (fromOwner ? 'text-align:right;' : '') + '">' +
+                    '<div class="pm-msg-text">' +
                     text +
                     '</div>' +
                     (showReplyButton ? '<div class="pm-reply-timer-wrap">' +
@@ -21152,17 +21167,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             viewArea.style.setProperty('--msg-theme-accent-owner', vars.accentOwner);
             viewArea.style.setProperty('--msg-theme-link', vars.link);
             localStorage.setItem(MESSAGE_VIEW_THEME_KEY, hex);
-            // Sync theme to Firebase so it loads on any device
+            // Sync theme to Firebase under a global key so it loads on any device
             try {
-                if (window._pmDb && window.pmGetSenderId && window.pmSafeKey) {
-                    var _themeUid = window.pmGetSenderId();
-                    if (_themeUid) {
-                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
-                            update(ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(_themeUid) + '/meta'), {
-                                messageTheme: hex
-                            }).catch(function() {});
-                        }).catch(function() {});
-                    }
+                if (window._pmDb) {
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ set, ref }) {
+                        set(ref(window._pmDb, 'siteSettings/messageTheme'), hex).catch(function() {});
+                    }).catch(function() {});
                 }
             } catch(e) {}
         }
@@ -21170,6 +21180,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function applyStoredMessageViewTheme() {
             const stored = localStorage.getItem(MESSAGE_VIEW_THEME_KEY);
             if (stored) applyMessageViewTheme(stored);
+            // Also fetch from global Firebase path to stay in sync across devices
+            try {
+                if (window._pmDb) {
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ get, ref }) {
+                        get(ref(window._pmDb, 'siteSettings/messageTheme')).then(function(snap) {
+                            var fbHex = snap.val();
+                            if (fbHex && typeof fbHex === 'string') {
+                                localStorage.setItem(MESSAGE_VIEW_THEME_KEY, fbHex);
+                                applyMessageViewTheme(fbHex);
+                            }
+                        }).catch(function() {});
+                    }).catch(function() {});
+                }
+            } catch(e) {}
         }
 
         function initMessageThemePresetGrid() {
