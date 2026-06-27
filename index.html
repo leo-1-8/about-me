@@ -2318,9 +2318,168 @@
             border-top-color: rgba(255, 255, 255, 0.15);
         }
 
+        /* 3-dots settings button on inbox item */
+        .pm-inbox-settings-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(100,116,139,0.25);
+            color: rgba(255,255,255,0.75);
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: -1px;
+            line-height: 1;
+            transition: background 0.18s, border-color 0.18s;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .pm-inbox-settings-btn:hover {
+            background: rgba(100,116,139,0.55);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* USER SETTINGS modal */
+        #userSettingsModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            z-index: 999999;
+            justify-content: center;
+            align-items: center;
+        }
+        #userSettingsModal.active {
+            display: flex;
+        }
+        .user-settings-box {
+            background: #1a2035;
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 16px;
+            padding: 28px 18px 24px 24px;
+            width: min(92%, 420px);
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.65);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.35) transparent;
+        }
+        .user-settings-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .user-settings-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .user-settings-box::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.35);
+            border-radius: 8px;
+        }
+        .user-settings-box::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255,255,255,0.55);
+        }
+        .user-settings-scroll-top-btn {
+            position: sticky;
+            bottom: 8px;
+            align-self: flex-end;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .user-settings-scroll-top-btn:hover {
+            background: rgba(255,255,255,0.22);
+            color: #fff;
+        }
+        .user-settings-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .user-settings-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9ca3af;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .user-settings-password-box {
+            width: 100%;
+            padding: 10px 14px 14px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            box-sizing: border-box;
+        }
+        .user-settings-password-box .user-settings-label {
+            margin-bottom: 0;
+        }
+        .user-settings-password-value {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            word-break: break-all;
+            user-select: all;
+            letter-spacing: 0.5px;
+        }
+        .user-settings-violations-box {
+            padding: 8px 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #facc15;
+            background: rgba(250,204,21,0.10);
+            border: 1px solid rgba(250,204,21,0.3);
+        }
+        .user-settings-ban-row {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .user-settings-close-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .user-settings-close-btn:hover { color: #fff; }
+
         .pm-conversation-ban-btn,
         .pm-conversation-unban-btn {
-            flex: 1;
+            flex: 1 1 0%;
+            min-width: 0;
             padding: 10px 14px;
             border: none;
             border-radius: 8px;
@@ -2329,6 +2488,9 @@
             cursor: pointer !important;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
             pointer-events: auto !important;
+            text-align: center;
+            white-space: nowrap;
+            box-sizing: border-box;
         }
 
         .pm-conversation-ban-btn {
@@ -10559,13 +10721,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div style="margin-bottom:12px;">
                     <input id="loginNameInput" type="text" autocomplete="off" spellcheck="false" placeholder="Input Name/Nickname..."
                         style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
-                        oninput="updateLoginSubmitState()" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
+                        oninput="updateLoginSubmitState();(function(){var e=document.getElementById('loginErrorMsg');if(e){e.style.display='none';}})();" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
                 </div>
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
                     <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Input password..."
                         style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
-                        oninput="updateLoginSubmitState()" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
+                        oninput="updateLoginSubmitState();(function(){var e=document.getElementById('loginErrorMsg');if(e){e.style.display='none';}})();" onkeydown="if(event.key==='Enter') attemptSenderLogin()">
                     <button type="button" id="loginPwEyeBtn" onclick="toggleLoginPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#aaa; display:flex; align-items:center;">
                         <span id="loginPwEyeOpen" style="display:none;">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -10588,6 +10750,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <!-- Auto-logout notice -->
                 <div id="autoLoggedOutNotice" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); color:#ef4444; font-size:12px; font-weight:700; text-align:center; letter-spacing:0.3px; line-height:1.6;">
                     YOU HAVE BEEN AUTOMATICALLY LOGGED OUT DUE TO THE TIMER ENDED.
+                </div>
+                <!-- Ban warning — shown for 8s when a banned account tries to log in -->
+                <div id="loginBanWarning" style="display:none; margin-top:12px; padding:12px 14px; border-radius:8px; background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.6); color:#ef4444; font-size:12px; font-weight:800; text-align:center; letter-spacing:0.6px; line-height:1.6; position:relative; overflow:hidden;">
+                    <span id="loginBanWarningText"></span>
                 </div>
                 <!-- Create new account link -->
                 <div style="margin-top:14px; display:flex; align-items:center; justify-content:center; text-align:center; width:100%;">
@@ -10651,7 +10817,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <span>Letter Limit: 1000</span>
                 <span id="christmasWordCounter" class="christmas-word-counter">0 / 1000</span>
             </div>
-            <button type="button" class="christmas-submit-btn" id="christmasSubmitBtn" onclick="submitChristmasMessage()" disabled style="opacity:0.45; cursor:not-allowed;">SUBMIT</button>
+            <div id="christmasSubmitRow" style="display:flex; flex-direction:column; gap:8px;">
+                <button type="button" class="christmas-submit-btn" id="christmasSubmitBtn" onclick="submitChristmasMessage()" disabled style="opacity:0.45; cursor:not-allowed; width:100%;">SUBMIT</button>
+                <button type="button" id="christmasBannedLogoutBtn" onclick="openLogoutConfirmModal()" class="christmas-view-logout-btn" style="display:none; background:none; border:none; font-size:13px; font-weight:700; cursor:pointer; text-align:left; padding:2px 0 2px 4px; width:auto; align-self:flex-start; margin-left:6px;">Log out</button>
+            </div>
             
             <!-- Violations Counter with Exclamation Point -->
             <div id="christmasViolationsRow" style="display: flex; align-items: center; justify-content: center; margin-top: 12px; gap: 8px; position: relative;">
@@ -10901,24 +11070,99 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <div class="modal-overlay" id="messageConversationModal">
         <div class="christmas-modal-box pm-conversation-modal-shell">
             <button class="close-button" onclick="closeMessageConversation()" title="Close">×</button>
-            <button type="button" id="pmResetDataBtn" onclick="showResetDataConfirm()" style="position: absolute; top: 20px; left: 20px; height: 32px; padding: 0 8px; border: 1px solid rgba(239,68,68,0.5); border-radius: 6px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 9px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; z-index: 2; display: flex; align-items: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">RESET DATA</button>
             <div class="christmas-modal-title" id="messageConversationTitle">CONVERSATION</div>
             <div id="messageConversationThread" class="pm-conversation-thread"></div>
             <div id="messageConversationBannedNotice" class="pm-conversation-banned-notice">THIS PERSON IS BANNED</div>
-            <div id="messageConversationViolations" class="pm-conversation-violations" style="display:none;">Remaining Violations: 10</div>
-            <div class="pm-conversation-footer" id="messageConversationFooter" style="flex-wrap:wrap; gap:10px;">
-                <button type="button" class="pm-conversation-ban-btn" id="pmConversationBanBtn" onclick="banActiveConversation()">🔴 Ban</button>
-                <button type="button" class="pm-conversation-unban-btn" id="pmConversationUnbanBtn" onclick="showUnbanConfirm()">🟢 Unban</button>
-                <div id="pmConversationPasswordDisplay" style="width:100%; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; text-align:center; display:none;">
-                    <div style="font-size:10px; font-weight:700; color:#9ca3af; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">PASSWORD</div>
-                    <div id="pmConversationPasswordValue" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:15px; font-weight:700; color:#ffffff; word-break:break-all; user-select:all; letter-spacing:0.5px;"></div>
-                </div>
+            <!-- Hidden stubs kept so updateConversationBanFooter() still works without errors -->
+            <div id="messageConversationViolations" style="display:none;"></div>
+            <div id="pmConversationBanBtn" style="display:none;"></div>
+            <div id="pmConversationUnbanBtn" style="display:none;"></div>
+            <div id="pmConversationPasswordDisplay" style="display:none;">
+                <div id="pmConversationPasswordValue"></div>
             </div>
         </div>
     </div>
 
+    <!-- USER SETTINGS Modal -->
+    <div id="userSettingsModal">
+        <div class="user-settings-box" onclick="event.stopPropagation()">
+            <!-- Title row with inline X -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                <div class="user-settings-title" id="userSettingsTitle" style="margin-bottom:0;">USER SETTINGS</div>
+                <button class="user-settings-close-btn" style="position:static;font-size:18px;color:rgba(255,255,255,0.5);line-height:1;margin-right:10px;margin-top:-8px;" onclick="closeUserSettingsModal()">×</button>
+            </div>
+
+            <!-- EMPTY notice — shown centered in place of Name/Password once this account's data has been reset -->
+            <div id="userSettingsEmptyNotice" style="display:none; padding:28px 14px; text-align:center; font-size:16px; font-weight:800; letter-spacing:2px; color:rgba(255,255,255,0.45); text-transform:uppercase;">EMPTY</div>
+
+            <!-- Name / Nickname -->
+            <div id="userSettingsNameSection">
+                <div class="user-settings-password-box">
+                    <div class="user-settings-label">Name / Nickname</div>
+                    <div id="userSettingsNameValue" class="user-settings-password-value" style="font-size:18px; font-weight:800;"></div>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div id="userSettingsPwSection" style="display:none;">
+                <div class="user-settings-password-box">
+                    <div class="user-settings-label">Password</div>
+                    <div id="userSettingsPwValue" class="user-settings-password-value"></div>
+                </div>
+            </div>
+
+            <!-- Ban / Unban -->
+            <div id="userSettingsActionsSection">
+                <div class="user-settings-label">Actions</div>
+                <div class="user-settings-ban-row">
+                    <button type="button" class="pm-conversation-ban-btn" id="userSettingsBanBtn" onclick="banFromSettings()">🔴 Ban</button>
+                    <button type="button" class="pm-conversation-unban-btn" id="userSettingsUnbanBtn" onclick="unbanFromSettings()">🟢 Unban</button>
+                </div>
+            </div>
+
+            <!-- Banned status notice — shown below Ban/Unban when the person is banned -->
+            <div id="userSettingsBannedNotice" class="pm-conversation-banned-notice" style="display:none;">THIS PERSON IS BANNED</div>
+
+            <!-- Remaining Violations — below ban/unban, styled like the screenshot -->
+            <div id="userSettingsViolationsSection" style="display:none;">
+                <div class="user-settings-violations-box" id="userSettingsViolationsValue">Remaining Violations: 9</div>
+            </div>
+
+            <!-- Login status (LOGGED IN / LOGGED OUT) -->
+            <div id="userSettingsLoginStatusSection">
+                <div id="userSettingsInactiveBox" style="display:flex;align-items:center;justify-content:center;"></div>
+            </div>
+
+            <!-- Active Time -->
+            <div id="userSettingsActiveTimerSection">
+                <div class="user-settings-label" style="text-align:center;">Active Timer</div>
+                <div id="userSettingsSessionTimerBox" style="display:flex;align-items:center;justify-content:center;"></div>
+            </div>
+
+            <!-- End Active Timer — only visible while the active session timer is actually running -->
+            <button type="button" id="userSettingsEndActiveTimerBtn" onclick="endActiveTimerFromSettings()" style="width: 100%; height: 34px; padding: 0 10px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: none; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">END TIMER</button>
+
+            <!-- In-Active Timer (title sits above the 168h cooldown box) -->
+            <div id="userSettingsInactiveTimerSection">
+                <div class="user-settings-label" style="text-align:center;">In-Active Timer</div>
+                <div id="userSettingsCooldownBox" style="display:flex;align-items:center;justify-content:center;"></div>
+            </div>
+
+            <!-- End Timer — only visible when 168h timer is actively counting down -->
+            <button type="button" id="userSettingsEndTimerBtn" onclick="endLoginCooldownFromSettings()" style="width: 100%; height: 34px; padding: 0 10px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: none; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">END TIMER</button>
+
+            <!-- Scroll to top button — appears when scrolled down -->
+            <button type="button" id="userSettingsScrollTopBtn" class="user-settings-scroll-top-btn" onclick="document.querySelector('.user-settings-box').scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+
+            <!-- Reset Data — very bottom -->
+            <button type="button" id="pmResetDataBtn" onclick="showResetDataConfirm()" style="width: 100%; height: 60px; padding: 0 14px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">RESET DATA</button>
+        </div>
+    </div>
+
     <!-- Unban Confirmation Modal -->
-    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:99999; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">⚠️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO UNBAN THIS PERSON?</div>
@@ -10930,7 +11174,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:99999; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">🚫</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO BAN THIS PERSON?</div>
@@ -10943,7 +11187,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Reset Data Confirmation Modal -->
-    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:99999; justify-content:center; align-items:center; pointer-events:auto !important;">
+    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto !important;">
         <div style="background:#1a2035; border:1px solid rgba(239,68,68,0.3); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">🗑️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:6px;">RESET THIS PERSON'S DATA?</div>
@@ -14561,6 +14805,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     return;
                 }
                 openModal('christmasMessage');
+                // Make sure the live meta listener is running now that the
+                // sender is actually back in the messaging UI — without this,
+                // reopening Message Me from a stored session never (re)started
+                // it, so a remote END TIMER / ban / reset sent while they were
+                // sitting here could go completely unnoticed.
+                if (typeof startSenderThreadListener === 'function') {
+                    try { startSenderThreadListener(); } catch (e) {}
+                }
                 // Do NOT automatically open the view your message area
                 // User must manually click the "View Your Message" button
                 return;
@@ -15151,6 +15403,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 stopAccountCooldownTimer();
                 var _cdBox0 = document.getElementById('accountCooldownTimerBox');
                 if (_cdBox0) _cdBox0.style.display = 'none';
+                // Check ban status from Firebase and show warning if banned
+                (function() {
+                    var _localSenderId = window.pmGetSenderId ? window.pmGetSenderId() : localStorage.getItem('christmasUserId');
+                    if (!_localSenderId || !window._pmDb || !window.pmSafeKey) return;
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ get, ref }) {
+                        var _safeK = window.pmSafeKey(_localSenderId);
+                        get(ref(window._pmDb, 'privateMessages/' + _safeK + '/meta')).then(function(snap) {
+                            var _localMeta = snap.val() || {};
+                            if (_localMeta.ownerBanned || _localMeta.isBanned) {
+                                // Reverse the login — kick them back out
+                                localStorage.removeItem('userNameForMessage');
+                                localStorage.removeItem('userNameStoredAt');
+                                localStorage.removeItem('senderPassword');
+                                closeModal('christmasMessage');
+                                openModal('senderLogin');
+                                startLoginReleaseTimer();
+                                showLoginBanWarning(_localMeta);
+                            }
+                        }).catch(function() {});
+                    }).catch(function() {});
+                })();
                 return;
             }
 
@@ -15205,7 +15478,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                     var _loginSafeKey = window.pmSafeKey(senderId);
                                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref: fbRef }) {
                                         update(fbRef(window._pmDb, 'privateMessages/' + _loginSafeKey + '/meta'), {
-                                            senderPassword: pwVal
+                                            senderPassword: pwVal,
+                                            hasAccountLock: true
                                         }).catch(function() {});
                                     }).catch(function() {});
                                 }
@@ -15216,6 +15490,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 if (typeof applyMessageViewTheme === 'function') {
                                     try { applyMessageViewTheme(meta.messageTheme); } catch(e) {}
                                 }
+                            }
+                            // Block login if account is banned — show warning inside the modal
+                            if (meta && (meta.ownerBanned || meta.isBanned)) {
+                                if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
+                                showLoginBanWarning(meta);
+                                return;
                             }
                             applySelectedLogoutOption();
                             closeModal('senderLogin');
@@ -15251,11 +15531,34 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }).catch(function() { showLoginError(btn, err); });
         }
 
+        var _loginErrorTimeout = null;
         function showLoginError(btn, err) {
             if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
-            if (err) err.style.display = 'block';
-            // Re-evaluate submit state
+            if (err) {
+                err.style.display = 'block';
+                // Auto-hide after 8 seconds
+                if (_loginErrorTimeout) clearTimeout(_loginErrorTimeout);
+                _loginErrorTimeout = setTimeout(function() {
+                    if (err) err.style.display = 'none';
+                }, 8000);
+            }
             updateLoginSubmitState();
+        }
+
+        var _loginBanWarningTimeout = null;
+        function showLoginBanWarning(meta) {
+            var box = document.getElementById('loginBanWarning');
+            var txt = document.getElementById('loginBanWarningText');
+            if (!box || !txt) return;
+            var isProfanityBan = !!(meta && meta.isBanned && !meta.ownerBanned);
+            txt.textContent = isProfanityBan
+                ? 'THIS ACCOUNT IS BANNED DUE TO REPEATED VIOLATIONS'
+                : 'THIS ACCOUNT IS BANNED';
+            box.style.display = 'block';
+            if (_loginBanWarningTimeout) clearTimeout(_loginBanWarningTimeout);
+            _loginBanWarningTimeout = setTimeout(function() {
+                if (box) box.style.display = 'none';
+            }, 8000);
         }
 
         // ── Auto-logout duration feature ──────────────────────────────────
@@ -15405,15 +15708,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var sid = window.pmGetSenderId();
             var sk = window.pmSafeKey(sid);
             var loggedOutAtTs = isLoggedOut ? Date.now() : null;
+            var updates = {
+                isLoggedOut: isLoggedOut ? true : null,
+                loggedOutAt: loggedOutAtTs
+            };
+            // Starting a fresh logout cooldown clears any earlier "ended early" marker
+            if (isLoggedOut) updates.cooldownEndedByOwnerAt = null;
             import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
-                update(ref(window._pmDb, 'privateMessages/' + sk + '/meta'), {
-                    isLoggedOut: isLoggedOut ? true : null,
-                    loggedOutAt: loggedOutAtTs
-                }).catch(function() {});
+                update(ref(window._pmDb, 'privateMessages/' + sk + '/meta'), updates).catch(function() {});
             }).catch(function() {});
         }
 
         function performAutoLogout() {
+            try {
+                console.log('[pm-debug] performAutoLogout() RUNNING — call stack:');
+                console.trace();
+            } catch (e) {}
             localStorage.removeItem('userNameForMessage');
             localStorage.removeItem('userNameStoredAt');
             localStorage.removeItem('senderPassword');
@@ -15424,14 +15734,33 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             stopAutoLogoutWatcher();
             writeLogoutStatusToFirebase(true);
             startAccountCooldownTimer();
-            // Only show the login modal if the person was actively inside the
-            // message modal when the session expired. If the page is on the
-            // loading screen or they haven't opened Message Me yet, silently
-            // clear the session — the login modal will show naturally when
-            // they click Message Me.
-            var modal = document.getElementById('christmasMessageModal');
-            if (modal && modal.classList.contains('active')) {
-                closeModal('christmasMessage');
+            // Show the login modal immediately whenever the page is open and the
+            // person is anywhere in the messaging flow — not just when the main
+            // compose/thread modal happens to be the active one. This covers
+            // being inside the conversation thread, the name/password
+            // confirmation steps, etc. Only fall back to the silent flag if none
+            // of the messaging modals are open at all (e.g. they're elsewhere on
+            // the site, or the page was closed when this fired and is only
+            // running this now as a catch-up check).
+            var messagingModalIds = ['christmasMessageModal', 'messageConfirmationModal', 'nameFinalConfirmModal', 'senderPasswordModal'];
+            var anyMessagingModalOpen = messagingModalIds.some(function(id) {
+                var m = document.getElementById(id);
+                return m && m.classList.contains('active');
+            });
+            try {
+                console.log('[pm-debug] anyMessagingModalOpen:', anyMessagingModalOpen, messagingModalIds.map(function(id) {
+                    var m = document.getElementById(id);
+                    return id + '=' + (m ? m.classList.contains('active') : 'MISSING');
+                }));
+            } catch (e) {}
+            if (anyMessagingModalOpen) {
+                messagingModalIds.forEach(function(id) {
+                    var m = document.getElementById(id);
+                    if (m && m.classList.contains('active')) {
+                        var shortType = id.replace(/Modal$/, '');
+                        closeModal(shortType);
+                    }
+                });
                 openSenderLoginModal();
                 var notice = document.getElementById('autoLoggedOutNotice');
                 if (notice) {
@@ -15543,9 +15872,39 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var remaining = ACCOUNT_COOLDOWN_MS - elapsed;
 
             if (remaining <= 0) {
-                // Cooldown finished — allow new account creation
+                // Cooldown finished — unlock new account creation immediately
                 box.style.display = 'none';
                 stopAccountCooldownTimer();
+                // Clear the account lock from localStorage so the warning vanishes right now
+                // (no refresh needed — this fires while the modal is open)
+                localStorage.removeItem('accountCreatedOnDevice');
+                localStorage.removeItem('autoLoggedOutAt');
+                localStorage.removeItem('lastKnownSenderName');
+                localStorage.removeItem('lastKnownSenderPasswordHash');
+                localStorage.removeItem('lastKnownSenderDeviceId');
+                localStorage.removeItem('christmasUserId');
+                // Hide the one-account warnings immediately
+                var _expW1 = document.getElementById('oneAccountWarning');
+                if (_expW1) _expW1.style.display = 'none';
+                var _expW2 = document.getElementById('oneAccountWarningConfirm');
+                if (_expW2) _expW2.style.display = 'none';
+                // Re-enable the name input and submit button inside the confirmation modal
+                var _expNameInput = document.getElementById('userNameInput');
+                if (_expNameInput) { _expNameInput.disabled = false; _expNameInput.value = ''; }
+                var _expSubmitBtn = document.querySelector('#messageConfirmationModal .name-submit-btn');
+                if (_expSubmitBtn) { _expSubmitBtn.disabled = false; _expSubmitBtn.style.opacity = ''; _expSubmitBtn.style.cursor = ''; _expSubmitBtn.textContent = 'Submit'; }
+                // Also clear Firebase account lock so other devices unlock too
+                try {
+                    if (window._pmDb && window.pmGetSenderId && window.pmSafeKey) {
+                        var _expiredId = window.pmGetSenderId();
+                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
+                            update(ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(_expiredId) + '/meta'), {
+                                hasAccountLock: null,
+                                accountLockedAt: null
+                            }).catch(function() {});
+                        }).catch(function() {});
+                    }
+                } catch(e) {}
                 return;
             }
 
@@ -15574,6 +15933,35 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // Still in cooldown — show timer immediately
                 // Defer slightly to make sure DOM is ready
                 setTimeout(function() { startAccountCooldownTimer(); }, 500);
+            } else {
+                // 168h has fully elapsed — clear account lock so the warning never shows again
+                localStorage.removeItem('accountCreatedOnDevice');
+                localStorage.removeItem('autoLoggedOutAt');
+                localStorage.removeItem('lastKnownSenderName');
+                localStorage.removeItem('lastKnownSenderPasswordHash');
+                localStorage.removeItem('lastKnownSenderDeviceId');
+                localStorage.removeItem('christmasUserId');
+                // Also clear hasAccountLock in Firebase so other devices/browsers are unlocked too
+                setTimeout(function() {
+                    if (window._pmDb && window.pmGetSenderId && window.pmSafeKey) {
+                        var _expiredId = window.pmGetSenderId();
+                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
+                            update(ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(_expiredId) + '/meta'), {
+                                hasAccountLock: null,
+                                accountLockedAt: null
+                            }).catch(function() {});
+                        }).catch(function() {});
+                    }
+                }, 1000);
+                // Hide the warnings in case they were left visible
+                setTimeout(function() {
+                    var w1 = document.getElementById('oneAccountWarning');
+                    if (w1) w1.style.display = 'none';
+                    var w2 = document.getElementById('oneAccountWarningConfirm');
+                    if (w2) w2.style.display = 'none';
+                    var box = document.getElementById('accountCooldownTimerBox');
+                    if (box) box.style.display = 'none';
+                }, 200);
             }
         })();
         // ── End 168-hour cooldown timer ──────────────────────────────────
@@ -15615,8 +16003,50 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var hasSession = localStorage.getItem('userNameForMessage') && localStorage.getItem('senderPassword');
             if (!hasSession) return;
             startAutoLogoutWatcher();
+            // Also catch up on a remote END TIMER (force-logout) that may have
+            // been sent by the owner while this device's page was fully closed —
+            // the live meta listener can only react while the page is open, so
+            // without this check a closed-then-reopened tab would keep showing
+            // as logged in even though the owner already ended the session.
+            checkForMissedForceLogoutOnLoad();
         }
         document.addEventListener('DOMContentLoaded', resumeAutoLogoutOnLoad);
+
+        function checkForMissedForceLogoutOnLoad() {
+            if (!window.pmGetSenderId || !window._pmDb) {
+                // Firebase/PM helpers may not be ready yet this early — retry shortly.
+                setTimeout(function() {
+                    if (window.pmGetSenderId && window._pmDb) checkForMissedForceLogoutOnLoad();
+                }, 800);
+                return;
+            }
+            var senderId = window.pmGetSenderId();
+            import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                var metaPath = 'privateMessages/' + window.pmSafeKey(senderId) + '/meta';
+                fb.get(fb.ref(window._pmDb, metaPath)).then(function(snap) {
+                    var meta = snap.val() || {};
+                    if (!meta.forceLogoutAt) return;
+                    var lastHandled = parseInt(localStorage.getItem('lastHandledForceLogoutAt') || '0');
+                    if (Number(meta.forceLogoutAt) > lastHandled) {
+                        localStorage.setItem('lastHandledForceLogoutAt', String(meta.forceLogoutAt));
+                        // Was caught before any messaging modal was open (this runs
+                        // right on page load) — clear the session via performAutoLogout,
+                        // then explicitly show the LOG IN screen with the warning
+                        // ourselves, instead of relying on performAutoLogout's
+                        // modal-detection branch, which has nothing to detect yet
+                        // this early and would otherwise just silently flag it for
+                        // "next time they open Message Me" — not what's wanted here.
+                        performAutoLogout();
+                        openSenderLoginModal();
+                        var notice = document.getElementById('autoLoggedOutNotice');
+                        if (notice) {
+                            notice.style.display = 'block';
+                            setTimeout(function() { if (notice) notice.style.display = 'none'; }, 15000);
+                        }
+                    }
+                }).catch(function() {});
+            }).catch(function() {});
+        }
 
         // Cross-tab sync: when another tab creates an account or logs in/out,
         // update the open confirmation modal in THIS tab immediately.
@@ -15713,7 +16143,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         logoutMinutes: 60,
                         logoutExpiresAt: newAccountExpiresAt,
                         isLoggedOut: null,
-                        loggedOutAt: null
+                        loggedOutAt: null,
+                        hasAccountLock: true,
+                        accountLockedAt: Date.now()
                     }).catch(function() {});
                     // Clear any leftover resetSignal tied to this (possibly reused)
                     // senderId so the brand-new account doesn't immediately get treated
@@ -16077,12 +16509,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     var authorWasReset = localStorage.getItem('authorWasReset') === 'true';
                     // Clean up any old stale flags from previous code versions
                     localStorage.removeItem('wasAuthorReset');
+                    // If the user is permanently banned (violations exhausted), keep the input
+                    // locked and skip all account-unlock logic that would re-enable it.
+                    var _isPermanentlyBanned = violationsRemaining <= 0;
                     if (hasAccount) {
                         // Check if 168h cooldown has expired — if so, unlock new account creation
                         var _loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
                         var _cooldownPassed = _loggedOutAt > 0 && (Date.now() - _loggedOutAt) >= 168 * 60 * 60 * 1000;
-                        if (!hasActiveSession && _cooldownPassed) {
-                            // 168h elapsed — clear and allow new account
+                        // Also treat as expired if the owner already pressed END TIMER for this session
+                        var _endedByOwner = !!(typeof senderConversationMeta !== 'undefined' && senderConversationMeta && senderConversationMeta.cooldownEndedByOwnerAt && _loggedOutAt > 0 && Number(senderConversationMeta.cooldownEndedByOwnerAt) >= _loggedOutAt);
+                        if (!hasActiveSession && (_cooldownPassed || _endedByOwner)) {
+                            // 168h elapsed or owner ended timer — clear and allow new account
                             localStorage.removeItem('accountCreatedOnDevice');
                             localStorage.removeItem('autoLoggedOutAt');
                             localStorage.removeItem('lastKnownSenderName');
@@ -16094,8 +16531,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             if (_warn) _warn.style.display = 'none';
                             var _warnC = document.getElementById('oneAccountWarningConfirm');
                             if (_warnC) _warnC.style.display = 'none';
-                            if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
-                            if (nameInput) { nameInput.value = ''; nameInput.disabled = false; }
+                            // Only re-enable input/button if not permanently banned
+                            if (!_isPermanentlyBanned) {
+                                if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
+                                if (nameInput) { nameInput.value = ''; nameInput.disabled = false; }
+                            }
                         } else {
                             // Still in cooldown — block
                             var _oneAcct2 = document.getElementById('oneAccountWarning');
@@ -16104,7 +16544,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             if (_oneAcctC2) _oneAcctC2.style.display = 'block';
                             if (resetNotice) resetNotice.style.display = 'none';
                             if (submitBtn) {
-                                submitBtn.textContent = 'Submit';
+                                submitBtn.textContent = _isPermanentlyBanned ? 'Permanently Banned' : 'Submit';
                                 submitBtn.disabled = true;
                                 submitBtn.style.opacity = '0.45';
                                 submitBtn.style.cursor = 'not-allowed';
@@ -16117,8 +16557,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             resetNotice.textContent = 'AUTHOR RESET YOUR DATA FOR SOME REASON.';
                             resetNotice.style.display = 'block';
                         }
-                        if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
-                        if (nameInput) nameInput.disabled = false;
+                        // Only re-enable if not permanently banned
+                        if (!_isPermanentlyBanned) {
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
+                            if (nameInput) nameInput.disabled = false;
+                        }
                     } else {
                         if (resetNotice) resetNotice.style.display = 'none';
                     }
@@ -16851,6 +17294,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 submitBtn.style.cursor = 'not-allowed';
                 submitBtn.style.pointerEvents = 'none';
             }
+            // Show logout button on the left when banned (only if logged in)
+            var _bannedLogoutBtn = document.getElementById('christmasBannedLogoutBtn');
+            if (_bannedLogoutBtn) {
+                var _hasSession = !!(localStorage.getItem('userNameForMessage'));
+                _bannedLogoutBtn.style.display = _hasSession ? 'inline-flex' : 'none';
+                _bannedLogoutBtn.style.alignItems = 'center';
+                _bannedLogoutBtn.style.justifyContent = 'center';
+            }
             // Always hide view button and message content for ANY ban type
             if (viewBtn) viewBtn.style.display = 'none';
             if (errorMsg) errorMsg.style.display = 'none';
@@ -16927,6 +17378,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Show view button and message content on unban
             if (viewBtn) viewBtn.style.display = 'block';
             if (messageContent) messageContent.style.display = 'block';
+
+            // Hide the banned-state logout button on unban
+            var _bannedLgBtn = document.getElementById('christmasBannedLogoutBtn');
+            if (_bannedLgBtn) _bannedLgBtn.style.display = 'none';
 
             // Remove banned CSS class from modal
             if (modal) modal.classList.remove('message-me-banned');
@@ -17988,25 +18443,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function updateConversationBanFooter(meta) {
             const isBanned = isConversationSenderBanned(meta);
             const notice = document.getElementById('messageConversationBannedNotice');
-            const violationsEl = document.getElementById('messageConversationViolations');
-            const banBtn = document.getElementById('pmConversationBanBtn');
-            const unbanBtn = document.getElementById('pmConversationUnbanBtn');
-            // Show sender's password if available in meta
-            const pwDisplay = document.getElementById('pmConversationPasswordDisplay');
-            const pwValue = document.getElementById('pmConversationPasswordValue');
-            if (pwDisplay && pwValue) {
-                var pw = meta && meta.senderPassword ? meta.senderPassword : '';
-                if (pw) {
-                    pwValue.textContent = pw;
-                    pwDisplay.style.display = 'block';
-                } else {
-                    pwDisplay.style.display = 'none';
-                }
-            }
+
+            // Only show the banned banner — violations and password moved to USER SETTINGS modal
             if (notice) {
                 notice.style.display = isBanned ? 'block' : 'none';
                 if (isBanned) {
-                    // isBanned = auto-banned by profanity violations; ownerBanned = manually banned by author
                     const profanityBanned = !!(meta && meta.isBanned);
                     if (profanityBanned && !meta.ownerBanned) {
                         notice.textContent = 'THIS PERSON IS BANNED DUE TO REPEATED VIOLATION';
@@ -18017,26 +18458,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     }
                 }
             }
-            if (violationsEl) {
-                const remaining = (meta && meta.remainingViolations !== undefined) ? meta.remainingViolations : 10;
-                // Only show accumulated strikes (1-9 remaining) before they're banned.
-                // Once it hits 0, the ban banner above already covers it — no need to show "0" too.
-                if (remaining > 0 && remaining < 10) {
-                    violationsEl.style.display = 'block';
-                    violationsEl.textContent = 'Remaining Violations: ' + remaining;
-                } else {
-                    violationsEl.style.display = 'none';
-                }
-            }
-            if (banBtn) banBtn.disabled = isBanned;
 
-            // Unban is available whenever this person is banned — you as the author decide whether to click it
-            if (unbanBtn) {
-                unbanBtn.disabled = !isBanned;
-                unbanBtn.style.opacity = isBanned ? '1' : '0.4';
-                unbanBtn.title = isBanned
-                    ? 'Unban this person and reset their violations to 10'
-                    : 'This person is not banned';
+            // If USER SETTINGS modal is open for this same sender, keep it in sync
+            var usModal = document.getElementById('userSettingsModal');
+            if (usModal && usModal.classList.contains('active') &&
+                _userSettingsTargetSenderId === activeConversationSenderId) {
+                _populateUserSettingsModal(meta);
             }
         }
 
@@ -18049,6 +18476,382 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 activeConversationMeta || {}
             );
         }
+
+        // ── USER SETTINGS MODAL ──────────────────────────────────────────
+        var _userSettingsTargetSenderId = null;
+        var _userSettingsMetaUnsubscribe = null;
+        var _userSettingsPollInterval = null;
+        // senderIds whose data has been wiped via RESET DATA — once wiped, the
+        // USER SETTINGS modal shows UNKNOWN / EMPTY for that id instead of
+        // their old name/password, for the rest of this page session.
+        var _userSettingsWipedIds = {};
+
+        function openUserSettingsModal(senderId) {
+            _userSettingsTargetSenderId = senderId || activeConversationSenderId;
+
+            // A senderId only stays "wiped" while there is no real conversation
+            // left for it. If this id still has a live inbox entry (i.e. someone
+            // is currently using this device/name with real data), it can't
+            // actually be the wiped account — clear any stale flag so a reused
+            // device id from an earlier reset doesn't wrongly mark a brand new
+            // conversation as UNKNOWN / EMPTY.
+            if (_cachedInboxConversations[_userSettingsTargetSenderId]) {
+                delete _userSettingsWipedIds[_userSettingsTargetSenderId];
+            }
+
+            var modal = document.getElementById('userSettingsModal');
+            if (!modal) return;
+
+            // Get whatever we already have in memory
+            var meta = (_userSettingsTargetSenderId === activeConversationSenderId && activeConversationMeta)
+                ? activeConversationMeta
+                : null;
+
+            // Show modal immediately with what we have, then keep it live
+            _populateUserSettingsModal(meta);
+            modal.classList.add('active');
+
+            // Attach scroll-to-top button listener every time the modal opens
+            (function() {
+                var _box = document.querySelector('.user-settings-box');
+                var _btn = document.getElementById('userSettingsScrollTopBtn');
+                if (_box && _btn) {
+                    _box.scrollTop = 0;
+                    _btn.style.display = 'none';
+                    // Remove old listener to avoid stacking, then re-add
+                    var _onScroll = function() {
+                        _btn.style.display = _box.scrollTop > 60 ? 'flex' : 'none';
+                    };
+                    _box.removeEventListener('scroll', _box._settingsScrollHandler);
+                    _box._settingsScrollHandler = _onScroll;
+                    _box.addEventListener('scroll', _onScroll, { passive: true });
+                }
+            })();
+
+            // Tear down any previous live subscription / poller before starting new ones
+            if (_userSettingsMetaUnsubscribe) {
+                _userSettingsMetaUnsubscribe();
+                _userSettingsMetaUnsubscribe = null;
+            }
+            if (_userSettingsPollInterval) {
+                clearInterval(_userSettingsPollInterval);
+                _userSettingsPollInterval = null;
+            }
+
+            var targetId = _userSettingsTargetSenderId;
+
+            function applyFreshMeta(freshMeta) {
+                var currentModal = document.getElementById('userSettingsModal');
+                if (!currentModal || !currentModal.classList.contains('active')) return;
+                if (_userSettingsTargetSenderId !== targetId) return;
+                // If Firebase still has real meta for this id (a name, a password,
+                // or any other field), it can't be wiped — clear any stale flag
+                // left over from an earlier, unrelated reset on this same device.
+                if (freshMeta && Object.keys(freshMeta).length > 0) {
+                    delete _userSettingsWipedIds[targetId];
+                }
+                if (activeConversationSenderId === targetId) {
+                    activeConversationMeta = freshMeta;
+                }
+                _populateUserSettingsModal(freshMeta);
+            }
+
+            // Subscribe live so ban/unban/logout/login state updates instantly
+            // without needing to close and reopen this modal.
+            if (window.PrivateMessaging && window.PrivateMessaging.listenConversationMeta) {
+                _userSettingsMetaUnsubscribe = window.PrivateMessaging.listenConversationMeta(targetId, applyFreshMeta);
+            }
+
+            // Belt-and-suspenders poller: re-fetch directly every 2s in case the
+            // live listener above ever misses an update, so the modal never
+            // requires a manual close/reopen to reflect the latest state.
+            if (window.PrivateMessaging && window.PrivateMessaging._db && window.PrivateMessaging._pmSafeKey) {
+                _userSettingsPollInterval = setInterval(function() {
+                    var currentModal = document.getElementById('userSettingsModal');
+                    if (!currentModal || !currentModal.classList.contains('active')) {
+                        clearInterval(_userSettingsPollInterval);
+                        _userSettingsPollInterval = null;
+                        return;
+                    }
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                        var metaPath = 'privateMessages/' + window.PrivateMessaging._pmSafeKey(targetId) + '/meta';
+                        fb.get(fb.ref(window.PrivateMessaging._db, metaPath)).then(function(snap) {
+                            applyFreshMeta(snap.val() || {});
+                        }).catch(function() {});
+                    }).catch(function() {});
+                }, 2000);
+            }
+        }
+
+        function _populateUserSettingsModal(meta) {
+            meta = meta || {};
+            var cachedConv = _cachedInboxConversations[_userSettingsTargetSenderId] || {};
+
+            var titleEl = document.getElementById('userSettingsTitle');
+            var emptyNotice = document.getElementById('userSettingsEmptyNotice');
+            var isWiped = !!_userSettingsWipedIds[_userSettingsTargetSenderId];
+
+            if (titleEl) titleEl.textContent = isWiped ? 'UNKNOWN' : 'USER SETTINGS';
+
+            // Name / Nickname
+            var nameSection = document.getElementById('userSettingsNameSection');
+            var nameValue = document.getElementById('userSettingsNameValue');
+            if (nameSection) nameSection.style.display = isWiped ? 'none' : '';
+            if (nameValue && !isWiped) {
+                var senderName = meta.senderName || cachedConv.senderName || cachedConv.lastDeviceName || '';
+                nameValue.textContent = senderName || '—';
+            }
+
+            // Password
+            var pwSection = document.getElementById('userSettingsPwSection');
+            var pwValue = document.getElementById('userSettingsPwValue');
+            var pw = meta.senderPassword || '';
+            if (pwSection && pwValue) {
+                if (isWiped) { pwSection.style.display = 'none'; }
+                else if (pw) { pwValue.textContent = pw; pwSection.style.display = 'block'; }
+                else { pwSection.style.display = 'none'; }
+            }
+
+            if (emptyNotice) emptyNotice.style.display = isWiped ? 'block' : 'none';
+
+            // Everything below (Actions, ban status, timers, Reset Data) is
+            // meaningless once this account's data has been wiped — hide it
+            // all and stop here instead of filling it with stale info.
+            var actionsSection = document.getElementById('userSettingsActionsSection');
+            var loginStatusSection = document.getElementById('userSettingsLoginStatusSection');
+            var activeTimerSection = document.getElementById('userSettingsActiveTimerSection');
+            var inactiveTimerSection = document.getElementById('userSettingsInactiveTimerSection');
+            var resetBtn = document.getElementById('pmResetDataBtn');
+            var endTimerBtnEl = document.getElementById('userSettingsEndTimerBtn');
+            var endActiveTimerBtnEl = document.getElementById('userSettingsEndActiveTimerBtn');
+
+            if (isWiped) {
+                if (actionsSection) actionsSection.style.display = 'none';
+                var bannedNoticeEl = document.getElementById('userSettingsBannedNotice');
+                if (bannedNoticeEl) bannedNoticeEl.style.display = 'none';
+                var violSectionEl = document.getElementById('userSettingsViolationsSection');
+                if (violSectionEl) violSectionEl.style.display = 'none';
+                if (loginStatusSection) loginStatusSection.style.display = 'none';
+                if (activeTimerSection) activeTimerSection.style.display = 'none';
+                if (inactiveTimerSection) inactiveTimerSection.style.display = 'none';
+                if (endTimerBtnEl) endTimerBtnEl.style.display = 'none';
+                if (endActiveTimerBtnEl) endActiveTimerBtnEl.style.display = 'none';
+                if (resetBtn) resetBtn.style.display = 'none';
+                return;
+            } else {
+                if (actionsSection) actionsSection.style.display = '';
+                if (loginStatusSection) loginStatusSection.style.display = '';
+                if (activeTimerSection) activeTimerSection.style.display = '';
+                if (inactiveTimerSection) inactiveTimerSection.style.display = '';
+                if (resetBtn) resetBtn.style.display = 'flex';
+            }
+
+            // Violations
+            var violSection = document.getElementById('userSettingsViolationsSection');
+            var violValue = document.getElementById('userSettingsViolationsValue');
+            if (violSection && violValue) {
+                var remaining = (meta.remainingViolations !== undefined) ? meta.remainingViolations : 10;
+                if (remaining > 0 && remaining < 10) {
+                    violValue.textContent = 'Remaining Violations: ' + remaining;
+                    violSection.style.display = 'block';
+                } else {
+                    violSection.style.display = 'none';
+                }
+            }
+
+            // Ban / Unban
+            var isBanned = isConversationSenderBanned(meta);
+            var banBtn = document.getElementById('userSettingsBanBtn');
+            var unbanBtn = document.getElementById('userSettingsUnbanBtn');
+            if (banBtn) { banBtn.disabled = isBanned; banBtn.style.opacity = isBanned ? '0.4' : '1'; banBtn.style.cursor = isBanned ? 'not-allowed' : 'pointer'; }
+            if (unbanBtn) { unbanBtn.disabled = !isBanned; unbanBtn.style.opacity = isBanned ? '1' : '0.4'; unbanBtn.style.cursor = isBanned ? 'pointer' : 'not-allowed'; }
+
+            // Banned status notice (below Ban/Unban)
+            var bannedNotice = document.getElementById('userSettingsBannedNotice');
+            if (bannedNotice) {
+                bannedNotice.style.display = isBanned ? 'block' : 'none';
+                if (isBanned) {
+                    var profanityBanned = !!(meta && meta.isBanned);
+                    if (profanityBanned && !meta.ownerBanned) {
+                        bannedNotice.textContent = 'THIS PERSON IS BANNED DUE TO REPEATED VIOLATION';
+                        bannedNotice.style.fontSize = '11px';
+                    } else {
+                        bannedNotice.textContent = 'THIS PERSON IS BANNED';
+                        bannedNotice.style.fontSize = '';
+                    }
+                }
+            }
+
+            // Active Time + In-Active Timer (always both visible, independent of each other)
+            var sessionBox = document.getElementById('userSettingsSessionTimerBox');
+            var inactiveBox = document.getElementById('userSettingsInactiveBox');
+            var cooldownBox = document.getElementById('userSettingsCooldownBox');
+            var isLoggedOut = (meta.isLoggedOut !== undefined) ? meta.isLoggedOut : cachedConv.isLoggedOut;
+            var loggedOutAt = (meta.loggedOutAt !== undefined && meta.loggedOutAt !== null) ? meta.loggedOutAt : cachedConv.loggedOutAt;
+            var logoutMinutes = (meta.logoutMinutes !== undefined) ? meta.logoutMinutes : cachedConv.logoutMinutes;
+            var logoutExpiresAt = (meta.logoutExpiresAt !== undefined && meta.logoutExpiresAt !== null) ? meta.logoutExpiresAt : cachedConv.logoutExpiresAt;
+
+            var greenPillOpen = '<span style="display:inline-flex;align-items:center;justify-content:center;background:rgba(74,222,128,0.15);border:1.5px solid rgba(74,222,128,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#4ade80;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">';
+            var redPillOpen = '<span style="display:inline-flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.15);border:1.5px solid rgba(239,68,68,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#ef4444;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">';
+            var pillClose = '</span>';
+
+            // Active Time: counts only while NOT logged out; frozen at 00:00:00:000 once logged out
+            if (sessionBox) {
+                if (!isLoggedOut && logoutMinutes !== null && logoutMinutes !== undefined) {
+                    var isPermanent = (logoutMinutes === 0);
+                    var activeContent = isPermanent ? '∞' : '<span class="inbox-session-countdown" data-expires="' + (logoutExpiresAt || 0) + '">00:00:00:000</span>';
+                    sessionBox.innerHTML = greenPillOpen + activeContent + pillClose;
+                } else {
+                    sessionBox.innerHTML = greenPillOpen + '00:00:00:000' + pillClose;
+                }
+            }
+
+            // Show END TIMER (active session) button only while this person is
+            // actually logged in with a running timer — including the
+            // unlimited (∞) case, since clicking it still forces a logout.
+            // Hidden the moment they're logged out / offline, same as the
+            // 168h END TIMER button's visibility rule below.
+            if (endActiveTimerBtnEl) {
+                var activeTimerIsRunning = !isLoggedOut && logoutMinutes !== null && logoutMinutes !== undefined;
+                endActiveTimerBtnEl.style.display = activeTimerIsRunning ? 'flex' : 'none';
+            }
+
+            // In-Active Timer: status pill always reflects real isLoggedOut state.
+            // The 168h cooldown box ticks down normally while logged out, unless
+            // END TIMER was used (cooldownEndedByOwnerAt newer than this logout),
+            // in which case it shows EXPIRED but LOGGED OUT stays untouched.
+            var cooldownEndedByOwnerAt = (meta.cooldownEndedByOwnerAt !== undefined) ? meta.cooldownEndedByOwnerAt : cachedConv.cooldownEndedByOwnerAt;
+            var cooldownWasEndedEarly = !!cooldownEndedByOwnerAt && (!loggedOutAt || Number(cooldownEndedByOwnerAt) >= Number(loggedOutAt));
+            if (inactiveBox && cooldownBox) {
+                if (isLoggedOut) {
+                    inactiveBox.innerHTML = redPillOpen + 'LOGGED OUT' + pillClose;
+                    if (cooldownWasEndedEarly) {
+                        cooldownBox.innerHTML = redPillOpen + 'EXPIRED' + pillClose;
+                    } else {
+                        var cooldownMs = 168 * 60 * 60 * 1000;
+                        var cooldownExpires = loggedOutAt ? (Number(loggedOutAt) + cooldownMs) : 0;
+                        var cooldownContent = cooldownExpires > 0
+                            ? '<span class="inbox-cooldown-countdown" data-expires="' + cooldownExpires + '">168:00:00:000</span>'
+                            : '168:00:00:000';
+                        cooldownBox.innerHTML = redPillOpen + cooldownContent + pillClose;
+                    }
+                } else {
+                    inactiveBox.innerHTML = greenPillOpen + 'LOGGED IN' + pillClose;
+                    cooldownBox.innerHTML = cooldownEndedByOwnerAt
+                        ? redPillOpen + 'EXPIRED' + pillClose
+                        : redPillOpen + '168:00:00:000' + pillClose;
+                }
+            }
+
+            // Show END TIMER button only when the 168h cooldown is actively counting down
+            var endTimerBtn = document.getElementById('userSettingsEndTimerBtn');
+            if (endTimerBtn) {
+                var timerIsActive = isLoggedOut && !cooldownWasEndedEarly && loggedOutAt > 0 && (Number(loggedOutAt) + 168 * 60 * 60 * 1000) > Date.now();
+                endTimerBtn.style.display = timerIsActive ? 'flex' : 'none';
+            }
+
+            // Make sure any timer spans we just inserted start ticking
+            startInboxSessionCountdowns();
+        }
+
+        function closeUserSettingsModal() {
+            var modal = document.getElementById('userSettingsModal');
+            if (modal) modal.classList.remove('active');
+            // Reset scroll position and hide scroll button
+            var _box = document.querySelector('.user-settings-box');
+            if (_box) _box.scrollTop = 0;
+            var _scrollBtn = document.getElementById('userSettingsScrollTopBtn');
+            if (_scrollBtn) _scrollBtn.style.display = 'none';
+            if (_userSettingsMetaUnsubscribe) {
+                _userSettingsMetaUnsubscribe();
+                _userSettingsMetaUnsubscribe = null;
+            }
+            if (_userSettingsPollInterval) {
+                clearInterval(_userSettingsPollInterval);
+                _userSettingsPollInterval = null;
+            }
+        }
+
+        // Re-fetch the freshest meta from Firebase for a sender and refresh
+        // both the conversation banned-footer and the USER SETTINGS modal
+        // (if it's open) with it. Always used after ban/unban so we never
+        // overwrite password/violations with a stale local merge.
+        async function _refreshMetaEverywhere(senderId) {
+            if (!senderId || !window.PrivateMessaging || !window.PrivateMessaging._db || !window.PrivateMessaging._pmSafeKey) return null;
+            try {
+                var fb = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                var metaPath = 'privateMessages/' + window.PrivateMessaging._pmSafeKey(senderId) + '/meta';
+                var snap = await fb.get(fb.ref(window.PrivateMessaging._db, metaPath));
+                var freshMeta = snap.val() || {};
+                if (activeConversationSenderId === senderId) {
+                    activeConversationMeta = freshMeta;
+                }
+                updateConversationBanFooter(freshMeta);
+                if (_userSettingsTargetSenderId === senderId) {
+                    _populateUserSettingsModal(freshMeta);
+                }
+                return freshMeta;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function banFromSettings() {
+            // Keep the USER SETTINGS modal open underneath the ban confirmation
+            if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
+                activeConversationSenderId = _userSettingsTargetSenderId;
+            }
+            showBanConfirm();
+        }
+
+        function unbanFromSettings() {
+            // Keep the USER SETTINGS modal open underneath the unban confirmation
+            if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
+                activeConversationSenderId = _userSettingsTargetSenderId;
+            }
+            showUnbanConfirm();
+        }
+
+        // Ends the 168h re-login cooldown (Firebase side only — see note on
+        // endLoginCooldown). Instantly flips the modal's In-Active/cooldown
+        // display to show the timer as expired.
+        async function endLoginCooldownFromSettings() {
+            var targetId = _userSettingsTargetSenderId || activeConversationSenderId;
+            if (!targetId || !window.PrivateMessaging || !window.PrivateMessaging.endLoginCooldown) return;
+            var btn = document.getElementById('userSettingsEndTimerBtn');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+            try {
+                await window.PrivateMessaging.endLoginCooldown(targetId);
+                await _refreshMetaEverywhere(targetId);
+            } catch (e) {
+                alert('Could not end the timer for this conversation.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+            }
+        }
+        // ────────────────────────────────────────────────────────────────
+
+        // Force-ends this person's active session timer right now, even if it
+        // was set to unlimited (∞) — the sender's own browser is listening for
+        // this signal and will log itself out immediately, the same way it
+        // would if its own countdown had reached zero naturally.
+        async function endActiveTimerFromSettings() {
+            var targetId = _userSettingsTargetSenderId || activeConversationSenderId;
+            try { console.log('[pm-debug] endActiveTimerFromSettings clicked, targetId:', targetId); } catch (e) {}
+            if (!targetId || !window.PrivateMessaging || !window.PrivateMessaging.forceLogout) return;
+            var btn = document.getElementById('userSettingsEndActiveTimerBtn');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+            try {
+                await window.PrivateMessaging.forceLogout(targetId);
+                try { console.log('[pm-debug] forceLogout() write completed for', targetId); } catch (e2) {}
+                await _refreshMetaEverywhere(targetId);
+            } catch (e) {
+                alert('Could not end the active timer for this conversation.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+            }
+        }
+        // ────────────────────────────────────────────────────────────────
 
         async function banActiveConversation() {
             showBanConfirm();
@@ -18109,9 +18912,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (!activeConversationSenderId || !window.PrivateMessaging) return;
                 try {
                     await window.PrivateMessaging.banConversation(activeConversationSenderId);
-                    const mergedMeta = Object.assign({}, activeConversationMeta || {}, { ownerBanned: true });
-                    activeConversationMeta = mergedMeta;
-                    updateConversationBanFooter(mergedMeta);
+                    await _refreshMetaEverywhere(activeConversationSenderId);
                 } catch (e) {
                     alert('Could not ban this conversation.');
                 }
@@ -18179,11 +18980,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (!activeConversationSenderId || !window.PrivateMessaging) return;
             try {
                 await window.PrivateMessaging.unbanConversation(activeConversationSenderId);
-                // Immediately reflect unban state in UI (remainingViolations will arrive
-                // via the meta listener with whatever balance unbanConversation restored)
-                const mergedMeta = Object.assign({}, activeConversationMeta || {}, { ownerBanned: false, isBanned: false });
-                activeConversationMeta = mergedMeta;
-                updateConversationBanFooter(mergedMeta);
+                // Pull the freshest meta (with the restored remainingViolations
+                // balance) straight from Firebase so nothing goes stale or missing.
+                await _refreshMetaEverywhere(activeConversationSenderId);
             } catch (e) {
                 alert('Could not unban this conversation.');
             }
@@ -18271,6 +19070,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         let resetDataCountdownTimer = null;
 
         function showResetDataConfirm() {
+            // If triggered from the USER SETTINGS modal (inbox), make sure the
+            // active conversation matches the target sender before resetting.
+            if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
+                activeConversationSenderId = _userSettingsTargetSenderId;
+            }
             const modal = document.getElementById("resetDataConfirmModal");
             const confirmBtn = document.getElementById("resetDataConfirmBtn");
             const cancelBtn = document.getElementById("resetDataCancelBtn");
@@ -18352,6 +19156,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 await set(ref(window._pmDb, "privateMessages/" + safeKey + "/resetSignal"), {
                     resetAt: Date.now()
                 });
+
+                // Mark this sender as wiped so USER SETTINGS shows UNKNOWN / EMPTY
+                // instead of their old name & password if it's open (or reopened
+                // later) for this same person.
+                _userSettingsWipedIds[activeConversationSenderId] = true;
+                var _usModal = document.getElementById('userSettingsModal');
+                if (_usModal && _usModal.classList.contains('active') &&
+                    _userSettingsTargetSenderId === activeConversationSenderId) {
+                    _populateUserSettingsModal({});
+                }
+
                 closeMessageConversation();
                 openModal('messageConfirmation');
             } catch (e) {
@@ -18389,18 +19204,28 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             });
         }
 
+        var _cachedInboxConversations = {}; // senderId → conv object
+
         function renderInboxList(conversations) {
             const listEl = document.getElementById('messageInboxList');
             if (!listEl) return;
             
-            // Keep only one conversation per sender
-            const seenSenders = {};
+            // Dedup by Firebase key (guaranteed unique per conversation node)
+            // Fall back to senderId if firebaseKey is missing (e.g. from checkInboxForName temp call)
+            const seenKeys = {};
             const filteredConversations = [];
             conversations.forEach(function(conv) {
-                if (!seenSenders[conv.senderId]) {
-                    seenSenders[conv.senderId] = true;
+                var dedupKey = conv.firebaseKey || conv.senderId;
+                if (!seenKeys[dedupKey]) {
+                    seenKeys[dedupKey] = true;
                     filteredConversations.push(conv);
                 }
+            });
+
+            // Cache for name lookup when opening USER SETTINGS from inbox
+            _cachedInboxConversations = {};
+            filteredConversations.forEach(function(conv) {
+                _cachedInboxConversations[conv.senderId] = conv;
             });
             
             let html = '';
@@ -18443,24 +19268,24 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     timerHtml = '<span style="display:inline-flex;align-items:center;justify-content:center;background:rgba(74,222,128,0.15);border:1.5px solid rgba(74,222,128,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#4ade80;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">' + timerContent + '</span>';
                 }
 
+                var senderId = escapeHtmlPm(conv.senderId);
                 html +=
                     '<div class="pm-inbox-item' +
                     (unread > 0 ? ' unread' : '') +
-                    '" data-sender-id="' +
-                    escapeHtmlPm(conv.senderId) +
-                    '" onclick="openOwnerConversation(this.getAttribute(\'data-sender-id\'))">' +
-                    '<div class="pm-inbox-body">' +
+                    '" data-sender-id="' + senderId +
+                    '" onclick="openOwnerConversation(this.getAttribute(\'data-sender-id\'))" style="display:flex;align-items:center;gap:8px;">' +
+                    '<div class="pm-inbox-body" style="flex:1;min-width:0;">' +
                     '<div class="pm-inbox-device-title">' +
-                    messageNumber + '. ' + displayLabel +
-                    newTag +
+                    messageNumber + '. ' + displayLabel + newTag +
                     '</div>' +
                     '<div class="pm-inbox-preview">' +
                     preview +
                     '</div>' +
-                    '<div class="pm-inbox-meta" style="display:flex;align-items:center;justify-content:space-between;">' +
+                    '<div class="pm-inbox-meta" style="display:flex;align-items:center;justify-content:flex-start;">' +
                     '<span>' + time + '</span>' +
-                    '<span style="display:inline-flex;gap:4px;align-items:center;">' + cooldownBoxHtml + timerHtml + '</span>' +
-                    '</div></div></div>';
+                    '</div></div>' +
+                    '<button type="button" class="pm-inbox-settings-btn" title="User Settings" style="align-self:flex-start;" onclick="event.stopPropagation();openUserSettingsModal(\'' + senderId + '\')">&#8943;</button>' +
+                    '</div>';
             });
             listEl.innerHTML = html;
             startInboxSessionCountdowns();
@@ -19481,15 +20306,86 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function startSenderThreadListener() {
             stopSenderThreadListenerOnly();
-            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) return;
+            if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
+                try { console.warn('[pm-debug] startSenderThreadListener: PrivateMessaging not ready'); } catch (e) {}
+                return;
+            }
             const senderId = window.PrivateMessaging.getUid();
+            try { console.log('[pm-debug] startSenderThreadListener for senderId:', senderId, 'meta listener already running:', !!pmSenderMetaUnsubscribe); } catch (e) {}
             pmSenderThreadUnsubscribe = window.PrivateMessaging.listenMyThread(function(messages, ownerUid) {
                 renderSenderThread(messages, ownerUid);
             });
             // Only start meta listener if not already running (it persists across view open/close)
             if (senderId && window.PrivateMessaging.listenConversationMeta && !pmSenderMetaUnsubscribe) {
+                try { console.log('[pm-debug] subscribing fresh meta listener for', senderId); } catch (e) {}
                 pmSenderMetaUnsubscribe = window.PrivateMessaging.listenConversationMeta(senderId, function(meta) {
                     senderConversationMeta = meta || {};
+                    try { console.log('[pm-debug] meta update received:', JSON.stringify(meta)); } catch (e) {}
+
+                    // ── Firebase is source of truth for account lock ──────────────
+                    // If Firebase says hasAccountLock is null/false, clear local lock
+                    // immediately. This is the fix for "YOU CAN ONLY CREATE ONE ACCOUNT!"
+                    // persisting across refreshes after END TIMER or natural 168h expiry.
+                    if (!senderConversationMeta.hasAccountLock && !localStorage.getItem('userNameForMessage')) {
+                        if (localStorage.getItem('accountCreatedOnDevice')) {
+                            localStorage.removeItem('accountCreatedOnDevice');
+                            localStorage.removeItem('autoLoggedOutAt');
+                            var _fbw1 = document.getElementById('oneAccountWarning');
+                            if (_fbw1) _fbw1.style.display = 'none';
+                            var _fbw2 = document.getElementById('oneAccountWarningConfirm');
+                            if (_fbw2) _fbw2.style.display = 'none';
+                            var _fbBox = document.getElementById('accountCooldownTimerBox');
+                            if (_fbBox) _fbBox.style.display = 'none';
+                            stopAccountCooldownTimer();
+                        }
+                    }
+                    // ── End account lock check ────────────────────────────────────
+
+                    // Owner pressed END TIMER on the active session (USER SETTINGS).
+                    // If this device currently has a live session, log it out right
+                    // now using the exact same path as a naturally-expired timer —
+                    // including the unlimited (∞) case. Deduped via localStorage so
+                    // this only fires once per forceLogoutAt value, the same pattern
+                    // used for resetAt below.
+                    try {
+                        console.log('[pm-debug] forceLogoutAt check — meta.forceLogoutAt:', senderConversationMeta.forceLogoutAt,
+                            'userNameForMessage present:', !!localStorage.getItem('userNameForMessage'),
+                            'lastHandledForceLogoutAt:', localStorage.getItem('lastHandledForceLogoutAt'));
+                    } catch (e) {}
+                    if (senderConversationMeta.forceLogoutAt && localStorage.getItem('userNameForMessage')) {
+                        var _lastHandledForceLogout = parseInt(localStorage.getItem('lastHandledForceLogoutAt') || '0');
+                        if (Number(senderConversationMeta.forceLogoutAt) > _lastHandledForceLogout) {
+                            try { console.log('[pm-debug] forceLogoutAt is NEW — calling performAutoLogout() now'); } catch (e) {}
+                            localStorage.setItem('lastHandledForceLogoutAt', String(senderConversationMeta.forceLogoutAt));
+                            performAutoLogout();
+                        } else {
+                            try { console.log('[pm-debug] forceLogoutAt already handled, skipping'); } catch (e) {}
+                        }
+                    }
+
+                    // If the owner ended the 168h cooldown early (END TIMER in admin settings),
+                    // clear the local account lock so "YOU CAN ONLY CREATE ONE ACCOUNT!" never
+                    // shows again on this device — the owner has explicitly released the cooldown.
+                    if (senderConversationMeta.cooldownEndedByOwnerAt && !localStorage.getItem('userNameForMessage')) {
+                        var _cooledLoggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
+                        var _endedAt = Number(senderConversationMeta.cooldownEndedByOwnerAt);
+                        // Only clear if the END TIMER was pressed after (or during) this logout
+                        if (_cooledLoggedOutAt > 0 && _endedAt >= _cooledLoggedOutAt) {
+                            localStorage.removeItem('accountCreatedOnDevice');
+                            localStorage.removeItem('autoLoggedOutAt');
+                            localStorage.removeItem('lastKnownSenderName');
+                            localStorage.removeItem('lastKnownSenderPasswordHash');
+                            localStorage.removeItem('lastKnownSenderDeviceId');
+                            localStorage.removeItem('christmasUserId');
+                            stopAccountCooldownTimer();
+                            var _cdBoxEnd = document.getElementById('accountCooldownTimerBox');
+                            if (_cdBoxEnd) _cdBoxEnd.style.display = 'none';
+                            var _w1 = document.getElementById('oneAccountWarning');
+                            if (_w1) _w1.style.display = 'none';
+                            var _w2 = document.getElementById('oneAccountWarningConfirm');
+                            if (_w2) _w2.style.display = 'none';
+                        }
+                    }
 
                     // If Firebase says unbanned, reset localStorage FIRST so isPermanentlyProfanityBanned() returns false
                     if (!senderConversationMeta.isBanned && !senderConversationMeta.ownerBanned) {
@@ -22025,6 +22921,26 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             remainingViolations: restoredBalance
                         });
                     },
+                    // Force-ends the 168h re-login cooldown display (Firebase side only).
+                    // Does NOT change isLoggedOut/loggedOutAt — LOGGED OUT status stays
+                    // exactly as-is; only the 168h countdown is shown as EXPIRED.
+                    endLoginCooldown: async function (senderId) {
+                        await update(pmMetaRef(senderId), {
+                            cooldownEndedByOwnerAt: Date.now(),
+                            hasAccountLock: null,
+                            accountLockedAt: null
+                        });
+                    },
+                    // Forces this sender's active session timer to end right now,
+                    // even if it was set to unlimited (∞). Writes a signal the
+                    // sender's own browser is listening for; their own client
+                    // performs the actual logout (clearing their local session
+                    // and writing isLoggedOut/loggedOutAt) the moment it sees this.
+                    forceLogout: async function (senderId) {
+                        await update(pmMetaRef(senderId), {
+                            forceLogoutAt: Date.now()
+                        });
+                    },
                     sendMessage: async function (text, deviceName) {
                         var senderId = pmGetSenderId();
                         var { get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
@@ -22178,11 +23094,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         return onValue(ref(db, 'privateMessages'), function (snap) {
                             var val = snap.val();
                             var list = [];
+                            var seenKeys = {};
                             if (val && typeof val === 'object') {
                                 Object.keys(val).forEach(function (key) {
+                                    // Skip duplicate Firebase keys (should never happen but be safe)
+                                    if (seenKeys[key]) return;
+                                    seenKeys[key] = true;
                                     var meta = val[key] && val[key].meta;
                                     if (meta) {
                                         list.push({
+                                            firebaseKey: key,           // always-unique Firebase key
                                             senderId: meta.senderId || key,
                                             lastMessage: meta.lastMessage,
                                             lastTimestamp: meta.lastTimestamp,
@@ -22199,7 +23120,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 });
                             }
                             list.sort(function (a, b) {
-                                return (Number(b.lastTimestamp) || 0) - (Number(a.lastTimestamp) || 0);
+                                var tsA = Number(a.lastTimestamp) || (a.lastTimestamp ? 0 : Infinity);
+                                var tsB = Number(b.lastTimestamp) || (b.lastTimestamp ? 0 : Infinity);
+                                return tsB - tsA;
                             });
                             callback(list);
                         });
