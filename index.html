@@ -1310,7 +1310,7 @@
         }
         body.dark-mode #updatesModal .see-more-link {
             color: rgba(255, 255, 255, 0.92) !important;
-            text-decoration: underline;
+            text-decoration: none;
         }
         body.dark-mode #updatesModal .updates-summary-accent {
             color: rgba(255, 255, 255, 0.92) !important;
@@ -5262,7 +5262,7 @@
             color: #808080;
             cursor: pointer;
             font-weight: 600;
-            text-decoration: underline;
+            text-decoration: none;
             margin-left: 2px;
             font-style: normal;
             transition: color 0.3s ease;
@@ -9605,7 +9605,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <div class="clock-digital-block">
                             <div class="clock-digital" id="clockDigital" aria-live="polite">-- : -- : --</div>
                             <div class="clock-date" id="clockDate">———</div>
-                            <div id="clockUtcOffset" style="font-size:14px; opacity:0.9; text-align:center; margin-top:6px; letter-spacing:0.5px; line-height:1.4;"></div>
+                            <div id="clockUtcOffset" style="font-size:11px; opacity:0.8; text-align:center; margin-top:4px; letter-spacing:0.5px; line-height:1.3;"></div>
                         </div>
                     </main>
                     </section>
@@ -10976,8 +10976,45 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
                 <div class="updates-scroll-body">
                     <p class="update14-heading update16-heading-first">
-                        <strong class="update16-rainbow-title">UPDATE 1.7 [IMPROVED]</strong>
-                        <span style="font-size: 0.75em; color: #90EE90 !important;">6/10/26, 12:00PM</span>
+                        <strong class="update16-rainbow-title">UPDATE 1.8 [FIXES]</strong>
+                        <span style="font-size: 0.75em; color: #90EE90 !important;">7/2/26, 12:00PM</span>
+                    </p>
+                    <p id="update18-summary" style="margin-bottom: 8px; font-style: italic;">
+                        In this update, I fixed several bugs and made improvements to my website.
+                        <span id="update18-toggle-top" class="see-more-link" onclick="toggleUpdate18Details()">see more...</span>
+                    </p>
+                    <div id="update18-details" style="display:none; margin-bottom: 15px;">
+                        <p style="margin-top: 12px;"><strong>🏠 Main Menu</strong></p>
+                        <p>Adjusted the "Updates In" timer.</p>
+                        <p>Fixed the positioning of buttons in landscape mode.</p>
+                        <p>Fixed the screen flashing issue that occurred when rotating your mobile device and when the keyboard was open. This issue has now been resolved.</p>
+                        <p style="margin-top: 20px;"><strong>💬 Message Me</strong></p>
+                        <p>Added a Theme button.</p>
+                        <p>Added a Log Out button.</p>
+                        <p>Added a Log In button.</p>
+                        <p>Added a Create an Account option.</p>
+                        <p>Added profanity filter, sending messages or names containing prohibited words will result in a permanent violation up to 10 points reaching 0 points may result in a permanently ban.</p>
+                        <p>Added message timestamps that automatically convert to your local time zone.</p>
+                        <p>Improved password storage.</p>
+                        <p>Fixed the eye icon.</p>
+                        <p>Fixed the date and time displayed in chat bubbles.</p>
+                        <p>Fixed the Remaining Time in Edit your message.</p>
+                        <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
+                        <p>Fixed the timers in NovaAI, Box Dash, Calendar, Clock and Maps. They now use your local time zone. Manually changing your device's time in Settings will no longer affect them.</p>
+                        <p>Added UTC below the clock.</p>
+                        <p>Added AM/PM to the clock.</p>
+                        <p style="margin-top: 20px;"><strong>🐛 Bugs & Improvements</strong></p>
+                        <p>Fixed 45+ bugs.</p>
+                        <p>Implemented 15+ improvements.</p>
+                        <p>Feel free to submit suggestions using the form or send me a message through "Message Me."</p>
+                        <p>That's all for today's update. Thank you!
+                            <span id="update18-toggle-bottom" class="see-more-link" onclick="toggleUpdate18Details()">see less...</span>
+                        </p>
+                    </div>
+
+                    <p class="update14-heading update16-heading-first">
+                        <strong>UPDATE 1.7 [IMPROVED]</strong>
+                        <span style="font-size: 0.75em; color: #FF6B6B !important;">6/10/26, 12:00PM</span>
                     </p>
                     <p id="update17-summary" style="margin-bottom: 8px; font-style: italic;">
                         In this update, I improved a bit on my website.
@@ -11520,7 +11557,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 </div>
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version">v. 1.7</div>
+                    <div class="settings-version">v. 1.8</div>
                     <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
             </div>
@@ -12894,6 +12931,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             bottomToggle.style.display = isHidden ? 'inline' : 'none';
         }
 
+        function toggleUpdate18Details() {
+            const details = document.getElementById('update18-details');
+            const topToggle = document.getElementById('update18-toggle-top');
+            const bottomToggle = document.getElementById('update18-toggle-bottom');
+            if (!details || !topToggle || !bottomToggle) return;
+            const isHidden = details.style.display === 'none' || details.style.display === '';
+            details.style.display = isHidden ? 'block' : 'none';
+            topToggle.style.display = isHidden ? 'none' : 'inline';
+            bottomToggle.style.display = isHidden ? 'inline' : 'none';
+        }
+
         function toggleUpdate16Details() {
             const details = document.getElementById('update16-details');
             const topToggle = document.getElementById('update16-toggle-top');
@@ -13261,12 +13309,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         function formatClockDigital(d) {
+            const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
             return (
                 padClock2(getHours12(d)) +
                 ' <span class="clock-sep">:</span> ' +
                 padClock2(d.getMinutes()) +
                 ' <span class="clock-sep">:</span> ' +
-                padClock2(d.getSeconds())
+                padClock2(d.getSeconds()) +
+                ' <span style="font-size:0.65em; margin-left:8px; vertical-align:middle; opacity:0.85; display:inline-block;">' + ampm + '</span>'
             );
         }
 
