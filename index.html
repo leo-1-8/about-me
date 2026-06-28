@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='16' font-weight='bold' fill='%23667eea'>.</text></svg>">
     <style>
         * {
             margin: 0;
@@ -173,8 +174,8 @@
         }
 
         .loading-text {
-            font-family: 'Bebas Neue', 'Orbitron', sans-serif;
-            font-size: 36px;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
+            font-size: 26px;
             font-weight: 400;
             letter-spacing: 8px;
             text-transform: uppercase;
@@ -191,8 +192,8 @@
         }
 
         .loading-dots span {
-            font-family: 'Bebas Neue', 'Orbitron', sans-serif;
-            font-size: 36px;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
+            font-size: 26px;
             font-weight: 400;
             display: inline-block;
             background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff88, #00ccff, #aa44ff, #ff0099, #ff0000);
@@ -250,9 +251,9 @@
         }
 
         .loading-percentage {
-            font-family: 'Bebas Neue', sans-serif;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
             color: white;
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 400;
             letter-spacing: 3px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -261,9 +262,9 @@
         }
 
         .loading-message {
-            font-family: 'Bebas Neue', sans-serif;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
             color: white;
-            font-size: 18px;
+            font-size: 13px;
             font-weight: 400;
             letter-spacing: 2px;
             text-align: center;
@@ -1147,28 +1148,52 @@
         body.dark-mode .author-replies-label {
             color: #3399ff !important;
         }
+
         body.dark-mode .pm-reply-btn {
-            background: rgba(198, 40, 40, 0.8) !important;
-            color: rgba(255, 255, 255, 0.95) !important;
+            background: transparent !important;
+            color: #60a5fa !important;
+            border: 2px solid #60a5fa !important;
         }
         body.dark-mode .pm-reply-btn:hover {
-            background: rgba(220, 60, 60, 0.9) !important;
+            background: rgba(96, 165, 250, 0.1) !important;
         }
         body.dark-mode .pm-reply-compose textarea {
-            background: rgba(20, 24, 40, 0.9) !important;
+            background: transparent !important;
             color: rgba(255, 255, 255, 0.95) !important;
-            border-color: rgba(198, 40, 40, 0.5) !important;
+            border-color: #60a5fa !important;
         }
         body.dark-mode .pm-reply-compose textarea::placeholder {
             color: rgba(255, 255, 255, 0.3) !important;
         }
         body.dark-mode .pm-reply-send {
-            background: rgba(198, 40, 40, 0.8) !important;
-            color: rgba(255, 255, 255, 0.95) !important;
+            background: transparent !important;
+            color: #60a5fa !important;
+            border: 2px solid #60a5fa !important;
         }
         body.dark-mode .pm-reply-send:hover {
-            background: rgba(220, 60, 60, 0.9) !important;
+            background: rgba(96, 165, 250, 0.1) !important;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         body.dark-mode .pm-inbox-list {
             background: rgba(20, 24, 40, 0.9) !important;
             scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
@@ -2627,16 +2652,16 @@
             padding: 6px 14px;
             font-size: 12px;
             font-weight: 600;
-            border: none;
+            border: 2px solid #3b82f6;
             border-radius: 6px;
-            background: #c62828;
-            color: #fff;
+            background: transparent;
+            color: #3b82f6;
             cursor: pointer !important;
             pointer-events: auto !important;
         }
 
         .pm-reply-btn:hover {
-            background: #b71c1c;
+            background: rgba(59, 130, 246, 0.1);
         }
 
         .pm-reply-timer-wrap {
@@ -2667,29 +2692,57 @@
             display: block;
         }
 
+
         .pm-reply-compose textarea {
             width: 100%;
             min-height: 72px;
-            border: 2px solid #ffcdd2;
+            border: 2px solid #3b82f6;
             border-radius: 8px;
             padding: 8px;
             font-family: inherit;
             font-size: 14px;
             resize: vertical;
             box-sizing: border-box;
+            background: transparent;
         }
 
         .pm-reply-send {
             margin-top: 6px;
             padding: 8px 16px;
-            background: #c62828;
-            color: #fff;
-            border: none;
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
             border-radius: 6px;
             font-weight: 700;
             cursor: pointer !important;
             pointer-events: auto !important;
         }
+
+        .pm-reply-send:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         .quiz-option.selected {
             background: #22c55e; /* green */
@@ -2781,6 +2834,7 @@
             color: #ff5722;
             font-weight: 700;
             font-size: 14px;
+            line-height: 1;
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
@@ -3154,7 +3208,6 @@
             font-size: 11px;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #999;
             display: flex;
             align-items: center;
             flex-wrap: nowrap;
@@ -3189,7 +3242,6 @@
         .christmas-msg-date {
             font-size: 10px;
             font-weight: 600;
-            color: #999;
             line-height: 1;
             text-align: left;
         }
@@ -3380,7 +3432,12 @@
 
         body.dark-mode #christmasMessageModal #christmasViewArea:not(.custom-themed) .christmas-msg-header,
         body.dark-mode #christmasMessageModal #christmasViewArea:not(.custom-themed) .christmas-msg-date {
-            color: #aaaaaa !important;
+            color: inherit !important;
+        }
+
+        body:not(.dark-mode) #christmasMessageModal #christmasViewArea .christmas-msg-header,
+        body:not(.dark-mode) #christmasMessageModal #christmasViewArea .christmas-msg-date {
+            color: #111111 !important;
         }
 
         .message-theme-overlay {
@@ -8233,16 +8290,16 @@
             }
 
             .loading-percentage {
-                font-family: 'Bebas Neue', sans-serif;
+                font-family: 'Poppins', sans-serif; font-weight: 700;
                 font-size: 40px;
             }
 
             .loading-text {
-                font-size: 24px;
+                font-size: 18px;
             }
 
             .loading-dots span {
-                font-size: 24px;
+                font-size: 18px;
             }
 
             .info-toggle-button {
@@ -10779,7 +10836,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
                         <span id="loginPwEyeClosed" style="display:inline-flex;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16\"></path></svg>
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16"></path></svg>
                         </span>
                     </button>
                 </div>
@@ -18689,6 +18746,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (!messageForMeBox.classList.contains('show')) {
                 messageForMeBox.classList.add('show');
             }
+
         }, 500);
 
         // Handle page visibility - restart timer when user comes back to site
@@ -19570,7 +19628,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 
                 // Check if last message is from sender (lastSenderId equals senderId)
                 const lastMessageFromSender = conv.lastSenderId === conv.senderId;
-                const newTag = '';
+                const newTag = lastMessageFromSender ? ` <span style="font-size:11px;font-weight:700;color:#4ade80;padding:1px 5px;border-radius:4px;vertical-align:baseline;margin-left:4px;display:inline-block;line-height:1;">[NEW]</span>` : '';
                 
                 const unread = Number(conv.unreadCount) || 0;
                 const preview = escapeHtmlPm(conv.lastMessage || 'No message');
@@ -19600,7 +19658,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     '" onclick="openOwnerConversation(this.getAttribute(\'data-sender-id\'))" style="display:flex;align-items:center;gap:8px;">' +
                     '<div class="pm-inbox-body" style="flex:1;min-width:0;">' +
                     '<div class="pm-inbox-device-title">' +
-                    messageNumber + '. ' + displayLabel + newTag +
+                    messageNumber + '. ' + displayLabel +
                     '</div>' +
                     '<div class="pm-inbox-preview">' +
                     preview +
@@ -19730,7 +19788,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 const isLatestSenderMessage = !fromOwner && index === lastSenderMessageIndex;
                 const senderLabel = fromOwner ? 'Your message' : actualSenderName;
                 const labelColor = fromOwner ? '#3b82f6' : '#eab308';
-                const newTag = '';
+                // [NEW] on sender messages that have no owner reply after them
+                const showNewTagConv = !fromOwner && index >= lastSenderMessageIndex && !hasOwnerReplyAfterLastSender;
+                const newTag = showNewTagConv ? ` <span style="font-size:11px;font-weight:700;color:#4ade80;padding:1px 5px;border-radius:4px;vertical-align:baseline;margin-left:4px;display:inline-block;line-height:1;">[NEW]</span>` : '';
+                // [NEW] on owner messages that come after sender messages
+                const showNewTagOwner = fromOwner && lastSenderMessageIndex !== -1 && index > lastSenderMessageIndex;
+                const newTagOwner = showNewTagOwner ? ` <span style="font-size:11px;font-weight:700;color:#4ade80;padding:1px 5px;border-radius:4px;vertical-align:baseline;margin-left:4px;display:inline-block;line-height:1;">[NEW]</span>` : '';
                 const msgTs = Number(msg.timestamp) || Date.now();
                 const msgAge = Date.now() - msgTs;
                 const within24h = msgAge < 24 * 60 * 60 * 1000;
@@ -19747,8 +19810,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     '<div class="pm-msg-time" style="' + (fromOwner ? 'justify-content:flex-end;text-align:right;' : '') + '">' +
                     '<span>' +
                     (fromOwner ?
-                        ('<span style="color: ' + labelColor + '; font-weight: 600;">Your message</span> · ' + time) :
-                        (time + ' · <span style="color: ' + labelColor + '; font-weight: 600;">' + senderLabel + '</span>' + newTag)
+                        ('<span style="color: ' + labelColor + '; font-weight: 600;">Your message</span>' + ' · ' + time) :
+                        (time + ' · <span style="color: ' + labelColor + '; font-weight: 600;">' + senderLabel + '</span>')
                     ) +
                     '</span>' +
                     (editsButton ? editsButton : '') +
@@ -19843,6 +19906,63 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (box) {
                     box.classList.remove('show');
                     // Keep reply button visible — it disappears only after 24hrs from message timestamp
+                }
+            } catch (e) {
+                alert('Could not send reply. Please try again.');
+            }
+            ta.disabled = false;
+        }
+
+        function toggleSenderReply(index) {
+            const ta = document.getElementById('senderReplyText' + index);
+            const sendBtn = document.getElementById('senderReplaySend' + index);
+            
+            // Initialize tracking set if it doesn't exist
+            if (!window._openSenderReplyBoxes) {
+                window._openSenderReplyBoxes = new Set();
+            }
+            
+            if (ta && sendBtn) {
+                if (ta.style.display === 'none') {
+                    // Show textarea and send button
+                    ta.style.display = 'block';
+                    ta.style.pointerEvents = 'auto';
+                    ta.disabled = false;
+                    sendBtn.style.display = 'block';
+                    sendBtn.style.pointerEvents = 'auto';
+                    window._openSenderReplyBoxes.add(index);
+                    setTimeout(function() {
+                        ta.focus();
+                    }, 50);
+                } else {
+                    // Hide textarea and send button
+                    ta.style.display = 'none';
+                    sendBtn.style.display = 'none';
+                    window._openSenderReplyBoxes.delete(index);
+                }
+            }
+        }
+
+        async function sendSenderReply(index) {
+            const ta = document.getElementById('senderReplyText' + index);
+            if (!ta || !window.PrivateMessaging) return;
+            const text = (ta.value || '').trim();
+            if (!text) return;
+            
+            ta.disabled = true;
+            try {
+                // Use sendMessage so the reply is attributed to the sender (visitor),
+                // not the owner. sendReply was incorrectly marking messages as from PM_OWNER_ID.
+                await window.PrivateMessaging.sendMessage(text, getMessageDeviceName ? getMessageDeviceName() : '');
+                ta.value = '';
+                const box = document.getElementById('senderReplyCompose' + index);
+                if (box) {
+                    // Hide entire compose area after sending
+                    box.style.display = 'none';
+                }
+                // Clear from tracking
+                if (window._openSenderReplyBoxes) {
+                    window._openSenderReplyBoxes.delete(index);
                 }
             } catch (e) {
                 alert('Could not send reply. Please try again.');
@@ -20405,6 +20525,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (viewBtn) viewBtn.style.display = 'block';
             messageContent.style.display = 'block';
             
+            // Don't re-render if a reply textarea is currently focused (user is typing)
+            if (window._openSenderReplyBoxes && window._openSenderReplyBoxes.size > 0) {
+                const focusedElement = document.activeElement;
+                for (let index of window._openSenderReplyBoxes) {
+                    const ta = document.getElementById('senderReplyText' + index);
+                    if (ta && focusedElement === ta) {
+                        // User is typing in reply box, don't re-render
+                        return;
+                    }
+                }
+            }
+            
             // Check if there are any messages at all
             if (!messages || !messages.length) {
                 updateChristmasViewBtnText(false);
@@ -20430,17 +20562,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
             
-            // If there's a user message with waiting_for_reply status, lock textarea
-            if (latestUserMessage && latestUserMessage.status === 'waiting_for_reply') {
-                // Check if there's an owner reply AFTER this message
-                var hasOwnerReplyAfter = false;
+            // Check for owner reply after latest user message
+            var hasOwnerReplyAfter = false;
+            if (latestUserMessage) {
                 for (let i = 0; i < messages.length; i++) {
                     if (messages[i].senderId === ownerUid && messages[i].timestamp > latestUserMessage.timestamp) {
                         hasOwnerReplyAfter = true;
                         break;
                     }
                 }
-                
+            }
+
+            // If there's a user message with waiting_for_reply status, lock textarea
+            if (latestUserMessage && latestUserMessage.status === 'waiting_for_reply') {
                 // Update button text based on whether there's an author reply
                 updateChristmasViewBtnText(hasOwnerReplyAfter);
                 
@@ -20496,6 +20630,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
 
+            // Find the index of the most recent message sent by the author (owner)
+            let lastAuthorMessageIndex = -1;
+            for (let i = messages.length - 1; i >= 0; i--) {
+                if (messages[i].senderId === ownerUid) {
+                    lastAuthorMessageIndex = i;
+                    break;
+                }
+            }
+
+            // Store messages globally for sendSenderReply to access
+            window._currentMessages = messages;
+
             let html = '';
             messages.forEach(function(msg, index) {
                 const fromOwner = msg.senderId === ownerUid;
@@ -20535,10 +20681,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 let headerDiv = '<div class="christmas-msg-header">' +
                     '<span>' +
                     (fromOwner ?
-                        (clockTime + ' · <span class="author-replies-label" style="color: #3399ff;">Author replies</span>') :
+                        (clockTime + ' · <span class="author-replies-label" style="color: #3399ff;">Author replies</span>' + (showNewTag ? ` <span style="font-size:11px;font-weight:700;color:#4ade80;padding:1px 5px;border-radius:4px;vertical-align:baseline;margin-left:4px;display:inline-block;line-height:1;">[NEW]</span>` : '')) :
                         ('<span style="color: #eab308; font-weight: 700;">Your message</span> · ' + clockTime)
                     ) +
-                    '' +
                     '</span>';
                 headerDiv += '</div>';
 
@@ -20548,15 +20693,56 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     dateRow += '<span class="christmas-msg-edit-slot">' + editButton + '</span>';
                 }
                 dateRow += '</div>';
+                
+                // Add reply interface only on the most recent author message if no sender reply exists after it
+                let replyInterface = '';
+                if (fromOwner && !msg.isEdited && index === lastAuthorMessageIndex) {
+                    // Check if there's a sender message after this author message
+                    let hasSenderReplyAfter = false;
+                    for (let i = index + 1; i < messages.length; i++) {
+                        if (messages[i].senderId !== ownerUid) {
+                            hasSenderReplyAfter = true;
+                            break;
+                        }
+                    }
+                    
+                    // Only show reply if no sender reply exists after this author message
+                    if (!hasSenderReplyAfter) {
+                        replyInterface = '<div class="pm-reply-compose" id="senderReplyCompose' + index + '" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:10;">' +
+                            '<button type="button" class="pm-reply-btn" id="senderReplyBtn' + index + '" onclick="toggleSenderReply(' + index + ')">Reply</button>' +
+                            '<textarea maxlength="1000" placeholder="Write a reply…" id="senderReplyText' + index + '" style="display:none;position:relative;z-index:11;pointer-events:auto;"></textarea>' +
+                            '<button type="button" class="pm-reply-send" id="senderReplaySend' + index + '" onclick="sendSenderReply(' + index + ')" style="display:none;position:relative;z-index:11;pointer-events:auto;">Send</button></div>';
+                    }
+                }
+                
                 html +=
                     '<div class="christmas-msg-bubble ' + (fromOwner ? 'from-owner' : 'from-user') + '">' +
                     headerDiv +
                     '<p class="christmas-msg-text">' +
                     wrappedText +
                     '</p>' +
-                    dateRow + '</div>';
+                    dateRow + 
+                    replyInterface + '</div>';
             });
             messageContent.innerHTML = html;
+            
+            // Restore any open reply boxes after re-rendering
+            if (window._openSenderReplyBoxes && window._openSenderReplyBoxes.size > 0) {
+                window._openSenderReplyBoxes.forEach(function(index) {
+                    const ta = document.getElementById('senderReplyText' + index);
+                    const sendBtn = document.getElementById('senderReplaySend' + index);
+                    if (ta) {
+                        ta.style.display = 'block';
+                        ta.style.pointerEvents = 'auto';
+                        ta.disabled = false;
+                    }
+                    if (sendBtn) {
+                        sendBtn.style.display = 'block';
+                        sendBtn.style.pointerEvents = 'auto';
+                    }
+                });
+            }
+            
             applyStoredMessageViewTheme();
             updateScrollToBottomBtn();
             
@@ -20913,6 +21099,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (submitBtn) submitBtn.disabled = true;
             try {
                 await window.PrivateMessaging.sendMessage(text, getMessageDeviceName());
+
                 textarea.value = '';
                 textarea.placeholder = 'Waiting for a reply from the author';
                 textarea.disabled = true;
@@ -21180,20 +21367,24 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function applyStoredMessageViewTheme() {
             const stored = localStorage.getItem(MESSAGE_VIEW_THEME_KEY);
             if (stored) applyMessageViewTheme(stored);
-            // Also fetch from global Firebase path to stay in sync across devices
-            try {
-                if (window._pmDb) {
-                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ get, ref }) {
-                        get(ref(window._pmDb, 'siteSettings/messageTheme')).then(function(snap) {
-                            var fbHex = snap.val();
-                            if (fbHex && typeof fbHex === 'string') {
-                                localStorage.setItem(MESSAGE_VIEW_THEME_KEY, fbHex);
-                                applyMessageViewTheme(fbHex);
-                            }
+            // Also fetch from global Firebase path to stay in sync across devices,
+            // but only apply if we don't already have a locally saved value —
+            // this prevents Firebase from reverting a freshly saved color choice.
+            if (!stored) {
+                try {
+                    if (window._pmDb) {
+                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ get, ref }) {
+                            get(ref(window._pmDb, 'siteSettings/messageTheme')).then(function(snap) {
+                                var fbHex = snap.val();
+                                if (fbHex && typeof fbHex === 'string') {
+                                    localStorage.setItem(MESSAGE_VIEW_THEME_KEY, fbHex);
+                                    applyMessageViewTheme(fbHex);
+                                }
+                            }).catch(function() {});
                         }).catch(function() {});
-                    }).catch(function() {});
-                }
-            } catch(e) {}
+                    }
+                } catch(e) {}
+            }
         }
 
         function initMessageThemePresetGrid() {
