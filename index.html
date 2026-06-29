@@ -15823,6 +15823,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             if (eyeOpen) eyeOpen.style.display = 'none';
             if (eyeClosed) eyeClosed.style.display = 'inline-flex';
+            // Show reset notice on login modal if author reset this user
+            var resetNoticeSL = document.getElementById('authorResetNoticeSenderLogin');
+            if (resetNoticeSL) {
+                if (localStorage.getItem('authorWasReset') === 'true') {
+                    resetNoticeSL.style.display = 'block';
+                } else {
+                    resetNoticeSL.style.display = 'none';
+                }
+            }
             initLogoutOptionsUi();
             updateLoginSubmitState();
             openModal('senderLogin'); startLoginReleaseTimer();
@@ -16944,6 +16953,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             localStorage.setItem('senderPassword', password);
             localStorage.removeItem('authorWasReset'); // clear reset notice — they've made their new account
             localStorage.removeItem('wasAuthorReset');
+            // Hide reset notice on both modals now that a new account is created
+            var _rnSL = document.getElementById('authorResetNoticeSenderLogin');
+            if (_rnSL) _rnSL.style.display = 'none';
+            var _rnMain = document.getElementById('authorResetNotice');
+            if (_rnMain) _rnMain.style.display = 'none';
             // Mark "now" as handled rather than wiping this to 0 — this device's
             // senderId is reused for the new account, so if a stale resetSignal from
             // the reset that just happened is still sitting in Firebase (e.g. the
