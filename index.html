@@ -6,7 +6,7 @@
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='16' font-weight='bold' fill='%23667eea'>.</text></svg>">
     <style>
         * {
@@ -16,7 +16,15 @@
         }
 
         :root {
-            --font-timer: 'JetBrains Mono', 'Segoe UI Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace;
+            --font-timer: 'Share Tech Mono', 'JetBrains Mono', 'Segoe UI Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace;
+        }
+
+        /* Remove the slashed zero from all timer/clock displays */
+        .clock-digital, .clock-status-time,
+        .stopwatch-display, .timer-display, .countdown-display,
+        .clock-battery-pct {
+            font-feature-settings: "zero" 0, "ss01" 0;
+            font-variant-numeric: tabular-nums;
         }
 
         html {
@@ -465,6 +473,13 @@
         }
         body.dark-mode .settings-button svg {
             color: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode #mainMenuClock {
+            background: rgba(0, 0, 0, 0.35) !important;
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body.intro-pending #mainMenuClock {
+            display: none !important;
         }
         body.intro-pending .settings-button {
             display: none !important;
@@ -1354,7 +1369,7 @@
             color: rgba(255, 255, 255, 0.92) !important;
         }
         body.dark-mode #updatesModal .see-more-link {
-            color: rgba(255, 255, 255, 0.92) !important;
+            color: #4ade80 !important;
             text-decoration: none;
         }
         body.dark-mode #updatesModal .updates-summary-accent {
@@ -1777,8 +1792,8 @@
             user-select: none;
         }
 
-        /* F opens inbox — looks like normal text (not obviously clickable) */
-        .christmas-modal-title span.clickable-f {
+        /* 8 in version number — secret trigger, looks like normal text (not obviously clickable) */
+        .settings-version span.clickable-version-digit {
             cursor: inherit;
             user-select: auto;
             opacity: 1;
@@ -1907,6 +1922,64 @@
 
         body.dark-mode #senderLoginModal.modal-overlay {
             background: #000000 !important;
+        }
+
+        /* ── Login modal light/dark mode inputs ── */
+        #senderLoginModal #loginNameInput,
+        #senderLoginModal #loginPasswordInput {
+            background: #f0f2f5;
+            color: #111111;
+            border-color: rgba(0, 0, 0, 0.18);
+        }
+        #senderLoginModal #loginNameInput::placeholder,
+        #senderLoginModal #loginPasswordInput::placeholder {
+            color: #888888;
+        }
+        #senderLoginModal #loginPwEyeBtn {
+            color: #555555;
+        }
+        /* Logout option buttons in login modal */
+        #senderLoginModal .logout-opt {
+            background: rgba(0,0,0,0.04);
+            border-color: rgba(0,0,0,0.14);
+        }
+        #senderLoginModal .pw-req-text {
+            color: #333333;
+        }
+        body.dark-mode #senderLoginModal #loginNameInput,
+        body.dark-mode #senderLoginModal #loginPasswordInput {
+            background: rgba(20, 24, 40, 0.7);
+            color: #ffffff;
+            border-color: rgba(135, 206, 235, 0.5);
+        }
+        body.dark-mode #senderLoginModal #loginNameInput::placeholder,
+        body.dark-mode #senderLoginModal #loginPasswordInput::placeholder {
+            color: #aaaaaa;
+        }
+        body.dark-mode #senderLoginModal #loginPwEyeBtn {
+            color: #aaaaaa;
+        }
+        body.dark-mode #senderLoginModal .logout-opt {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.14);
+        }
+        body.dark-mode #senderLoginModal .pw-req-text {
+            color: rgba(223,235,255,0.9);
+        }
+        /* Login modal body background */
+        #senderLoginModal .confirmation-body {
+            background: #f0f2f5;
+        }
+        body.dark-mode #senderLoginModal .confirmation-body {
+            background: #111827;
+        }
+        /* "New here?" text in light mode */
+        #senderLoginModal .confirmation-body span[style*="color:#888"] {
+            color: #666666;
+        }
+        /* Lockout timer text in light mode */
+        #senderLoginModal #loginAttemptLockoutTimer {
+            color: #ef4444;
         }
 
         #senderPasswordModal.modal-overlay {
@@ -2097,6 +2170,13 @@
         #senderPasswordInput[type="text"],
         #loginPasswordInput[type="text"],
         #inboxPinInput[type="text"] { -webkit-text-security: none !important; font-family: inherit !important; }
+        /* Hide native browser password-reveal eye icon */
+        #loginPasswordInput::-ms-reveal,
+        #loginPasswordInput::-ms-clear,
+        #senderPasswordInput::-ms-reveal,
+        #senderPasswordInput::-ms-clear,
+        #inboxPinInput::-ms-reveal,
+        #inboxPinInput::-ms-clear { display: none !important; }
         @supports not (-webkit-text-security: disc) {
             input[type="password"],
             #senderPasswordInput[type="password"],
@@ -2567,8 +2647,7 @@
         #christmasMessageModal.message-me-banned .christmas-submit-btn,
         #christmasMessageModal.message-me-banned .christmas-modal-title,
         #christmasMessageModal.message-me-banned .christmas-counter-row,
-        #christmasMessageModal.message-me-banned .christmas-view-btn,
-        #christmasMessageModal.message-me-banned .clickable-f {
+        #christmasMessageModal.message-me-banned .christmas-view-btn {
             cursor: not-allowed !important;
             pointer-events: none;
         }
@@ -4505,6 +4584,67 @@
             background: rgba(7, 11, 20, 0.95);
         }
 
+        /* Login/Message "currently closed" countdown overlays — theme aware */
+        .closed-status-overlay {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.55);
+        }
+        body.dark-mode .closed-status-overlay {
+            background: rgba(10, 14, 26, 0.82);
+        }
+        .closed-status-x {
+            color: #222;
+        }
+        body.dark-mode .closed-status-x {
+            color: #fff;
+        }
+        .closed-status-title {
+            color: #222;
+        }
+        body.dark-mode .closed-status-title {
+            color: #fff;
+        }
+        .closed-status-labels {
+            color: rgba(0, 0, 0, 0.55);
+        }
+        body.dark-mode .closed-status-labels {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .close-custom-time-input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .close-custom-time-clear-btn:disabled {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Confirm modal: light mode gets a light blur (not black), dark mode keeps original transparent+blur */
+        #closeMessageMeConfirmModal {
+            background: rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+        }
+        body.dark-mode #closeMessageMeConfirmModal {
+            background: transparent !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+        }
+        #closeMessageMeConfirmModal .christmas-modal-box {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        #closeMessageMeConfirmModal .christmas-modal-title,
+        #closeMessageMeConfirmModal .close-msg-text {
+            color: #222 !important;
+        }
+        body.dark-mode #closeMessageMeConfirmModal .christmas-modal-title,
+        body.dark-mode #closeMessageMeConfirmModal .close-msg-text {
+            color: #fff !important;
+        }
         /* Hide buttons on the background when modal is active */
         .modal-overlay.active {
             pointer-events: auto;
@@ -4537,6 +4677,17 @@
 
         /* Keep What's New above settings when opened from settings */
         #updatesModal {
+            z-index: 28010;
+        }
+
+        /* Keep the secret inbox gate / quiz above settings when triggered from the
+           version-number click inside the Settings panel */
+        #messageInboxGateModal,
+        #secretQuizModal,
+        #messageInboxModal,
+        #messageConversationModal,
+        #closeMessageMeModal,
+        #closeMessageMeConfirmModal {
             z-index: 28010;
         }
 
@@ -5519,7 +5670,7 @@
         }
 
         .see-more-link {
-            color: #a8c4e0;
+            color: #22c55e;
             cursor: pointer;
             font-weight: 600;
             text-decoration: none;
@@ -5529,7 +5680,7 @@
         }
 
         .see-more-link:hover {
-            color: #cce0f5;
+            color: #4ade80;
         }
 
         @keyframes slideDown {
@@ -5951,6 +6102,7 @@
             font-weight: 700;
             letter-spacing: 0.06em;
             font-variant-numeric: tabular-nums;
+            font-feature-settings: "zero" 0;
             color: #f1f5f9;
             text-shadow: 0 0 24px rgba(129, 140, 248, 0.5);
         }
@@ -8185,7 +8337,7 @@
         /* Warning Message Box */
         .warning-message {
             position: absolute;
-            bottom: 40px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             padding: 15px 25px;
@@ -8196,15 +8348,15 @@
             font-size: 14px;
             color: #cc0000;
             font-weight: 500;
-            max-width: 500px;
-            width: 90%;
+            max-width: 340px;
+            width: 75%;
             box-shadow: 0 2px 10px rgba(255, 0, 0, 0.1);
         }
 
         /* Stable width so "UPDATES IN" timer does not shift when seconds tick */
         #warningTimer {
             display: inline-block;
-            min-width: 12ch;
+            min-width: 16ch;
             font-family: var(--font-timer);
             font-variant-numeric: tabular-nums;
             letter-spacing: 0.02em;
@@ -8507,7 +8659,7 @@
                 bottom: auto;
                 left: auto;
                 transform: none;
-                margin: 70px auto 0;
+                margin: 150px auto 0;
                 padding: 12px 15px;
                 font-size: 11px;
                 box-sizing: border-box;
@@ -8522,7 +8674,7 @@
                 transform: none !important;
                 width: 100%;
                 max-width: 100%;
-                margin: 30px auto 0;
+                margin: 8px auto 0;
                 padding: 10px 15px;
                 text-align: center;
                 display: block !important;
@@ -9369,6 +9521,26 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
+        <div id="mainMenuClock" style="
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 25001;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            font-family: var(--font-timer);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #1e293b;
+            font-feature-settings: 'zero' 0;
+        ">--:--:-- AM</div>
         <button type="button" id="settingsBtn" class="settings-button" aria-label="Open settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
@@ -9413,7 +9585,7 @@
             </div>
             <div class="message-for-me-box" id="messageForMeBox">
                 <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
-                    <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me">
+                    <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px;">
                         MESSAGE ME
                     </div>
                 </div>
@@ -9429,7 +9601,7 @@
         <div class="warning-message" id="mainWarning" style="display: none;">
             <span data-i18n="warning_unfinished">THIS ISN'T OFFICIALLY FINISHED YET; I STILL HAVE MANY WORKS TO DO</span>
             <div id="warningTimerLine" style="margin-top:6px;font-weight:700;">
-                <span data-i18n="warning_updates_in">UPDATES IN</span> <span id="warningTimer">--:--:--:--</span>
+                <span data-i18n="warning_updates_in">UPDATES IN</span> <span id="warningTimer">---:--:--:--:---</span>
             </div>
         </div>
         <!-- Outside the box link below the warning + timer -->
@@ -9568,8 +9740,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_cats_title">Cats</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_cats_short">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
-                                <span class="description-full" data-i18n="about_fav_cats_full">One of my favorite animals is the cat. I like cats because they are cute, calm, and independent. They don't need too much attention, but they still show love in their own ways. I enjoy watching how playful they can be when they chase toys or roll around. Their soft fur and gentle purring make me feel relaxed whenever I'm near them. Cats also have funny personalities, and that makes me smile every day.</span>
+                                <span class="description-short" data-i18n="about_fav_cats_short">If I had to choose one animal that always makes me smile, it would be cats. There's something special about the way they quietly become part of your day. They don't always ask for attention, but when they decide to curl up beside you or gently purr, it feels like their own little way of saying, "I trust you."</span>
+                                <span class="description-full" data-i18n="about_fav_cats_full">If I had to choose one animal that always makes me smile, it would be cats. There's something special about the way they quietly become part of your day. They don't always ask for attention, but when they decide to curl up beside you or gently purr, it feels like their own little way of saying, "I trust you." I love watching them chase toys, stretch lazily under the sunlight or suddenly zoom around the house for no reason at all. Their soft fur, funny personalities and calm presence can brighten even my worst days.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -9579,8 +9751,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_music_title">Music</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_music_short">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
-                                <span class="description-full" data-i18n="about_fav_music_full">Music is one of the things I can't live without. It helps me express how I feel and comforts me when I'm sad or tired. I like listening to different types of music depending on my mood — sometimes pop when I want to dance, and slow songs when I just want to think. Music inspires me and gives me energy to start my day. It's like my best friend that always understands me.</span>
+                                <span class="description-short" data-i18n="about_fav_music_short">Music has always been more than just sound to me — it's something I can always turn to, no matter how I feel. On happy days, upbeat songs make me want to dance and enjoy the moment. On quiet days, slow melodies help me think, breathe and understand my emotions.</span>
+                                <span class="description-full" data-i18n="about_fav_music_full">Music has always been more than just sound to me — it's something I can always turn to, no matter how I feel. On happy days, upbeat songs make me want to dance and enjoy the moment. On quiet days, slow melodies help me think, breathe and understand my emotions. Sometimes, a single song can say the words I can't explain myself. That's why music feels like a friend who always knows exactly what I need to hear.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -9590,19 +9762,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_sunsets_title">Sunsets</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_sunsets_short">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
-                                <span class="description-full" data-i18n="about_fav_sunsets_full">I love watching sunsets because they are peaceful and beautiful. When the sky turns orange, pink, and purple, it feels like the world slows down for a moment. It reminds me to appreciate life and be thankful for another day. Watching a sunset makes me calm and helps me forget my worries. It's one of those simple things that make me feel happy inside.</span>
+                                <span class="description-short" data-i18n="about_fav_sunsets_short">No matter how busy life gets, sunsets always remind me to slow down. Watching the sky slowly change from blue to shades of orange, pink and purple feels like nature's way of painting a masterpiece before the day ends.</span>
+                                <span class="description-full" data-i18n="about_fav_sunsets_full">No matter how busy life gets, sunsets always remind me to slow down. Watching the sky slowly change from blue to shades of orange, pink and purple feels like nature's way of painting a masterpiece before the day ends. In those few peaceful moments, my worries seem smaller and I remember to be thankful for another day. A sunset may only last for a short while, but the feeling it leaves behind stays much longer.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🍽️</span>
-                                <span class="favorite-topic-title" data-i18n="about_fav_foods_title">Foods</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_foods_title">Food</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_foods_short">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
-                                <span class="description-full" data-i18n="about_fav_foods_full">When it comes to food, I have quite a sweet and simple taste. I love chocolate because it melts in my mouth and instantly makes me feel happy. Spaghetti is my favorite meal because it's flavorful and comforting — I especially like it when it's cooked with a sweet-style sauce. And marshmallows? They're soft, sweet, and fun to eat, especially when roasted or mixed with chocolate. These foods remind me of celebrations, bonding, and happy moments with friends and family.</span>
+                                <span class="description-short" data-i18n="about_fav_foods_short">Some of my happiest memories are connected to food. Chocolate is my favorite sweet because it melts so smoothly and somehow makes every day feel a little brighter. I also love spaghetti, especially when it's cooked with a sweet-style sauce that reminds me of family gatherings and celebrations.</span>
+                                <span class="description-full" data-i18n="about_fav_foods_full">Some of my happiest memories are connected to food. Chocolate is my favorite sweet because it melts so smoothly and somehow makes every day feel a little brighter. I also love spaghetti, especially when it's cooked with a sweet-style sauce that reminds me of family gatherings and celebrations. Marshmallows are another favorite — they're soft, fluffy and even better when roasted or paired with chocolate. These simple foods aren't just delicious, they remind me of laughter, shared meals and moments spent with the people I love.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -9612,8 +9784,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_friends_title">My Friends</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_friends_short">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
-                                <span class="description-full" data-i18n="about_fav_friends_full">My friends are also one of my favorites because they make my life more colorful and fun. They're always there when I need someone to talk to or laugh with. I like being surrounded by people who understand and support me no matter what. My friends motivate me to be better and remind me that I'm never alone in facing challenges.</span>
+                                <span class="description-short" data-i18n="about_fav_friends_short">Life wouldn't be the same without my friends. They're the people who make ordinary days unforgettable with their jokes, stories and endless laughter. They celebrate my successes, encourage me when I feel discouraged and remind me that I never have to face challenges alone.</span>
+                                <span class="description-full" data-i18n="about_fav_friends_full">Life wouldn't be the same without my friends. They're the people who make ordinary days unforgettable with their jokes, stories and endless laughter. They celebrate my successes, encourage me when I feel discouraged and remind me that I never have to face challenges alone. Having friends who accept me for who I am is one of the greatest blessings I could ever ask for.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -9623,8 +9795,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_movies_title">Movies</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_movies_short">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
-                                <span class="description-full" data-i18n="about_fav_movies_full">I enjoy watching movies and shows that make me laugh, feel inspired, or even emotional. Some of my favorites are Minions and Doraemon because they're funny, cute, and full of good lessons about friendship and kindness. I also like watching BL (Boys' Love) series because they show different kinds of love and teach acceptance, equality, and respect for the LGBTQIA+ community. I admire how these stories show that love is love — no matter who you are.</span>
+                                <span class="description-short" data-i18n="about_fav_movies_short">Movies are one of my favorite ways to relax and escape into different worlds. I enjoy stories that make me laugh, inspire me or even bring tears to my eyes. I especially love Minions and Doraemon because they're funny, heartwarming and filled with lessons about friendship, kindness and believing in yourself.</span>
+                                <span class="description-full" data-i18n="about_fav_movies_full">Movies are one of my favorite ways to relax and escape into different worlds. I enjoy stories that make me laugh, inspire me or even bring tears to my eyes. I especially love Minions and Doraemon because they're funny, heartwarming and filled with lessons about friendship, kindness and believing in yourself. I also enjoy watching BL (Boys Love) series because they portray different kinds of love while encouraging acceptance, equality and respect for the LGBTQIA+ community. These stories remind me that everyone deserves kindness, understanding and the freedom to be themselves.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -9634,8 +9806,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span class="favorite-topic-title" data-i18n="about_fav_social_title">Social Media</span>
                             </div>
                             <div class="favorite-topic-description">
-                                <span class="description-short" data-i18n="about_fav_social_short">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events.</span>
-                                <span class="description-full" data-i18n="about_fav_social_full">Social media is one of my favorites because it allows me to communicate, share, and learn from different people around the world. I enjoy using various platforms where I can express myself creatively and stay informed about current events. Through these platforms, I can connect with my family and friends, explore new ideas, and discover trends that match my interests. Social media also helps me stay updated with technology, entertainment, and news while providing a space to appreciate art, culture, and diverse communities. It is important in my daily life because it combines communication, learning, and self-expression in one digital environment.</span>
+                                <span class="description-short" data-i18n="about_fav_social_short">For me, social media is more than just scrolling through posts — it's a place where I can connect, learn and express myself. It helps me stay in touch with friends and family, discover creative ideas and keep up with what's happening around the world.</span>
+                                <span class="description-full" data-i18n="about_fav_social_full">For me, social media is more than just scrolling through posts — it's a place where I can connect, learn and express myself. It helps me stay in touch with friends and family, discover creative ideas and keep up with what's happening around the world. I enjoy exploring art, music, technology and different cultures through the people I follow. While it's important to use it responsibly, social media has become a meaningful part of my daily life because it brings people, ideas and opportunities together in one place.</span>
+                                <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
+                            </div>
+                        </div>
+                        <div class="favorite-topic-box">
+                            <div class="favorite-topic-header">
+                                <span class="favorite-topic-emoji">💻</span>
+                                <span class="favorite-topic-title" data-i18n="about_fav_coding_title">Coding</span>
+                            </div>
+                            <div class="favorite-topic-description">
+                                <span class="description-short" data-i18n="about_fav_coding_short">Coding is one of the things that challenges me in the best way. At first, it can be confusing, but there's a special kind of happiness that comes from finally solving a problem after spending time figuring it out. Every line of code feels like a small piece of a puzzle and watching everything work together is incredibly satisfying.</span>
+                                <span class="description-full" data-i18n="about_fav_coding_full">Coding is one of the things that challenges me in the best way. At first, it can be confusing, but there's a special kind of happiness that comes from finally solving a problem after spending time figuring it out. Every line of code feels like a small piece of a puzzle and watching everything work together is incredibly satisfying. I enjoy learning new programming skills because they allow me to turn ideas into something real, whether it's a simple program, a website or a project I'm proud of. Coding reminds me that mistakes aren't failures — they're just part of learning and improving. Every bug I fix teaches me something new and motivates me to keep going.</span>
                                 <span class="see-more-link" onclick="toggleDescription(this)" data-i18n="link_see_more">see more...</span>
                             </div>
                         </div>
@@ -10704,7 +10887,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             </div>
             
             <!-- Name Warning Info Box (hidden by default) -->
-            <div class="name-warning-overlay" id="nameWarningOverlay" style="display: none;" onclick="closeNameWarning(event)">
+            <div class="name-warning-overlay" id="nameWarningOverlay" style="display: none; cursor: default;">
                 <div class="name-warning-box" onclick="event.stopPropagation();">
                     <p class="name-warning-text">Note: Names and nicknames are permanent once submitted. Please review them carefully before submitting.</p>
                     <button type="button" class="name-warning-ok-btn" onclick="closeNameWarning()">OK</button>
@@ -10795,6 +10978,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Login Modal (returning user on new device) -->
     <div class="modal-overlay" id="senderLoginModal" style="pointer-events:auto;">
         <div class="message-confirmation-box" onclick="event.stopPropagation();" style="max-width:380px; width:90%; pointer-events:auto; position:relative; overflow:hidden;">
+            <!-- Close-Message-Me timer overlay (shown when message me is closed) -->
+            <div id="loginMeClosedOverlay" class="closed-status-overlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; z-index:100; border-radius:inherit; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:all; text-align:center; padding:24px;">
+                <div id="loginMeClosedTitle" class="closed-status-title" style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; line-height:1.5; max-width:260px;"></div>
+                <div id="loginMeClosedCountdown" style="font-size:24px; font-weight:800; color:#3b82f6; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
+                <div id="loginMeClosedLabels" class="closed-status-labels" style="display:flex; justify-content:center; font-family:monospace; font-size:10px; font-weight:700; letter-spacing:0; margin-top:-6px; gap:0;"></div>
+                <button onclick="closeModal('senderLogin')" style="margin-top:8px; padding:7px 32px; border-radius:8px; border:none; background:#22c55e; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
+            </div>
+
             <!-- Release timer overlay -->
             <div id="loginReleaseOverlay" style="position:absolute; top:0; left:0; right:0; bottom:0; z-index:99; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); background:rgba(0,0,0,0.5); border-radius:inherit; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; pointer-events:all;">
                 <div style="font-size:13px; font-weight:700; letter-spacing:1.5px; color:#87CEEB; text-transform:uppercase; text-align:center;">RELEASE TIME</div>
@@ -10811,7 +11002,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <button type="button" onclick="closeModal('senderLogin')" style="margin-top:6px; padding:7px 32px; border-radius:8px; border:none; background:#87CEEB; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
             </div>
 
-            <button class="close-button" onclick="closeModal('senderLogin')" title="Close" style="width:26px; height:26px; top:14px; right:14px; font-size:16px;">×</button>
+            <button class="close-button" id="senderLoginOuterClose" onclick="closeModal('senderLogin')" title="Close" style="width:26px; height:26px; top:14px; right:14px; font-size:16px;">×</button>
             <div class="confirmation-header" style="display:flex; align-items:center; justify-content:center; margin-bottom:20px; margin-top:-12px;">
                 <h3 class="confirmation-title" style="flex:1; text-align:center; margin:0; font-size:20px;">LOG IN</h3>
             </div>
@@ -10819,15 +11010,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <!-- Name input row -->
                 <div style="margin-bottom:12px;">
                     <input id="loginNameInput" type="text" autocomplete="off" spellcheck="false" placeholder="Input Name/Nickname..."
-                        style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
+                        style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
                 </div>
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
-                    <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Input password..."
-                        style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;"
+                    <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" placeholder="Input password..."
+                        style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
@@ -10863,10 +11054,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div id="loginBanWarning" style="display:none; margin-top:12px; padding:12px 14px; border-radius:8px; background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.6); color:#ef4444; font-size:12px; font-weight:800; text-align:center; letter-spacing:0.6px; line-height:1.6; position:relative; overflow:hidden;">
                     <span id="loginBanWarningText"></span>
                 </div>
-                <!-- Create new account link -->
-                <div style="margin-top:14px; display:flex; align-items:center; justify-content:center; text-align:center; width:100%;">
-                    <span style="font-size:12px; color:#888;">New here?&nbsp;</span>
-                    <span style="font-size:12px; color:#87CEEB; cursor:pointer; font-weight:600; text-decoration:underline;" onclick="goToCreateAccountFromLogin()">Create an account</span>
+                <!-- Active-session-on-another-device warning — shown for 5s when account still has time left -->
+                <div id="loginAnotherDeviceWarning" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(251,191,36,0.12); border:2px solid rgba(251,191,36,0.55); color:#f59e0b; font-size:12px; font-weight:800; text-align:center; letter-spacing:0.5px; line-height:1.5;">
+                    THIS ACCOUNT IS LOGGED IN TO ANOTHER DEVICE.
+                </div>
+                <!-- Author reset notice — shown when owner wiped this sender's Firebase data -->
+                <div id="authorResetNoticeSenderLogin" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); color:#ef4444; font-size:12px; font-weight:600; text-align:center; letter-spacing:0.3px; line-height:1.5;">
+                    AUTHOR RESET YOUR DATA FOR SOME REASON.
                 </div>
                 <!-- Auto logout duration options -->
                 <div id="logoutOptionsContainer" style="margin-top:16px; display:none; flex-direction:column; gap:4px;">
@@ -10887,6 +11081,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <span class="pw-req-text">Don't log out automatically.</span>
                     </div>
                 </div>
+                <!-- Create new account link -->
+                <div style="margin-top:14px; display:flex; align-items:center; justify-content:center; text-align:center; width:100%;">
+                    <span style="font-size:12px; color:#888;">New here?&nbsp;</span>
+                    <span style="font-size:12px; color:#87CEEB; cursor:pointer; font-weight:600; text-decoration:underline;" onclick="goToCreateAccountFromLogin()">Create an account</span>
+                </div>
+                <!-- Encounter any issues? feedback link -->
+                <div style="margin-top:6px; display:flex; align-items:center; justify-content:center; text-align:center; width:100%;">
+                    <span style="font-size:12px; color:#87CEEB; cursor:pointer; font-weight:600; text-decoration:underline;" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScgAoAtcFpC5qAWvfZBrh98Lqx30gd7Absf0Da6VQ6OumnvfQ/viewform?usp=publish-editor', '_blank')">Encounter any issues?</span>
+                </div>
             </div>
         </div>
     </div>
@@ -10902,11 +11105,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
     <!-- Christmas Message Modal -->
     <div class="modal-overlay" id="christmasMessageModal">
-        <div class="christmas-modal-box">
-            <button class="close-button" onclick="closeModal('christmasMessage')" title="Close">×</button>
+        <div class="christmas-modal-box" style="position:relative; overflow:hidden;">
+            <!-- Close-Message-Me timer overlay -->
+            <div id="msgMeClosedOverlay" class="closed-status-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:all; text-align:center; padding:24px;">
+                <!-- X button inside the blur -->
+                <button onclick="closeModal('christmasMessage')" title="Close" class="closed-status-x" style="position:absolute; top:10px; right:12px; font-size:22px; background:none; border:none; cursor:pointer; line-height:1; opacity:0.8;">×</button>
+                <div id="msgMeClosedTitle" class="closed-status-title" style="font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; line-height:1.5; max-width:260px;"></div>
+                <div id="msgMeClosedCountdown" style="font-size:26px; font-weight:800; color:#3b82f6; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
+                <!-- Labels aligned under each segment using the same letter-spacing as the countdown -->
+                <div id="msgMeClosedLabels" class="closed-status-labels" style="display:flex; justify-content:center; font-family:monospace; font-size:10px; font-weight:700; letter-spacing:0; margin-top:-6px; gap:0;"></div>
+                <button onclick="closeModal('christmasMessage')" style="margin-top:8px; padding:7px 32px; border-radius:8px; border:none; background:#22c55e; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
+            </div>
+            <button class="close-button" id="christmasMessageOuterClose" onclick="closeModal('christmasMessage')" title="Close">×</button>
             <div class="christmas-modal-title">
                 <span class="christmas-warning-btn" onclick="toggleChristmasWarning(event); event.stopPropagation();">!</span>
-                MESS<span class="clickable-f" onclick="christmasFClickHandler();">A</span>GE ME
+                MESSAGE ME
             </div>
             <div style="position: relative;">
                 <textarea
@@ -11161,8 +11374,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Inbox list (F section) -->
     <div class="modal-overlay" id="messageInboxModal">
         <div class="christmas-modal-box">
-            <button class="close-button" onclick="closeModal('messageInbox')" title="Close">×</button>
-            <div style="text-align:center;">
+            <button class="close-button" onclick="closeModal('messageInbox'); closeModal('messageInboxGate'); if (typeof closeSettings === 'function') closeSettings();" title="Close">×</button>
+            <div style="text-align:center; display: flex; align-items: center; justify-content: center; position: relative;">
+                <button onclick="openCloseMessageMeModal()" style="position: absolute; left: 10px; background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">🔒</button>
                 <div class="christmas-modal-title">INBOX</div>
             </div>
             <div id="messageInboxList" class="pm-inbox-list">
@@ -11187,6 +11401,119 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div id="pmConversationUnbanBtn" style="display:none;"></div>
             <div id="pmConversationPasswordDisplay" style="display:none;">
                 <div id="pmConversationPasswordValue"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLOSE MESSAGE ME Modal -->
+    <div class="modal-overlay" id="closeMessageMeModal" style="background: rgba(0, 0, 0, 0.85); pointer-events: auto;" onclick="if(event.target.id === 'closeMessageMeModal') return;">
+        <div class="christmas-modal-box" style="background: #1a1a1a; max-width: 450px; position: relative;">
+            <button style="position: absolute; top: 46px; right: 12px; font-size: 28px; color: #fff; background: none; border: none; cursor: pointer; padding: 0; line-height: 1;" onclick="document.getElementById('closeMessageMeModal').classList.remove('active'); document.getElementById('closeMessageMeModal').style.display = 'none';">×</button>
+            
+            <div style="text-align: left; padding: 30px 20px 20px;">
+                <div class="christmas-modal-title" style="margin-bottom: 20px; text-align: center;">CLOSE MESSAGE ME</div>
+                
+                <div style="text-align: left; font-size: 12px; color: #999; margin-bottom: 25px; font-weight: normal;">SELECT A SPECIFIC TIME BELOW</div>
+                
+                <!-- ALL options in one single scrollable container — no scroll button -->
+                <div id="closeTimeDurationScroll" style="max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1a1a1a; padding-right: 4px; margin-bottom: 25px;">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="1hour" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 1 HOUR</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="3hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 3 HOURS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="12hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 12 HOURS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="24hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 24 HOURS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 7 DAYS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="15days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 15 DAYS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="30days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
+                        </label>
+                        <!-- Open Immediately -->
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #22c55e; padding-top: 2px;">
+                            <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
+                        </label>
+                        <!-- Add Specific Date and Time -->
+                        <label class="close-msg-radio-label" id="closeCustomTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(document.getElementById('closeCustomTimeRadio').dataset.locked!=='true'){event.preventDefault(); document.getElementById('closeCustomDays').focus(); updateCloseCustomTimeButtons();}">
+                            <input type="radio" name="closeTime" value="custom" id="closeCustomTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
+                            <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                                <span class="close-msg-text" style="font-weight: normal;">ADD SPECIFIC DATE AND TIME</span>
+                                <span style="display: inline-block;" onclick="event.stopPropagation();">
+                                    <span style="display: grid; grid-template-columns: 28px 12px 28px 12px 28px; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid #333; border-radius: 8px; padding: 6px 8px; width: fit-content;">
+                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomDays" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
+                                        <span style="text-align:center; color:#666;">:</span>
+                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomHours" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
+                                        <span style="text-align:center; color:#666;">:</span>
+                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomMinutes" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
+                                    </span>
+                                    <span style="display: grid; grid-template-columns: 28px 12px 28px 12px 28px; padding: 0 8px; margin-top: 2px;">
+                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">D</span>
+                                        <span></span>
+                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">H</span>
+                                        <span></span>
+                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">M</span>
+                                    </span>
+                                </span>
+                                <span style="display: inline-flex; gap: 6px; margin-top: 6px;" onclick="event.stopPropagation();">
+                                    <button type="button" id="closeCustomTimeEnterBtn" class="close-custom-time-action-btn" onclick="lockCloseCustomTime()" disabled style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4;">ENTER</button>
+                                    <button type="button" id="closeCustomTimeClearBtn" class="close-custom-time-action-btn" onclick="resetCloseCustomTime()" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
+                                </span>
+                            </span>
+                        </label>
+                        <!-- Divider + CHOOSE A TITLE inside scroll -->
+                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE A TITLE</div>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTitle" value="closed" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY CLOSED.</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTitle" value="minor" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY EXPERIENCING MINOR TECHNICAL DIFFICULTIES.</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTitle" value="major" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY EXPERIENCING MAJOR TECHNICAL ISSUES.</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTitle" value="updating" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="applyCloseMessageMeBtn" class="modal-action-button" onclick="applyCloseMessageMe()" style="margin-top: 20px; opacity: 0.5; cursor: not-allowed;" disabled>APPLY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLOSE MESSAGE ME Confirmation Modal -->
+    <div class="modal-overlay" id="closeMessageMeConfirmModal" style="pointer-events: auto;" onclick="if(event.target.id === 'closeMessageMeConfirmModal') return;">
+        <div class="christmas-modal-box" style="max-width: 400px; position: relative;">
+            
+            <div style="text-align: center; padding: 40px 20px;">
+                <div class="christmas-modal-title" id="closeMessageMeConfirmTitle" style="margin-bottom: 30px; font-size: 18px;">MESSAGE ME IS CURRENTLY CLOSED.</div>
+                
+                <div style="font-size: 28px; font-family: 'Share Tech Mono', monospace; color: #22c55e; margin-bottom: 40px; letter-spacing: 2px; font-weight: bold;" id="closeMessageMeTimer">0:00:00:00:000</div>
+                
+                <button class="modal-action-button" onclick="closeCloseMessageMeConfirm()" style="margin-top: 20px; width: 100px;">OK</button>
             </div>
         </div>
     </div>
@@ -11338,6 +11665,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <p>Adjusted the "Updates In" timer.</p>
                         <p>Fixed the positioning of buttons in landscape mode.</p>
                         <p>Fixed the screen flashing issue that occurred when rotating your mobile device and when the keyboard was open. This issue has now been resolved.</p>
+                        <p>Added Time.</p>
+                        <p>Fixed the positioning of Updates In box and Answer this form.</p>
                         <p style="margin-top: 20px;"><strong>💬 Message Me</strong></p>
                         <p>Added a Theme button.</p>
                         <p>Added a Log Out button.</p>
@@ -11949,7 +12278,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <script src="site-lang.js"></script>
     <script src="about-others-lang.js"></script>
     <script>
-        class ProfanityFilter {
+        if (typeof ProfanityFilter === 'undefined') { var ProfanityFilter = class ProfanityFilter {
             constructor(options = {}) {
                 this.options = {
                     lang: options.lang || 'en',
@@ -12125,7 +12454,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
                 return true;
             }
-        }
+        }; }
     </script>
     <script>
         // Loading Screen with Percentage and Progress Bar
@@ -12386,6 +12715,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             function openSettings() {
                 if (!settingsOverlay) return;
+                // Close any secret-inbox related modals that might still be open
+                // underneath — otherwise they're just hidden by Settings' higher
+                // z-index and reappear the instant Settings is closed.
+                if (document.getElementById('messageConversationModal') && document.getElementById('messageConversationModal').classList.contains('active')) {
+                    closeMessageConversation();
+                }
+                if (document.getElementById('messageInboxModal') && document.getElementById('messageInboxModal').classList.contains('active')) {
+                    closeModal('messageInbox');
+                }
+                if (document.getElementById('messageInboxGateModal') && document.getElementById('messageInboxGateModal').classList.contains('active')) {
+                    closeModal('messageInboxGate');
+                }
+                if (document.getElementById('secretQuizModal') && document.getElementById('secretQuizModal').classList.contains('active')) {
+                    closeModal('secretQuiz');
+                }
                 settingsOverlay.classList.add('show');
                 settingsOverlay.setAttribute('aria-hidden', 'false');
             }
@@ -12397,6 +12741,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 settingsOverlay.classList.remove('show');
                 settingsOverlay.setAttribute('aria-hidden', 'true');
             }
+            window.closeSettings = closeSettings;
             function openUpdatesFromSettings() {
                 openModal('updates');
             }
@@ -12407,9 +12752,29 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 });
             }
             if (settingsBtn) {
+                // 10-second hold on the settings button triggers the inbox gate (secret)
+                var _settingsHoldTimer = null;
+                var _settingsHoldFired = false;
+                function _startSettingsHold() {
+                    _settingsHoldFired = false;
+                    _settingsHoldTimer = setTimeout(function() {
+                        _settingsHoldFired = true;
+                        openMessageInboxGate();
+                    }, 5000);
+                }
+                function _cancelSettingsHold() {
+                    if (_settingsHoldTimer) { clearTimeout(_settingsHoldTimer); _settingsHoldTimer = null; }
+                }
+                settingsBtn.addEventListener('pointerdown', function(e) { _startSettingsHold(); });
+                settingsBtn.addEventListener('pointerup', function(e) { _cancelSettingsHold(); });
+                settingsBtn.addEventListener('pointerleave', function(e) { _cancelSettingsHold(); });
+                settingsBtn.addEventListener('pointercancel', function(e) { _cancelSettingsHold(); });
+
                 settingsBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    // If the hold just fired the secret, don't also open settings
+                    if (_settingsHoldFired) { _settingsHoldFired = false; return; }
                     var gearSvg = settingsBtn.querySelector('svg');
                     if (gearSvg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                         gearSvg.classList.remove('settings-gear-spin-once');
@@ -12530,7 +12895,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     var mm = String(absOffset % 60).padStart(2, '0');
                     return Promise.resolve({ now: new Date(nowMs), utcOffset: sign + hh + ':' + mm });
                 }
-                return fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
+                return fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                     .then(function(r) { return r.json(); })
                     .then(function(d) {
                         return { now: new Date(d.utc_datetime), utcOffset: d.utc_offset || '' };
@@ -13060,17 +13425,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Don't start loading automatically - wait for user click
             // Loading will start when user clicks on the loading screen
 
-            function formatDhms(totalSeconds) {
+            function formatDhms(totalMs) {
+                const totalSeconds = Math.floor(totalMs / 1000);
+                const ms = Math.floor(totalMs % 1000);
                 const days = Math.floor(totalSeconds / 86400);
                 const rem = totalSeconds % 86400;
                 const hours = Math.floor(rem / 3600);
                 const mins = Math.floor((rem % 3600) / 60);
                 const secs = rem % 60;
-                const dd = String(days).padStart(2, '0');
+                const dd = String(days).padStart(3, '0');
                 const hh = String(hours).padStart(2, '0');
                 const mm = String(mins).padStart(2, '0');
                 const ss = String(secs).padStart(2, '0');
-                return dd + ':' + hh + ':' + mm + ':' + ss;
+                const mmm = String(ms).padStart(3, '0');
+                return dd + ':' + hh + ':' + mm + ':' + ss + ':' + mmm;
             }
 
 
@@ -13119,7 +13487,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 function scheduleWarningContinue(optMs) {
                     if (countdownAlreadyDone) return;
-                    var d = typeof optMs === 'number' ? optMs : alignWarningDelay();
+                    var d = typeof optMs === 'number' ? optMs : 50;
                     if (d < 50) d = 50;
                     if (warningCountdownInterval) clearTimeout(warningCountdownInterval);
                     warningCountdownInterval = setTimeout(updateCountdown, d);
@@ -13128,10 +13496,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 function updateCountdown() {
                     function setDiffFromNow(now) {
                         if (!updatesCountdownTargetDate) return true;
-                        var diff = Math.floor((updatesCountdownTargetDate.getTime() - now.getTime()) / 1000);
-                        if (diff < 0) diff = 0;
-                        if (warningTimerEl) warningTimerEl.textContent = formatDhms(diff);
-                        if (diff === 0) {
+                        var diffMs = updatesCountdownTargetDate.getTime() - now.getTime();
+                        if (diffMs < 0) diffMs = 0;
+                        if (warningTimerEl) warningTimerEl.textContent = formatDhms(diffMs);
+                        if (diffMs === 0) {
                             if (warningCountdownInterval) {
                                 clearTimeout(warningCountdownInterval);
                                 warningCountdownInterval = null;
@@ -13384,7 +13752,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // Periodically re-anchor from a real HTTP source (WorldTimeAPI)
         // so even if someone changes clock BEFORE page load, it self-corrects
         (function _syncServerAnchor() {
-            fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
+            fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                 .then(function(r) { return r.json(); })
                 .then(function(d) {
                     var serverMs = new Date(d.utc_datetime).getTime();
@@ -13782,7 +14150,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 utcEl.innerHTML = utcStr + (tzName ? '<br><span style="font-size:10px;opacity:0.8;">' + tzName + '</span>' : '');
             }
             const status = document.getElementById('clockStatusTime');
-            if (status) status.textContent = padClock2(getHours12(now)) + ':' + padClock2(now.getMinutes());
+            if (status) status.textContent = padClock2(getHours12(now)) + ':' + padClock2(now.getMinutes()) + ' ' + (now.getHours() >= 12 ? 'PM' : 'AM');
         }
 
         function _getTamperProofNow() {
@@ -13796,6 +14164,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             updateClockDisplay(_getTamperProofNow());
             clockAppRaf = requestAnimationFrame(clockAppLoop);
         }
+
+        // Main menu corner clock
+        function updateMainMenuClock() {
+            var el = document.getElementById('mainMenuClock');
+            if (!el) return;
+            var now = _getTamperProofNow();
+            var h = now.getHours();
+            var m = now.getMinutes();
+            var s = now.getSeconds();
+            var ampm = h >= 12 ? 'PM' : 'AM';
+            var h12 = h % 12 || 12;
+            el.textContent = String(h12).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + ' ' + ampm;
+        }
+        updateMainMenuClock();
+        setInterval(updateMainMenuClock, 1000);
 
         const CLOCK_APP_STORAGE = 'clockAppBgState';
 
@@ -14184,9 +14567,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (lap) lap.addEventListener('click', stopwatchLap);
         }
 
-        const TIMER_PICKER_ITEM_H = 36;
-        const TIMER_PICKER_COPIES = 3;
-        const TIMER_PICKER_SNAP_DELAY_MS = 280;
+        if (typeof TIMER_PICKER_ITEM_H === 'undefined') var TIMER_PICKER_ITEM_H = 36;
+        if (typeof TIMER_PICKER_COPIES === 'undefined') var TIMER_PICKER_COPIES = 3;
+        if (typeof TIMER_PICKER_SNAP_DELAY_MS === 'undefined') var TIMER_PICKER_SNAP_DELAY_MS = 280;
 
         const timerState = {
             view: 'setup',
@@ -14856,6 +15239,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 notice.textContent = 'AUTHOR RESET YOUR DATA FOR SOME REASON.';
                 notice.style.display = 'block';
             }
+            var noticeSenderLogin = document.getElementById('authorResetNoticeSenderLogin');
+            if (noticeSenderLogin) {
+                noticeSenderLogin.style.display = 'block';
+            }
             // Restore submit button and name input so they can create a new account
             var submitBtn = document.querySelector('#messageConfirmationModal .name-submit-btn');
             var nameInput2 = document.getElementById('userNameInput');
@@ -15498,45 +15885,80 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             // Fast path: this exact name+password was used to create or last log
             // into an account on THIS device/browser (e.g. they just logged out).
-            // No need to depend on Firebase for that case.
+            // We still need to check Firebase for an active session on another device
+            // BEFORE opening the modal, so we do the meta fetch first.
             if (tryLocalLogin(nameVal, pwVal)) {
                 resetLoginAttemptCount();
                 setLoginAttemptLockoutEndTime(null);
                 if (err) err.style.display = 'none';
-                applySelectedLogoutOption();
-                closeModal('senderLogin');
-                openModal('christmasMessage');
-                var viewArea0 = document.getElementById('christmasViewArea');
-                if (viewArea0) {
-                    viewArea0.style.display = 'block';
-                    localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
-                    startSenderThreadListener();
-                }
-                // Hide 168-hour cooldown timer — user is now logged in; reset so next logout starts fresh
-                localStorage.removeItem('autoLoggedOutAt');
-                stopAccountCooldownTimer();
-                var _cdBox0 = document.getElementById('accountCooldownTimerBox');
-                if (_cdBox0) _cdBox0.style.display = 'none';
-                // Check ban status from Firebase and show warning if banned
+                // Show loading state while we verify no active session elsewhere
+                if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; btn.style.opacity = '0.7'; }
                 (function() {
                     var _localSenderId = window.pmGetSenderId ? window.pmGetSenderId() : localStorage.getItem('christmasUserId');
-                    if (!_localSenderId || !window._pmDb || !window.pmSafeKey) return;
+                    function _proceedLocalLogin() {
+                        if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
+                        applySelectedLogoutOption();
+                        closeModal('senderLogin');
+                        openModal('christmasMessage');
+                        var viewArea0 = document.getElementById('christmasViewArea');
+                        if (viewArea0) {
+                            viewArea0.style.display = 'block';
+                            localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
+                            startSenderThreadListener();
+                        }
+                        localStorage.removeItem('autoLoggedOutAt');
+                        stopAccountCooldownTimer();
+                        var _cdBox0 = document.getElementById('accountCooldownTimerBox');
+                        if (_cdBox0) _cdBox0.style.display = 'none';
+                    }
+                    function _revertLocalLogin() {
+                        localStorage.removeItem('userNameForMessage');
+                        localStorage.removeItem('userNameStoredAt');
+                        localStorage.removeItem('senderPassword');
+                        if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
+                    }
+                    if (!_localSenderId || !window._pmDb || !window.pmSafeKey) {
+                        // Firebase not ready — proceed without the check (graceful degradation)
+                        _proceedLocalLogin();
+                        return;
+                    }
                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ get, ref }) {
                         var _safeK = window.pmSafeKey(_localSenderId);
                         get(ref(window._pmDb, 'privateMessages/' + _safeK + '/meta')).then(function(snap) {
                             var _localMeta = snap.val() || {};
+                            // Ban check FIRST — a banned account must never see the
+                            // "another device" warning instead of the ban warning.
                             if (_localMeta.ownerBanned || _localMeta.isBanned) {
-                                // Reverse the login — kick them back out
-                                localStorage.removeItem('userNameForMessage');
-                                localStorage.removeItem('userNameStoredAt');
-                                localStorage.removeItem('senderPassword');
-                                closeModal('christmasMessage');
-                                openModal('senderLogin');
+                                _revertLocalLogin();
                                 startLoginReleaseTimer();
                                 showLoginBanWarning(_localMeta);
+                                return;
                             }
-                        }).catch(function() {});
-                    }).catch(function() {});
+                            // Check if this account is still active on another device.
+                            // Read local expiry BEFORE applySelectedLogoutOption writes it.
+                            var _ldExpiresAt = Number(_localMeta.logoutExpiresAt) || 0;
+                            var _ldIsLoggedOut = !!(_localMeta.isLoggedOut);
+                            var _ldForceLogoutAt = Number(_localMeta.forceLogoutAt) || 0;
+                            var _ldOwnerEnded = _ldForceLogoutAt > 0 && _ldForceLogoutAt > (_ldExpiresAt - (Number(_localMeta.logoutMinutes || 0) * 60 * 1000 + 5000));
+                            // At this point applySelectedLogoutOption has NOT run yet,
+                            // so LOGOUT_EXPIRES_AT_KEY reflects the OLD (logged-out) state.
+                            var _ldLocalExpStr = localStorage.getItem(LOGOUT_EXPIRES_AT_KEY);
+                            var _ldLocalExpAt = _ldLocalExpStr ? parseInt(_ldLocalExpStr, 10) : 0;
+                            // If this device still has a matching local expiry it owns the session
+                            var _ldThisDeviceOwns = _ldLocalExpAt > 0 && Math.abs(_ldLocalExpAt - _ldExpiresAt) < 30000;
+                            if (_ldExpiresAt > 0 && _ldExpiresAt > Date.now() && !_ldIsLoggedOut && !_ldOwnerEnded && !_ldThisDeviceOwns) {
+                                _revertLocalLogin();
+                                showLoginAnotherDeviceWarning(null);
+                                return;
+                            }
+                            _proceedLocalLogin();
+                        }).catch(function() {
+                            // Firebase error — proceed without blocking (fail open)
+                            _proceedLocalLogin();
+                        });
+                    }).catch(function() {
+                        _proceedLocalLogin();
+                    });
                 })();
                 return;
             }
@@ -15607,10 +16029,36 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                     try { applyMessageViewTheme(meta.messageTheme); } catch(e) {}
                                 }
                             }
-                            // Block login if account is banned — show warning inside the modal
+                            // Block login if account is banned — always check this FIRST
+                            // so a banned account never sees the "another device" warning instead.
                             if (meta && (meta.ownerBanned || meta.isBanned)) {
+                                localStorage.removeItem('userNameForMessage');
+                                localStorage.removeItem('userNameStoredAt');
+                                localStorage.removeItem('senderPassword');
+                                localStorage.removeItem('accountCreatedOnDevice');
                                 if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
                                 showLoginBanWarning(meta);
+                                return;
+                            }
+                            // Block login if account still has an active session on another device.
+                            // Allow if: timer expired naturally, owner ended it early (forceLogoutAt),
+                            // account is marked isLoggedOut, or this device already owns the session.
+                            var _fbExpiresAt = Number(meta.logoutExpiresAt) || 0;
+                            var _fbIsLoggedOut = !!(meta.isLoggedOut);
+                            var _fbForceLogoutAt = Number(meta.forceLogoutAt) || 0;
+                            // forceLogoutAt newer than the session start = owner ended the timer early
+                            var _ownerEndedTimer = _fbForceLogoutAt > 0 && _fbForceLogoutAt > (_fbExpiresAt - (Number(meta.logoutMinutes || 0) * 60 * 1000 + 5000));
+                            var _localExpStr = localStorage.getItem(LOGOUT_EXPIRES_AT_KEY);
+                            var _localExpAt = _localExpStr ? parseInt(_localExpStr, 10) : 0;
+                            // 30-second tolerance for clock skew / Firebase write propagation
+                            var _thisDeviceOwns = _localExpAt > 0 && Math.abs(_localExpAt - _fbExpiresAt) < 30000;
+                            if (_fbExpiresAt > 0 && _fbExpiresAt > Date.now() && !_fbIsLoggedOut && !_ownerEndedTimer && !_thisDeviceOwns) {
+                                // Revert the session items we already wrote
+                                localStorage.removeItem('userNameForMessage');
+                                localStorage.removeItem('userNameStoredAt');
+                                localStorage.removeItem('senderPassword');
+                                localStorage.removeItem('accountCreatedOnDevice');
+                                showLoginAnotherDeviceWarning(btn);
                                 return;
                             }
                             applySelectedLogoutOption();
@@ -15645,6 +16093,25 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     }).catch(function() { showLoginError(btn, err); });
                 }).catch(function() { showLoginError(btn, err); });
             }).catch(function() { showLoginError(btn, err); });
+        }
+
+        // ── Another-device warning ─────────────────────────────────────────────
+        // Shows the "THIS ACCOUNT IS LOGGED IN TO ANOTHER DEVICE." warning below
+        // the Submit button for 5 seconds, then auto-hides it.  Re-showing it on
+        // every failed attempt is intentional — the 5-second countdown restarts.
+        var _loginAnotherDeviceWarningTimeout = null;
+        function showLoginAnotherDeviceWarning(btn) {
+            var box = document.getElementById('loginAnotherDeviceWarning');
+            if (box) {
+                box.style.display = 'block';
+                if (_loginAnotherDeviceWarningTimeout) clearTimeout(_loginAnotherDeviceWarningTimeout);
+                _loginAnotherDeviceWarningTimeout = setTimeout(function() {
+                    if (box) box.style.display = 'none';
+                    _loginAnotherDeviceWarningTimeout = null;
+                }, 5000);
+            }
+            // Restore the Submit button so the user can try again later
+            if (btn) { btn.disabled = false; btn.textContent = 'Submit'; btn.style.opacity = ''; btn.style.cursor = ''; }
         }
 
         var _loginErrorTimeout = null;
@@ -15854,7 +16321,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function performAutoLogout() {
             try {
-                console.log('[pm-debug] performAutoLogout() RUNNING — call stack:');
                 console.trace();
             } catch (e) {}
             localStorage.removeItem('userNameForMessage');
@@ -15880,12 +16346,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 var m = document.getElementById(id);
                 return m && m.classList.contains('active');
             });
-            try {
-                console.log('[pm-debug] anyMessagingModalOpen:', anyMessagingModalOpen, messagingModalIds.map(function(id) {
-                    var m = document.getElementById(id);
-                    return id + '=' + (m ? m.classList.contains('active') : 'MISSING');
-                }));
-            } catch (e) {}
+
             if (anyMessagingModalOpen) {
                 messagingModalIds.forEach(function(id) {
                     var m = document.getElementById(id);
@@ -17124,6 +17585,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (type === 'christmasMessage') {
                 stopChristmasMessageViewportSync();
             }
+            if (type === 'senderLogin') {
+                var _senderLoginResetNotice = document.getElementById('authorResetNoticeSenderLogin');
+                if (_senderLoginResetNotice) _senderLoginResetNotice.style.display = 'none';
+            }
             if (type === 'messageConfirmation' || type === 'nameFinalConfirm' || type === 'senderPassword') {
                 clearConfirmationModalBackdrop();
                 // Also close the important message modal if password modal is being closed
@@ -17357,8 +17822,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             };
         }
 
-        // Click handler for regular clickable letters (requires 10 clicks)
-        function createClickableLetterHandler(actionFunction) {
+        // Click handler for regular clickable letters (defaults to 10 clicks; pass a second arg to override)
+        function createClickableLetterHandler(actionFunction, requiredClicks = 10) {
             let clickCount = 0;
             let lastClickTime = 0;
             const clickWindow = 3000; // 3 seconds window
@@ -17371,7 +17836,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clickCount++;
                 lastClickTime = now;
                 
-                if (clickCount >= 10) {
+                if (clickCount >= requiredClicks) {
                     actionFunction();
                     clickCount = 0;
                 }
@@ -17411,9 +17876,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             clearMessagesAndResetSubmission();
         }, 4);
 
-        const christmasFClickHandler = createClickableLetterHandler(function() {
+        const settingsVersionClickHandler = createClickableLetterHandler(function() {
             openMessageInboxGate();
-        });
+        }, 5);
         
         function viewAllMessagesViaE() {
             if (isInboxUnlocked()) {
@@ -18083,18 +18548,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const expireAt = stored ? parseInt(stored, 10) : null;
             const hasValidSession = expireAt && expireAt > Date.now();
             
-            // Clear unlock key
-            localStorage.removeItem(INBOX_UNLOCK_KEY);
-            // Only clear session if it's actually expired (not if still valid)
-            if (!hasValidSession) {
-                localStorage.removeItem(SECRET_SESSION_EXPIRES_KEY);
-            }
-            localStorage.removeItem(ADMIN_ACCESS_KEY);  // Remove admin bypass
-            
-            if (isInboxUnlocked()) {
+            // A still-valid 1-hour session always grants access, regardless of how
+            // this gate was opened — the secret trigger should never force someone
+            // who is already unlocked to re-enter the password.
+            if (hasValidSession || localStorage.getItem(INBOX_UNLOCK_KEY) === 'true') {
                 openMessageInbox();
                 return;
             }
+            
+            // Not unlocked — clear any stale flags and show the password gate
+            localStorage.removeItem(INBOX_UNLOCK_KEY);
+            localStorage.removeItem(SECRET_SESSION_EXPIRES_KEY);
+            localStorage.removeItem(ADMIN_ACCESS_KEY);  // Remove admin bypass
+            
             openModal('messageInboxGate');
             // Reset eye to hidden state on open
             const _eyeBtn = document.getElementById('inboxPinEyeBtn');
@@ -18795,6 +19261,605 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
+        function openCloseMessageMeModal() {
+            const modal = document.getElementById('closeMessageMeModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function scrollCloseTimeDuration() {
+            var el = document.getElementById('closeTimeDurationScroll');
+            if (!el) return;
+            var atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 10;
+            if (atBottom) {
+                el.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                el.scrollBy({ top: 100, behavior: 'smooth' });
+            }
+            setTimeout(updateCloseScrollBtn, 350);
+        }
+        function updateCloseScrollBtn() {
+            var el = document.getElementById('closeTimeDurationScroll');
+            var arrow = document.getElementById('closeTimeScrollArrow');
+            var label = document.getElementById('closeTimeScrollLabel');
+            if (!el || !arrow || !label) return;
+            var atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 10;
+            arrow.style.transform = atBottom ? 'rotate(180deg)' : 'rotate(0deg)';
+            label.textContent = atBottom ? 'SCROLL UP' : 'SCROLL';
+        }
+
+        function toggleCloseRadio(radio) {
+            if (radio.dataset.wasChecked === 'true') {
+                radio.checked = false;
+                radio.dataset.wasChecked = 'false';
+                // Reset text color for this radio
+                const label = radio.closest('.close-msg-radio-label');
+                const textSpan = label ? label.querySelector('.close-msg-text') : null;
+                if (textSpan) textSpan.style.color = '#fff';
+                updateCloseMessageMeSelection();
+            } else {
+                // Mark all in same group as not checked
+                const siblings = document.getElementsByName(radio.name);
+                for (let r of siblings) { r.dataset.wasChecked = 'false'; }
+                radio.dataset.wasChecked = 'true';
+
+                // "Open immediately" and "close for a duration" are two different
+                // actions — picking one clears the other so they can't conflict.
+                if (radio.name === 'closeOpenNow') {
+                    clearCloseRadioGroup('closeTime');
+                    clearCloseRadioGroup('closeTitle');
+                } else if (radio.name === 'closeTime' || radio.name === 'closeTitle') {
+                    clearCloseRadioGroup('closeOpenNow');
+                }
+            }
+        }
+
+        function clearCloseRadioGroup(groupName) {
+            const radios = document.getElementsByName(groupName);
+            for (let r of radios) {
+                r.checked = false;
+                r.dataset.wasChecked = 'false';
+                const label = r.closest('.close-msg-radio-label');
+                const textSpan = label ? label.querySelector('.close-msg-text') : null;
+                if (textSpan) textSpan.style.color = '#fff';
+            }
+            if (groupName === 'closeTime') {
+                resetCloseCustomTime();
+            }
+        }
+
+        // Enables/disables both ENTER and the red ✕ clear button based on whether
+        // any of the D/H/M fields currently have a value typed in.
+        function updateCloseCustomTimeButtons() {
+            const d = document.getElementById('closeCustomDays');
+            const h = document.getElementById('closeCustomHours');
+            const m = document.getElementById('closeCustomMinutes');
+            const enterBtn = document.getElementById('closeCustomTimeEnterBtn');
+            const clearBtn = document.getElementById('closeCustomTimeClearBtn');
+            const radio = document.getElementById('closeCustomTimeRadio');
+
+            const hasValue = (d && d.value.trim() !== '') || (h && h.value.trim() !== '') || (m && m.value.trim() !== '');
+            // Use explicit data-locked attribute instead of radio.checked so that
+            // clicking the label text (which auto-checks the radio) doesn't falsely
+            // treat the inputs as locked before the user hits ENTER.
+            const isLocked = radio && radio.dataset.locked === 'true';
+
+            [enterBtn, clearBtn].forEach(function(btn) {
+                if (!btn) return;
+                const shouldEnable = isLocked ? (btn === clearBtn) : hasValue;
+                btn.disabled = !shouldEnable;
+                btn.style.opacity = shouldEnable ? '1' : '0.4';
+                btn.style.cursor = shouldEnable ? 'pointer' : 'not-allowed';
+            });
+
+            // Re-enable the inputs if not locked
+            if (!isLocked && d && h && m) {
+                d.disabled = false;
+                h.disabled = false;
+                m.disabled = false;
+            }
+        }
+
+        // Locks in the custom D/H/M duration typed by the user. Locking turns the
+        // label text and radio dot green, matching every other selected option,
+        // and behaves like any other closeTime radio for validation/apply purposes.
+        function lockCloseCustomTime() {
+            const d = parseInt(document.getElementById('closeCustomDays').value, 10) || 0;
+            const h = parseInt(document.getElementById('closeCustomHours').value, 10) || 0;
+            const m = parseInt(document.getElementById('closeCustomMinutes').value, 10) || 0;
+
+            if (d <= 0 && h <= 0 && m <= 0) {
+                return; // nothing entered — don't lock an empty/zero duration
+            }
+
+            const radio = document.getElementById('closeCustomTimeRadio');
+            const label = document.getElementById('closeCustomTimeLabel');
+
+            // Behave like toggleCloseRadio: clear sibling closeTime + closeOpenNow radios
+            clearCloseRadioGroup('closeOpenNow');
+            const timeSiblings = document.getElementsByName('closeTime');
+            for (let r of timeSiblings) {
+                if (r !== radio) {
+                    r.checked = false;
+                    r.dataset.wasChecked = 'false';
+                    const sLabel = r.closest('.close-msg-radio-label');
+                    const sText = sLabel ? sLabel.querySelector('.close-msg-text') : null;
+                    if (sText) sText.style.color = '#fff';
+                }
+            }
+
+            radio.checked = true;
+            radio.dataset.wasChecked = 'true';
+            radio.dataset.locked = 'true';
+            radio.dataset.customDays = String(d);
+            radio.dataset.customHours = String(h);
+            radio.dataset.customMinutes = String(m);
+
+            // Lock the inputs so the value can't be changed without clearing first
+            ['closeCustomDays', 'closeCustomHours', 'closeCustomMinutes'].forEach(function(id) {
+                document.getElementById(id).disabled = true;
+            });
+
+            // Label text and radio dot both turn green, matching every other selected option
+            const ownText = label ? label.querySelector('.close-msg-text') : null;
+            if (ownText) ownText.style.color = '#22c55e';
+
+            updateCloseCustomTimeButtons();
+            updateCloseMessageMeSelection();
+        }
+
+        function resetCloseCustomTime() {
+            const radio = document.getElementById('closeCustomTimeRadio');
+            const label = document.getElementById('closeCustomTimeLabel');
+            if (!radio) return;
+
+            radio.checked = false;
+            radio.dataset.wasChecked = 'false';
+            radio.dataset.locked = 'false';
+            delete radio.dataset.customDays;
+            delete radio.dataset.customHours;
+            delete radio.dataset.customMinutes;
+
+            ['closeCustomDays', 'closeCustomHours', 'closeCustomMinutes'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) { el.value = ''; el.disabled = false; }
+            });
+            const ownText = label ? label.querySelector('.close-msg-text') : null;
+            if (ownText) ownText.style.color = '#fff';
+
+            updateCloseCustomTimeButtons();
+        }
+
+        function updateCloseMessageMeSelection() {
+            const timeRadios = document.getElementsByName('closeTime');
+            const titleRadios = document.getElementsByName('closeTitle');
+            const openNowRadios = document.getElementsByName('closeOpenNow');
+            
+            // Update time selection colors (skip the custom radio — it has its own white-lock styling)
+            for (let radio of timeRadios) {
+                if (radio.id === 'closeCustomTimeRadio') continue;
+                const label = radio.closest('.close-msg-radio-label');
+                const textSpan = label.querySelector('.close-msg-text');
+                if (radio.checked) {
+                    textSpan.style.color = '#22c55e';
+                } else {
+                    textSpan.style.color = '#fff';
+                }
+            }
+
+            // Update open-immediately selection color
+            for (let radio of openNowRadios) {
+                const label = radio.closest('.close-msg-radio-label');
+                const textSpan = label.querySelector('.close-msg-text');
+                if (radio.checked) {
+                    textSpan.style.color = '#22c55e';
+                } else {
+                    textSpan.style.color = '#fff';
+                }
+            }
+            
+            // Update title selection colors
+            for (let radio of titleRadios) {
+                const label = radio.closest('.close-msg-radio-label');
+                const textSpan = label.querySelector('.close-msg-text');
+                if (radio.checked) {
+                    textSpan.style.color = '#22c55e';
+                } else {
+                    textSpan.style.color = '#fff';
+                }
+            }
+            
+            // Check validation
+            checkCloseMessageMeValidation();
+        }
+
+        function checkCloseMessageMeValidation() {
+            const timeRadios = document.getElementsByName('closeTime');
+            const titleRadios = document.getElementsByName('closeTitle');
+            const openNowRadios = document.getElementsByName('closeOpenNow');
+            const applyBtn = document.getElementById('applyCloseMessageMeBtn');
+            
+            let timeSelected = false;
+            let titleSelected = false;
+            let openNowSelected = false;
+            
+            for (let radio of timeRadios) {
+                // Custom radio only counts when the user has confirmed a value via ENTER (data-locked)
+                if (radio.id === 'closeCustomTimeRadio') {
+                    if (radio.dataset.locked === 'true') { timeSelected = true; break; }
+                } else if (radio.checked) {
+                    timeSelected = true;
+                    break;
+                }
+            }
+            
+            for (let radio of titleRadios) {
+                if (radio.checked) {
+                    titleSelected = true;
+                    break;
+                }
+            }
+
+            for (let radio of openNowRadios) {
+                if (radio.checked) {
+                    openNowSelected = true;
+                    break;
+                }
+            }
+            
+            if (openNowSelected || (timeSelected && titleSelected)) {
+                applyBtn.disabled = false;
+                applyBtn.style.opacity = '1';
+                applyBtn.style.cursor = 'pointer';
+            } else {
+                applyBtn.disabled = true;
+                applyBtn.style.opacity = '0.5';
+                applyBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        function applyCloseMessageMe() {
+            const timeRadios = document.getElementsByName('closeTime');
+            const titleRadios = document.getElementsByName('closeTitle');
+            const openNowRadios = document.getElementsByName('closeOpenNow');
+            
+            let selectedTime = null;
+            let selectedTitle = null;
+            let openNowSelected = false;
+            
+            for (let radio of timeRadios) {
+                if (radio.checked) {
+                    selectedTime = radio.value;
+                    break;
+                }
+            }
+            
+            for (let radio of titleRadios) {
+                if (radio.checked) {
+                    selectedTitle = radio.value;
+                    break;
+                }
+            }
+
+            for (let radio of openNowRadios) {
+                if (radio.checked) {
+                    openNowSelected = true;
+                    break;
+                }
+            }
+
+            // ── Open Message Me Immediately — clears any active closure ──
+            if (openNowSelected) {
+                // Clear local state right away so the timer/title disappear instantly
+                window.closeMessageMeEndPerfMs = 0;
+                window.closeMessageMeTitle = '';
+                if (window.closeMessageMeTimerRAF) {
+                    cancelAnimationFrame(window.closeMessageMeTimerRAF);
+                    window.closeMessageMeTimerRAF = null;
+                }
+                updateAllCloseMessageMeDisplays();
+
+                // Clear Firebase so it stays open for everyone, with the same
+                // ready-state retry as the closing write below
+                (function clearCloseMessageMeStatus(attemptsLeft) {
+                    if (!window._pmDb) {
+                        if (attemptsLeft > 0) {
+                            setTimeout(function() { clearCloseMessageMeStatus(attemptsLeft - 1); }, 300);
+                        } else {
+                            console.warn('[closeMessageMe] Firebase not ready — clear dropped after retries');
+                        }
+                        return;
+                    }
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                        fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' }).catch(function(e) {
+                            console.warn('[closeMessageMe] Firebase clear failed:', e);
+                        });
+                    }).catch(function(e) {
+                        console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                    });
+                })(20);
+
+                // Reset the radio selection back to a clean slate
+                clearCloseRadioGroup('closeTime');
+                clearCloseRadioGroup('closeTitle');
+                clearCloseRadioGroup('closeOpenNow');
+                checkCloseMessageMeValidation();
+
+                // Stay inside the Close Message Me modal — no need to close it
+                return;
+            }
+            
+            if (!selectedTime || !selectedTitle) {
+                return;
+            }
+            
+            // Calculate duration in milliseconds
+            let durationMs = 0;
+            switch(selectedTime) {
+                case '1hour': durationMs = 60 * 60 * 1000; break;
+                case '3hours': durationMs = 3 * 60 * 60 * 1000; break;
+                case '12hours': durationMs = 12 * 60 * 60 * 1000; break;
+                case '24hours': durationMs = 24 * 60 * 60 * 1000; break;
+                case '7days': durationMs = 7 * 24 * 60 * 60 * 1000; break;
+                case '15days': durationMs = 15 * 24 * 60 * 60 * 1000; break;
+                case '30days': durationMs = 30 * 24 * 60 * 60 * 1000; break;
+                case 'custom': {
+                    const customRadio = document.getElementById('closeCustomTimeRadio');
+                    const cd = parseInt(customRadio?.dataset.customDays, 10) || 0;
+                    const ch = parseInt(customRadio?.dataset.customHours, 10) || 0;
+                    const cm = parseInt(customRadio?.dataset.customMinutes, 10) || 0;
+                    durationMs = (cd * 24 * 60 * 60 * 1000) + (ch * 60 * 60 * 1000) + (cm * 60 * 1000);
+                    break;
+                }
+            }
+            
+            // Get title text
+            const titleText = {
+                'closed': 'MESSAGE ME IS CURRENTLY CLOSED.',
+                'minor': 'MESSAGE ME IS CURRENTLY EXPERIENCING MINOR TECHNICAL DIFFICULTIES.',
+                'major': 'MESSAGE ME IS CURRENTLY EXPERIENCING MAJOR TECHNICAL ISSUES.',
+                'updating': 'MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.'
+            }[selectedTitle];
+            
+            // Use tamper-proof time anchored to server UTC via performance.now()
+            var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
+            var endUtcMs = serverNowMs + durationMs;
+
+            // Set local state immediately so the timer shows right away on this device
+            window.closeMessageMeEndPerfMs = performance.now() + durationMs;
+            window.closeMessageMeTitle = titleText;
+
+            // ── Write to Firebase so ALL other devices update instantly ──
+            // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
+            // clicked very soon after page load) instead of silently dropping the write.
+            (function writeCloseMessageMeStatus(attemptsLeft) {
+                if (!window._pmDb) {
+                    if (attemptsLeft > 0) {
+                        setTimeout(function() { writeCloseMessageMeStatus(attemptsLeft - 1); }, 300);
+                    } else {
+                        console.warn('[closeMessageMe] Firebase not ready — write dropped after retries');
+                    }
+                    return;
+                }
+                import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                    fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), {
+                        endUtcMs: endUtcMs,
+                        title: titleText,
+                        active: true
+                    }).catch(function(e) {
+                        console.warn('[closeMessageMe] Firebase write failed:', e);
+                    });
+                }).catch(function(e) {
+                    console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                });
+            })(20); // up to ~6s of retrying
+
+            // Start RAF so the closed-timer keeps updating in the background for visitors.
+            // Stay inside the Close Message Me modal — no separate confirm popup.
+            startCloseMessageMeRAF();
+
+            // Wipe all selections so APPLY can't be clicked again without
+            // choosing fresh options — prevents accidental duplicate applies.
+            clearCloseRadioGroup('closeTime');
+            clearCloseRadioGroup('closeTitle');
+            clearCloseRadioGroup('closeOpenNow');
+            checkCloseMessageMeValidation();
+        }
+
+        // ── Close-Message-Me helpers ──────────────────────────────────────────
+
+        // Apply state received from Firebase (called both on first load and on live updates)
+        function applyCloseMessageMeState(endUtcMs, titleText) {
+            var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
+            var remainingMs = endUtcMs - serverNowMs;
+            if (remainingMs <= 0) {
+                // Expired — clear everything
+                window.closeMessageMeEndPerfMs = 0;
+                window.closeMessageMeTitle = '';
+                updateAllCloseMessageMeDisplays();
+                return;
+            }
+            window.closeMessageMeEndPerfMs = performance.now() + remainingMs;
+            window.closeMessageMeTitle = titleText || '';
+            startCloseMessageMeRAF();
+        }
+
+        // Listen to Firebase for real-time updates across all devices
+        (function listenCloseMessageMeStatus() {
+            function attach() {
+                if (!window._pmDb) { setTimeout(attach, 500); return; }
+                import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                    fb.onValue(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), function(snap) {
+                        var val = snap.val();
+                        if (!val || !val.active || !val.endUtcMs) {
+                            // No active close status — clear
+                            window.closeMessageMeEndPerfMs = 0;
+                            window.closeMessageMeTitle = '';
+                            updateAllCloseMessageMeDisplays();
+                            return;
+                        }
+                        applyCloseMessageMeState(val.endUtcMs, val.title);
+                    }, function(err) {
+                        console.warn('[closeMessageMe] Firebase listen error:', err);
+                    });
+                });
+            }
+            attach();
+        })();
+
+        function getCloseMessageMeFormatted() {
+            var remainingMs = Math.max(0, (window.closeMessageMeEndPerfMs || 0) - performance.now());
+            var totalSeconds = Math.floor(remainingMs / 1000);
+            var days    = Math.floor(totalSeconds / 86400);
+            var hours   = Math.floor((totalSeconds % 86400) / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+            var ms      = Math.floor(remainingMs % 1000);
+            return {
+                remainingMs: remainingMs,
+                text: days + ':' + String(hours).padStart(2,'0') + ':' + String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0') + ':' + String(ms).padStart(3,'0')
+            };
+        }
+
+        function updateAllCloseMessageMeDisplays() {
+            var f = getCloseMessageMeFormatted();
+            var title = window.closeMessageMeTitle || '';
+
+            // 1. Confirm popup timer
+            var confirmTimer = document.getElementById('closeMessageMeTimer');
+            if (confirmTimer) confirmTimer.textContent = f.remainingMs > 0 ? f.text : '0:00:00:00:000';
+
+            // 2. Message Me modal overlay
+            var msgOverlay   = document.getElementById('msgMeClosedOverlay');
+            var msgTitle     = document.getElementById('msgMeClosedTitle');
+            var msgCountdown = document.getElementById('msgMeClosedCountdown');
+            var msgLabels    = document.getElementById('msgMeClosedLabels');
+            // Hide the original modal × when overlay is active so only the in-blur × shows
+            var msgOrigClose = document.getElementById('christmasMessageOuterClose');
+            if (msgOverlay) {
+                if (f.remainingMs > 0) {
+                    msgOverlay.style.display = 'flex';
+                    if (msgOrigClose) msgOrigClose.style.setProperty('display', 'none', 'important');
+                    if (msgTitle)     msgTitle.textContent     = title;
+                    if (msgCountdown) {
+                        msgCountdown.textContent = f.text;
+                        // Build aligned labels dynamically from the segments in f.text
+                        if (msgLabels) buildSegmentLabels(msgLabels, f.text, msgCountdown);
+                    }
+                } else {
+                    msgOverlay.style.display = 'none';
+                    if (msgOrigClose) msgOrigClose.style.removeProperty('display');
+                }
+            }
+
+            // 3. Login modal overlay
+            var loginOverlay   = document.getElementById('loginMeClosedOverlay');
+            var loginTitle     = document.getElementById('loginMeClosedTitle');
+            var loginCountdown = document.getElementById('loginMeClosedCountdown');
+            var loginLabels    = document.getElementById('loginMeClosedLabels');
+            var loginOrigClose = document.getElementById('senderLoginOuterClose');
+            if (loginOverlay) {
+                if (f.remainingMs > 0) {
+                    loginOverlay.style.display = 'flex';
+                    if (loginOrigClose) loginOrigClose.style.setProperty('display', 'none', 'important');
+                    if (loginTitle)     loginTitle.textContent     = title;
+                    if (loginCountdown) {
+                        loginCountdown.textContent = f.text;
+                        if (loginLabels) buildSegmentLabels(loginLabels, f.text, loginCountdown);
+                    }
+                } else {
+                    loginOverlay.style.display = 'none';
+                    if (loginOrigClose) loginOrigClose.style.removeProperty('display');
+                }
+            }
+        }
+
+        // Build D/H/M/S/MS labels that exactly match the countdown character widths
+        function buildSegmentLabels(labelsEl, text, countdownEl) {
+            // Only rebuild when day-digit count changes (avoids expensive DOM work every frame)
+            var key = text.split(':')[0].length;
+            if (labelsEl._lastKey === key) return;
+            labelsEl._lastKey = key;
+
+            var names = ['D','H','M','S','MS'];
+            var segments = text.split(':');
+            // Use a hidden clone to measure each segment width
+            var clone = document.createElement('span');
+            clone.style.cssText = countdownEl.style.cssText;
+            clone.style.position = 'absolute';
+            clone.style.visibility = 'hidden';
+            clone.style.whiteSpace = 'nowrap';
+            clone.style.left = '-9999px';
+            document.body.appendChild(clone);
+
+            labelsEl.innerHTML = '';
+            var colonWidth = (function(){
+                clone.textContent = ':';
+                return clone.getBoundingClientRect().width;
+            })();
+
+            for (var i = 0; i < segments.length; i++) {
+                clone.textContent = segments[i];
+                var w = clone.getBoundingClientRect().width;
+                var span = document.createElement('span');
+                span.textContent = names[i];
+                span.style.cssText = 'display:inline-block; text-align:center; width:' + w + 'px;';
+                labelsEl.appendChild(span);
+                if (i < segments.length - 1) {
+                    var sep = document.createElement('span');
+                    sep.style.cssText = 'display:inline-block; width:' + colonWidth + 'px;';
+                    labelsEl.appendChild(sep);
+                }
+            }
+            document.body.removeChild(clone);
+        }
+
+        function startCloseMessageMeRAF() {
+            if (window.closeMessageMeTimerRAF) cancelAnimationFrame(window.closeMessageMeTimerRAF);
+            function rafLoop() {
+                updateAllCloseMessageMeDisplays();
+                if ((window.closeMessageMeEndPerfMs || 0) > performance.now()) {
+                    window.closeMessageMeTimerRAF = requestAnimationFrame(rafLoop);
+                } else {
+                    window.closeMessageMeTimerRAF = null;
+                    // Expired — clear Firebase entry so other devices stop too
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                        if (window._pmDb) {
+                            fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' }).catch(function(){});
+                        }
+                    });
+                    updateAllCloseMessageMeDisplays();
+                }
+            }
+            window.closeMessageMeTimerRAF = requestAnimationFrame(rafLoop);
+        }
+
+        // Legacy wrapper
+        function updateCloseMessageMeTimer() { updateAllCloseMessageMeDisplays(); }
+
+        function showCloseMessageMeConfirm(titleText, endUtcMs) {
+            const confirmModal = document.getElementById('closeMessageMeConfirmModal');
+            const titleEl = document.getElementById('closeMessageMeConfirmTitle');
+            if (titleEl) titleEl.textContent = titleText || window.closeMessageMeTitle || '';
+            updateAllCloseMessageMeDisplays();
+            confirmModal.classList.add('active');
+            confirmModal.style.display = 'flex';
+        }
+
+        // OK button just hides the confirm popup — the RAF keeps running in background
+        function closeCloseMessageMeConfirm() {
+            const confirmModal = document.getElementById('closeMessageMeConfirmModal');
+            confirmModal.classList.remove('active');
+            confirmModal.style.display = 'none';
+            // Do NOT cancel the RAF — timer keeps updating the modal overlays on all devices
+        }
+
         function stopInboxListener() {
             if (pmInboxUnsubscribe) {
                 pmInboxUnsubscribe();
@@ -19218,13 +20283,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // would if its own countdown had reached zero naturally.
         async function endActiveTimerFromSettings() {
             var targetId = _userSettingsTargetSenderId || activeConversationSenderId;
-            try { console.log('[pm-debug] endActiveTimerFromSettings clicked, targetId:', targetId); } catch (e) {}
             if (!targetId || !window.PrivateMessaging || !window.PrivateMessaging.forceLogout) return;
             var btn = document.getElementById('userSettingsEndActiveTimerBtn');
             if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
             try {
                 await window.PrivateMessaging.forceLogout(targetId);
-                try { console.log('[pm-debug] forceLogout() write completed for', targetId); } catch (e2) {}
                 await _refreshMetaEverywhere(targetId);
             } catch (e) {
                 alert('Could not end the active timer for this conversation.');
@@ -19461,6 +20524,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const cancelBtn = document.getElementById("resetDataCancelBtn");
             const display = document.getElementById("resetDataCountdownDisplay");
             if (!modal || !confirmBtn || !cancelBtn || !display) return;
+            // Disable pointer events on underlying modals so they don't intercept clicks
+            const settingsModal = document.getElementById("userSettingsModal");
+            const conversationModal = document.getElementById("messageConversationModal");
+            const inboxModal = document.getElementById("messageInboxModal");
+            if (settingsModal) settingsModal.style.pointerEvents = "none";
+            if (conversationModal) conversationModal.style.pointerEvents = "none";
+            if (inboxModal) inboxModal.style.pointerEvents = "none";
             modal.style.display = "flex";
             modal.style.pointerEvents = "auto";
             Array.from(modal.querySelectorAll('*')).forEach(function(el) { el.style.pointerEvents = "auto"; });
@@ -19499,6 +20569,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const modal = document.getElementById("resetDataConfirmModal");
             if (modal) modal.style.display = "none";
             if (resetDataCountdownTimer) { clearInterval(resetDataCountdownTimer); resetDataCountdownTimer = null; }
+            // Restore pointer events on underlying modals
+            const settingsModal = document.getElementById("userSettingsModal");
+            const conversationModal = document.getElementById("messageConversationModal");
+            const inboxModal = document.getElementById("messageInboxModal");
+            if (settingsModal) settingsModal.style.pointerEvents = "";
+            if (conversationModal) conversationModal.style.pointerEvents = "";
+            if (inboxModal) inboxModal.style.pointerEvents = "";
         }
 
         async function resetActiveConversation() {
@@ -19550,7 +20627,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 closeMessageConversation();
                 showAuthorResetNotice();
-                openModal('messageConfirmation');
             } catch (e) {
                 alert("Could not reset this conversation: " + e.message);
             }
@@ -19955,6 +21031,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // not the owner. sendReply was incorrectly marking messages as from PM_OWNER_ID.
                 await window.PrivateMessaging.sendMessage(text, getMessageDeviceName ? getMessageDeviceName() : '');
                 ta.value = '';
+                // Sender replied — clear the notification badge
                 const box = document.getElementById('senderReplyCompose' + index);
                 if (box) {
                     // Hide entire compose area after sending
@@ -20485,6 +21562,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             messageEditTimers = {};
         }
 
+        
         async function renderSenderThread(messages, ownerUid) {
             // Cache latest data so removeMessageMeSendBanState can re-trigger this
             window._cachedSenderMessages = messages;
@@ -20508,6 +21586,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (!messageContent || !viewArea) return;
 
             const meta = senderConversationMeta || {};
+
+            
             setMessageMeBannedUi(meta);
 
             // ── BANNED: hide all conversation content immediately and stop ──
@@ -20553,20 +21633,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 return;
             }
             
-            // Find latest user message (not from owner)
+            // Find latest user message (not from owner) — use array index (push-key order)
             var latestUserMessage = null;
+            var latestUserMessageIndex = -1;
             for (let i = messages.length - 1; i >= 0; i--) {
                 if (messages[i].senderId !== ownerUid) {
                     latestUserMessage = messages[i];
+                    latestUserMessageIndex = i;
                     break;
                 }
             }
             
-            // Check for owner reply after latest user message
+            // Check for owner reply AFTER latest user message by position, not timestamp
             var hasOwnerReplyAfter = false;
-            if (latestUserMessage) {
-                for (let i = 0; i < messages.length; i++) {
-                    if (messages[i].senderId === ownerUid && messages[i].timestamp > latestUserMessage.timestamp) {
+            if (latestUserMessageIndex >= 0) {
+                for (let i = latestUserMessageIndex + 1; i < messages.length; i++) {
+                    if (messages[i].senderId === ownerUid) {
                         hasOwnerReplyAfter = true;
                         break;
                     }
@@ -20817,20 +21899,50 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function startSenderThreadListener() {
             stopSenderThreadListenerOnly();
             if (!window.PrivateMessaging || !window.PrivateMessaging.ready) {
-                try { console.warn('[pm-debug] startSenderThreadListener: PrivateMessaging not ready'); } catch (e) {}
                 return;
             }
             const senderId = window.PrivateMessaging.getUid();
-            try { console.log('[pm-debug] startSenderThreadListener for senderId:', senderId, 'meta listener already running:', !!pmSenderMetaUnsubscribe); } catch (e) {}
             pmSenderThreadUnsubscribe = window.PrivateMessaging.listenMyThread(function(messages, ownerUid) {
                 renderSenderThread(messages, ownerUid);
             });
             // Only start meta listener if not already running (it persists across view open/close)
             if (senderId && window.PrivateMessaging.listenConversationMeta && !pmSenderMetaUnsubscribe) {
-                try { console.log('[pm-debug] subscribing fresh meta listener for', senderId); } catch (e) {}
                 pmSenderMetaUnsubscribe = window.PrivateMessaging.listenConversationMeta(senderId, function(meta) {
+                    // ── DELETED NODE DETECTION ────────────────────────────────────
+                    // If the owner wiped the entire Firebase node for this sender,
+                    // meta arrives as null. Treat it as a forced reset — clear all
+                    // local session data and kick the sender back to the login screen.
+                    if (meta === null && localStorage.getItem('userNameForMessage')) {
+                        localStorage.removeItem('userNameForMessage');
+                        localStorage.removeItem('userNameStoredAt');
+                        localStorage.removeItem('senderPassword');
+                        localStorage.removeItem('accountCreatedOnDevice');
+                        localStorage.removeItem('lastKnownSenderName');
+                        localStorage.removeItem('lastKnownSenderPasswordHash');
+                        localStorage.removeItem('lastKnownSenderDeviceId');
+                        localStorage.removeItem('lastHandledResetAt');
+                        localStorage.removeItem('lastHandledForceLogoutAt');
+                        localStorage.removeItem('autoLoggedOutAt');
+                        localStorage.setItem('messageProfanityViolations', '10');
+                        localStorage.setItem('nameProfanityViolations', '10');
+                        localStorage.removeItem('hasSeenZeroViolationsName');
+                        senderConversationMeta = {};
+                        var nameInput = document.getElementById('userNameInput');
+                        if (nameInput) nameInput.value = '';
+                        resetMessageTheme();
+                        var msgModal = document.getElementById('christmasMessageModal');
+                        if (msgModal && msgModal.classList.contains('active')) {
+                            closeModal('christmasMessage');
+                        }
+                        showAuthorResetNotice();
+                        // Only pop up login if this is actually the sender's device, not the owner's
+                        if (localStorage.getItem(ADMIN_ACCESS_KEY) !== 'true') {
+                            openModal('senderLogin');
+                        }
+                        return;
+                    }
+                    // ── END DELETED NODE DETECTION ────────────────────────────────
                     senderConversationMeta = meta || {};
-                    try { console.log('[pm-debug] meta update received:', JSON.stringify(meta)); } catch (e) {}
 
                     // ── Firebase is source of truth for account lock ──────────────
                     // If Firebase says hasAccountLock is null/false, clear local lock
@@ -20857,19 +21969,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     // including the unlimited (∞) case. Deduped via localStorage so
                     // this only fires once per forceLogoutAt value, the same pattern
                     // used for resetAt below.
-                    try {
-                        console.log('[pm-debug] forceLogoutAt check — meta.forceLogoutAt:', senderConversationMeta.forceLogoutAt,
-                            'userNameForMessage present:', !!localStorage.getItem('userNameForMessage'),
-                            'lastHandledForceLogoutAt:', localStorage.getItem('lastHandledForceLogoutAt'));
-                    } catch (e) {}
                     if (senderConversationMeta.forceLogoutAt && localStorage.getItem('userNameForMessage')) {
                         var _lastHandledForceLogout = parseInt(localStorage.getItem('lastHandledForceLogoutAt') || '0');
                         if (Number(senderConversationMeta.forceLogoutAt) > _lastHandledForceLogout) {
-                            try { console.log('[pm-debug] forceLogoutAt is NEW — calling performAutoLogout() now'); } catch (e) {}
                             localStorage.setItem('lastHandledForceLogoutAt', String(senderConversationMeta.forceLogoutAt));
                             performAutoLogout();
-                        } else {
-                            try { console.log('[pm-debug] forceLogoutAt already handled, skipping'); } catch (e) {}
                         }
                     }
 
@@ -20958,7 +22062,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 closeModal('christmasMessage');
                             }
                             showAuthorResetNotice();
-                            openModal('messageConfirmation');
+                            // Only pop up confirmation if this is the sender's device, not the owner's
+                            if (localStorage.getItem(ADMIN_ACCESS_KEY) !== 'true') {
+                                openModal('messageConfirmation');
+                            }
                             return;
                         }
                     }
@@ -21117,6 +22224,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     errorMsg.textContent = '✓ Message sent successfully! Waiting for a reply from the author...';
                 }
                 localStorage.setItem(CHRISTMAS_SUBMITTED_KEY, 'true');
+                // Sender just sent — clear the reply notification badge
                 // Force lock state to persist
                 if (submitBtn) submitBtn.disabled = true;
                 // Start listener which will also lock the textarea
@@ -23405,7 +24513,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     listenConversationMeta: function (senderId, callback) {
                         var metaVal = null;
                         var signalVal = null;
+                        var metaReceived = false;
+                        var signalReceived = false;
                         function emit() {
+                            // Wait until both listeners have fired at least once before
+                            // emitting, so we never act on a false null during initial load.
+                            if (!metaReceived || !signalReceived) return;
+                            // If both are null, the entire sender node was deleted —
+                            // pass null so the listener can detect a wipe and force logout.
+                            if (metaVal === null && signalVal === null) {
+                                callback(null);
+                                return;
+                            }
                             var merged = Object.assign({}, metaVal || {});
                             if (signalVal && signalVal.resetAt) {
                                 merged.resetAt = signalVal.resetAt;
@@ -23414,10 +24533,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         }
                         var unsubMeta = onValue(pmMetaRef(senderId), function (snap) {
                             metaVal = snap.val() || null;
+                            metaReceived = true;
                             emit();
                         });
                         var unsubSignal = onValue(ref(db, 'privateMessages/' + pmSafeKey(senderId) + '/resetSignal'), function (snap) {
                             signalVal = snap.val() || null;
+                            signalReceived = true;
                             emit();
                         });
                         return function() { unsubMeta(); unsubSignal(); };
