@@ -1267,8 +1267,7 @@
         body.dark-mode #aboutModal .favorite-topic-title,
         body.dark-mode #aboutModal .favorite-topic-description,
         body.dark-mode #aboutModal .description-short,
-        body.dark-mode #aboutModal .description-full,
-        body.dark-mode #aboutModal .see-more-link {
+        body.dark-mode #aboutModal .description-full {
             color: rgba(255, 255, 255, 0.95) !important;
         }
         body.dark-mode #aboutModal .see-more-link {
@@ -1365,8 +1364,12 @@
 
         /* Dark mode: force What's New (updates) modal text readable */
         body.dark-mode #updatesModal .modal-content,
-        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title) {
+        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title):not(.see-more-link) {
             color: rgba(255, 255, 255, 0.92) !important;
+        }
+        #updatesModal .see-more-link {
+            color: #22c55e !important;
+            text-decoration: none;
         }
         body.dark-mode #updatesModal .see-more-link {
             color: #4ade80 !important;
@@ -13081,7 +13084,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1.8';
             
             function hasSeenUpdatedSplashOnce() {
                 try {
@@ -13749,22 +13752,32 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         var _timeAnchorDeviceMs = Date.now();       // device clock at anchor moment
         var _timeAnchorPerfMs   = performance.now(); // perf counter at anchor moment
 
-        // Periodically re-anchor from a real HTTP source (WorldTimeAPI)
+        // Periodically re-anchor from a real HTTP source
         // so even if someone changes clock BEFORE page load, it self-corrects
         (function _syncServerAnchor() {
+            function applyServerMs(ms) {
+                if (!isNaN(ms)) {
+                    _timeAnchorDeviceMs = ms;
+                    _timeAnchorPerfMs   = performance.now();
+                }
+            }
             fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                 .then(function(r) { return r.json(); })
                 .then(function(d) {
-                    var serverMs = new Date(d.utc_datetime).getTime();
-                    if (!isNaN(serverMs)) {
-                        _timeAnchorDeviceMs = serverMs;
-                        _timeAnchorPerfMs   = performance.now();
-                    }
+                    applyServerMs(new Date(d.utc_datetime).getTime());
                 })
                 .catch(function() {
-                    // Fallback: re-anchor with device time (better than nothing)
-                    _timeAnchorDeviceMs = Date.now();
-                    _timeAnchorPerfMs   = performance.now();
+                    // Fallback 1: worldtimeapi.org
+                    fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
+                        .then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            applyServerMs(new Date(d.utc_datetime).getTime());
+                        })
+                        .catch(function() {
+                            // Fallback 2: use device time (better than nothing)
+                            _timeAnchorDeviceMs = Date.now();
+                            _timeAnchorPerfMs   = performance.now();
+                        });
                 });
             // Re-sync every 5 minutes
             setTimeout(_syncServerAnchor, 5 * 60 * 1000);
@@ -14165,20 +14178,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             clockAppRaf = requestAnimationFrame(clockAppLoop);
         }
 
-        // Main menu corner clock
+        // Main menu corner clock — snaps to exact second boundary, zero drift
         function updateMainMenuClock() {
             var el = document.getElementById('mainMenuClock');
             if (!el) return;
-            var now = _getTamperProofNow();
+            var now = new Date();
             var h = now.getHours();
             var m = now.getMinutes();
             var s = now.getSeconds();
             var ampm = h >= 12 ? 'PM' : 'AM';
             var h12 = h % 12 || 12;
             el.textContent = String(h12).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + ' ' + ampm;
+            // Fire again exactly when the next second rolls over (sub-millisecond accuracy)
+            setTimeout(updateMainMenuClock, 1000 - now.getMilliseconds());
         }
-        updateMainMenuClock();
-        setInterval(updateMainMenuClock, 1000);
+        // Snap to the very next second boundary before starting
+        setTimeout(updateMainMenuClock, 1000 - new Date().getMilliseconds());
 
         const CLOCK_APP_STORAGE = 'clockAppBgState';
 
@@ -16287,8 +16302,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function applySelectedLogoutOption() {
             var minutes = getLogoutDurationMinutes();
             if (minutes === null) minutes = 0; // no selection made = never log out
+            // Use tamper-proof server-anchored time so device clock changes can't extend sessions
+            var _nowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
             if (minutes > 0) {
-                var expiresAt = Date.now() + minutes * 60 * 1000;
+                var expiresAt = _nowMs + minutes * 60 * 1000;
                 localStorage.setItem(LOGOUT_EXPIRES_AT_KEY, String(expiresAt));
             } else {
                 localStorage.removeItem(LOGOUT_EXPIRES_AT_KEY);
@@ -16297,7 +16316,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (window._pmDb && window.pmGetSenderId && window.pmSafeKey) {
                 var sid = window.pmGetSenderId();
                 var sk = window.pmSafeKey(sid);
-                var expiresAtVal = minutes > 0 ? (Date.now() + minutes * 60 * 1000) : 0;
+                var expiresAtVal = minutes > 0 ? (_nowMs + minutes * 60 * 1000) : 0;
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
                     update(ref(window._pmDb, 'privateMessages/' + sk + '/meta'), {
                         logoutMinutes: minutes,
@@ -16971,7 +16990,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // New accounts get a forced 1-hour session — sets the timer visible in
             // the admin inbox and automatically logs them out when it expires.
             setLogoutDurationMinutes(60);
-            var newAccountExpiresAt = Date.now() + 60 * 60 * 1000;
+            var newAccountExpiresAt = ((typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now()) + 60 * 60 * 1000;
             localStorage.setItem(LOGOUT_EXPIRES_AT_KEY, String(newAccountExpiresAt));
             // Keep a durable local backup of these credentials so that logging out
             // and back in on THIS SAME device/browser always works instantly, even
@@ -19637,20 +19658,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 'updating': 'MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.'
             }[selectedTitle];
             
-            // Use tamper-proof time anchored to server UTC via performance.now()
-            var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
-                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
-                : Date.now();
-            var endUtcMs = serverNowMs + durationMs;
+            // Always fetch a fresh server timestamp before writing endUtcMs
+            // so the close timer is immune to device clock manipulation.
+            function _doWriteClose(serverNowMs) {
+                var endUtcMs = serverNowMs + durationMs;
 
-            // Set local state immediately so the timer shows right away on this device
-            window.closeMessageMeEndPerfMs = performance.now() + durationMs;
-            window.closeMessageMeTitle = titleText;
+                // Set local state immediately so the timer shows right away on this device
+                window.closeMessageMeEndPerfMs = performance.now() + durationMs;
+                window.closeMessageMeTitle = titleText;
 
-            // ── Write to Firebase so ALL other devices update instantly ──
-            // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
-            // clicked very soon after page load) instead of silently dropping the write.
-            (function writeCloseMessageMeStatus(attemptsLeft) {
+                // ── Write to Firebase so ALL other devices update instantly ──
+                // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
+                // clicked very soon after page load) instead of silently dropping the write.
+                (function writeCloseMessageMeStatus(attemptsLeft) {
                 if (!window._pmDb) {
                     if (attemptsLeft > 0) {
                         setTimeout(function() { writeCloseMessageMeStatus(attemptsLeft - 1); }, 300);
@@ -19670,24 +19690,47 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }).catch(function(e) {
                     console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
                 });
-            })(20); // up to ~6s of retrying
+                })(20); // up to ~6s of retrying
 
-            // Start RAF so the closed-timer keeps updating in the background for visitors.
-            // Stay inside the Close Message Me modal — no separate confirm popup.
-            startCloseMessageMeRAF();
+                // Start RAF so the closed-timer keeps updating in the background for visitors.
+                // Stay inside the Close Message Me modal — no separate confirm popup.
+                startCloseMessageMeRAF();
 
-            // Wipe all selections so APPLY can't be clicked again without
-            // choosing fresh options — prevents accidental duplicate applies.
-            clearCloseRadioGroup('closeTime');
-            clearCloseRadioGroup('closeTitle');
-            clearCloseRadioGroup('closeOpenNow');
-            checkCloseMessageMeValidation();
+                // Wipe all selections so APPLY can't be clicked again without
+                // choosing fresh options — prevents accidental duplicate applies.
+                clearCloseRadioGroup('closeTime');
+                clearCloseRadioGroup('closeTitle');
+                clearCloseRadioGroup('closeOpenNow');
+                checkCloseMessageMeValidation();
+            } // end _doWriteClose
+
+            // Fetch fresh server time, fall back to anchor, then device time
+            (function() {
+                function useServerMs(ms) { _doWriteClose(isNaN(ms) ? Date.now() : ms); }
+                fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { useServerMs(new Date(d.utc_datetime).getTime()); })
+                    .catch(function() {
+                        fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
+                            .then(function(r) { return r.json(); })
+                            .then(function(d) { useServerMs(new Date(d.utc_datetime).getTime()); })
+                            .catch(function() {
+                                // Both failed — use tamper-proof anchor
+                                var ms = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                                    ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                                    : Date.now();
+                                useServerMs(ms);
+                            });
+                    });
+            })();
         }
 
         // ── Close-Message-Me helpers ──────────────────────────────────────────
 
         // Apply state received from Firebase (called both on first load and on live updates)
         function applyCloseMessageMeState(endUtcMs, titleText) {
+            // Always use tamper-proof anchor (synced from server on page load and every 5 min)
+            // so changing device clock cannot affect the countdown
             var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
                 ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
                 : Date.now();
