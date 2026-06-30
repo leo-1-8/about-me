@@ -19386,22 +19386,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Dedup by Firebase key — same approach as the main inbox list
             var seenKeys = {};
             var filtered = [];
-            // Exclude THIS device's own identity (e.g. from a past test message sent
-            // from this same browser) — selecting it as a "target" would close
-            // Message Me for yourself instead of the intended other person, since
-            // the personal-closure listener checks this exact same device ID.
-            var myOwnSenderId = (typeof window.pmGetSenderId === 'function') ? window.pmGetSenderId() : null;
             (conversations || []).forEach(function(conv) {
-                if (myOwnSenderId && conv.senderId === myOwnSenderId) return;
                 var dedupKey = conv.firebaseKey || conv.senderId;
                 if (!seenKeys[dedupKey]) { seenKeys[dedupKey] = true; filtered.push(conv); }
             });
-
-            // If a previously-selected target turns out to be this device's own ID
-            // (stale selection from before this fix), clear it immediately.
-            if (myOwnSenderId && closeMessageMeSelectedPersonId === myOwnSenderId) {
-                closeMessageMeSelectedPersonId = null;
-            }
 
             if (!filtered.length) {
                 listEl.innerHTML = '<div class="pm-inbox-empty" style="font-size:12px;color:#999;">No conversations yet.</div>';
