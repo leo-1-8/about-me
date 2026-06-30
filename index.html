@@ -27,6 +27,16 @@
             font-variant-numeric: tabular-nums;
         }
 
+        /* Remove number input spinners */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
         html {
             background-color: #ffffff;
         }
@@ -478,7 +488,14 @@
             background: rgba(0, 0, 0, 0.35) !important;
             color: rgba(255, 255, 255, 0.92) !important;
         }
+        body.dark-mode #mainMenuClockDate {
+            background: rgba(0, 0, 0, 0.35) !important;
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
         body.intro-pending #mainMenuClock {
+            display: none !important;
+        }
+        body.intro-pending #mainMenuClockDate {
             display: none !important;
         }
         body.intro-pending .settings-button {
@@ -2869,6 +2886,12 @@
             user-select: none;
         }
 
+        body.dark-mode #secretQuizStepTitle {
+            color: #f0f0f0 !important;
+        }
+        body.dark-mode #secretQuizStepCaption {
+            color: #d0d0d0 !important;
+        }
         body.dark-mode .pm-inbox-item {
             background: #2a2a2a;
             border-color: #444;
@@ -4589,11 +4612,13 @@
 
         /* Login/Message "currently closed" countdown overlays — theme aware */
         .closed-status-overlay {
-            backdrop-filter: blur(3px) !important;
-            -webkit-backdrop-filter: blur(3px) !important;
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
             background: rgba(255, 255, 255, 0.75);
         }
         body.dark-mode .closed-status-overlay {
+            backdrop-filter: blur(2px) !important;
+            -webkit-backdrop-filter: blur(2px) !important;
             background: rgba(10, 14, 26, 0.88);
         }
         .closed-status-x {
@@ -7977,7 +8002,7 @@
         }
 
         .otp-input {
-            padding: 10px 74px 10px 14px;
+            padding: 10px 74px 10px 74px;
             font-size: 16px;
             width: 210px;
             text-align: center;
@@ -9544,6 +9569,24 @@
             color: #1e293b;
             font-feature-settings: 'zero' 0;
         ">--:--:-- AM</div>
+        <div id="mainMenuClockDate" style="
+            position: fixed;
+            top: 46px;
+            left: 14px;
+            z-index: 25001;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            font-family: var(--font-timer);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #1e293b;
+        ">---</div>
         <button type="button" id="settingsBtn" class="settings-button" aria-label="Open settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
@@ -11363,8 +11406,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div class="christmas-modal-title">UNKNOWN</div>
             <div class="pm-inbox-gate" style="padding:20px; gap:18px; pointer-events: auto;">
                 <div>
-                    <div id="secretQuizStepTitle" style="font-size:1rem;font-weight:700;margin-bottom:12px;color:#f0f0f0;"></div>
-                    <div id="secretQuizStepCaption" style="font-size:0.95rem;color:#d0d0d0;margin-bottom:18px;"></div>
+                    <div id="secretQuizStepTitle" style="font-size:1rem;font-weight:700;margin-bottom:12px;color:#111;"></div>
+                    <div id="secretQuizStepCaption" style="font-size:0.95rem;color:#444;margin-bottom:18px;"></div>
                 </div>
                 <div id="secretQuizOptions" style="display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:10px; width:100%; pointer-events: auto;"></div>
                 <button type="button" class="otp-submit" id="secretQuizSubmit" onclick="submitSecretQuiz()" style="width:100%;margin-top:12px; pointer-events: auto; cursor: pointer;">SUBMIT</button>
@@ -11422,22 +11465,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div id="closeTimeDurationScroll" style="max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1a1a1a; padding-right: 4px; margin-bottom: 25px;">
                     <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="1hour" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 1 HOUR</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="3hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 3 HOURS</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="12hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 12 HOURS</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="24hours" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 24 HOURS</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 7 DAYS</span>
                         </label>
@@ -11449,37 +11476,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <input type="radio" name="closeTime" value="30days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
                         </label>
-                        <!-- Open Immediately -->
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #22c55e; padding-top: 2px;">
-                            <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
-                        </label>
-                        <!-- Add Specific Date and Time -->
-                        <label class="close-msg-radio-label" id="closeCustomTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(document.getElementById('closeCustomTimeRadio').dataset.locked!=='true'){event.preventDefault(); document.getElementById('closeCustomDays').focus(); updateCloseCustomTimeButtons();}">
-                            <input type="radio" name="closeTime" value="custom" id="closeCustomTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
+                        <!-- Add Custom Date and Time -->
+                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); document.getElementById('closeCustomDateTimeRadio').checked=true; clearCloseRadioGroup('closeOpenNow'); updateCloseMessageMeSelection(); openCustomDateTimePicker();">
+                            <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                                <span class="close-msg-text" style="font-weight: normal;">ADD SPECIFIC DATE AND TIME</span>
-                                <span style="display: inline-block;" onclick="event.stopPropagation();">
-                                    <span style="display: grid; grid-template-columns: 28px 12px 28px 12px 28px; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid #333; border-radius: 8px; padding: 6px 8px; width: fit-content;">
-                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomDays" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
-                                        <span style="text-align:center; color:#666;">:</span>
-                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomHours" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
-                                        <span style="text-align:center; color:#666;">:</span>
-                                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="00" id="closeCustomMinutes" class="close-custom-time-input" style="width: 28px; text-align: center; background: transparent; border: none; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 14px; outline: none;" oninput="this.value=this.value.replace(/[^0-9]/g,''); updateCloseCustomTimeButtons();" onkeydown="if(event.key==='Enter'){event.preventDefault(); lockCloseCustomTime();}">
-                                    </span>
-                                    <span style="display: grid; grid-template-columns: 28px 12px 28px 12px 28px; padding: 0 8px; margin-top: 2px;">
-                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">D</span>
-                                        <span></span>
-                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">H</span>
-                                        <span></span>
-                                        <span style="text-align: center; font-size: 10px; color: #999; font-weight: 700;">M</span>
-                                    </span>
-                                </span>
-                                <span style="display: inline-flex; gap: 6px; margin-top: 6px;" onclick="event.stopPropagation();">
-                                    <button type="button" id="closeCustomTimeEnterBtn" class="close-custom-time-action-btn" onclick="lockCloseCustomTime()" disabled style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4;">ENTER</button>
-                                    <button type="button" id="closeCustomTimeClearBtn" class="close-custom-time-action-btn" onclick="resetCloseCustomTime()" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
+                                <span class="close-msg-text" style="font-weight: normal;">ADD CUSTOM DATE AND TIME</span>
+                                <span id="closeCustomDateTimePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
+                                <span style="display: inline-flex; gap: 6px;">
+                                    <button type="button" id="closeCustomDateTimeEnterBtn" onclick="event.stopPropagation(); openCustomDateTimePicker();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">PICK</button>
+                                    <button type="button" id="closeCustomDateTimeClearBtn" onclick="event.stopPropagation(); resetCloseCustomDateTime();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
                                 </span>
                             </span>
+                        </label>
+                        <!-- Open Immediately -->
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
                         </label>
                         <!-- Divider + CHOOSE A TITLE inside scroll -->
                         <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE A TITLE</div>
@@ -11498,6 +11510,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTitle" value="updating" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.</span>
+                        </label>
+                        <!-- Custom Title -->
+                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName!=='BUTTON'){document.getElementById('closeCustomTitleRadio').checked=true; document.getElementById('closeCustomTitleInput').focus();} updateCloseMessageMeSelection();">
+                            <input type="radio" name="closeTitle" value="custom" id="closeCustomTitleRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
+                            <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                                <span class="close-msg-text" style="font-weight: normal;">ADD YOUR OWN TITLE MESSAGE</span>
+                                <span style="display: inline-flex; gap: 6px; align-items: center;">
+                                    <input type="text" id="closeCustomTitleInput" maxlength="120" placeholder="Type your custom title..." onkeydown="if(event.key==='Enter'){event.preventDefault(); confirmCloseCustomTitle();}" oninput="updateCloseCustomTitleButtons();" style="flex: 1; min-width: 0; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px;">
+                                    <button type="button" id="closeCustomTitleEnterBtn" onclick="event.stopPropagation(); confirmCloseCustomTitle();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">ENTER</button>
+                                    <button type="button" id="closeCustomTitleClearBtn" onclick="event.stopPropagation(); resetCloseCustomTitle();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
+                                </span>
+                                <span id="closeCustomTitlePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
+                            </span>
                         </label>
                     </div>
                 </div>
@@ -12755,7 +12780,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 });
             }
             if (settingsBtn) {
-                // 10-second hold on the settings button triggers the inbox gate (secret)
+                // 3-second hold on the settings button triggers the inbox gate (secret)
                 var _settingsHoldTimer = null;
                 var _settingsHoldFired = false;
                 function _startSettingsHold() {
@@ -12763,7 +12788,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     _settingsHoldTimer = setTimeout(function() {
                         _settingsHoldFired = true;
                         openMessageInboxGate();
-                    }, 5000);
+                    }, 3000);
                 }
                 function _cancelSettingsHold() {
                     if (_settingsHoldTimer) { clearTimeout(_settingsHoldTimer); _settingsHoldTimer = null; }
@@ -14189,6 +14214,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var ampm = h >= 12 ? 'PM' : 'AM';
             var h12 = h % 12 || 12;
             el.textContent = String(h12).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + ' ' + ampm;
+            var dateEl = document.getElementById('mainMenuClockDate');
+            if (dateEl) {
+                var monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                dateEl.textContent = monthsShort[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+            }
             // Fire again exactly when the next second rolls over (sub-millisecond accuracy)
             setTimeout(updateMainMenuClock, 1000 - now.getMilliseconds());
         }
@@ -19325,6 +19355,46 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             label.textContent = atBottom ? 'SCROLL UP' : 'SCROLL';
         }
 
+        function updateCloseCustomTitleButtons() {
+            var radio = document.getElementById('closeCustomTitleRadio');
+            var isLocked = radio && radio.dataset.locked === 'true';
+            var clearBtn = document.getElementById('closeCustomTitleClearBtn');
+            if (clearBtn) {
+                clearBtn.disabled = !isLocked;
+                clearBtn.style.opacity = isLocked ? '1' : '0.4';
+                clearBtn.style.cursor = isLocked ? 'pointer' : 'not-allowed';
+            }
+        }
+
+        function confirmCloseCustomTitle() {
+            var input = document.getElementById('closeCustomTitleInput');
+            var radio = document.getElementById('closeCustomTitleRadio');
+            if (!input || !radio) return;
+            var text = input.value.trim();
+            if (!text) return;
+            radio.dataset.locked = 'true';
+            radio.dataset.customText = text;
+            radio.checked = true;
+            var preview = document.getElementById('closeCustomTitlePreview');
+            if (preview) { preview.textContent = text; preview.style.display = 'block'; }
+            updateCloseCustomTitleButtons();
+            updateCloseMessageMeSelection();
+        }
+
+        function resetCloseCustomTitle() {
+            var radio = document.getElementById('closeCustomTitleRadio');
+            var input = document.getElementById('closeCustomTitleInput');
+            if (!radio) return;
+            radio.checked = false;
+            radio.dataset.locked = 'false';
+            delete radio.dataset.customText;
+            if (input) input.value = '';
+            var preview = document.getElementById('closeCustomTitlePreview');
+            if (preview) { preview.textContent = ''; preview.style.display = 'none'; }
+            updateCloseCustomTitleButtons();
+            updateCloseMessageMeSelection();
+        }
+
         function toggleCloseRadio(radio) {
             if (radio.dataset.wasChecked === 'true') {
                 radio.checked = false;
@@ -19361,110 +19431,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (textSpan) textSpan.style.color = '#fff';
             }
             if (groupName === 'closeTime') {
-                resetCloseCustomTime();
+                // (specific-duration custom timer removed)
             }
-        }
-
-        // Enables/disables both ENTER and the red ✕ clear button based on whether
-        // any of the D/H/M fields currently have a value typed in.
-        function updateCloseCustomTimeButtons() {
-            const d = document.getElementById('closeCustomDays');
-            const h = document.getElementById('closeCustomHours');
-            const m = document.getElementById('closeCustomMinutes');
-            const enterBtn = document.getElementById('closeCustomTimeEnterBtn');
-            const clearBtn = document.getElementById('closeCustomTimeClearBtn');
-            const radio = document.getElementById('closeCustomTimeRadio');
-
-            const hasValue = (d && d.value.trim() !== '') || (h && h.value.trim() !== '') || (m && m.value.trim() !== '');
-            // Use explicit data-locked attribute instead of radio.checked so that
-            // clicking the label text (which auto-checks the radio) doesn't falsely
-            // treat the inputs as locked before the user hits ENTER.
-            const isLocked = radio && radio.dataset.locked === 'true';
-
-            [enterBtn, clearBtn].forEach(function(btn) {
-                if (!btn) return;
-                const shouldEnable = isLocked ? (btn === clearBtn) : hasValue;
-                btn.disabled = !shouldEnable;
-                btn.style.opacity = shouldEnable ? '1' : '0.4';
-                btn.style.cursor = shouldEnable ? 'pointer' : 'not-allowed';
-            });
-
-            // Re-enable the inputs if not locked
-            if (!isLocked && d && h && m) {
-                d.disabled = false;
-                h.disabled = false;
-                m.disabled = false;
+            if (groupName === 'closeTitle' && typeof resetCloseCustomTitle === 'function') {
+                resetCloseCustomTitle();
             }
-        }
-
-        // Locks in the custom D/H/M duration typed by the user. Locking turns the
-        // label text and radio dot green, matching every other selected option,
-        // and behaves like any other closeTime radio for validation/apply purposes.
-        function lockCloseCustomTime() {
-            const d = parseInt(document.getElementById('closeCustomDays').value, 10) || 0;
-            const h = parseInt(document.getElementById('closeCustomHours').value, 10) || 0;
-            const m = parseInt(document.getElementById('closeCustomMinutes').value, 10) || 0;
-
-            if (d <= 0 && h <= 0 && m <= 0) {
-                return; // nothing entered — don't lock an empty/zero duration
-            }
-
-            const radio = document.getElementById('closeCustomTimeRadio');
-            const label = document.getElementById('closeCustomTimeLabel');
-
-            // Behave like toggleCloseRadio: clear sibling closeTime + closeOpenNow radios
-            clearCloseRadioGroup('closeOpenNow');
-            const timeSiblings = document.getElementsByName('closeTime');
-            for (let r of timeSiblings) {
-                if (r !== radio) {
-                    r.checked = false;
-                    r.dataset.wasChecked = 'false';
-                    const sLabel = r.closest('.close-msg-radio-label');
-                    const sText = sLabel ? sLabel.querySelector('.close-msg-text') : null;
-                    if (sText) sText.style.color = '#fff';
-                }
-            }
-
-            radio.checked = true;
-            radio.dataset.wasChecked = 'true';
-            radio.dataset.locked = 'true';
-            radio.dataset.customDays = String(d);
-            radio.dataset.customHours = String(h);
-            radio.dataset.customMinutes = String(m);
-
-            // Lock the inputs so the value can't be changed without clearing first
-            ['closeCustomDays', 'closeCustomHours', 'closeCustomMinutes'].forEach(function(id) {
-                document.getElementById(id).disabled = true;
-            });
-
-            // Label text and radio dot both turn green, matching every other selected option
-            const ownText = label ? label.querySelector('.close-msg-text') : null;
-            if (ownText) ownText.style.color = '#22c55e';
-
-            updateCloseCustomTimeButtons();
-            updateCloseMessageMeSelection();
-        }
-
-        function resetCloseCustomTime() {
-            const radio = document.getElementById('closeCustomTimeRadio');
-            const label = document.getElementById('closeCustomTimeLabel');
-            if (!radio) return;
-
-            radio.checked = false;
-            radio.dataset.wasChecked = 'false';
-            radio.dataset.locked = 'false';
-            delete radio.dataset.customDays;
-            delete radio.dataset.customHours;
-            delete radio.dataset.customMinutes;
-
-            ['closeCustomDays', 'closeCustomHours', 'closeCustomMinutes'].forEach(function(id) {
-                const el = document.getElementById(id);
-                if (el) { el.value = ''; el.disabled = false; }
-            });
-            const ownText = label ? label.querySelector('.close-msg-text') : null;
-            if (ownText) ownText.style.color = '#fff';
-
-            updateCloseCustomTimeButtons();
         }
 
         function updateCloseMessageMeSelection() {
@@ -19472,9 +19443,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const titleRadios = document.getElementsByName('closeTitle');
             const openNowRadios = document.getElementsByName('closeOpenNow');
             
-            // Update time selection colors (skip the custom radio — it has its own white-lock styling)
+            // Update time selection colors
             for (let radio of timeRadios) {
-                if (radio.id === 'closeCustomTimeRadio') continue;
                 const label = radio.closest('.close-msg-radio-label');
                 const textSpan = label.querySelector('.close-msg-text');
                 if (radio.checked) {
@@ -19521,8 +19491,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             let openNowSelected = false;
             
             for (let radio of timeRadios) {
-                // Custom radio only counts when the user has confirmed a value via ENTER (data-locked)
-                if (radio.id === 'closeCustomTimeRadio') {
+                // Custom date/time radio only counts when confirmed (data-locked)
+                if (radio.id === 'closeCustomDateTimeRadio') {
                     if (radio.dataset.locked === 'true') { timeSelected = true; break; }
                 } else if (radio.checked) {
                     timeSelected = true;
@@ -19531,7 +19501,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             
             for (let radio of titleRadios) {
-                if (radio.checked) {
+                if (radio.id === 'closeCustomTitleRadio') {
+                    if (radio.dataset.locked === 'true') { titleSelected = true; break; }
+                } else if (radio.checked) {
                     titleSelected = true;
                     break;
                 }
@@ -19555,7 +19527,31 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
+        function showApplyingState() {
+            const applyBtn = document.getElementById('applyCloseMessageMeBtn');
+            if (!applyBtn) return;
+            if (!applyBtn.dataset.origText) applyBtn.dataset.origText = applyBtn.textContent;
+            applyBtn.textContent = 'APPLYING...';
+            applyBtn.disabled = true;
+            applyBtn.style.opacity = '0.6';
+            applyBtn.style.cursor = 'not-allowed';
+        }
+
+        function hideApplyingState() {
+            const applyBtn = document.getElementById('applyCloseMessageMeBtn');
+            if (!applyBtn) return;
+            applyBtn.textContent = applyBtn.dataset.origText || 'APPLY';
+            // Re-evaluate the correct enabled/disabled + opacity state for current selections
+            checkCloseMessageMeValidation();
+        }
+
         function applyCloseMessageMe() {
+            // Show custom confirm modal instead of the native confirm() popup
+            showApplyConfirmModal(_doApplyCloseMessageMeConfirmed);
+        }
+
+        function _doApplyCloseMessageMeConfirmed() {
+            showApplyingState();
             const timeRadios = document.getElementsByName('closeTime');
             const titleRadios = document.getElementsByName('closeTitle');
             const openNowRadios = document.getElementsByName('closeOpenNow');
@@ -19572,7 +19568,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             
             for (let radio of titleRadios) {
-                if (radio.checked) {
+                if (radio.id === 'closeCustomTitleRadio') {
+                    if (radio.dataset.locked === 'true') { selectedTitle = radio.value; break; }
+                } else if (radio.checked) {
                     selectedTitle = radio.value;
                     break;
                 }
@@ -19595,6 +19593,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     window.closeMessageMeTimerRAF = null;
                 }
                 updateAllCloseMessageMeDisplays();
+                hideApplyingState();
 
                 // Clear Firebase so it stays open for everyone, with the same
                 // ready-state retry as the closing write below
@@ -19620,6 +19619,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clearCloseRadioGroup('closeTime');
                 clearCloseRadioGroup('closeTitle');
                 clearCloseRadioGroup('closeOpenNow');
+                if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
                 checkCloseMessageMeValidation();
 
                 // Stay inside the Close Message Me modal — no need to close it
@@ -19627,31 +19627,31 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             
             if (!selectedTime || !selectedTitle) {
+                hideApplyingState();
                 return;
             }
             
             // Calculate duration in milliseconds
             let durationMs = 0;
             switch(selectedTime) {
-                case '1hour': durationMs = 60 * 60 * 1000; break;
-                case '3hours': durationMs = 3 * 60 * 60 * 1000; break;
-                case '12hours': durationMs = 12 * 60 * 60 * 1000; break;
-                case '24hours': durationMs = 24 * 60 * 60 * 1000; break;
                 case '7days': durationMs = 7 * 24 * 60 * 60 * 1000; break;
                 case '15days': durationMs = 15 * 24 * 60 * 60 * 1000; break;
                 case '30days': durationMs = 30 * 24 * 60 * 60 * 1000; break;
-                case 'custom': {
-                    const customRadio = document.getElementById('closeCustomTimeRadio');
-                    const cd = parseInt(customRadio?.dataset.customDays, 10) || 0;
-                    const ch = parseInt(customRadio?.dataset.customHours, 10) || 0;
-                    const cm = parseInt(customRadio?.dataset.customMinutes, 10) || 0;
-                    durationMs = (cd * 24 * 60 * 60 * 1000) + (ch * 60 * 60 * 1000) + (cm * 60 * 1000);
+                case 'customDateTime': {
+                    const dtRadio = document.getElementById('closeCustomDateTimeRadio');
+                    const targetMs = parseInt(dtRadio?.dataset.targetMs, 10) || 0;
+                    const nowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                        ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                        : Date.now();
+                    durationMs = targetMs - nowMs;
                     break;
                 }
             }
             
             // Get title text
-            const titleText = {
+            const titleText = selectedTitle === 'custom'
+                ? (document.getElementById('closeCustomTitleRadio')?.dataset.customText || '')
+                : {
                 'closed': 'MESSAGE ME IS CURRENTLY CLOSED.',
                 'minor': 'MESSAGE ME IS CURRENTLY EXPERIENCING MINOR TECHNICAL DIFFICULTIES.',
                 'major': 'MESSAGE ME IS CURRENTLY EXPERIENCING MAJOR TECHNICAL ISSUES.',
@@ -19666,6 +19666,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // Set local state immediately so the timer shows right away on this device
                 window.closeMessageMeEndPerfMs = performance.now() + durationMs;
                 window.closeMessageMeTitle = titleText;
+                hideApplyingState();
 
                 // ── Write to Firebase so ALL other devices update instantly ──
                 // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
@@ -19701,6 +19702,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clearCloseRadioGroup('closeTime');
                 clearCloseRadioGroup('closeTitle');
                 clearCloseRadioGroup('closeOpenNow');
+                if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
                 checkCloseMessageMeValidation();
             } // end _doWriteClose
 
@@ -19771,6 +19773,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         })();
 
         function getCloseMessageMeFormatted() {
+            // Pure duration math on epoch-ms (UTC-anchored via _timeAnchorDeviceMs, which is
+            // synced from the server's utc_datetime). Epoch ms is identical everywhere on
+            // Earth, so this countdown is inherently timezone-agnostic — there's no "local"
+            // version of a duration, unlike a clock-face time display would have.
             var remainingMs = Math.max(0, (window.closeMessageMeEndPerfMs || 0) - performance.now());
             var totalSeconds = Math.floor(remainingMs / 1000);
             var days    = Math.floor(totalSeconds / 86400);
@@ -19885,12 +19891,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     window.closeMessageMeTimerRAF = requestAnimationFrame(rafLoop);
                 } else {
                     window.closeMessageMeTimerRAF = null;
-                    // Expired — clear Firebase entry so other devices stop too
-                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
-                        if (window._pmDb) {
-                            fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' }).catch(function(){});
-                        }
-                    });
+                    // Natural local expiry — do NOT broadcast active:false to Firebase here.
+                    // Every device independently computes its own countdown from the same
+                    // endUtcMs, so each one will hide its own overlay at its own true zero.
+                    // Broadcasting a clear from whichever device's clock runs fastest would
+                    // force-close every OTHER device's overlay early (the "last 2 seconds"
+                    // bug), even though their own local countdown hadn't reached zero yet.
                     updateAllCloseMessageMeDisplays();
                 }
             }
@@ -25041,5 +25047,461 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         })();
     </script>
+
+<!-- Custom Date Time Picker Modal -->
+<div id="applyConfirmOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
+  <div id="applyConfirmBox" onclick="event.stopPropagation()" style="background:#111;border-radius:16px;padding:24px;width:300px;max-width:90vw;box-shadow:0 8px 40px rgba(0,0,0,0.8);font-family:'Share Tech Mono',monospace;color:#fff;text-align:center;">
+    <div style="font-size:14px;font-weight:800;letter-spacing:0.5px;margin-bottom:14px;">ARE YOU SURE YOU WANT TO APPLY THIS?</div>
+    <div id="applyConfirmTimer" style="font-size:13px;color:#888;margin-bottom:18px;">3</div>
+    <div style="display:flex;gap:10px;">
+      <button id="applyConfirmCancelBtn" onclick="hideApplyConfirmModal()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:12px;font-weight:800;cursor:pointer;letter-spacing:0.5px;">CANCEL</button>
+      <button id="applyConfirmYesBtn" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#22c55e;color:#111;font-size:12px;font-weight:800;cursor:not-allowed;opacity:0.4;letter-spacing:0.5px;">YES</button>
+    </div>
+  </div>
+</div>
+
+<div id="customDTPOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
+  <div id="customDTPBox" onclick="event.stopPropagation()" style="background:#1a1a2e;border-radius:16px;padding:20px;width:320px;max-width:93vw;box-shadow:0 8px 40px rgba(0,0,0,0.8);font-family:'Share Tech Mono',monospace;color:#fff;">
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button id="cdtpDateTab" onclick="cdtpShowTab('date')" style="flex:1;box-sizing:border-box;height:36px;padding:8px;border-radius:8px;border:none;font-weight:800;font-size:12px;cursor:pointer;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/><circle cx="8" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="18" r="1" fill="currentColor" stroke="none"/></svg> DATE</button>
+      <button id="cdtpTimeTab" onclick="cdtpShowTab('time')" style="flex:1;box-sizing:border-box;height:36px;padding:8px;border-radius:8px;border:none;font-weight:800;font-size:12px;cursor:pointer;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> TIME</button>
+    </div>
+    <!-- DATE panel -->
+    <div id="cdtpDatePanel">
+      <!-- Month/Year nav -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <button id="cdtpPrevMonthBtn" onmousedown="cdtpStartHold('month',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',-1)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8249;</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span id="cdtpMonthLabel" onclick="cdtpToggleMonthPicker()" style="font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);" title="Click to pick month"></span>
+          <span id="cdtpYearLabel" onclick="cdtpToggleYearPicker()" style="font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);" title="Click to pick year"></span>
+        </div>
+        <button onmousedown="cdtpStartHold('month',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',1)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8250;</button>
+      </div>
+      <!-- Month picker (hidden by default) -->
+      <div id="cdtpMonthPicker" style="display:none;margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.08);border-radius:8px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+          <button onclick="cdtpSelectMonth(0)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Jan</button>
+          <button onclick="cdtpSelectMonth(1)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Feb</button>
+          <button onclick="cdtpSelectMonth(2)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Mar</button>
+          <button onclick="cdtpSelectMonth(3)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Apr</button>
+          <button onclick="cdtpSelectMonth(4)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">May</button>
+          <button onclick="cdtpSelectMonth(5)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Jun</button>
+          <button onclick="cdtpSelectMonth(6)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Jul</button>
+          <button onclick="cdtpSelectMonth(7)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Aug</button>
+          <button onclick="cdtpSelectMonth(8)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Sep</button>
+          <button onclick="cdtpSelectMonth(9)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Oct</button>
+          <button onclick="cdtpSelectMonth(10)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Nov</button>
+          <button onclick="cdtpSelectMonth(11)" style="padding:6px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">Dec</button>
+        </div>
+      </div>
+      <!-- Year picker (hidden by default) -->
+      <div id="cdtpYearPicker" style="display:none;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+          <input id="cdtpYearInput" type="number" value="2026" min="2026" max="10000" style="width:72px;text-align:center;background:rgba(255,255,255,0.08);border:1px solid #444;border-radius:6px;color:#fff;font-size:15px;font-weight:700;padding:4px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpYearTyping(this.value)" onblur="cdtpYearInputChange(this.value)" onkeydown="if(event.key==='Enter'){cdtpYearInputChange(this.value);this.blur();}">
+        </div>
+      </div>
+      <!-- Day grid headers -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
+        <span style="text-align:center;font-size:10px;color:#888;">S</span><span style="text-align:center;font-size:10px;color:#888;">M</span><span style="text-align:center;font-size:10px;color:#888;">T</span><span style="text-align:center;font-size:10px;color:#888;">W</span><span style="text-align:center;font-size:10px;color:#888;">T</span><span style="text-align:center;font-size:10px;color:#888;">F</span><span style="text-align:center;font-size:10px;color:#888;">S</span>
+      </div>
+      <div id="cdtpCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px;"></div>
+      <div id="cdtpDateSummary" style="text-align:center;font-size:12px;color:#888;margin-bottom:14px;"></div>
+      <!-- Date buttons -->
+      <div style="display:flex;gap:6px;">
+        <button onclick="cdtpCancel()" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(239,68,68,0.2);color:#ef4444;font-size:11px;font-weight:700;cursor:pointer;">BACK</button>
+        <button onclick="cdtpSetToday()" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">TODAY</button>
+        <button onclick="cdtpShowTab('time')" style="flex:1;padding:8px;border-radius:8px;border:none;background:#22c55e;color:#111;font-size:11px;font-weight:700;cursor:pointer;">NEXT</button>
+      </div>
+    </div>
+    <!-- TIME panel -->
+    <div id="cdtpTimePanel" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
+        <!-- Hour -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <button onmousedown="cdtpStartHold('hour',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
+          <input id="cdtpHourInput" type="number" min="1" max="12" value="12" style="width:52px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid #444;border-radius:8px;color:#22c55e;font-size:28px;font-weight:700;padding:6px 2px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpHourTyped(this.value)">
+          <button onmousedown="cdtpStartHold('hour',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',-1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
+        </div>
+        <span style="font-size:28px;font-weight:700;color:#fff;">:</span>
+        <!-- Minute -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <button onmousedown="cdtpStartHold('min',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
+          <input id="cdtpMinInput" type="number" min="0" max="59" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid #444;border-radius:8px;color:#22c55e;font-size:28px;font-weight:700;padding:6px 2px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpMinTyped(this.value)">
+          <button onmousedown="cdtpStartHold('min',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',-1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
+        </div>
+        <span style="font-size:28px;font-weight:700;color:#fff;">:</span>
+        <!-- Second -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <input id="cdtpSecInput" type="number" min="0" max="59" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid #444;border-radius:8px;color:#22c55e;font-size:28px;font-weight:700;padding:6px 2px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpSecTyped(this.value)">
+        </div>
+        <!-- AM/PM -->
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:4px;">
+          <button id="cdtpAmBtn" onclick="cdtpSetAmPm('AM')" style="padding:8px 10px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;">AM</button>
+          <button id="cdtpPmBtn" onclick="cdtpSetAmPm('PM')" style="padding:8px 10px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;">PM</button>
+        </div>
+      </div>
+      <div id="cdtpTimeSummary" style="text-align:center;font-size:12px;color:#888;margin-bottom:14px;"></div>
+      <!-- Time buttons -->
+      <div style="display:flex;gap:6px;">
+        <button onclick="cdtpShowTab('date')" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">BACK</button>
+        <button onclick="cdtpSetNow()" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;">TODAY</button>
+        <button onclick="cdtpConfirm()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#22c55e;color:#111;font-size:11px;font-weight:700;cursor:pointer;">CONFIRM</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Apply Confirm Modal (replaces native confirm()) ──
+var _applyConfirmCallback=null;
+var _applyConfirmInterval=null;
+
+function showApplyConfirmModal(onConfirm){
+  _applyConfirmCallback=onConfirm;
+  var ov=document.getElementById('applyConfirmOverlay');
+  var yesBtn=document.getElementById('applyConfirmYesBtn');
+  var timerEl=document.getElementById('applyConfirmTimer');
+  if(!ov||!yesBtn||!timerEl)return;
+  yesBtn.disabled=true;
+  yesBtn.style.opacity='0.4';
+  yesBtn.style.cursor='not-allowed';
+  yesBtn.onclick=null;
+  var secondsLeft=3;
+  timerEl.style.display='block';
+  timerEl.textContent=secondsLeft;
+  if(_applyConfirmInterval){clearInterval(_applyConfirmInterval);_applyConfirmInterval=null;}
+  _applyConfirmInterval=setInterval(function(){
+    secondsLeft--;
+    if(secondsLeft>0){
+      timerEl.textContent=secondsLeft;
+    } else {
+      clearInterval(_applyConfirmInterval);
+      _applyConfirmInterval=null;
+      timerEl.style.display='none';
+      yesBtn.disabled=false;
+      yesBtn.style.opacity='1';
+      yesBtn.style.cursor='pointer';
+      yesBtn.onclick=function(){
+        hideApplyConfirmModal();
+        if(typeof _applyConfirmCallback==='function')_applyConfirmCallback();
+      };
+    }
+  },1000);
+  ov.style.display='flex';
+}
+
+function hideApplyConfirmModal(){
+  var ov=document.getElementById('applyConfirmOverlay');
+  if(ov)ov.style.display='none';
+  if(_applyConfirmInterval){clearInterval(_applyConfirmInterval);_applyConfirmInterval=null;}
+  var yesBtn=document.getElementById('applyConfirmYesBtn');
+  if(yesBtn)yesBtn.onclick=null;
+}
+
+// ── Custom Date Time Picker ──
+var _cdtpYear=2026,_cdtpMonth=0,_cdtpDay=1,_cdtpHour=12,_cdtpMin=0,_cdtpSec=0,_cdtpAmPm='AM';
+var _cdtpDaySelected=true;
+var _cdtpHoldTimer=null,_cdtpHoldInterval=null,_cdtpHoldSpeed=1;
+var _cdtpTimeModified=false;
+var _cdtpAutoUpdateInterval=null;
+
+function openCustomDateTimePicker(){
+  var radio=document.getElementById('closeCustomDateTimeRadio');
+  // Only load from "now" if no time has been manually set before
+  if(radio&&radio.dataset.targetMs&&radio.dataset.live!=='true'){
+    // Load previously saved fixed (manually set) time
+    var d=new Date(parseInt(radio.dataset.targetMs));
+    _cdtpYear=d.getFullYear();_cdtpMonth=d.getMonth();_cdtpDay=d.getDate();_cdtpDaySelected=true;
+    var h2=d.getHours();_cdtpAmPm=h2>=12?'PM':'AM';_cdtpHour=h2%12||12;_cdtpMin=d.getMinutes();_cdtpSec=d.getSeconds();
+    _cdtpTimeModified=true;
+  } else {
+    // First time opening, or previously left on a live "TODAY" clock —
+    // default to today/now and keep it ticking live.
+    var now=new Date();
+    _cdtpYear=now.getFullYear();_cdtpMonth=now.getMonth();_cdtpDay=now.getDate();_cdtpDaySelected=true;
+    var h=now.getHours();_cdtpAmPm=h>=12?'PM':'AM';_cdtpHour=h%12||12;_cdtpMin=now.getMinutes();_cdtpSec=now.getSeconds();
+    _cdtpTimeModified=false;
+    // Restart live auto-update so the clock keeps ticking until manually changed
+    if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}
+    _cdtpAutoUpdateInterval=setInterval(function(){
+      var n2=new Date();var h2=n2.getHours();
+      _cdtpAmPm=h2>=12?'PM':'AM';_cdtpHour=h2%12||12;_cdtpMin=n2.getMinutes();_cdtpSec=n2.getSeconds();
+      cdtpRenderTime();
+    },1000);
+  }
+  cdtpRenderCalendar();cdtpRenderTime();cdtpShowTab('date');
+  document.getElementById('cdtpYearPicker').style.display='none';
+  var ov=document.getElementById('customDTPOverlay');
+  if(ov){ov.style.display='flex';}
+}
+
+function closeCDTP(){
+  if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}
+  var ov=document.getElementById('customDTPOverlay');if(ov)ov.style.display='none';
+}
+
+
+function cdtpShowTab(tab){
+  document.getElementById('cdtpDatePanel').style.display=tab==='date'?'block':'none';
+  document.getElementById('cdtpTimePanel').style.display=tab==='time'?'block':'none';
+  var dt=document.getElementById('cdtpDateTab'),tt=document.getElementById('cdtpTimeTab');
+  dt.style.background=tab==='date'?'#22c55e':'rgba(255,255,255,0.1)';dt.style.color=tab==='date'?'#111':'#fff';
+  tt.style.background=tab==='time'?'#22c55e':'rgba(255,255,255,0.1)';tt.style.color=tab==='time'?'#111':'#fff';
+  if(tab==='time')cdtpRenderTime();
+}
+
+function cdtpRenderCalendar(){
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var monthsShort=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('cdtpMonthLabel').textContent=months[_cdtpMonth];
+  document.getElementById('cdtpYearLabel').textContent=_cdtpYear;
+  var yi=document.getElementById('cdtpYearInput');if(yi)yi.value=_cdtpYear;
+  var grid=document.getElementById('cdtpCalGrid');grid.innerHTML='';
+  var first=new Date(_cdtpYear,_cdtpMonth,1).getDay();
+  var days=new Date(_cdtpYear,_cdtpMonth+1,0).getDate();
+  var today=new Date();
+  var todayY=today.getFullYear(),todayM=today.getMonth(),todayD=today.getDate();
+  for(var i=0;i<first;i++){grid.appendChild(document.createElement('span'));}
+  for(var d=1;d<=days;d++){
+    (function(day){
+      var btn=document.createElement('button');btn.type='button';btn.textContent=day;
+      var isSel=_cdtpDaySelected&&day===_cdtpDay;var isTod=day===todayD&&_cdtpMonth===todayM&&_cdtpYear===todayY;
+      var isPast=(_cdtpYear<todayY)||(_cdtpYear===todayY&&_cdtpMonth<todayM)||(_cdtpYear===todayY&&_cdtpMonth===todayM&&day<todayD);
+      if(isPast){
+        btn.disabled=true;
+        btn.style.cssText='width:100%;aspect-ratio:1;border-radius:50%;border:none;cursor:not-allowed;font-size:11px;font-weight:400;background:transparent;color:#555;opacity:0.4;';
+      } else {
+        btn.style.cssText='width:100%;aspect-ratio:1;border-radius:50%;border:none;cursor:pointer;font-size:11px;font-weight:'+(isSel?'700':'400')+';background:'+(isSel?'#22c55e':isTod?'rgba(34,197,94,0.2)':'transparent')+';color:'+(isSel?'#111':isTod?'#22c55e':'#fff')+';';
+        btn.onclick=function(){_cdtpDay=day;_cdtpDaySelected=true;cdtpRenderCalendar();};
+      }
+      grid.appendChild(btn);
+    })(d);
+  }
+  var ds=document.getElementById('cdtpDateSummary');
+  if(ds)ds.textContent=monthsShort[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' at '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+':'+String(_cdtpSec).padStart(2,'0')+' '+_cdtpAmPm;
+  cdtpUpdatePrevMonthBtn();
+}
+
+function cdtpUpdatePrevMonthBtn(){
+  var btn=document.getElementById('cdtpPrevMonthBtn');
+  if(!btn)return;
+  var today=new Date();
+  var atMin=(_cdtpYear===today.getFullYear()&&_cdtpMonth===today.getMonth());
+  btn.disabled=atMin;
+  btn.style.cursor=atMin?'not-allowed':'pointer';
+  btn.style.opacity=atMin?'0.3':'1';
+  btn.style.color=atMin?'#555':'#fff';
+}
+
+function cdtpChangeMonth(dir){
+  var today=new Date();
+  var newMonth=_cdtpMonth+dir;
+  var newYear=_cdtpYear;
+  if(newMonth>11){newMonth=0;newYear++;}
+  if(newMonth<0){newMonth=11;newYear--;}
+  // Minimum allowed year is the current year — block going earlier
+  if(newYear<today.getFullYear())return;
+  if(newYear>10000)return;
+  // Block navigating to a month before the current month in the current year
+  if(newYear===today.getFullYear()&&newMonth<today.getMonth())return;
+  _cdtpYear=newYear;_cdtpMonth=newMonth;
+  _cdtpDay=1;_cdtpDaySelected=false;cdtpRenderCalendar();
+}
+
+function cdtpToggleMonthPicker(){
+  var mp=document.getElementById('cdtpMonthPicker');
+  mp.style.display=mp.style.display==='none'?'block':'none';
+  if(mp.style.display==='block'){
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var today=new Date();
+    var buttons=mp.querySelectorAll('button');
+    buttons.forEach(function(btn,idx){
+      var isPastMonth=_cdtpYear===today.getFullYear()&&idx<today.getMonth();
+      if(isPastMonth){
+        btn.disabled=true;
+        btn.style.background='rgba(255,255,255,0.03)';
+        btn.style.color='#555';
+        btn.style.cursor='not-allowed';
+        btn.style.opacity='0.4';
+      } else {
+        btn.disabled=false;
+        btn.style.cursor='pointer';
+        btn.style.opacity='1';
+        btn.style.background=idx===_cdtpMonth?'#22c55e':'rgba(255,255,255,0.1)';
+        btn.style.color=idx===_cdtpMonth?'#111':'#fff';
+      }
+    });
+  }
+}
+
+function cdtpSelectMonth(m){
+  var today=new Date();
+  if(_cdtpYear===today.getFullYear()&&m<today.getMonth())return; // past month, disallowed
+  _cdtpMonth=m;_cdtpDay=1;_cdtpDaySelected=false;cdtpRenderCalendar();
+  document.getElementById('cdtpMonthPicker').style.display='none';
+}
+
+function cdtpToggleYearPicker(){
+  var yp=document.getElementById('cdtpYearPicker');
+  yp.style.display=yp.style.display==='none'?'block':'none';
+}
+
+function cdtpYearTyping(v){
+  // While typing, just track the raw value — no clamping or re-render,
+  // so partial entries (e.g. typing "2027" digit by digit) aren't interrupted.
+  var n=parseInt(v);
+  if(!isNaN(n)) _cdtpYear=n;
+  var lbl=document.getElementById('cdtpYearLabel');
+  if(lbl&&!isNaN(n)) lbl.textContent=n;
+}
+
+function cdtpYearInputChange(v){
+  // Commit the typed year (on blur / Enter): clamp into the allowed range,
+  // then re-render — this is the only point where the input value is
+  // forced back in sync, so it never snaps back while still typing.
+  var n=parseInt(v);
+  var minYear=new Date().getFullYear();
+  if(isNaN(n)) n=minYear;
+  _cdtpYear=Math.max(minYear,Math.min(10000,n));
+  var today=new Date();
+  // If we land on the current year, make sure month/day aren't in the past
+  if(_cdtpYear===today.getFullYear()){
+    if(_cdtpMonth<today.getMonth())_cdtpMonth=today.getMonth();
+    if(_cdtpMonth===today.getMonth()&&_cdtpDay<today.getDate())_cdtpDay=today.getDate();
+  }
+  cdtpRenderCalendar();
+}
+
+function cdtpYearSliderChange(v){
+  var n=parseInt(v);if(isNaN(n))return;
+  var minYear=new Date().getFullYear();
+  _cdtpYear=Math.max(minYear,Math.min(10000,n));
+  cdtpRenderCalendar();
+}
+
+function cdtpSetToday(){
+  var now=new Date();_cdtpYear=now.getFullYear();_cdtpMonth=now.getMonth();_cdtpDay=now.getDate();_cdtpDaySelected=true;
+  document.getElementById('cdtpYearPicker').style.display='none';
+  cdtpRenderCalendar();
+}
+
+function cdtpSetNow(){
+  // Stop any existing auto-update
+  if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}
+  
+  // Set initial time
+  var now=new Date();var h=now.getHours();
+  _cdtpAmPm=h>=12?'PM':'AM';_cdtpHour=h%12||12;_cdtpMin=now.getMinutes();_cdtpSec=now.getSeconds();
+  _cdtpTimeModified=false;
+  cdtpRenderTime();
+  
+  // Start auto-update - update every 1 second
+  _cdtpAutoUpdateInterval=setInterval(function(){
+    var now=new Date();var h=now.getHours();
+    _cdtpAmPm=h>=12?'PM':'AM';_cdtpHour=h%12||12;_cdtpMin=now.getMinutes();_cdtpSec=now.getSeconds();
+    cdtpRenderTime();
+  },1000);
+}
+
+function cdtpRenderTime(){
+  var hi=document.getElementById('cdtpHourInput');if(hi)hi.value=String(_cdtpHour).padStart(2,'0');
+  var mi=document.getElementById('cdtpMinInput');if(mi)mi.value=String(_cdtpMin).padStart(2,'0');
+  var si=document.getElementById('cdtpSecInput');if(si)si.value=String(_cdtpSec).padStart(2,'0');
+  var ab=document.getElementById('cdtpAmBtn'),pb=document.getElementById('cdtpPmBtn');
+  if(ab){ab.style.background=_cdtpAmPm==='AM'?'#22c55e':'rgba(255,255,255,0.1)';ab.style.color=_cdtpAmPm==='AM'?'#111':'#fff';}
+  if(pb){pb.style.background=_cdtpAmPm==='PM'?'#22c55e':'rgba(255,255,255,0.1)';pb.style.color=_cdtpAmPm==='PM'?'#111':'#fff';}
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthsShort=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var ts=document.getElementById('cdtpTimeSummary');
+  if(ts)ts.textContent=months[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' at '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+':'+String(_cdtpSec).padStart(2,'0')+' '+_cdtpAmPm;
+  var ds=document.getElementById('cdtpDateSummary');
+  if(ds)ds.textContent=monthsShort[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' at '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+':'+String(_cdtpSec).padStart(2,'0')+' '+_cdtpAmPm;
+}
+
+function cdtpHourTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpHour=Math.max(1,Math.min(12,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
+function cdtpMinTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpMin=Math.max(0,Math.min(59,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
+function cdtpSecTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpSec=Math.max(0,Math.min(59,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
+function cdtpSetAmPm(v){_cdtpAmPm=v;_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
+
+function cdtpWheel(e,type){
+  e.preventDefault();
+  var dir=e.deltaY<0?1:-1;
+  if(type==='hour'){_cdtpHour+=dir;if(_cdtpHour>12)_cdtpHour=1;if(_cdtpHour<1)_cdtpHour=12;}
+  if(type==='min'){_cdtpMin+=dir;if(_cdtpMin>59)_cdtpMin=0;if(_cdtpMin<0)_cdtpMin=59;}
+  cdtpRenderTime();
+}
+
+function cdtpStep(type,dir){
+  if((type==='hour'||type==='min'||type==='sec')&&_cdtpAutoUpdateInterval){
+    clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;
+  }
+  var speed=_cdtpHoldSpeed||1;
+  for(var i=0;i<speed;i++){
+    if(type==='hour'){_cdtpHour+=dir;if(_cdtpHour>12)_cdtpHour=1;if(_cdtpHour<1)_cdtpHour=12;_cdtpTimeModified=true;}
+    if(type==='min'){_cdtpMin+=dir;if(_cdtpMin>59)_cdtpMin=0;if(_cdtpMin<0)_cdtpMin=59;_cdtpTimeModified=true;}
+    if(type==='sec'){_cdtpSec+=dir;if(_cdtpSec>59)_cdtpSec=0;if(_cdtpSec<0)_cdtpSec=59;_cdtpTimeModified=true;}
+    if(type==='month'){cdtpChangeMonth(dir);return;}
+    if(type==='year'){_cdtpYear=new Date().getFullYear();_cdtpDay=1;_cdtpDaySelected=false;cdtpRenderCalendar();return;}
+  }
+  cdtpRenderTime();
+}
+
+function cdtpStartHold(type,dir){
+  cdtpStopHold();
+  cdtpStep(type,dir);
+  _cdtpHoldSpeed=1;
+  _cdtpHoldTimer=setTimeout(function(){
+    _cdtpHoldSpeed=5;
+    _cdtpHoldInterval=setInterval(function(){cdtpStep(type,dir);},80);
+  },600);
+}
+
+function cdtpStopHold(){
+  _cdtpHoldSpeed=1;
+  if(_cdtpHoldTimer){clearTimeout(_cdtpHoldTimer);_cdtpHoldTimer=null;}
+  if(_cdtpHoldInterval){clearInterval(_cdtpHoldInterval);_cdtpHoldInterval=null;}
+}
+
+function cdtpSaveState(){
+  var h24=_cdtpAmPm==='PM'?(_cdtpHour===12?12:_cdtpHour+12):(_cdtpHour===12?0:_cdtpHour);
+  var targetMs=new Date(_cdtpYear,_cdtpMonth,_cdtpDay,h24,_cdtpMin,0,0).getTime();
+  var radio=document.getElementById('closeCustomDateTimeRadio');
+  radio.dataset.locked='true';radio.dataset.targetMs=String(targetMs);radio.checked=true;
+  radio.dataset.live=_cdtpAutoUpdateInterval?'true':'false';
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var preview=document.getElementById('closeCustomDateTimePreview');
+  if(preview){preview.textContent=months[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+' '+_cdtpAmPm;preview.style.display='block';}
+  updateCloseCustomDateTimeButtons();updateCloseMessageMeSelection();
+}
+
+function cdtpConfirm(){
+  cdtpSaveState();
+  closeCDTP();
+}
+
+function cdtpCancel(){
+  // Discard any unconfirmed changes and just close — does NOT save (unlike Confirm)
+  closeCDTP();
+}
+
+function updateCloseCustomDateTimeButtons(){
+  var radio=document.getElementById('closeCustomDateTimeRadio');
+  var isLocked=radio&&radio.dataset.locked==='true';
+  var clearBtn=document.getElementById('closeCustomDateTimeClearBtn');
+  if(clearBtn){clearBtn.disabled=!isLocked;clearBtn.style.opacity=isLocked?'1':'0.4';clearBtn.style.cursor=isLocked?'pointer':'not-allowed';}
+}
+
+function resetCloseCustomDateTime(){
+  var radio=document.getElementById('closeCustomDateTimeRadio');
+  if(!radio)return;
+  radio.checked=false;radio.dataset.locked='false';delete radio.dataset.targetMs;
+  var preview=document.getElementById('closeCustomDateTimePreview');
+  if(preview){preview.textContent='';preview.style.display='none';}
+  updateCloseCustomDateTimeButtons();updateCloseMessageMeSelection();
+}
+// ── End Custom Date Time Picker ──
+</script>
+
 </body>
 </html>
