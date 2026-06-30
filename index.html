@@ -11214,7 +11214,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <div style="display:flex; flex-direction:column; gap:6px;">
                     <div id="accountCooldownTimerBox" style="display:none; width:100%; padding:8px 12px; background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.6); border-radius:8px; text-align:center; box-sizing:border-box;">
                         <div style="font-size:9px; font-weight:700; color:#ef4444; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px;">NEW ACCOUNT AVAILABLE IN</div>
-                        <div id="accountCooldownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:14px; font-weight:700; color:#ef4444; letter-spacing:1px;">168:00:00:000</div>
+                        <div id="accountCooldownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:14px; font-weight:700; color:#ef4444; letter-spacing:1px;">1168:00:00:000</div>
                     </div>
                     <div class="christmas-view-theme-bar">
                         <button type="button" class="christmas-view-logout-btn" onclick="openLogoutConfirmModal()">Log out</button>
@@ -11477,12 +11477,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
                         </label>
                         <!-- Add Custom Date and Time -->
-                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); document.getElementById('closeCustomDateTimeRadio').checked=true; clearCloseRadioGroup('closeOpenNow'); updateCloseMessageMeSelection(); openCustomDateTimePicker();">
+                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); var r=document.getElementById('closeCustomDateTimeRadio'); if(r.checked){ resetCloseCustomDateTime(); } else { r.checked=true; clearCloseRadioGroup('closeOpenNow'); updateCloseMessageMeSelection(); openCustomDateTimePicker(); }">
                             <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                                 <span class="close-msg-text" style="font-weight: normal;">ADD CUSTOM DATE AND TIME</span>
                                 <span id="closeCustomDateTimePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
-                                <span style="display: inline-flex; gap: 6px;">
+                                <span id="closeCustomDateTimeBtnRow" style="display: none; gap: 6px;">
                                     <button type="button" id="closeCustomDateTimeEnterBtn" onclick="event.stopPropagation(); openCustomDateTimePicker();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">PICK</button>
                                     <button type="button" id="closeCustomDateTimeClearBtn" onclick="event.stopPropagation(); resetCloseCustomDateTime();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
                                 </span>
@@ -11512,11 +11512,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.</span>
                         </label>
                         <!-- Custom Title -->
-                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName!=='BUTTON'){document.getElementById('closeCustomTitleRadio').checked=true; document.getElementById('closeCustomTitleInput').focus();} updateCloseMessageMeSelection();">
+                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName==='BUTTON'){return;} event.preventDefault(); var r=document.getElementById('closeCustomTitleRadio'); if(r.checked){ resetCloseCustomTitle(); } else { r.checked=true; updateCloseMessageMeSelection(); document.getElementById('closeCustomTitleInput').focus(); }">
                             <input type="radio" name="closeTitle" value="custom" id="closeCustomTitleRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                                 <span class="close-msg-text" style="font-weight: normal;">ADD YOUR OWN TITLE MESSAGE</span>
-                                <span style="display: inline-flex; gap: 6px; align-items: center;">
+                                <span id="closeCustomTitleBtnRow" style="display: none; gap: 6px; align-items: center;">
                                     <input type="text" id="closeCustomTitleInput" maxlength="120" placeholder="Type your custom title..." onkeydown="if(event.key==='Enter'){event.preventDefault(); confirmCloseCustomTitle();}" oninput="updateCloseCustomTitleButtons();" style="flex: 1; min-width: 0; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px;">
                                     <button type="button" id="closeCustomTitleEnterBtn" onclick="event.stopPropagation(); confirmCloseCustomTitle();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">ENTER</button>
                                     <button type="button" id="closeCustomTitleClearBtn" onclick="event.stopPropagation(); resetCloseCustomTitle();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
@@ -11605,13 +11605,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <!-- End Active Timer — only visible while the active session timer is actually running -->
             <button type="button" id="userSettingsEndActiveTimerBtn" onclick="endActiveTimerFromSettings()" style="width: 100%; height: 34px; padding: 0 10px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: none; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">END TIMER</button>
 
-            <!-- In-Active Timer (title sits above the 168h cooldown box) -->
+            <!-- In-Active Timer (title sits above the 1168h cooldown box) -->
             <div id="userSettingsInactiveTimerSection">
                 <div class="user-settings-label" style="text-align:center;">In-Active Timer</div>
                 <div id="userSettingsCooldownBox" style="display:flex;align-items:center;justify-content:center;"></div>
             </div>
 
-            <!-- End Timer — only visible when 168h timer is actively counting down -->
+            <!-- End Timer — only visible when 1168h timer is actively counting down -->
             <button type="button" id="userSettingsEndTimerBtn" onclick="endLoginCooldownFromSettings()" style="width: 100%; height: 34px; padding: 0 10px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: none; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">END TIMER</button>
 
             <!-- Scroll to top button — appears when scrolled down -->
@@ -15378,13 +15378,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             const submitBtn = document.querySelector('#messageConfirmationModal .name-submit-btn');
 
             // Block if account already exists on this device —
-            // UNLESS 168 hours have passed since their auto-logout with no re-login.
+            // UNLESS 1168 hours have passed since their auto-logout with no re-login.
             if (localStorage.getItem('accountCreatedOnDevice')) {
                 var loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
                 var hasActiveSession = !!localStorage.getItem('userNameForMessage');
-                var twentyFourHoursPassed = loggedOutAt > 0 && (Date.now() - loggedOutAt) >= 168 * 60 * 60 * 1000;
+                var twentyFourHoursPassed = loggedOutAt > 0 && (Date.now() - loggedOutAt) >= 1168 * 60 * 60 * 1000;
                 if (!hasActiveSession && twentyFourHoursPassed) {
-                    // 168 hours elapsed without logging back in — allow a new account
+                    // 1168 hours elapsed without logging back in — allow a new account
                     localStorage.removeItem('accountCreatedOnDevice');
                     localStorage.removeItem('autoLoggedOutAt');
                     localStorage.removeItem('lastKnownSenderName');
@@ -15637,13 +15637,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function confirmFinalName() {
             // One account per device guard —
-            // UNLESS 168 hours have passed since their auto-logout with no re-login.
+            // UNLESS 1168 hours have passed since their auto-logout with no re-login.
             if (localStorage.getItem('accountCreatedOnDevice')) {
                 var loggedOutAt2 = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
                 var hasActiveSession2 = !!localStorage.getItem('userNameForMessage');
-                var twentyFourHoursPassed2 = loggedOutAt2 > 0 && (Date.now() - loggedOutAt2) >= 168 * 60 * 60 * 1000;
+                var twentyFourHoursPassed2 = loggedOutAt2 > 0 && (Date.now() - loggedOutAt2) >= 1168 * 60 * 60 * 1000;
                 if (!hasActiveSession2 && twentyFourHoursPassed2) {
-                    // 168 hours elapsed without logging back in — allow a new account
+                    // 1168 hours elapsed without logging back in — allow a new account
                     localStorage.removeItem('accountCreatedOnDevice');
                     localStorage.removeItem('autoLoggedOutAt');
                     localStorage.removeItem('lastKnownSenderName');
@@ -16135,7 +16135,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
                                 startSenderThreadListener();
                             }
-                            // Hide 168-hour cooldown timer — user is now logged in; reset so next logout starts fresh
+                            // Hide 1168-hour cooldown timer — user is now logged in; reset so next logout starts fresh
                             localStorage.removeItem('autoLoggedOutAt');
                             stopAccountCooldownTimer();
                             var _cdBoxFB = document.getElementById('accountCooldownTimerBox');
@@ -16396,7 +16396,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             localStorage.removeItem('userNameStoredAt');
             localStorage.removeItem('senderPassword');
             localStorage.removeItem(LOGOUT_EXPIRES_AT_KEY);
-            // Record when this auto-logout happened so the 168-hour new-account
+            // Record when this auto-logout happened so the 1168-hour new-account
             // cooldown can be checked in proceedToMessage / confirmFinalName.
             localStorage.setItem('autoLoggedOutAt', String(Date.now()));
             stopAutoLogoutWatcher();
@@ -16437,9 +16437,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
-        // ── 168-hour new-account cooldown timer ──────────────────────────
+        // ── 1168-hour new-account cooldown timer ──────────────────────────
         var _accountCooldownIntervalId = null;
-        var ACCOUNT_COOLDOWN_MS = 168 * 60 * 60 * 1000; // 168 hours
+        var ACCOUNT_COOLDOWN_MS = 1168 * 60 * 60 * 1000; // 1168 hours
 
         function startAccountCooldownTimer() {
             stopAccountCooldownTimer();
@@ -16840,7 +16840,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // Defer slightly to make sure DOM is ready
                 setTimeout(function() { startAccountCooldownTimer(); }, 500);
             } else {
-                // 168h has fully elapsed — clear account lock so the warning never shows again
+                // 1168h has fully elapsed — clear account lock so the warning never shows again
                 localStorage.removeItem('accountCreatedOnDevice');
                 localStorage.removeItem('autoLoggedOutAt');
                 localStorage.removeItem('lastKnownSenderName');
@@ -16870,7 +16870,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }, 200);
             }
         })();
-        // ── End 168-hour cooldown timer ──────────────────────────────────
+        // ── End 1168-hour cooldown timer ──────────────────────────────────
 
         function stopAutoLogoutWatcher() {
             if (_logoutWatcherTimeoutId !== null) {
@@ -17082,7 +17082,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 startSenderThreadListener();
                 setTimeout(updateScrollToBottomBtn, 200);
             }
-            // Hide 168-hour cooldown timer on new account creation; reset so next logout starts fresh
+            // Hide 1168-hour cooldown timer on new account creation; reset so next logout starts fresh
             localStorage.removeItem('autoLoggedOutAt');
             stopAccountCooldownTimer();
             var _cdBox = document.getElementById('accountCooldownTimerBox');
@@ -17430,13 +17430,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     // locked and skip all account-unlock logic that would re-enable it.
                     var _isPermanentlyBanned = violationsRemaining <= 0;
                     if (hasAccount) {
-                        // Check if 168h cooldown has expired — if so, unlock new account creation
+                        // Check if 1168h cooldown has expired — if so, unlock new account creation
                         var _loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
-                        var _cooldownPassed = _loggedOutAt > 0 && (Date.now() - _loggedOutAt) >= 168 * 60 * 60 * 1000;
+                        var _cooldownPassed = _loggedOutAt > 0 && (Date.now() - _loggedOutAt) >= 1168 * 60 * 60 * 1000;
                         // Also treat as expired if the owner already pressed END TIMER for this session
                         var _endedByOwner = !!(typeof senderConversationMeta !== 'undefined' && senderConversationMeta && senderConversationMeta.cooldownEndedByOwnerAt && _loggedOutAt > 0 && Number(senderConversationMeta.cooldownEndedByOwnerAt) >= _loggedOutAt);
                         if (!hasActiveSession && (_cooldownPassed || _endedByOwner)) {
-                            // 168h elapsed or owner ended timer — clear and allow new account
+                            // 1168h elapsed or owner ended timer — clear and allow new account
                             localStorage.removeItem('accountCreatedOnDevice');
                             localStorage.removeItem('autoLoggedOutAt');
                             localStorage.removeItem('lastKnownSenderName');
@@ -19345,6 +19345,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
+        // (Select-a-specific-person feature removed — Close Message Me now only
+        // supports site-wide closures.)
+        function resetCloseSpecificPersonSelection() {}
+
         function scrollCloseTimeDuration() {
             var el = document.getElementById('closeTimeDurationScroll');
             if (!el) return;
@@ -19487,6 +19491,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
             
+            // Show the PICK/clear buttons only while "Add Custom Date and Time" is
+            // selected; hide them again the moment it's deselected.
+            var dtRadio = document.getElementById('closeCustomDateTimeRadio');
+            var dtBtnRow = document.getElementById('closeCustomDateTimeBtnRow');
+            if (dtBtnRow) dtBtnRow.style.display = (dtRadio && dtRadio.checked) ? 'inline-flex' : 'none';
+
+            // Same for the custom title's input/ENTER/clear row.
+            var ctRadio = document.getElementById('closeCustomTitleRadio');
+            var ctBtnRow = document.getElementById('closeCustomTitleBtnRow');
+            if (ctBtnRow) ctBtnRow.style.display = (ctRadio && ctRadio.checked) ? 'inline-flex' : 'none';
+
             // Check validation
             checkCloseMessageMeValidation();
         }
@@ -19644,17 +19659,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             
             // Calculate duration in milliseconds
             let durationMs = 0;
+            let absoluteTargetMs = null; // set only for customDateTime — used verbatim, immune to fetch delay below
+            const _clickPerfMs = performance.now(); // captured now, before any async fetch delay
             switch(selectedTime) {
                 case '7days': durationMs = 7 * 24 * 60 * 60 * 1000; break;
                 case '15days': durationMs = 15 * 24 * 60 * 60 * 1000; break;
                 case '30days': durationMs = 30 * 24 * 60 * 60 * 1000; break;
                 case 'customDateTime': {
                     const dtRadio = document.getElementById('closeCustomDateTimeRadio');
-                    const targetMs = parseInt(dtRadio?.dataset.targetMs, 10) || 0;
+                    absoluteTargetMs = parseInt(dtRadio?.dataset.targetMs, 10) || 0;
                     const nowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
                         ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
                         : Date.now();
-                    durationMs = targetMs - nowMs;
+                    durationMs = absoluteTargetMs - nowMs;
                     break;
                 }
             }
@@ -19672,14 +19689,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Always fetch a fresh server timestamp before writing endUtcMs
             // so the close timer is immune to device clock manipulation.
             function _doWriteClose(serverNowMs) {
-                var endUtcMs = serverNowMs + durationMs;
+                // For an absolute custom date/time, use the target the user picked verbatim —
+                // adding durationMs to a freshly-fetched (and network-delayed) serverNowMs would
+                // push the close time later by however long that fetch took.
+                var endUtcMs = (absoluteTargetMs !== null) ? absoluteTargetMs : (serverNowMs + durationMs);
 
-                // Set local state immediately so the timer shows right away on this device
-                window.closeMessageMeEndPerfMs = performance.now() + durationMs;
+                // Site-wide closure — show the timer immediately on this device too.
+                // Uses _clickPerfMs (captured before the async server-time fetch) rather than
+                // performance.now() here, otherwise the fetch's network latency gets added
+                // on top of durationMs and the local countdown starts a beat late too.
+                window.closeMessageMeEndPerfMs = _clickPerfMs + durationMs;
                 window.closeMessageMeTitle = titleText;
                 hideApplyingState();
 
-                // ── Write to Firebase so ALL other devices update instantly ──
+                // ── Write to Firebase so the right device(s) update instantly ──
                 // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
                 // clicked very soon after page load) instead of silently dropping the write.
                 (function writeCloseMessageMeStatus(attemptsLeft) {
@@ -19760,21 +19783,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             startCloseMessageMeRAF();
         }
 
-        // Listen to Firebase for real-time updates across all devices
+        // Listen to Firebase for real-time updates across all devices — site-wide closure
         (function listenCloseMessageMeStatus() {
             function attach() {
                 if (!window._pmDb) { setTimeout(attach, 500); return; }
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                     fb.onValue(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), function(snap) {
                         var val = snap.val();
-                        if (!val || !val.active || !val.endUtcMs) {
-                            // No active close status — clear
+                        if (val && val.active && val.endUtcMs) {
+                            applyCloseMessageMeState(val.endUtcMs, val.title);
+                        } else {
                             window.closeMessageMeEndPerfMs = 0;
                             window.closeMessageMeTitle = '';
                             updateAllCloseMessageMeDisplays();
-                            return;
                         }
-                        applyCloseMessageMeState(val.endUtcMs, val.title);
                     }, function(err) {
                         console.warn('[closeMessageMe] Firebase listen error:', err);
                     });
@@ -20229,14 +20251,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // actually logged in with a running timer — including the
             // unlimited (∞) case, since clicking it still forces a logout.
             // Hidden the moment they're logged out / offline, same as the
-            // 168h END TIMER button's visibility rule below.
+            // 1168h END TIMER button's visibility rule below.
             if (endActiveTimerBtnEl) {
                 var activeTimerIsRunning = !isLoggedOut && logoutMinutes !== null && logoutMinutes !== undefined;
                 endActiveTimerBtnEl.style.display = activeTimerIsRunning ? 'flex' : 'none';
             }
 
             // In-Active Timer: status pill always reflects real isLoggedOut state.
-            // The 168h cooldown box ticks down normally while logged out, unless
+            // The 1168h cooldown box ticks down normally while logged out, unless
             // END TIMER was used (cooldownEndedByOwnerAt newer than this logout),
             // in which case it shows EXPIRED but LOGGED OUT stays untouched.
             var cooldownEndedByOwnerAt = (meta.cooldownEndedByOwnerAt !== undefined) ? meta.cooldownEndedByOwnerAt : cachedConv.cooldownEndedByOwnerAt;
@@ -20247,25 +20269,25 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     if (cooldownWasEndedEarly) {
                         cooldownBox.innerHTML = redPillOpen + 'EXPIRED' + pillClose;
                     } else {
-                        var cooldownMs = 168 * 60 * 60 * 1000;
+                        var cooldownMs = 1168 * 60 * 60 * 1000;
                         var cooldownExpires = loggedOutAt ? (Number(loggedOutAt) + cooldownMs) : 0;
                         var cooldownContent = cooldownExpires > 0
-                            ? '<span class="inbox-cooldown-countdown" data-expires="' + cooldownExpires + '">168:00:00:000</span>'
-                            : '168:00:00:000';
+                            ? '<span class="inbox-cooldown-countdown" data-expires="' + cooldownExpires + '">1168:00:00:000</span>'
+                            : '1168:00:00:000';
                         cooldownBox.innerHTML = redPillOpen + cooldownContent + pillClose;
                     }
                 } else {
                     inactiveBox.innerHTML = greenPillOpen + 'LOGGED IN' + pillClose;
                     cooldownBox.innerHTML = cooldownEndedByOwnerAt
                         ? redPillOpen + 'EXPIRED' + pillClose
-                        : redPillOpen + '168:00:00:000' + pillClose;
+                        : redPillOpen + '1168:00:00:000' + pillClose;
                 }
             }
 
-            // Show END TIMER button only when the 168h cooldown is actively counting down
+            // Show END TIMER button only when the 1168h cooldown is actively counting down
             var endTimerBtn = document.getElementById('userSettingsEndTimerBtn');
             if (endTimerBtn) {
-                var timerIsActive = isLoggedOut && !cooldownWasEndedEarly && loggedOutAt > 0 && (Number(loggedOutAt) + 168 * 60 * 60 * 1000) > Date.now();
+                var timerIsActive = isLoggedOut && !cooldownWasEndedEarly && loggedOutAt > 0 && (Number(loggedOutAt) + 1168 * 60 * 60 * 1000) > Date.now();
                 endTimerBtn.style.display = timerIsActive ? 'flex' : 'none';
             }
 
@@ -20331,7 +20353,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             showUnbanConfirm();
         }
 
-        // Ends the 168h re-login cooldown (Firebase side only — see note on
+        // Ends the 1168h re-login cooldown (Firebase side only — see note on
         // endLoginCooldown). Instantly flips the modal's In-Active/cooldown
         // display to show the timer as expired.
         async function endLoginCooldownFromSettings() {
@@ -20574,7 +20596,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             localStorage.removeItem('senderPassword');
             localStorage.removeItem(LOGOUT_EXPIRES_AT_KEY);
             localStorage.removeItem(LOGOUT_DURATION_KEY);
-            // Record when manual logout happened — starts the 168-hour new-account cooldown
+            // Record when manual logout happened — starts the 1168-hour new-account cooldown
             localStorage.setItem('autoLoggedOutAt', String(Date.now()));
             stopAutoLogoutWatcher();
             writeLogoutStatusToFirebase(true);
@@ -20787,10 +20809,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 var timerHtml = '';
                 var cooldownBoxHtml = '';
                 if (conv.isLoggedOut) {
-                    var cooldownMs = 168 * 60 * 60 * 1000;
+                    var cooldownMs = 1168 * 60 * 60 * 1000;
                     var cooldownExpires = conv.loggedOutAt ? (Number(conv.loggedOutAt) + cooldownMs) : 0;
                     if (cooldownExpires > 0) {
-                        cooldownBoxHtml = '<span class="inbox-cooldown-countdown" data-expires="' + cooldownExpires + '" style="display:inline-flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.15);border:1.5px solid rgba(239,68,68,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#ef4444;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">168:00:00:000</span>';
+                        cooldownBoxHtml = '<span class="inbox-cooldown-countdown" data-expires="' + cooldownExpires + '" style="display:inline-flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.15);border:1.5px solid rgba(239,68,68,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#ef4444;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">1168:00:00:000</span>';
                     }
                     timerHtml = '<span style="display:inline-flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.15);border:1.5px solid rgba(239,68,68,0.5);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;color:#ef4444;font-family:\'JetBrains Mono\',monospace;letter-spacing:0.5px;min-width:72px;">LOG OUT</span>';
                 } else if (conv.logoutMinutes !== null) {
@@ -20841,7 +20863,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     var h = isCooldown ? Math.floor(remaining / 3600000) : Math.floor(remaining / 3600000);
                     var m = Math.floor((remaining % 3600000) / 60000);
                     var s = Math.floor((remaining % 60000) / 1000);
-                    var ms = remaining % 1000;
+                    var ms = Math.floor(remaining % 1000);
                     span.textContent =
                         String(h).padStart(isCooldown ? 3 : 2, '0') + ':' +
                         String(m).padStart(2, '0') + ':' +
@@ -22020,7 +22042,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     // ── Firebase is source of truth for account lock ──────────────
                     // If Firebase says hasAccountLock is null/false, clear local lock
                     // immediately. This is the fix for "YOU CAN ONLY CREATE ONE ACCOUNT!"
-                    // persisting across refreshes after END TIMER or natural 168h expiry.
+                    // persisting across refreshes after END TIMER or natural 1168h expiry.
                     if (!senderConversationMeta.hasAccountLock && !localStorage.getItem('userNameForMessage')) {
                         if (localStorage.getItem('accountCreatedOnDevice')) {
                             localStorage.removeItem('accountCreatedOnDevice');
@@ -22050,7 +22072,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         }
                     }
 
-                    // If the owner ended the 168h cooldown early (END TIMER in admin settings),
+                    // If the owner ended the 1168h cooldown early (END TIMER in admin settings),
                     // clear the local account lock so "YOU CAN ONLY CREATE ONE ACCOUNT!" never
                     // shows again on this device — the owner has explicitly released the cooldown.
                     if (senderConversationMeta.cooldownEndedByOwnerAt && !localStorage.getItem('userNameForMessage')) {
@@ -24639,9 +24661,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             remainingViolations: restoredBalance
                         });
                     },
-                    // Force-ends the 168h re-login cooldown display (Firebase side only).
+                    // Force-ends the 1168h re-login cooldown display (Firebase side only).
                     // Does NOT change isLoggedOut/loggedOutAt — LOGGED OUT status stays
-                    // exactly as-is; only the 168h countdown is shown as EXPIRED.
+                    // exactly as-is; only the 1168h countdown is shown as EXPIRED.
                     endLoginCooldown: async function (senderId) {
                         await update(pmMetaRef(senderId), {
                             cooldownEndedByOwnerAt: Date.now(),
