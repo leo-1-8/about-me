@@ -13780,23 +13780,34 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // Periodically re-anchor from a real HTTP source
         // so even if someone changes clock BEFORE page load, it self-corrects
         (function _syncServerAnchor() {
-            function applyServerMs(ms) {
+            // Compensate for network round-trip latency: by the time we finish
+            // parsing the response, real time has already moved past the
+            // server's stamped timestamp by however long the request took.
+            // Without this, the whole clock (and every countdown built on it,
+            // including the warning timer's seconds/ms) runs systematically
+            // late by that latency amount.
+            function applyServerMs(ms, requestStartPerfMs) {
                 if (!isNaN(ms)) {
-                    _timeAnchorDeviceMs = ms;
-                    _timeAnchorPerfMs   = performance.now();
+                    var nowPerf = performance.now();
+                    var roundTripMs = nowPerf - requestStartPerfMs;
+                    var oneWayLatencyMs = Math.max(0, roundTripMs / 2);
+                    _timeAnchorDeviceMs = ms + oneWayLatencyMs;
+                    _timeAnchorPerfMs   = nowPerf;
                 }
             }
+            var _t0 = performance.now();
             fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                 .then(function(r) { return r.json(); })
                 .then(function(d) {
-                    applyServerMs(new Date(d.utc_datetime).getTime());
+                    applyServerMs(new Date(d.utc_datetime).getTime(), _t0);
                 })
                 .catch(function() {
                     // Fallback 1: worldtimeapi.org
+                    var _t1 = performance.now();
                     fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' })
                         .then(function(r) { return r.json(); })
                         .then(function(d) {
-                            applyServerMs(new Date(d.utc_datetime).getTime());
+                            applyServerMs(new Date(d.utc_datetime).getTime(), _t1);
                         })
                         .catch(function() {
                             // Fallback 2: use device time (better than nothing)
@@ -19811,9 +19822,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     if (msgOrigClose) msgOrigClose.style.setProperty('display', 'none', 'important');
                     if (msgTitle)     msgTitle.textContent     = title;
                     if (msgCountdown) {
-                        msgCountdown.textContent = f.text;
-                        // Build aligned labels dynamically from the segments in f.text
-                        if (msgLabels) buildSegmentLabels(msgLabels, f.text, msgCountdown);
+                        renderSegmentedCountdown(msgCountdown, msgLabels, f.text);
                     }
                 } else {
                     msgOverlay.style.display = 'none';
@@ -19833,8 +19842,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     if (loginOrigClose) loginOrigClose.style.setProperty('display', 'none', 'important');
                     if (loginTitle)     loginTitle.textContent     = title;
                     if (loginCountdown) {
-                        loginCountdown.textContent = f.text;
-                        if (loginLabels) buildSegmentLabels(loginLabels, f.text, loginCountdown);
+                        renderSegmentedCountdown(loginCountdown, loginLabels, f.text);
                     }
                 } else {
                     loginOverlay.style.display = 'none';
@@ -19843,44 +19851,46 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
-        // Build D/H/M/S/MS labels that exactly match the countdown character widths
-        function buildSegmentLabels(labelsEl, text, countdownEl) {
-            // Only rebuild when day-digit count changes (avoids expensive DOM work every frame)
-            var key = text.split(':')[0].length;
-            if (labelsEl._lastKey === key) return;
-            labelsEl._lastKey = key;
-
-            var names = ['D','H','M','S','MS'];
+        // Render D/H/M/S/MS as digit+label pairs stacked in the SAME column,
+        // so they're always perfectly aligned — no pixel-width measurement,
+        // no drift, no separate text node to keep in sync.
+        function renderSegmentedCountdown(countdownEl, labelsEl, text) {
+            if (labelsEl) labelsEl.style.display = 'none'; // legacy separate-labels row is no longer used
+            var names = ['D', 'H', 'M', 'S', 'MS'];
             var segments = text.split(':');
-            // Use a hidden clone to measure each segment width
-            var clone = document.createElement('span');
-            clone.style.cssText = countdownEl.style.cssText;
-            clone.style.position = 'absolute';
-            clone.style.visibility = 'hidden';
-            clone.style.whiteSpace = 'nowrap';
-            clone.style.left = '-9999px';
-            document.body.appendChild(clone);
-
-            labelsEl.innerHTML = '';
-            var colonWidth = (function(){
-                clone.textContent = ':';
-                return clone.getBoundingClientRect().width;
-            })();
-
-            for (var i = 0; i < segments.length; i++) {
-                clone.textContent = segments[i];
-                var w = clone.getBoundingClientRect().width;
-                var span = document.createElement('span');
-                span.textContent = names[i];
-                span.style.cssText = 'display:inline-block; text-align:center; width:' + w + 'px;';
-                labelsEl.appendChild(span);
-                if (i < segments.length - 1) {
-                    var sep = document.createElement('span');
-                    sep.style.cssText = 'display:inline-block; width:' + colonWidth + 'px;';
-                    labelsEl.appendChild(sep);
+            var key = segments.length + '|' + segments[0].length;
+            if (countdownEl._cmmKey !== key) {
+                countdownEl._cmmKey = key;
+                countdownEl.innerHTML = '';
+                countdownEl.style.display = 'flex';
+                countdownEl.style.alignItems = 'flex-start';
+                countdownEl.style.justifyContent = 'center';
+                countdownEl._cmmNums = [];
+                for (var i = 0; i < segments.length; i++) {
+                    var wrap = document.createElement('span');
+                    wrap.style.cssText = 'display:inline-flex; flex-direction:column; align-items:center;';
+                    var num = document.createElement('span');
+                    num.textContent = segments[i];
+                    var lbl = document.createElement('span');
+                    lbl.textContent = names[i] || '';
+                    lbl.style.cssText = 'font-family:monospace; font-size:10px; font-weight:700; letter-spacing:0; opacity:0.85; margin-top:2px;';
+                    wrap.appendChild(num);
+                    wrap.appendChild(lbl);
+                    countdownEl.appendChild(wrap);
+                    countdownEl._cmmNums.push(num);
+                    if (i < segments.length - 1) {
+                        var sep = document.createElement('span');
+                        sep.textContent = ':';
+                        countdownEl.appendChild(sep);
+                    }
+                }
+            } else if (countdownEl._cmmNums) {
+                for (var j = 0; j < segments.length; j++) {
+                    if (countdownEl._cmmNums[j].textContent !== segments[j]) {
+                        countdownEl._cmmNums[j].textContent = segments[j];
+                    }
                 }
             }
-            document.body.removeChild(clone);
         }
 
         function startCloseMessageMeRAF() {
@@ -25071,12 +25081,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <div id="cdtpDatePanel">
       <!-- Month/Year nav -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <button id="cdtpPrevMonthBtn" onmousedown="cdtpStartHold('month',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',-1)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8249;</button>
+        <button id="cdtpPrevMonthBtn" onmousedown="cdtpStartHold('month',-1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',-1,event)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8249;</button>
         <div style="display:flex;gap:6px;align-items:center;">
           <span id="cdtpMonthLabel" onclick="cdtpToggleMonthPicker()" style="font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);" title="Click to pick month"></span>
           <span id="cdtpYearLabel" onclick="cdtpToggleYearPicker()" style="font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.07);" title="Click to pick year"></span>
         </div>
-        <button onmousedown="cdtpStartHold('month',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',1)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8250;</button>
+        <button onmousedown="cdtpStartHold('month',1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('month',1,event)" ontouchend="cdtpStopHold()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;user-select:none;">&#8250;</button>
       </div>
       <!-- Month picker (hidden by default) -->
       <div id="cdtpMonthPicker" style="display:none;margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.08);border-radius:8px;">
@@ -25119,16 +25129,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
         <!-- Hour -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <button onmousedown="cdtpStartHold('hour',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
+          <button onmousedown="cdtpStartHold('hour',1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',1,event)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
           <input id="cdtpHourInput" type="number" min="1" max="12" value="12" style="width:52px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid #444;border-radius:8px;color:#22c55e;font-size:28px;font-weight:700;padding:6px 2px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpHourTyped(this.value)">
-          <button onmousedown="cdtpStartHold('hour',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',-1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
+          <button onmousedown="cdtpStartHold('hour',-1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('hour',-1,event)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
         </div>
         <span style="font-size:28px;font-weight:700;color:#fff;">:</span>
         <!-- Minute -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <button onmousedown="cdtpStartHold('min',1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
+          <button onmousedown="cdtpStartHold('min',1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',1,event)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▲</button>
           <input id="cdtpMinInput" type="number" min="0" max="59" value="0" style="width:52px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid #444;border-radius:8px;color:#22c55e;font-size:28px;font-weight:700;padding:6px 2px;outline:none;font-family:'Share Tech Mono',monospace;" oninput="cdtpMinTyped(this.value)">
-          <button onmousedown="cdtpStartHold('min',-1)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',-1)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
+          <button onmousedown="cdtpStartHold('min',-1,event)" onmouseup="cdtpStopHold()" onmouseleave="cdtpStopHold()" ontouchstart="cdtpStartHold('min',-1,event)" ontouchend="cdtpStopHold()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:6px;width:36px;height:30px;user-select:none;">▼</button>
         </div>
         <span style="font-size:28px;font-weight:700;color:#fff;">:</span>
         <!-- Second -->
@@ -25447,7 +25457,21 @@ function cdtpStep(type,dir){
   cdtpRenderTime();
 }
 
-function cdtpStartHold(type,dir){
+function cdtpStartHold(type,dir,evt){
+  if(evt){
+    if(evt.type==='touchstart'){
+      // Stop the browser's synthetic mouse-event cascade (mousedown/click)
+      // that normally follows a touch ~300ms later — without this, mobile
+      // taps were counting as 2 steps (one from touchstart, one from the
+      // synthetic mousedown that fires afterward).
+      evt.preventDefault();
+      window._cdtpLastTouchAt = Date.now();
+    } else if(evt.type==='mousedown'){
+      // If a touch just happened on this same control, ignore the
+      // synthetic mousedown that the browser fires right after it.
+      if(window._cdtpLastTouchAt && (Date.now() - window._cdtpLastTouchAt) < 800) return;
+    }
+  }
   cdtpStopHold();
   cdtpStep(type,dir);
   _cdtpHoldSpeed=1;
