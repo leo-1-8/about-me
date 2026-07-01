@@ -11725,6 +11725,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <option value="">SELECT ACCOUNT</option>
                             </select>
                         </div>
+                        <!-- Active per-person Close Message Me timers — only shown when at
+                             least one sender currently has one running; removed otherwise. -->
+                        <div id="closeSectionMarkerActiveTimers" style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; margin-bottom: 10px; font-weight: normal;">TITLE AND TIMER OF USERS</div>
+                        <div id="closeActiveTimersBox" style="display:none; margin-bottom: 10px; padding: 10px 12px; border-radius: 8px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.35); color: #22c55e; font-size: 12px; font-weight: 700; line-height: 1.6; font-family: 'Share Tech Mono', monospace;"></div>
                     </div>
                 </div>
                 
@@ -11815,13 +11819,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <!-- End Timer — only visible when 1168h timer is actively counting down -->
             <button type="button" id="userSettingsEndTimerBtn" onclick="endLoginCooldownFromSettings()" style="width: 100%; height: 34px; padding: 0 10px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: none; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">END TIMER</button>
 
-            <!-- Scroll to top button — appears when scrolled down -->
-            <button type="button" id="userSettingsScrollTopBtn" class="user-settings-scroll-top-btn" onclick="document.querySelector('.user-settings-box').scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-            </button>
-
             <!-- Reset Data — very bottom -->
-            <button type="button" id="pmResetDataBtn" onclick="showResetDataConfirm()" style="width: 100%; height: 60px; padding: 0 14px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">RESET DATA</button>
+            <button type="button" id="pmResetDataBtn" onclick="showResetDataConfirm()" style="width: 100%; min-width: 0; height: 60px; min-height: 60px; flex-shrink: 0; padding: 0 14px; border: 1px solid rgba(239,68,68,0.5); border-radius: 8px; background: rgba(239,68,68,0.12); color: #ef4444; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">RESET DATA</button>
+
+            <!-- Auto Login button -->
+            <button type="button" id="userSettingsAutoLoginBtn" onclick="autoLoginFromSettings()" style="width: 100%; min-width: 0; height: 60px; min-height: 60px; flex-shrink: 0; padding: 0 14px; border: 1px solid rgba(255,140,0,0.6); border-radius: 8px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center; box-shadow: 0 2px 12px rgba(249,115,22,0.35); margin-top: 6px;" onmouseover="this.style.background='linear-gradient(135deg,#fb923c,#f97316)';this.style.boxShadow='0 4px 18px rgba(249,115,22,0.55)'" onmouseout="this.style.background='linear-gradient(135deg,#f97316,#ea580c)';this.style.boxShadow='0 2px 12px rgba(249,115,22,0.35)'">AUTO LOGIN</button>
         </div>
     </div>
 
@@ -13124,6 +13126,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     var mm = String(absOffset % 60).padStart(2, '0');
                     return Promise.resolve({ now: new Date(nowMs), utcOffset: sign + hh + ':' + mm });
                 }
+                var _isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+                if (_isLocalDev) return Promise.resolve({ now: new Date(), utcOffset: '' });
                 return fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                     .then(function(r) { return r.json(); })
                     .then(function(d) {
@@ -13997,6 +14001,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
             var _t0 = performance.now();
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") { _timeAnchorDeviceMs = Date.now(); _timeAnchorPerfMs = performance.now(); } else {
             fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                 .then(function(r) { return r.json(); })
                 .then(function(d) {
@@ -14016,6 +14021,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             _timeAnchorPerfMs   = performance.now();
                         });
                 });
+            } // end localhost guard
             // Re-sync every 5 minutes
             setTimeout(_syncServerAnchor, 5 * 60 * 1000);
         })();
@@ -14423,10 +14429,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         // Main menu corner clock — snaps to exact second boundary, zero drift
+        // Uses the tamper-proof server-anchored time (see _timeAnchorDeviceMs /
+        // _timeAnchorPerfMs above), NOT new Date(), so a user manually changing
+        // their device clock in system settings has no effect on what's shown here.
         function updateMainMenuClock() {
             var el = document.getElementById('mainMenuClock');
             if (!el) return;
-            var now = new Date();
+            var now = _getTamperProofNow();
             var h = now.getHours();
             var m = now.getMinutes();
             var s = now.getSeconds();
@@ -18000,6 +18009,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             if (type === 'christmasMessage') {
                 stopChristmasMessageViewportSync();
+                // Restore the user settings modal z-index if it was lowered by autoLoginFromSettings
+                var _settingsModal = document.getElementById('userSettingsModal');
+                if (_settingsModal) _settingsModal.style.zIndex = '';
+                // Reset any z-index boost applied by autoLoginFromSettings
+                if (modal) modal.style.zIndex = '';
             }
             if (type === 'senderLogin') {
                 var _senderLoginResetNotice = document.getElementById('authorResetNoticeSenderLogin');
@@ -19695,6 +19709,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // on every fresh open closes that gap.
                 resetCloseSpecificPersonSelection();
                 populateCloseSpecificPersonSelect();
+                startCloseActiveTimersTicker();
                 modal.classList.add('active');
                 modal.style.display = 'flex';
                 var scrollEl = document.getElementById('closeTimeDurationScroll');
@@ -19714,6 +19729,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 modal.classList.remove('active');
                 modal.style.display = 'none';
             }
+            stopCloseActiveTimersTicker();
             resetCloseSpecificPersonSelection();
         }
 
@@ -19756,6 +19772,92 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             select.style.color = hasSelection ? '#22c55e' : '#999';
             select.style.borderColor = hasSelection ? 'rgba(34,197,94,0.6)' : 'rgba(255,255,255,0.25)';
             if (label) label.style.color = hasSelection ? '#22c55e' : '#fff';
+        }
+
+        // Lists every sender who currently has an active per-person Close Message Me
+        // timer running, e.g. "1. Yunna 00:00:00:000" with their chosen title beneath
+        // it. The box is hidden entirely whenever nobody has one active.
+        function renderCloseActiveTimersBox() {
+            var box = document.getElementById('closeActiveTimersBox');
+            if (!box) return;
+            var nowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
+            var entries = [];
+            Object.keys(_cachedInboxConversations || {}).forEach(function(senderId) {
+                var conv = _cachedInboxConversations[senderId];
+                if (conv && conv.messageMeClosedActive && conv.messageMeClosedEndUtcMs && conv.messageMeClosedEndUtcMs > nowMs) {
+                    entries.push({
+                        name: conv.senderName || formatInboxDeviceLabel(conv.lastDeviceName) || senderId,
+                        remainingMs: conv.messageMeClosedEndUtcMs - nowMs,
+                        title: conv.messageMeClosedTitle || '',
+                        // Fallback for entries written before this field existed, so
+                        // they still get a stable (if imperfect) sort position rather
+                        // than defaulting to 0 and jumping to the front.
+                        setAt: conv.messageMeClosedSetAt || conv.messageMeClosedEndUtcMs
+                    });
+                }
+            });
+            if (!entries.length) {
+                box.style.display = 'block';
+                box.style.background = 'transparent';
+                box.style.border = 'none';
+                box.style.padding = '0 0 10px 0';
+                box.style.color = '#999';
+                box.style.fontWeight = '400';
+                box.innerHTML = '<div style="text-align:center;">NO ACTIVE TITLE AND TIMER</div>';
+                return;
+            }
+            box.style.background = 'transparent';
+            box.style.border = 'none';
+            box.style.padding = '0';
+            box.style.color = '#22c55e';
+            box.style.fontWeight = '700';
+            box.style.display = 'flex';
+            box.style.flexDirection = 'column';
+            box.style.gap = '8px';
+            entries.sort(function(a, b) { return a.setAt - b.setAt; });
+            var html = entries.map(function(entry, i) {
+                var totalSeconds = Math.floor(entry.remainingMs / 1000);
+                var days = Math.floor(totalSeconds / 86400);
+                var hours = Math.floor((totalSeconds % 86400) / 3600);
+                var minutes = Math.floor((totalSeconds % 3600) / 60);
+                var seconds = totalSeconds % 60;
+                var ms = Math.floor(entry.remainingMs % 1000);
+                var timeText = (days > 0 ? days + ':' : '') + String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + ':' + String(ms).padStart(3, '0');
+                var row = '<div style="position:relative; padding:10px 12px; border-radius:8px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.35);">';
+                row += '<span style="position:absolute; left:12px; top:10px;">' + (i + 1) + '.</span>';
+                row += '<div style="text-align:center;">';
+                if (entry.title) {
+                    row += '<div style="font-weight:400; opacity:0.85; margin-bottom:2px;">' + escapeHtmlPm(entry.title) + '</div>';
+                }
+                row += escapeHtmlPm(entry.name) + ' ' + timeText;
+                row += '</div></div>';
+                return row;
+            }).join('');
+            box.innerHTML = html;
+            box.style.display = 'flex';
+        }
+
+        // Keeps the active-timers box counting down live while the Close Message Me
+        // modal is open. Started on open, stopped on close — no point ticking in
+        // the background when nobody can see it. Uses requestAnimationFrame (like
+        // the other countdowns in this modal) so the ms digits update smoothly
+        // instead of jumping once a second.
+        var _closeActiveTimersRAF = null;
+        function startCloseActiveTimersTicker() {
+            stopCloseActiveTimersTicker();
+            function tick() {
+                renderCloseActiveTimersBox();
+                _closeActiveTimersRAF = requestAnimationFrame(tick);
+            }
+            tick();
+        }
+        function stopCloseActiveTimersTicker() {
+            if (_closeActiveTimersRAF) {
+                cancelAnimationFrame(_closeActiveTimersRAF);
+                _closeActiveTimersRAF = null;
+            }
         }
 
         // Clears the person dropdown back to "SELECT ACCOUNT" — called alongside
@@ -20069,14 +20171,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             }
                             return;
                         }
-                        console.log('[closeMessageMe] Clearing person timer — target node:', 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta', 'raw selectedSenderId:', selectedSenderId);
+
                         import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                             fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
                                 messageMeClosedActive: false,
                                 messageMeClosedEndUtcMs: 0,
                                 messageMeClosedTitle: ''
                             }).then(function() {
-                                console.log('[closeMessageMe] Per-person clear write CONFIRMED by Firebase for', selectedSenderId);
+
                             }).catch(function(e) {
                                 console.warn('[closeMessageMe] Per-person Firebase clear failed:', e);
                             });
@@ -20196,7 +20298,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
                                 messageMeClosedEndUtcMs: endUtcMs,
                                 messageMeClosedTitle: titleText,
-                                messageMeClosedActive: true
+                                messageMeClosedActive: true,
+                                messageMeClosedSetAt: serverNowMs
                             }).catch(function(e) {
                                 console.warn('[closeMessageMe] Per-person Firebase write failed:', e);
                             });
@@ -20268,6 +20371,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             // Fetch fresh server time, fall back to anchor, then device time
             (function() {
+                if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") { var _ldMs = (typeof _timeAnchorDeviceMs !== "undefined" && typeof _timeAnchorPerfMs !== "undefined") ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs) : Date.now(); _doWriteClose(_ldMs); return; }
                 function useServerMs(ms) { _doWriteClose(isNaN(ms) ? Date.now() : ms); }
                 fetch('https://timeapi.world/api/ip', { cache: 'no-store' })
                     .then(function(r) { return r.json(); })
@@ -20337,20 +20441,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var now = performance.now();
             var siteRemaining = (window._cmmSitePerfEndMs || 0) - now;
             var personRemaining = (window._cmmPersonPerfEndMs || 0) - now;
-            console.log('[closeMessageMe] Recompute — siteRemainingMs:', Math.round(siteRemaining), 'personRemainingMs:', Math.round(personRemaining));
+
 
             if (siteRemaining > 0) {
-                console.log('[closeMessageMe] → showing SITE-WIDE closure (takes priority while active; person-specific is queued behind it)');
+
                 window.closeMessageMeEndPerfMs = window._cmmSitePerfEndMs;
                 window.closeMessageMeTitle = window._cmmSiteTitle || '';
                 startCloseMessageMeRAF();
             } else if (personRemaining > 0) {
-                console.log('[closeMessageMe] → showing PERSON-SPECIFIC closure (site-wide has expired)');
+
                 window.closeMessageMeEndPerfMs = window._cmmPersonPerfEndMs;
                 window.closeMessageMeTitle = window._cmmPersonTitle || '';
                 startCloseMessageMeRAF();
             } else {
-                console.log('[closeMessageMe] → clearing (nothing active on either slice)');
+
                 window.closeMessageMeEndPerfMs = 0;
                 window.closeMessageMeTitle = '';
                 updateAllCloseMessageMeDisplays();
@@ -20554,7 +20658,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     messageMeClosedActive: false,
                     messageMeClosedEndUtcMs: 0,
                     messageMeClosedTitle: ''
-                }).then(function() { console.log('[closeMessageMe] ' + logLabel + ' auto-cleared expired PERSON closure in Firebase for', senderId); })
+                }).then(function() { })
                   .catch(function(e) { console.warn('[closeMessageMe] ' + logLabel + ' auto-clear PERSON failed:', e); });
             }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
         }
@@ -20569,7 +20673,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 _cmmSiteClearedForEndMs = window._cmmSitePerfEndMs;
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                     fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' })
-                        .then(function() { console.log('[closeMessageMe] Auto-cleared expired SITE-wide closure in Firebase'); })
+                        .then(function() { })
                         .catch(function(e) { console.warn('[closeMessageMe] Auto-clear SITE failed:', e); });
                 }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
             }
@@ -20833,6 +20937,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var endTimerBtnEl = document.getElementById('userSettingsEndTimerBtn');
             var endActiveTimerBtnEl = document.getElementById('userSettingsEndActiveTimerBtn');
 
+            var autoLoginBtnEl = document.getElementById('userSettingsAutoLoginBtn');
+
             if (isWiped) {
                 if (actionsSection) actionsSection.style.display = 'none';
                 var bannedNoticeEl = document.getElementById('userSettingsBannedNotice');
@@ -20845,6 +20951,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (endTimerBtnEl) endTimerBtnEl.style.display = 'none';
                 if (endActiveTimerBtnEl) endActiveTimerBtnEl.style.display = 'none';
                 if (resetBtn) resetBtn.style.display = 'none';
+                if (autoLoginBtnEl) autoLoginBtnEl.style.display = 'none';
                 return;
             } else {
                 if (actionsSection) actionsSection.style.display = '';
@@ -20852,6 +20959,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (activeTimerSection) activeTimerSection.style.display = '';
                 if (inactiveTimerSection) inactiveTimerSection.style.display = '';
                 if (resetBtn) resetBtn.style.display = 'flex';
+                if (autoLoginBtnEl) autoLoginBtnEl.style.display = 'flex';
             }
 
             // Violations
@@ -21020,6 +21128,92 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             showUnbanConfirm();
         }
 
+        // Automatically logs in as this user by writing their credentials directly
+        // into localStorage, bypassing the normal login flow entirely.
+        async function autoLoginFromSettings() {
+            var targetId = _userSettingsTargetSenderId || activeConversationSenderId;
+            if (!targetId) { alert('No user selected.'); return; }
+
+            var btn = document.getElementById('userSettingsAutoLoginBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Logging in…'; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; }
+
+            try {
+                // Fetch the latest meta from Firebase
+                var meta = null;
+                if (window.PrivateMessaging && window.PrivateMessaging._db && window.PrivateMessaging._pmSafeKey) {
+                    var fbMods = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                    var metaSnap = await fbMods.get(fbMods.ref(window.PrivateMessaging._db, 'privateMessages/' + window.PrivateMessaging._pmSafeKey(targetId) + '/meta'));
+                    meta = metaSnap.val() || {};
+                } else if (activeConversationSenderId === targetId && activeConversationMeta) {
+                    meta = activeConversationMeta;
+                }
+
+                var name = (meta && (meta.senderName)) || '';
+                var pw   = (meta && meta.senderPassword) || '';
+
+                if (!name) { alert('No name found for this user — cannot auto-login.'); return; }
+
+                // Write session exactly the same way finishLogin() does
+                localStorage.setItem('userNameForMessage', name);
+                localStorage.setItem('userNameStoredAt', String(Date.now()));
+                if (pw) localStorage.setItem('senderPassword', pw);
+                localStorage.removeItem('authorWasReset');
+                localStorage.removeItem('wasAuthorReset');
+                localStorage.setItem('accountCreatedOnDevice', '1');
+                try { localStorage.setItem('christmasUserId', targetId); } catch(e) {}
+
+                // Clear any cooldown so the user can see the chat immediately
+                localStorage.removeItem('autoLoggedOutAt');
+                if (typeof stopAccountCooldownTimer === 'function') stopAccountCooldownTimer();
+                var cdBox = document.getElementById('accountCooldownTimerBox');
+                if (cdBox) cdBox.style.display = 'none';
+
+                // Set a fixed 10-minute active timer (instead of using the user's selected option)
+                var _nowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                    ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                    : Date.now();
+                var _autoLoginMinutes = 10;
+                var _autoLoginExpiresAt = _nowMs + _autoLoginMinutes * 60 * 1000;
+                localStorage.setItem(LOGOUT_EXPIRES_AT_KEY, String(_autoLoginExpiresAt));
+                // Write the 10-minute timer to Firebase so the admin inbox shows it
+                if (window._pmDb && window.pmSafeKey) {
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                        fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(targetId) + '/meta'), {
+                            logoutMinutes: _autoLoginMinutes,
+                            logoutExpiresAt: _autoLoginExpiresAt,
+                            isLoggedOut: null,
+                            loggedOutAt: null
+                        }).catch(function() {});
+                    }).catch(function() {});
+                }
+                if (typeof startAutoLogoutWatcher === 'function') startAutoLogoutWatcher();
+                if (typeof closeModal === 'function') closeModal('senderLogin');
+
+                // Lower the user settings modal z-index BEFORE opening christmasMessage.
+                // Force a reflow so the browser commits the new stacking order before
+                // christmasMessage enters the stacking context — fixes the first-open bug.
+                var _settingsModal = document.getElementById('userSettingsModal');
+                if (_settingsModal) {
+                    _settingsModal.style.zIndex = '9000';
+                    void _settingsModal.offsetHeight; // force reflow
+                }
+
+                if (typeof openModal === 'function') openModal('christmasMessage');
+                var viewArea = document.getElementById('christmasViewArea');
+                if (viewArea) {
+                    viewArea.style.display = 'block';
+                    localStorage.setItem('VIEW_YOUR_MESSAGE_OPEN', 'true');
+                    if (typeof startSenderThreadListener === 'function') startSenderThreadListener();
+                }
+
+            } catch (e) {
+                console.error('autoLoginFromSettings error:', e);
+                alert('Auto-login failed. Check the console for details.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'AUTO LOGIN'; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+            }
+        }
+
         // Ends the 1168h re-login cooldown (Firebase side only — see note on
         // endLoginCooldown). Instantly flips the modal's In-Active/cooldown
         // display to show the timer as expired.
@@ -21045,9 +21239,30 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // would if its own countdown had reached zero naturally.
         async function endActiveTimerFromSettings() {
             var targetId = _userSettingsTargetSenderId || activeConversationSenderId;
-            if (!targetId || !window.PrivateMessaging || !window.PrivateMessaging.forceLogout) return;
+            if (!targetId) return;
+
+            // Give instant feedback the click registered, before anything async runs.
             var btn = document.getElementById('userSettingsEndActiveTimerBtn');
             if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+
+            // window.PrivateMessaging is normally ready within a fraction of a
+            // second of page load, but a click landing right at page load (or on
+            // a tab just woken from the background) can beat it. Instead of
+            // hard-failing on the broader "ready" flag (which covers unrelated
+            // features), poll for the one thing this action actually needs —
+            // forceLogout — for a few seconds before giving up, so the button
+            // works on the first click instead of requiring a second try.
+            var waitedMs = 0;
+            while ((!window.PrivateMessaging || !window.PrivateMessaging.forceLogout) && waitedMs < 5000) {
+                await new Promise(function (resolve) { setTimeout(resolve, 200); });
+                waitedMs += 200;
+            }
+            if (!window.PrivateMessaging || !window.PrivateMessaging.forceLogout) {
+                alert('Please refresh this page, then click END TIMER again.');
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+                return;
+            }
+
             try {
                 await window.PrivateMessaging.forceLogout(targetId);
                 await _refreshMetaEverywhere(targetId);
@@ -21453,6 +21668,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var closeModalEl = document.getElementById('closeMessageMeModal');
             if (closeModalEl && closeModalEl.classList.contains('active') && typeof populateCloseSpecificPersonSelect === 'function') {
                 populateCloseSpecificPersonSelect();
+                if (typeof renderCloseActiveTimersBox === 'function') renderCloseActiveTimersBox();
             }
             
             let html = '';
@@ -22737,7 +22953,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     // scoped to just MY OWN meta node (privateMessages/<me>/meta), so an
                     // "ADD A SPECIFIC PERSON TIMER" closure the owner set for me actually
                     // shows up here — this is the piece that was previously missing.
-                    console.log('[closeMessageMe] Meta received for my own node — messageMeClosedActive:', senderConversationMeta.messageMeClosedActive, 'EndUtcMs:', senderConversationMeta.messageMeClosedEndUtcMs, 'Title:', senderConversationMeta.messageMeClosedTitle);
+
                     // Remember which node this is so the auto-clear (see
                     // _cmmMaybeAutoClearExpired) knows where to write the
                     // expiry clear back to once this device's own countdown ends.
@@ -24484,7 +24700,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                     audio.addEventListener('canplaythrough', function() {
                         // Audio is ready to play
-                        console.log('Audio ready for', songId);
+
                     });
                 }
             });
@@ -25568,7 +25784,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                             logoutMinutes: meta.logoutMinutes !== undefined ? meta.logoutMinutes : null,
                                             logoutExpiresAt: meta.logoutExpiresAt !== undefined ? meta.logoutExpiresAt : null,
                                             isLoggedOut: meta.isLoggedOut || false,
-                                            loggedOutAt: meta.loggedOutAt || null
+                                            loggedOutAt: meta.loggedOutAt || null,
+                                            messageMeClosedActive: meta.messageMeClosedActive || false,
+                                            messageMeClosedEndUtcMs: meta.messageMeClosedEndUtcMs || null,
+                                            messageMeClosedTitle: meta.messageMeClosedTitle || '',
+                                            messageMeClosedSetAt: meta.messageMeClosedSetAt || null
                                         });
 
                                         // ── CLOSE MESSAGE ME — owner-side auto-clear tracking ──
