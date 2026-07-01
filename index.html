@@ -11154,8 +11154,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         <div class="christmas-modal-box" style="position:relative; overflow:hidden;">
             <!-- Close-Message-Me timer overlay -->
             <div id="msgMeClosedOverlay" class="closed-status-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:all; text-align:center; padding:24px;">
-                <!-- X button inside the blur -->
-                <button onclick="closeModal('christmasMessage')" title="Close" class="closed-status-x" style="position:absolute; top:10px; right:12px; font-size:22px; background:none; border:none; cursor:pointer; line-height:1; opacity:0.8;">×</button>
                 <div id="msgMeClosedTitle" class="closed-status-title" style="font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; line-height:1.5; max-width:260px;"></div>
                 <div id="msgMeClosedCountdown" style="font-size:26px; font-weight:800; color:#3b82f6; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
                 <!-- Labels aligned under each segment using the same letter-spacing as the countdown -->
@@ -11454,47 +11452,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- CLOSE MESSAGE ME Modal -->
     <div class="modal-overlay" id="closeMessageMeModal" style="background: rgba(0, 0, 0, 0.85); pointer-events: auto;" onclick="if(event.target.id === 'closeMessageMeModal') return;">
         <div class="christmas-modal-box" style="background: #1a1a1a; max-width: 450px; position: relative;">
-            <button style="position: absolute; top: 46px; right: 12px; font-size: 28px; color: #fff; background: none; border: none; cursor: pointer; padding: 0; line-height: 1;" onclick="document.getElementById('closeMessageMeModal').classList.remove('active'); document.getElementById('closeMessageMeModal').style.display = 'none';">×</button>
+            <button style="position: absolute; top: 46px; right: 12px; font-size: 28px; color: #fff; background: none; border: none; cursor: pointer; padding: 0; line-height: 1;" onclick="closeCloseMessageMeModal()">×</button>
             
             <div style="text-align: left; padding: 30px 20px 20px;">
                 <div class="christmas-modal-title" style="margin-bottom: 20px; text-align: center;">CLOSE MESSAGE ME</div>
                 
-                <div style="text-align: left; font-size: 12px; color: #999; margin-bottom: 25px; font-weight: normal;">SELECT A SPECIFIC TIME BELOW</div>
+                <div style="text-align: left; font-size: 12px; color: #999; margin-bottom: 25px; font-weight: normal;">CHOOSE A TITLE</div>
                 
                 <!-- ALL options in one single scrollable container — no scroll button -->
                 <div id="closeTimeDurationScroll" style="max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1a1a1a; padding-right: 4px; margin-bottom: 25px;">
                     <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 7 DAYS</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="15days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 15 DAYS</span>
-                        </label>
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeTime" value="30days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
-                        </label>
-                        <!-- Add Custom Date and Time -->
-                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="_closeCustomDateTimeLabelClick(event);">
-                            <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;">
-                            <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                                <span class="close-msg-text" style="font-weight: normal;">ADD CUSTOM DATE AND TIME</span>
-                                <span id="closeCustomDateTimePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
-                                <span id="closeCustomDateTimeBtnRow" style="display: none; gap: 6px;">
-                                    <button type="button" id="closeCustomDateTimeEnterBtn" onclick="event.stopPropagation(); openCustomDateTimePicker();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">PICK</button>
-                                    <button type="button" id="closeCustomDateTimeClearBtn" onclick="event.stopPropagation(); resetCloseCustomDateTime();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
-                                </span>
-                            </span>
-                        </label>
-                        <!-- Open Immediately -->
-                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
-                            <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
-                            <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
-                        </label>
-                        <!-- Divider + CHOOSE A TITLE inside scroll -->
-                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE A TITLE</div>
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTitle" value="closed" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY CLOSED.</span>
@@ -11512,21 +11479,52 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.</span>
                         </label>
                         <!-- Custom Title -->
-                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName==='BUTTON'){return;} _closeCustomTitleLabelClick(event);">
+                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); var t=event.target; if(t.id==='closeCustomTitleRadio' || t.id==='closeCustomTitleTitleText'){ _closeCustomTitleLabelClick(event); }">
                             <input type="radio" name="closeTitle" value="custom" id="closeCustomTitleRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                                <span class="close-msg-text" style="font-weight: normal;">ADD YOUR OWN TITLE MESSAGE</span>
+                                <span class="close-msg-text" id="closeCustomTitleTitleText" style="font-weight: normal;">ADD YOUR OWN TITLE MESSAGE</span>
                                 <span id="closeCustomTitleBtnRow" style="display: none; gap: 6px; align-items: center; margin-bottom: 6px; width: 100%; height: 32px;">
                                     <input type="text" id="closeCustomTitleInput" maxlength="120" placeholder="Type your custom title..." onkeydown="if(event.key==='Enter'){event.preventDefault(); confirmCloseCustomTitle();}" oninput="updateCloseCustomTitleButtons();" style="flex: 1 1 auto; min-width: 0; height: 32px; padding: 0 10px; margin: 0; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px; box-sizing: border-box; line-height: 1; vertical-align: top;">
                                     <button type="button" id="closeCustomTitleEnterBtn" onclick="event.stopPropagation(); confirmCloseCustomTitle();" style="flex: 0 0 auto; height: 32px; padding: 0 16px; margin: 0; border-radius: 6px; border: 0; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; vertical-align: top;">ENTER</button>
                                     <button type="button" id="closeCustomTitleClearBtn" onclick="event.stopPropagation(); resetCloseCustomTitle();" disabled style="flex: 0 0 auto; width: 32px; height: 32px; padding: 0; margin: 0; border-radius: 6px; border: 0; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; vertical-align: top;">✕</button>
                                 </span>
-                                <span id="closeCustomTitlePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
+                                <span id="closeCustomTitlePreview" style="display:none; width: 100%; text-align: center; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
                             </span>
                         </label>
+                        <!-- Divider + SELECT A SPECIFIC TIME BELOW inside scroll -->
+                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">SELECT A SPECIFIC TIME BELOW</div>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 7 DAYS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="15days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 15 DAYS</span>
+                        </label>
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeTime" value="30days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
+                        </label>
+                        <!-- Add Custom Date and Time -->
+                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); var t=event.target; if(t.id==='closeCustomDateTimeRadio' || t.id==='closeCustomDateTimeTitleText'){ _closeCustomDateTimeLabelClick(event); }">
+                            <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;">
+                            <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                                <span class="close-msg-text" id="closeCustomDateTimeTitleText" style="font-weight: normal;">ADD CUSTOM DATE AND TIME</span>
+                                <span id="closeCustomDateTimePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
+                                <span id="closeCustomDateTimeBtnRow" style="display: none; gap: 6px;">
+                                    <button type="button" id="closeCustomDateTimeEnterBtn" onclick="event.stopPropagation(); openCustomDateTimePicker();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">PICK</button>
+                                    <button type="button" id="closeCustomDateTimeClearBtn" onclick="event.stopPropagation(); resetCloseCustomDateTime();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
+                                </span>
+                            </span>
+                        </label>
+                        <!-- Open Immediately -->
+                        <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
+                            <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
+                            <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
+                        </label>
                         <!-- Divider + ADD A SPECIFIC PERSON TIMER -->
-                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">ADD A SPECIFIC PERSON TIMER</div>
-                        <div class="close-msg-radio-label" id="closeSpecificPersonRow" style="display: flex; align-items: center; gap: 12px; color: #fff; padding-top: 2px;">
+                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">ADD A SPECIFIC PERSON'S TIMER</div>
+                        <div class="close-msg-radio-label" id="closeSpecificPersonRow" style="display: flex; align-items: center; gap: 12px; color: #fff; padding-top: 2px; margin-bottom: 10px;">
                             <span class="close-msg-text" id="closeSpecificPersonLabel" style="font-weight: normal; flex: 1 1 auto; min-width: 0;">SENDER'S NAME</span>
                             <select id="closeSpecificPersonSelect" onchange="updateCloseSpecificPersonSelection()" style="flex: 0 0 auto; max-width: 55%; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: #2a2a2a; color: #999; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box;">
                                 <option value="">SELECT PERSON</option>
@@ -19348,10 +19346,38 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function openCloseMessageMeModal() {
             const modal = document.getElementById('closeMessageMeModal');
             if (modal) {
+                // BUGFIX: a specific-person pick must never survive from a previous
+                // modal session into a new one. populateCloseSpecificPersonSelect()
+                // below intentionally RESTORES whatever the dropdown's previous value
+                // was (so it doesn't reset mid-session while the modal stays open and
+                // the inbox list live-refreshes) — but that same restore logic means
+                // that if a person was picked last time and the modal was closed
+                // without clicking APPLY, that senderId is still sitting in the
+                // dropdown right now. The next Apply — even one meant to be a plain
+                // GLOBAL "OPEN MESSAGE ME IMMEDIATELY" or a global duration close —
+                // would then read that leftover senderId as selectedSenderId and get
+                // silently scoped to privateMessages/<that person>/meta instead of
+                // siteConfig/messageMeStatus. Explicitly resetting to "SELECT PERSON"
+                // on every fresh open closes that gap.
+                resetCloseSpecificPersonSelection();
                 populateCloseSpecificPersonSelect();
                 modal.classList.add('active');
                 modal.style.display = 'flex';
             }
+        }
+
+        // Closing without applying must not leave a picked-but-uncommitted person
+        // selection behind either — same reasoning as the reset above, just covering
+        // the "changed my mind and closed the modal" exit instead of the "opened it"
+        // entry. Together these two guarantee selectedSenderId can only ever be
+        // non-empty because of a choice made during the CURRENT modal session.
+        function closeCloseMessageMeModal() {
+            const modal = document.getElementById('closeMessageMeModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
+            resetCloseSpecificPersonSelection();
         }
 
         // Fills the "ADD A SPECIFIC PERSON TIMER" dropdown from whatever
@@ -19685,11 +19711,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             }
                             return;
                         }
+                        console.log('[closeMessageMe] Clearing person timer — target node:', 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta', 'raw selectedSenderId:', selectedSenderId);
                         import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                             fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
                                 messageMeClosedActive: false,
                                 messageMeClosedEndUtcMs: 0,
                                 messageMeClosedTitle: ''
+                            }).then(function() {
+                                console.log('[closeMessageMe] Per-person clear write CONFIRMED by Firebase for', selectedSenderId);
                             }).catch(function(e) {
                                 console.warn('[closeMessageMe] Per-person Firebase clear failed:', e);
                             });
@@ -19905,9 +19934,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         //  • SITE-wide (siteConfig/messageMeStatus)      — applies to every visitor.
         //  • PERSON-specific (my own privateMessages/<me>/meta) — applies only to me.
         // Each is tracked in its own slice (_cmmSite*/_cmmPerson*) and merged by
-        // _recomputeCloseMessageMeEffective, which always shows whichever one is
-        // currently active AND ends later (the most-restrictive one), so updates to
-        // one source can never accidentally cut the other short or clear it early.
+        // _recomputeCloseMessageMeEffective. The SITE-wide closure always takes
+        // display priority while it's active — a person-specific closure never
+        // jumps ahead of it, even if the person-specific one happens to run
+        // longer. The person-specific closure is queued "behind" the site-wide
+        // one and only surfaces once the site-wide closure has fully expired.
+        // Either way, applying one never clears or overwrites the other's own
+        // Firebase record — they stay fully independent underneath.
 
         // Apply SITE-wide state received from Firebase (called on first load and on live updates)
         function applyCloseMessageMeState(endUtcMs, titleText) {
@@ -19938,23 +19971,28 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         // Merge the SITE and PERSON slices into the single combined timer that
-        // updateAllCloseMessageMeDisplays() / startCloseMessageMeRAF() already render —
-        // whichever slice is active and has the later end time wins. If only one side
-        // is active, that one is used automatically since the other reads as 0.
+        // updateAllCloseMessageMeDisplays() / startCloseMessageMeRAF() already render.
+        // SITE-wide always wins while it's still active — it is never overridden by
+        // a longer-running person-specific closure. PERSON-specific only takes over
+        // the display once SITE-wide has expired (i.e. it's queued behind it).
         function _recomputeCloseMessageMeEffective() {
             var now = performance.now();
             var siteRemaining = (window._cmmSitePerfEndMs || 0) - now;
             var personRemaining = (window._cmmPersonPerfEndMs || 0) - now;
+            console.log('[closeMessageMe] Recompute — siteRemainingMs:', Math.round(siteRemaining), 'personRemainingMs:', Math.round(personRemaining));
 
-            if (siteRemaining > 0 && siteRemaining >= personRemaining) {
+            if (siteRemaining > 0) {
+                console.log('[closeMessageMe] → showing SITE-WIDE closure (takes priority while active; person-specific is queued behind it)');
                 window.closeMessageMeEndPerfMs = window._cmmSitePerfEndMs;
                 window.closeMessageMeTitle = window._cmmSiteTitle || '';
                 startCloseMessageMeRAF();
             } else if (personRemaining > 0) {
+                console.log('[closeMessageMe] → showing PERSON-SPECIFIC closure (site-wide has expired)');
                 window.closeMessageMeEndPerfMs = window._cmmPersonPerfEndMs;
                 window.closeMessageMeTitle = window._cmmPersonTitle || '';
                 startCloseMessageMeRAF();
             } else {
+                console.log('[closeMessageMe] → clearing (nothing active on either slice)');
                 window.closeMessageMeEndPerfMs = 0;
                 window.closeMessageMeTitle = '';
                 updateAllCloseMessageMeDisplays();
@@ -20101,17 +20139,110 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     window.closeMessageMeTimerRAF = requestAnimationFrame(rafLoop);
                 } else {
                     window.closeMessageMeTimerRAF = null;
-                    // Natural local expiry — do NOT broadcast active:false to Firebase here.
-                    // Every device independently computes its own countdown from the same
-                    // endUtcMs, so each one will hide its own overlay at its own true zero.
-                    // Broadcasting a clear from whichever device's clock runs fastest would
-                    // force-close every OTHER device's overlay early (the "last 2 seconds"
-                    // bug), even though their own local countdown hadn't reached zero yet.
-                    updateAllCloseMessageMeDisplays();
+                    // Natural local expiry of whichever slice was being shown. Re-run the
+                    // SITE vs PERSON merge right now instead of just hiding the display —
+                    // this is what makes the handover instant: if the SITE-wide closure
+                    // just ended and a PERSON-specific one is still running underneath it,
+                    // _recomputeCloseMessageMeEffective() picks it up and restarts the RAF
+                    // immediately, with no gap waiting on the next Firebase update. If
+                    // nothing else is active, it clears the display the same way as before.
+                    _recomputeCloseMessageMeEffective();
                 }
             }
             window.closeMessageMeTimerRAF = requestAnimationFrame(rafLoop);
         }
+
+        // ── Auto-clear expired closures in Firebase ─────────────────────────
+        // The RAF loop above deliberately never writes back to Firebase on its
+        // own — that was the fix for the "last 2 seconds" bug (see comment
+        // above). But that meant active:true plus a stale endUtcMs would sit in
+        // Firebase forever after expiry. This section cleans that up safely:
+        //   • SITE-wide slice → only the OWNER's own device (the one that has
+        //     unlocked the inbox) is allowed to write the clear. A visitor's
+        //     device is never trusted with this write, so a fast/skewed visitor
+        //     clock can't force-close the countdown early for everyone else.
+        //   • PERSON-specific slice → cleared by whichever device notices it
+        //     expired first: either that one sender's own device (see
+        //     startSenderThreadListener), OR the OWNER's device if they have
+        //     that sender's conversation open in the inbox (see
+        //     openOwnerConversation). Both write the exact same values to the
+        //     exact same single node, so there's no race to guard against —
+        //     unlike the site-wide slice, no OTHER visitor is affected either
+        //     way. This fixes the bug where a person-specific closure never
+        //     got cleared because that particular sender never revisited the
+        //     site to trigger their own side of the cleanup.
+        // A grace period is added past the local zero-point in both cases, as a
+        // buffer against any residual clock drift before writing to Firebase.
+        var CMM_CLEAR_GRACE_MS = 4000;
+        var _cmmSiteClearedForEndMs = null;
+        var _cmmPersonClearedForEndMs = null;
+        // Per-sender map the OWNER's device fills in whenever it has that
+        // sender's conversation open (see openOwnerConversation) — lets the
+        // owner's device independently notice and clear an expired
+        // person-specific closure even if the sender's own device never does.
+        window._cmmOwnerPersonTimers = window._cmmOwnerPersonTimers || {};
+        window._cmmOwnerPersonClearedForEndMs = window._cmmOwnerPersonClearedForEndMs || {};
+
+        function _cmmIsOwnerDevice() {
+            if (localStorage.getItem(INBOX_UNLOCK_KEY) === 'true') return true;
+            var stored = localStorage.getItem(SECRET_SESSION_EXPIRES_KEY);
+            var expireAt = stored ? parseInt(stored, 10) : null;
+            return !!(expireAt && expireAt > Date.now());
+        }
+
+        function _cmmWritePersonClear(senderId, logLabel) {
+            import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(senderId) + '/meta'), {
+                    messageMeClosedActive: false,
+                    messageMeClosedEndUtcMs: 0,
+                    messageMeClosedTitle: ''
+                }).then(function() { console.log('[closeMessageMe] ' + logLabel + ' auto-cleared expired PERSON closure in Firebase for', senderId); })
+                  .catch(function(e) { console.warn('[closeMessageMe] ' + logLabel + ' auto-clear PERSON failed:', e); });
+            }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
+        }
+
+        function _cmmMaybeAutoClearExpired() {
+            if (!window._pmDb) return;
+            var now = performance.now();
+
+            // SITE-wide — owner-only write.
+            if (window._cmmSitePerfEndMs && now > (window._cmmSitePerfEndMs + CMM_CLEAR_GRACE_MS)
+                && _cmmSiteClearedForEndMs !== window._cmmSitePerfEndMs && _cmmIsOwnerDevice()) {
+                _cmmSiteClearedForEndMs = window._cmmSitePerfEndMs;
+                import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                    fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' })
+                        .then(function() { console.log('[closeMessageMe] Auto-cleared expired SITE-wide closure in Firebase'); })
+                        .catch(function(e) { console.warn('[closeMessageMe] Auto-clear SITE failed:', e); });
+                }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
+            }
+
+            // PERSON-specific (the affected sender's OWN device).
+            if (window._cmmPersonPerfEndMs && now > (window._cmmPersonPerfEndMs + CMM_CLEAR_GRACE_MS)
+                && _cmmPersonClearedForEndMs !== window._cmmPersonPerfEndMs
+                && window._cmmPersonSenderId && window.pmSafeKey) {
+                _cmmPersonClearedForEndMs = window._cmmPersonPerfEndMs;
+                _cmmWritePersonClear(window._cmmPersonSenderId, 'Sender-side');
+            }
+
+            // PERSON-specific (the OWNER's device, for any sender conversation
+            // it currently has — or has had — open). Covers the case where the
+            // sender never comes back to trigger their own side of the clear.
+            if (_cmmIsOwnerDevice() && window.pmSafeKey) {
+                Object.keys(window._cmmOwnerPersonTimers).forEach(function(sid) {
+                    var perfEndMs = window._cmmOwnerPersonTimers[sid];
+                    if (!perfEndMs) return;
+                    if (now > (perfEndMs + CMM_CLEAR_GRACE_MS) && window._cmmOwnerPersonClearedForEndMs[sid] !== perfEndMs) {
+                        window._cmmOwnerPersonClearedForEndMs[sid] = perfEndMs;
+                        _cmmWritePersonClear(sid, 'Owner-side');
+                    }
+                });
+            }
+        }
+
+        // Runs independently of the RAF display loop (which stops once the local
+        // countdown reaches zero) so the grace-period check above still gets a
+        // chance to fire even after the on-screen timer has already disappeared.
+        setInterval(_cmmMaybeAutoClearExpired, 2000);
 
         // Legacy wrapper
         function updateCloseMessageMeTimer() { updateAllCloseMessageMeDisplays(); }
@@ -21084,6 +21215,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 activeConversationMeta = meta;
                 updateConversationBanFooter(meta);
                 renderActiveOwnerConversation();
+
+                // ── CLOSE MESSAGE ME — owner-side tracking for auto-clear ──────
+                // Mirrors the sender's own tracking (see startSenderThreadListener),
+                // just from the owner's side, so an expired specific-person closure
+                // still gets cleared in Firebase even if that sender never opens
+                // the site again to trigger their own side of the cleanup.
+                if (meta && meta.messageMeClosedActive && meta.messageMeClosedEndUtcMs) {
+                    var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                        ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                        : Date.now();
+                    var remainingMs = meta.messageMeClosedEndUtcMs - serverNowMs;
+                    window._cmmOwnerPersonTimers = window._cmmOwnerPersonTimers || {};
+                    window._cmmOwnerPersonTimers[senderId] = performance.now() + remainingMs;
+                } else if (window._cmmOwnerPersonTimers) {
+                    delete window._cmmOwnerPersonTimers[senderId];
+                }
             });
         }
 
@@ -22232,6 +22379,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     // scoped to just MY OWN meta node (privateMessages/<me>/meta), so an
                     // "ADD A SPECIFIC PERSON TIMER" closure the owner set for me actually
                     // shows up here — this is the piece that was previously missing.
+                    console.log('[closeMessageMe] Meta received for my own node — messageMeClosedActive:', senderConversationMeta.messageMeClosedActive, 'EndUtcMs:', senderConversationMeta.messageMeClosedEndUtcMs, 'Title:', senderConversationMeta.messageMeClosedTitle);
+                    // Remember which node this is so the auto-clear (see
+                    // _cmmMaybeAutoClearExpired) knows where to write the
+                    // expiry clear back to once this device's own countdown ends.
+                    window._cmmPersonSenderId = senderId;
                     if (typeof applyPersonCloseMessageMeState === 'function') {
                         applyPersonCloseMessageMeState(
                             senderConversationMeta.messageMeClosedActive ? senderConversationMeta.messageMeClosedEndUtcMs : 0,
@@ -25042,6 +25194,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                     seenKeys[key] = true;
                                     var meta = val[key] && val[key].meta;
                                     if (meta) {
+                                        var _cmmSid = meta.senderId || key;
                                         list.push({
                                             firebaseKey: key,           // always-unique Firebase key
                                             senderId: meta.senderId || key,
@@ -25056,6 +25209,24 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                             isLoggedOut: meta.isLoggedOut || false,
                                             loggedOutAt: meta.loggedOutAt || null
                                         });
+
+                                        // ── CLOSE MESSAGE ME — owner-side auto-clear tracking ──
+                                        // The inbox root listener already sees every sender's
+                                        // meta live, so feed each one's person-specific closure
+                                        // state into the owner-side tracking map here. This means
+                                        // an expired closure gets auto-cleared the moment the
+                                        // owner has the inbox open at all — no need to click into
+                                        // that specific sender's conversation individually.
+                                        window._cmmOwnerPersonTimers = window._cmmOwnerPersonTimers || {};
+                                        if (meta.messageMeClosedActive && meta.messageMeClosedEndUtcMs) {
+                                            var _cmmServerNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                                                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                                                : Date.now();
+                                            var _cmmRemainingMs = meta.messageMeClosedEndUtcMs - _cmmServerNowMs;
+                                            window._cmmOwnerPersonTimers[_cmmSid] = performance.now() + _cmmRemainingMs;
+                                        } else {
+                                            delete window._cmmOwnerPersonTimers[_cmmSid];
+                                        }
                                     }
                                 });
                             }
