@@ -11477,8 +11477,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 30 DAYS</span>
                         </label>
                         <!-- Add Custom Date and Time -->
-                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="event.preventDefault(); var r=document.getElementById('closeCustomDateTimeRadio'); if(r.checked){ resetCloseCustomDateTime(); } else { r.checked=true; clearCloseRadioGroup('closeOpenNow'); updateCloseMessageMeSelection(); openCustomDateTimePicker(); }">
-                            <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
+                        <label class="close-msg-radio-label" id="closeCustomDateTimeLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="_closeCustomDateTimeLabelClick(event);">
+                            <input type="radio" name="closeTime" value="customDateTime" id="closeCustomDateTimeRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                                 <span class="close-msg-text" style="font-weight: normal;">ADD CUSTOM DATE AND TIME</span>
                                 <span id="closeCustomDateTimePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
@@ -11512,18 +11512,26 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.</span>
                         </label>
                         <!-- Custom Title -->
-                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName==='BUTTON'){return;} event.preventDefault(); var r=document.getElementById('closeCustomTitleRadio'); if(r.checked){ resetCloseCustomTitle(); } else { r.checked=true; updateCloseMessageMeSelection(); document.getElementById('closeCustomTitleInput').focus(); }">
-                            <input type="radio" name="closeTitle" value="custom" id="closeCustomTitleRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px; pointer-events: none;">
+                        <label class="close-msg-radio-label" id="closeCustomTitleLabel" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;" onclick="if(event.target.tagName==='INPUT' && event.target.type==='text'){return;} if(event.target.tagName==='BUTTON'){return;} _closeCustomTitleLabelClick(event);">
+                            <input type="radio" name="closeTitle" value="custom" id="closeCustomTitleRadio" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;">
                             <span style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                                 <span class="close-msg-text" style="font-weight: normal;">ADD YOUR OWN TITLE MESSAGE</span>
-                                <span id="closeCustomTitleBtnRow" style="display: none; gap: 6px; align-items: center;">
-                                    <input type="text" id="closeCustomTitleInput" maxlength="120" placeholder="Type your custom title..." onkeydown="if(event.key==='Enter'){event.preventDefault(); confirmCloseCustomTitle();}" oninput="updateCloseCustomTitleButtons();" style="flex: 1; min-width: 0; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px;">
-                                    <button type="button" id="closeCustomTitleEnterBtn" onclick="event.stopPropagation(); confirmCloseCustomTitle();" style="padding: 4px 16px; border-radius: 6px; border: none; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px;">ENTER</button>
-                                    <button type="button" id="closeCustomTitleClearBtn" onclick="event.stopPropagation(); resetCloseCustomTitle();" disabled style="padding: 4px 12px; border-radius: 6px; border: none; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; line-height:1;">✕</button>
+                                <span id="closeCustomTitleBtnRow" style="display: none; gap: 6px; align-items: center; margin-bottom: 6px; width: 100%; height: 32px;">
+                                    <input type="text" id="closeCustomTitleInput" maxlength="120" placeholder="Type your custom title..." onkeydown="if(event.key==='Enter'){event.preventDefault(); confirmCloseCustomTitle();}" oninput="updateCloseCustomTitleButtons();" style="flex: 1 1 auto; min-width: 0; height: 32px; padding: 0 10px; margin: 0; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px; box-sizing: border-box; line-height: 1; vertical-align: top;">
+                                    <button type="button" id="closeCustomTitleEnterBtn" onclick="event.stopPropagation(); confirmCloseCustomTitle();" style="flex: 0 0 auto; height: 32px; padding: 0 16px; margin: 0; border-radius: 6px; border: 0; background: #22c55e; color: #111; font-size: 11px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; vertical-align: top;">ENTER</button>
+                                    <button type="button" id="closeCustomTitleClearBtn" onclick="event.stopPropagation(); resetCloseCustomTitle();" disabled style="flex: 0 0 auto; width: 32px; height: 32px; padding: 0; margin: 0; border-radius: 6px; border: 0; background: #ef4444; color: #fff; font-size: 14px; font-weight: 800; cursor: not-allowed; letter-spacing: 0.5px; opacity: 0.4; display: flex; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1; vertical-align: top;">✕</button>
                                 </span>
                                 <span id="closeCustomTitlePreview" style="display:none; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
                             </span>
                         </label>
+                        <!-- Divider + ADD A SPECIFIC PERSON TIMER -->
+                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">ADD A SPECIFIC PERSON TIMER</div>
+                        <div class="close-msg-radio-label" id="closeSpecificPersonRow" style="display: flex; align-items: center; gap: 12px; color: #fff; padding-top: 2px;">
+                            <span class="close-msg-text" id="closeSpecificPersonLabel" style="font-weight: normal; flex: 1 1 auto; min-width: 0;">SENDER'S NAME</span>
+                            <select id="closeSpecificPersonSelect" onchange="updateCloseSpecificPersonSelection()" style="flex: 0 0 auto; max-width: 55%; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: #2a2a2a; color: #999; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box;">
+                                <option value="">SELECT PERSON</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
@@ -19340,14 +19348,61 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function openCloseMessageMeModal() {
             const modal = document.getElementById('closeMessageMeModal');
             if (modal) {
+                populateCloseSpecificPersonSelect();
                 modal.classList.add('active');
                 modal.style.display = 'flex';
             }
         }
 
-        // (Select-a-specific-person feature removed — Close Message Me now only
-        // supports site-wide closures.)
-        function resetCloseSpecificPersonSelection() {}
+        // Fills the "ADD A SPECIFIC PERSON TIMER" dropdown from whatever
+        // conversations are currently cached from the inbox listener (same
+        // source openUserSettingsModal uses), so the list always reflects
+        // real senderIds — never typed/guessed ones.
+        function populateCloseSpecificPersonSelect() {
+            var select = document.getElementById('closeSpecificPersonSelect');
+            if (!select) return;
+            var previousValue = select.value;
+
+            var entries = Object.keys(_cachedInboxConversations || {}).map(function(senderId) {
+                var conv = _cachedInboxConversations[senderId];
+                var label = (conv && (conv.senderName || formatInboxDeviceLabel(conv.lastDeviceName))) || senderId;
+                return { senderId: senderId, label: label };
+            });
+            entries.sort(function(a, b) { return a.label.localeCompare(b.label); });
+
+            var html = '<option value="">SELECT PERSON</option>';
+            entries.forEach(function(entry) {
+                html += '<option value="' + escapeHtmlPm(entry.senderId) + '">' + escapeHtmlPm(entry.label) + '</option>';
+            });
+            select.innerHTML = html;
+
+            // Keep the previous pick selected across a refresh, if it's still in the list
+            if (previousValue && entries.some(function(e) { return e.senderId === previousValue; })) {
+                select.value = previousValue;
+            }
+            updateCloseSpecificPersonSelection();
+        }
+
+        // Colors the dropdown green when a person is selected, gray otherwise —
+        // matching the green/gray "selected" look every other row in this modal uses.
+        function updateCloseSpecificPersonSelection() {
+            var select = document.getElementById('closeSpecificPersonSelect');
+            var label = document.getElementById('closeSpecificPersonLabel');
+            if (!select) return;
+            var hasSelection = !!select.value;
+            select.style.color = hasSelection ? '#22c55e' : '#999';
+            select.style.borderColor = hasSelection ? 'rgba(34,197,94,0.6)' : 'rgba(255,255,255,0.25)';
+            if (label) label.style.color = hasSelection ? '#22c55e' : '#fff';
+        }
+
+        // Clears the person dropdown back to "SELECT PERSON" — called alongside
+        // clearCloseRadioGroup so a fresh APPLY always starts from a clean slate.
+        function resetCloseSpecificPersonSelection() {
+            var select = document.getElementById('closeSpecificPersonSelect');
+            if (!select) return;
+            select.value = '';
+            updateCloseSpecificPersonSelection();
+        }
 
         function scrollCloseTimeDuration() {
             var el = document.getElementById('closeTimeDurationScroll');
@@ -19500,7 +19555,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Same for the custom title's input/ENTER/clear row.
             var ctRadio = document.getElementById('closeCustomTitleRadio');
             var ctBtnRow = document.getElementById('closeCustomTitleBtnRow');
-            if (ctBtnRow) ctBtnRow.style.display = (ctRadio && ctRadio.checked) ? 'inline-flex' : 'none';
+            if (ctBtnRow) ctBtnRow.style.display = (ctRadio && ctRadio.checked) ? 'flex' : 'none';
 
             // Check validation
             checkCloseMessageMeValidation();
@@ -19585,6 +19640,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             let selectedTime = null;
             let selectedTitle = null;
             let openNowSelected = false;
+
+            // Specific-person scope: if set, the closure only ever touches this
+            // one senderId's own Firebase node — never the site-wide status —
+            // so every other visitor's Message Me stays completely unaffected.
+            const specificPersonSelect = document.getElementById('closeSpecificPersonSelect');
+            const selectedSenderId = specificPersonSelect ? specificPersonSelect.value : '';
             
             for (let radio of timeRadios) {
                 if (radio.checked) {
@@ -19611,14 +19672,47 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             // ── Open Message Me Immediately — clears any active closure ──
             if (openNowSelected) {
-                // Clear local state right away so the timer/title disappear instantly
-                window.closeMessageMeEndPerfMs = 0;
-                window.closeMessageMeTitle = '';
-                if (window.closeMessageMeTimerRAF) {
-                    cancelAnimationFrame(window.closeMessageMeTimerRAF);
-                    window.closeMessageMeTimerRAF = null;
+                if (selectedSenderId) {
+                    // Scoped re-open: clear only this sender's own closure, leave
+                    // the site-wide status (and everyone else's) untouched.
+                    hideApplyingState();
+                    (function clearPersonCloseStatus(attemptsLeft) {
+                        if (!window._pmDb || !window.pmSafeKey) {
+                            if (attemptsLeft > 0) {
+                                setTimeout(function() { clearPersonCloseStatus(attemptsLeft - 1); }, 300);
+                            } else {
+                                console.warn('[closeMessageMe] Firebase not ready — per-person clear dropped after retries');
+                            }
+                            return;
+                        }
+                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                            fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
+                                messageMeClosedActive: false,
+                                messageMeClosedEndUtcMs: 0,
+                                messageMeClosedTitle: ''
+                            }).catch(function(e) {
+                                console.warn('[closeMessageMe] Per-person Firebase clear failed:', e);
+                            });
+                        }).catch(function(e) {
+                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                        });
+                    })(20);
+
+                    clearCloseRadioGroup('closeTime');
+                    clearCloseRadioGroup('closeTitle');
+                    clearCloseRadioGroup('closeOpenNow');
+                    resetCloseSpecificPersonSelection();
+                    if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
+                    checkCloseMessageMeValidation();
+                    return;
                 }
-                updateAllCloseMessageMeDisplays();
+
+                // Clear local state right away so the timer/title disappear instantly.
+                // Only the SITE slice is touched here — a specific-person timer (if any
+                // happens to be running on this same device) is left completely alone.
+                window._cmmSitePerfEndMs = 0;
+                window._cmmSiteTitle = '';
+                _recomputeCloseMessageMeEffective();
                 hideApplyingState();
 
                 // Clear Firebase so it stays open for everyone, with the same
@@ -19645,6 +19739,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clearCloseRadioGroup('closeTime');
                 clearCloseRadioGroup('closeTitle');
                 clearCloseRadioGroup('closeOpenNow');
+                resetCloseSpecificPersonSelection();
                 if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
                 checkCloseMessageMeValidation();
 
@@ -19694,13 +19789,56 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // push the close time later by however long that fetch took.
                 var endUtcMs = (absoluteTargetMs !== null) ? absoluteTargetMs : (serverNowMs + durationMs);
 
+                hideApplyingState();
+
+                if (selectedSenderId) {
+                    // ── Scoped closure: write ONLY to this sender's own Firebase
+                    // node (privateMessages/<safeKey>/meta), the exact same node
+                    // ban/unban/forceLogout already use — never siteConfig, so no
+                    // other visitor's Message Me is touched by this at all. ──
+                    (function writePersonCloseStatus(attemptsLeft) {
+                        if (!window._pmDb || !window.pmSafeKey) {
+                            if (attemptsLeft > 0) {
+                                setTimeout(function() { writePersonCloseStatus(attemptsLeft - 1); }, 300);
+                            } else {
+                                console.warn('[closeMessageMe] Firebase not ready — per-person write dropped after retries');
+                            }
+                            return;
+                        }
+                        import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                            fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
+                                messageMeClosedEndUtcMs: endUtcMs,
+                                messageMeClosedTitle: titleText,
+                                messageMeClosedActive: true
+                            }).catch(function(e) {
+                                console.warn('[closeMessageMe] Per-person Firebase write failed:', e);
+                            });
+                        }).catch(function(e) {
+                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                        });
+                    })(20); // up to ~6s of retrying
+
+                    // No RAF/global preview here — this closure doesn't apply to the
+                    // owner's own device or to the site at large, only to the one
+                    // selected sender, so there's nothing site-wide to animate.
+                    clearCloseRadioGroup('closeTime');
+                    clearCloseRadioGroup('closeTitle');
+                    clearCloseRadioGroup('closeOpenNow');
+                    resetCloseSpecificPersonSelection();
+                    if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
+                    checkCloseMessageMeValidation();
+                    return;
+                }
+
                 // Site-wide closure — show the timer immediately on this device too.
                 // Uses _clickPerfMs (captured before the async server-time fetch) rather than
                 // performance.now() here, otherwise the fetch's network latency gets added
                 // on top of durationMs and the local countdown starts a beat late too.
-                window.closeMessageMeEndPerfMs = _clickPerfMs + durationMs;
-                window.closeMessageMeTitle = titleText;
-                hideApplyingState();
+                // Stored in the SITE slice (not the combined var directly) so it merges
+                // correctly with any specific-person timer instead of overwriting it.
+                window._cmmSitePerfEndMs = _clickPerfMs + durationMs;
+                window._cmmSiteTitle = titleText;
+                _recomputeCloseMessageMeEffective();
 
                 // ── Write to Firebase so the right device(s) update instantly ──
                 // Retries if Firebase hasn't finished initializing yet (e.g. Apply was
@@ -19736,6 +19874,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clearCloseRadioGroup('closeTime');
                 clearCloseRadioGroup('closeTitle');
                 clearCloseRadioGroup('closeOpenNow');
+                resetCloseSpecificPersonSelection();
                 if (typeof resetCloseCustomDateTime === 'function') resetCloseCustomDateTime();
                 checkCloseMessageMeValidation();
             } // end _doWriteClose
@@ -19762,25 +19901,64 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         }
 
         // ── Close-Message-Me helpers ──────────────────────────────────────────
+        // Two independent closures can be active for a given sender at once:
+        //  • SITE-wide (siteConfig/messageMeStatus)      — applies to every visitor.
+        //  • PERSON-specific (my own privateMessages/<me>/meta) — applies only to me.
+        // Each is tracked in its own slice (_cmmSite*/_cmmPerson*) and merged by
+        // _recomputeCloseMessageMeEffective, which always shows whichever one is
+        // currently active AND ends later (the most-restrictive one), so updates to
+        // one source can never accidentally cut the other short or clear it early.
 
-        // Apply state received from Firebase (called both on first load and on live updates)
+        // Apply SITE-wide state received from Firebase (called on first load and on live updates)
         function applyCloseMessageMeState(endUtcMs, titleText) {
             // Always use tamper-proof anchor (synced from server on page load and every 5 min)
             // so changing device clock cannot affect the countdown
             var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
                 ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
                 : Date.now();
-            var remainingMs = endUtcMs - serverNowMs;
-            if (remainingMs <= 0) {
-                // Expired — clear everything
+            var remainingMs = (endUtcMs || 0) - serverNowMs;
+            window._cmmSitePerfEndMs = remainingMs > 0 ? (performance.now() + remainingMs) : 0;
+            window._cmmSiteTitle = titleText || '';
+            _recomputeCloseMessageMeEffective();
+        }
+
+        // Apply PERSON-specific state read from MY OWN meta node — called from the
+        // per-sender meta listener in startSenderThreadListener(). This is what makes
+        // the "ADD A SPECIFIC PERSON TIMER" closure actually show up on that sender's
+        // own device: same math as the site-wide version above, just kept in its own
+        // slice so it never gets overwritten by (or overwrites) the site-wide one.
+        function applyPersonCloseMessageMeState(endUtcMs, titleText) {
+            var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
+            var remainingMs = (endUtcMs || 0) - serverNowMs;
+            window._cmmPersonPerfEndMs = remainingMs > 0 ? (performance.now() + remainingMs) : 0;
+            window._cmmPersonTitle = titleText || '';
+            _recomputeCloseMessageMeEffective();
+        }
+
+        // Merge the SITE and PERSON slices into the single combined timer that
+        // updateAllCloseMessageMeDisplays() / startCloseMessageMeRAF() already render —
+        // whichever slice is active and has the later end time wins. If only one side
+        // is active, that one is used automatically since the other reads as 0.
+        function _recomputeCloseMessageMeEffective() {
+            var now = performance.now();
+            var siteRemaining = (window._cmmSitePerfEndMs || 0) - now;
+            var personRemaining = (window._cmmPersonPerfEndMs || 0) - now;
+
+            if (siteRemaining > 0 && siteRemaining >= personRemaining) {
+                window.closeMessageMeEndPerfMs = window._cmmSitePerfEndMs;
+                window.closeMessageMeTitle = window._cmmSiteTitle || '';
+                startCloseMessageMeRAF();
+            } else if (personRemaining > 0) {
+                window.closeMessageMeEndPerfMs = window._cmmPersonPerfEndMs;
+                window.closeMessageMeTitle = window._cmmPersonTitle || '';
+                startCloseMessageMeRAF();
+            } else {
                 window.closeMessageMeEndPerfMs = 0;
                 window.closeMessageMeTitle = '';
                 updateAllCloseMessageMeDisplays();
-                return;
             }
-            window.closeMessageMeEndPerfMs = performance.now() + remainingMs;
-            window.closeMessageMeTitle = titleText || '';
-            startCloseMessageMeRAF();
         }
 
         // Listen to Firebase for real-time updates across all devices — site-wide closure
@@ -19793,9 +19971,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         if (val && val.active && val.endUtcMs) {
                             applyCloseMessageMeState(val.endUtcMs, val.title);
                         } else {
-                            window.closeMessageMeEndPerfMs = 0;
-                            window.closeMessageMeTitle = '';
-                            updateAllCloseMessageMeDisplays();
+                            // Clear only the SITE slice — must not stomp on an active
+                            // specific-person timer that might be running for this visitor.
+                            applyCloseMessageMeState(0, '');
                         }
                     }, function(err) {
                         console.warn('[closeMessageMe] Firebase listen error:', err);
@@ -20780,6 +20958,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             filteredConversations.forEach(function(conv) {
                 _cachedInboxConversations[conv.senderId] = conv;
             });
+
+            // Keep the "ADD A SPECIFIC PERSON TIMER" dropdown in sync with the
+            // inbox while Close Message Me is open, so new senders show up live.
+            var closeModalEl = document.getElementById('closeMessageMeModal');
+            if (closeModalEl && closeModalEl.classList.contains('active') && typeof populateCloseSpecificPersonSelect === 'function') {
+                populateCloseSpecificPersonSelect();
+            }
             
             let html = '';
             let messageNumber = 0;
@@ -22030,6 +22215,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             closeModal('christmasMessage');
                         }
                         showAuthorResetNotice();
+                        // Node is gone, so any specific-person closure that was set for
+                        // this sender is gone with it — clear it locally too.
+                        if (typeof applyPersonCloseMessageMeState === 'function') applyPersonCloseMessageMeState(0, '');
                         // Only pop up login if this is actually the sender's device, not the owner's
                         if (localStorage.getItem(ADMIN_ACCESS_KEY) !== 'true') {
                             openModal('senderLogin');
@@ -22038,6 +22226,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     }
                     // ── END DELETED NODE DETECTION ────────────────────────────────
                     senderConversationMeta = meta || {};
+
+                    // ── CLOSE MESSAGE ME — specific-person timer ───────────────────
+                    // Mirrors the site-wide siteConfig/messageMeStatus handling, but
+                    // scoped to just MY OWN meta node (privateMessages/<me>/meta), so an
+                    // "ADD A SPECIFIC PERSON TIMER" closure the owner set for me actually
+                    // shows up here — this is the piece that was previously missing.
+                    if (typeof applyPersonCloseMessageMeState === 'function') {
+                        applyPersonCloseMessageMeState(
+                            senderConversationMeta.messageMeClosedActive ? senderConversationMeta.messageMeClosedEndUtcMs : 0,
+                            senderConversationMeta.messageMeClosedTitle
+                        );
+                    }
 
                     // ── Firebase is source of truth for account lock ──────────────
                     // If Firebase says hasAccountLock is null/false, clear local lock
@@ -25237,6 +25437,26 @@ var _cdtpDaySelected=true;
 var _cdtpHoldTimer=null,_cdtpHoldInterval=null,_cdtpHoldSpeed=1;
 var _cdtpTimeModified=false;
 var _cdtpAutoUpdateInterval=null;
+
+// Helper: called from the label onclick for the
+// "ADD CUSTOM DATE AND TIME" row so clicking either the circle or the text works.
+function _closeCustomDateTimeLabelClick(evt){
+  if(evt){ evt.preventDefault(); evt.stopPropagation(); }
+  var r=document.getElementById('closeCustomDateTimeRadio');
+  if(!r) return;
+  if(r.checked){ resetCloseCustomDateTime(); }
+  else { var sib=document.getElementsByName('closeTime'); for(var s of sib){s.dataset.wasChecked='false';} r.checked=true; r.dataset.wasChecked='true'; clearCloseRadioGroup('closeOpenNow'); updateCloseMessageMeSelection(); openCustomDateTimePicker(); }
+}
+
+// Helper: called from the label onclick for the
+// "ADD YOUR OWN TITLE MESSAGE" row.
+function _closeCustomTitleLabelClick(evt){
+  if(evt){ evt.preventDefault(); evt.stopPropagation(); }
+  var r=document.getElementById('closeCustomTitleRadio');
+  if(!r) return;
+  if(r.checked){ resetCloseCustomTitle(); }
+  else { var sib=document.getElementsByName('closeTitle'); for(var s of sib){s.dataset.wasChecked='false';} r.checked=true; r.dataset.wasChecked='true'; updateCloseMessageMeSelection(); document.getElementById('closeCustomTitleInput').focus(); }
+}
 
 function openCustomDateTimePicker(){
   var radio=document.getElementById('closeCustomDateTimeRadio');
