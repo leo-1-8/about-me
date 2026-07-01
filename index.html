@@ -492,10 +492,17 @@
             background: rgba(0, 0, 0, 0.35) !important;
             color: rgba(255, 255, 255, 0.92) !important;
         }
+        body.dark-mode #mainMenuClockTz {
+            background: rgba(0, 0, 0, 0.35) !important;
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
         body.intro-pending #mainMenuClock {
             display: none !important;
         }
         body.intro-pending #mainMenuClockDate {
+            display: none !important;
+        }
+        body.intro-pending #mainMenuClockTz {
             display: none !important;
         }
         body.intro-pending .settings-button {
@@ -1956,12 +1963,12 @@
             color: #888888;
         }
         #senderLoginModal #loginPwEyeBtn {
-            color: #555555;
+            color: #000000;
         }
         /* Logout option buttons in login modal */
         #senderLoginModal .logout-opt {
-            background: rgba(0,0,0,0.04);
-            border-color: rgba(0,0,0,0.14);
+            background: transparent;
+            border-color: transparent;
         }
         #senderLoginModal .pw-req-text {
             color: #333333;
@@ -2051,6 +2058,143 @@
 
         .name-info-btn:hover {
             background: #777777;
+        }
+
+        .name-info-btn.flashing-red {
+            animation: nameInfoBtnFlash 0.6s ease-in-out infinite;
+        }
+        @keyframes nameInfoBtnFlash {
+            0%, 100% {
+                background: #999999;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+                transform: scale(1);
+            }
+            50% {
+                background: #ff1a1a;
+                box-shadow: 0 0 12px 4px rgba(255, 26, 26, 0.75);
+                transform: scale(1.15);
+            }
+        }
+
+        /* Same effect, but keeps the icon's existing 180deg rotation (used on the password modal's exclamation icon) */
+        #senderPwExclam.flashing-red {
+            animation: pwExclamFlash 0.6s ease-in-out infinite;
+        }
+        @keyframes pwExclamFlash {
+            0%, 100% {
+                background: #888888;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+                transform: rotate(180deg) scale(1);
+            }
+            50% {
+                background: #ff1a1a;
+                box-shadow: 0 0 12px 4px rgba(255, 26, 26, 0.75);
+                transform: rotate(180deg) scale(1.15);
+            }
+        }
+
+        /* Password modal — Exit confirmation */
+        .password-exit-confirm-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10006;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .password-exit-confirm-box {
+            background: #ffffff;
+            color: #222222;
+            border-radius: 12px;
+            padding: 26px 22px;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode .password-exit-confirm-box {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .password-exit-confirm-title {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .password-exit-confirm-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #666666;
+            margin-bottom: 16px;
+        }
+
+        body.dark-mode .password-exit-confirm-desc {
+            color: #cccccc;
+        }
+
+        .password-exit-confirm-timer {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 14px;
+        }
+
+        .password-exit-confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .password-exit-cancel-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #999999;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s ease;
+        }
+
+        .password-exit-cancel-btn:hover {
+            background: #888888;
+        }
+
+        .password-exit-exit-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #ef4444;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s ease;
+        }
+
+        .password-exit-exit-btn:hover {
+            background: #dc2626;
+        }
+
+        .password-exit-exit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .name-input-field {
@@ -2209,6 +2353,18 @@
 
         #senderPasswordInput:focus {
             border-color: #87CEEB;
+        }
+
+        body.dark-mode #senderPasswordInput {
+            background: rgba(20, 24, 40, 0.7) !important;
+            color: #ffffff !important;
+            border-color: rgba(135, 206, 235, 0.5) !important;
+        }
+        body.dark-mode #senderPasswordInput::placeholder {
+            color: #aaaaaa;
+        }
+        body.dark-mode #senderPwEyeBtn {
+            color: #aaaaaa !important;
         }
 
         .name-submit-btn {
@@ -9549,7 +9705,7 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
-        <div id="mainMenuClock" style="
+        <div id="mainMenuClock" onclick="toggleMainMenuClockTz()" style="
             position: fixed;
             top: 14px;
             left: 14px;
@@ -9568,8 +9724,9 @@
             letter-spacing: 0.04em;
             color: #1e293b;
             font-feature-settings: 'zero' 0;
+            cursor: pointer;
         ">--:--:-- AM</div>
-        <div id="mainMenuClockDate" style="
+        <div id="mainMenuClockDate" onclick="toggleMainMenuClockTz()" style="
             position: fixed;
             top: 46px;
             left: 14px;
@@ -9586,7 +9743,30 @@
             font-weight: 700;
             letter-spacing: 0.04em;
             color: #1e293b;
+            cursor: pointer;
         ">---</div>
+        <div id="mainMenuClockTz" onclick="toggleMainMenuClockTz()" style="
+            display: none;
+            position: fixed;
+            top: 74px;
+            left: 14px;
+            z-index: 25001;
+            max-width: 220px;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            font-family: var(--font-timer);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            color: #1e293b;
+            text-align: center;
+            line-height: 1.3;
+            cursor: pointer;
+        ">UTC+00:00</div>
         <button type="button" id="settingsBtn" class="settings-button" aria-label="Open settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
@@ -9629,13 +9809,6 @@
                     <span data-i18n="btn_others">Others</span>
                 </button>
             </div>
-            <div class="message-for-me-box" id="messageForMeBox">
-                <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe">
-                    <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px;">
-                        MESSAGE ME
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="update-button-container hidden" id="updateButtonContainer" style="display: none !important;">
             <div id="comingSoonMainLink" class="christmas-message-link-wrapper" style="display:none;">
@@ -9644,21 +9817,31 @@
                 </div>
             </div>
         </div>
-        <div class="warning-message" id="mainWarning" style="display: none;">
-            <span data-i18n="warning_unfinished">THIS ISN'T OFFICIALLY FINISHED YET; I STILL HAVE MANY WORKS TO DO</span>
-            <div id="warningTimerLine" style="margin-top:6px;font-weight:700;">
-                <span data-i18n="warning_updates_in">UPDATES IN</span> <span id="warningTimer">---:--:--:--:---</span>
+        <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box + ANSWER THIS FORM, pinned to the very bottom of the page -->
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:10px !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:10px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
+            <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:0px; white-space:nowrap;">
+                    <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe" style="width:auto;">
+                        <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px; width:auto;">
+                            MESSAGE ME
+                        </div>
+                    </div>
+                </div>
+                <span data-i18n="warning_unfinished">THIS ISN'T OFFICIALLY FINISHED YET; I STILL HAVE MANY WORKS TO DO</span>
+                <div id="warningTimerLine" style="margin-top:6px;font-weight:700;">
+                    <span data-i18n="warning_updates_in">UPDATES IN</span> <span id="warningTimer">---:--:--:--:---</span>
+                </div>
             </div>
-        </div>
-        <!-- Outside the box link below the warning + timer -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important;">
-            <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer;"
-                data-i18n="form_answer"
-            >ANSWER THIS FORM</a>
+            <!-- Outside the box link below the warning + timer -->
+            <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer;"
+                    data-i18n="form_answer"
+                >ANSWER THIS FORM</a>
+            </div>
         </div>
     </div>
 
@@ -10935,7 +11118,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <!-- Name Warning Info Box (hidden by default) -->
             <div class="name-warning-overlay" id="nameWarningOverlay" style="display: none; cursor: default;">
                 <div class="name-warning-box" onclick="event.stopPropagation();">
-                    <p class="name-warning-text">Note: Names and nicknames are permanent once submitted. Please review them carefully before submitting.</p>
+                    <p class="name-warning-text">Note: Names and nicknames are <span style="color:#ef4444;">permanent</span> once submitted. Please <span style="color:#ef4444;">review them carefully</span> before submitting. Feel free to use fake name/nickname or anything that doesn't <span style="color:#ef4444;">violate the rules</span>.</p>
                     <button type="button" class="name-warning-ok-btn" onclick="closeNameWarning()">OK</button>
                 </div>
             </div>
@@ -10973,17 +11156,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Password Creation Modal -->
     <div class="modal-overlay" id="senderPasswordModal">
         <div class="message-confirmation-box" onclick="event.stopPropagation();" style="max-width:380px; width:90%;">
-            <div class="confirmation-header" style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px; margin-top: -12px; gap: 12px;">
-                <!-- Exclamation/Info icon on the LEFT - SMALLER -->
-                <div id="senderPwExclam" style="width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transform: rotate(180deg);" onclick="showImportantMessage()" title="Important information">i</div>
-                <h3 class="confirmation-title" style="flex: 1; text-align: center; margin: 0;">PASSWORD</h3>
-                <div style="width: 20px;"></div>
+            <!-- Exclamation/Info icon on the LEFT - SMALLER -->
+            <div id="senderPwExclam" style="position:absolute; top:16px; left:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transform: rotate(180deg); z-index:2;" onclick="showImportantMessage()" title="Important information">i</div>
+            <button type="button" id="senderPwExitBtn" onclick="openPasswordExitConfirm()" title="Exit" aria-label="Exit" style="position:absolute; top:16px; right:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; border: none; padding: 0; line-height: 1; font-family: inherit; z-index:2;">✕</button>
+            <div class="confirmation-header" style="margin-bottom: 20px; margin-top: -12px;">
+                <h3 class="confirmation-title" style="text-align: center; margin: 0;">PASSWORD</h3>
             </div>
             <div class="confirmation-body" style="margin-bottom:0; padding: 16px 0 0 0;">
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
-                    <input id="senderPasswordInput" type="password" autocomplete="new-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Type a password..." style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(135,206,235,0.5); background:rgba(20,24,40,0.7); color:#fff; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;" oninput="checkSenderPasswordRequirements()">
-                    <button type="button" id="senderPwEyeBtn" data-state="hidden" onclick="toggleSenderPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#aaa; display:flex; align-items:center;">
+                    <input id="senderPasswordInput" type="password" autocomplete="new-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Type a password..." style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(0,0,0,0.18); background:#f0f2f5; color:#111111; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;" oninput="checkSenderPasswordRequirements()">
+                    <button type="button" id="senderPwEyeBtn" data-state="hidden" onclick="toggleSenderPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#555555; display:flex; align-items:center;">
                         <span id="senderPwEyeOpen" style="display:none;">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
@@ -11017,6 +11200,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <span class="pw-req-text">Must not contain spaces.</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal Exit Confirmation -->
+    <div class="password-exit-confirm-overlay" id="passwordExitConfirmOverlay" style="display:none;">
+        <div class="password-exit-confirm-box" onclick="event.stopPropagation();">
+            <div class="password-exit-confirm-title">ARE YOU SURE YOU WANT TO EXIT?</div>
+            <div class="password-exit-confirm-desc">Exiting will cancel your progress and you will need to create again.</div>
+            <div class="password-exit-confirm-timer"><span id="pwExitConfirmCountdown">5</span>s</div>
+            <div class="password-exit-confirm-buttons">
+                <button type="button" class="password-exit-cancel-btn" onclick="closePasswordExitConfirm()">Cancel</button>
+                <button type="button" class="password-exit-exit-btn" id="pwExitConfirmBtn" disabled onclick="confirmPasswordExit()">Exit</button>
             </div>
         </div>
     </div>
@@ -11068,7 +11264,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
-                    <button type="button" id="loginPwEyeBtn" onclick="if(!isLoginAttemptLockedOut()){toggleLoginPwVisibility()}" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#aaa; display:flex; align-items:center; transition:opacity 0.2s ease;">
+                    <button type="button" id="loginPwEyeBtn" onclick="if(!isLoginAttemptLockedOut()){toggleLoginPwVisibility()}" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; transition:opacity 0.2s ease;">
                         <span id="loginPwEyeOpen" style="display:none;">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
@@ -11144,7 +11340,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <!-- Important Message Modal (Overlay inside Password Modal) -->
     <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
         <div class="important-message-box" style="background: rgba(20, 24, 40, 0.95); border-radius: 12px; padding: 24px; max-width: 340px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); position: relative; pointer-events: auto;">
-            <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please remember your password or save it in a secure place. It cannot be recovered if you forget it, so you'll need it to access your messages.</p>
+            <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please <span style="color:#ef4444;">remember your password</span> or save it in a secure place. It <span style="color:#ef4444;">cannot be recovered</span> if you forget it, so you'll need it to access your messages.</p>
             <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative;" onmousedown="closeImportantMessage()">OK</button>
         </div>
     </div>
@@ -11457,10 +11653,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div style="text-align: left; padding: 30px 20px 20px;">
                 <div class="christmas-modal-title" style="margin-bottom: 20px; text-align: center;">CLOSE MESSAGE ME</div>
                 
-                <div style="text-align: left; font-size: 12px; color: #999; margin-bottom: 25px; font-weight: normal;">CHOOSE A TITLE</div>
+                <div id="closeSectionHeader" style="text-align: left; font-size: 12px; color: #999; margin-bottom: 25px; font-weight: normal;">CHOOSE A TITLE</div>
                 
                 <!-- ALL options in one single scrollable container — no scroll button -->
-                <div id="closeTimeDurationScroll" style="max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1a1a1a; padding-right: 4px; margin-bottom: 25px;">
+                <div id="closeTimeDurationScroll" style="max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1a1a1a; padding-right: 4px; margin-bottom: 25px;" onscroll="updateCloseSectionHeader()">
                     <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTitle" value="closed" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
@@ -11491,8 +11687,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span id="closeCustomTitlePreview" style="display:none; width: 100%; text-align: center; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
                             </span>
                         </label>
-                        <!-- Divider + SELECT A SPECIFIC TIME BELOW inside scroll -->
-                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">SELECT A SPECIFIC TIME BELOW</div>
+                        <div id="closeSectionMarkerTime" style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE A TIME</div>
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">CLOSE MESSAGE ME FOR 7 DAYS</span>
@@ -11523,11 +11718,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
                         </label>
                         <!-- Divider + ADD A SPECIFIC PERSON TIMER -->
-                        <div style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">ADD A SPECIFIC PERSON'S TIMER</div>
+                        <div id="closeSectionMarkerAccount" style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE AN ACCOUNT'S NAME</div>
                         <div class="close-msg-radio-label" id="closeSpecificPersonRow" style="display: flex; align-items: center; gap: 12px; color: #fff; padding-top: 2px; margin-bottom: 10px;">
                             <span class="close-msg-text" id="closeSpecificPersonLabel" style="font-weight: normal; flex: 1 1 auto; min-width: 0;">SENDER'S NAME</span>
                             <select id="closeSpecificPersonSelect" onchange="updateCloseSpecificPersonSelection()" style="flex: 0 0 auto; max-width: 55%; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: #2a2a2a; color: #999; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box;">
-                                <option value="">SELECT PERSON</option>
+                                <option value="">SELECT ACCOUNT</option>
                             </select>
                         </div>
                     </div>
@@ -11658,7 +11853,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         <div style="background:#1a2035; border:1px solid rgba(239,68,68,0.3); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">🗑️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:6px;">RESET THIS PERSON'S DATA?</div>
-            <div style="font-size:12px; color:#9ca3af; margin-bottom:20px; line-height:1.5;">All messages will be deleted and they will be sent back to the CONFIRMATION stage.</div>
+            <div style="font-size:12px; color:#9ca3af; margin-bottom:20px; line-height:1.5;">All messages will be deleted and account.</div>
             <div id="resetDataCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s; color:#ef4444;"></div>
             <div style="display:flex; gap:12px;">
                 <button type="button" id="resetDataCancelBtn" style="flex:1; padding:11px; border:none; border-radius:8px; background:#6b7280; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">CANCEL</button>
@@ -14141,6 +14336,59 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             window.addEventListener('orientationchange', applyClockLayout);
         }
 
+        // Shared helper: turns a Date into a "UTC+08:00" style string plus,
+        // when we recognize the offset, a human-readable zone name like
+        // "PHILIPPINE STANDARD TIME". Used by both the analog clock app and
+        // the main menu corner clock so the zone-name list only lives once.
+        function getUtcOffsetInfo(now) {
+            var tzOff = -(now.getTimezoneOffset());
+            var tzSign = tzOff >= 0 ? '+' : '-';
+            var tzAbs = Math.abs(tzOff);
+            var tzH = String(Math.floor(tzAbs / 60)).padStart(2, '0');
+            var tzM = String(tzAbs % 60).padStart(2, '0');
+            var utcStr = 'UTC' + tzSign + tzH + ':' + tzM;
+            var tzNames = {
+                '+14:00': 'LINE ISLANDS TIME',
+                '+13:00': 'TONGA TIME',
+                '+12:00': 'NEW ZEALAND STANDARD TIME',
+                '+11:00': 'SOLOMON ISLANDS TIME',
+                '+10:30': 'LORD HOWE STANDARD TIME',
+                '+10:00': 'AUSTRALIAN EASTERN STANDARD TIME',
+                '+09:30': 'AUSTRALIAN CENTRAL STANDARD TIME',
+                '+09:00': 'JAPAN STANDARD TIME',
+                '+08:00': 'PHILIPPINE STANDARD TIME',
+                '+07:00': 'INDOCHINA TIME',
+                '+06:30': 'MYANMAR TIME',
+                '+06:00': 'BANGLADESH STANDARD TIME',
+                '+05:30': 'INDIA STANDARD TIME',
+                '+05:45': 'NEPAL TIME',
+                '+05:00': 'PAKISTAN STANDARD TIME',
+                '+04:30': 'AFGHANISTAN TIME',
+                '+04:00': 'GULF STANDARD TIME',
+                '+03:30': 'IRAN STANDARD TIME',
+                '+03:00': 'ARABIA STANDARD TIME',
+                '+02:00': 'EASTERN EUROPEAN TIME',
+                '+01:00': 'CENTRAL EUROPEAN TIME',
+                '+00:00': 'GREENWICH MEAN TIME',
+                '-01:00': 'AZORES TIME',
+                '-02:00': 'SOUTH GEORGIA TIME',
+                '-03:00': 'ARGENTINA TIME',
+                '-03:30': 'NEWFOUNDLAND STANDARD TIME',
+                '-04:00': 'ATLANTIC STANDARD TIME',
+                '-05:00': 'EASTERN STANDARD TIME',
+                '-06:00': 'CENTRAL STANDARD TIME',
+                '-07:00': 'MOUNTAIN STANDARD TIME',
+                '-08:00': 'PACIFIC STANDARD TIME',
+                '-09:00': 'ALASKA STANDARD TIME',
+                '-09:30': 'MARQUESAS TIME',
+                '-10:00': 'HAWAII-ALEUTIAN STANDARD TIME',
+                '-11:00': 'SAMOA STANDARD TIME',
+                '-12:00': 'INTERNATIONAL DATE LINE WEST'
+            };
+            var key = tzSign + tzH + ':' + tzM;
+            return { utcStr: utcStr, tzName: tzNames[key] || '' };
+        }
+
         function updateClockDisplay(now) {
             const s = now.getSeconds() + now.getMilliseconds() / 1000;
             const m = now.getMinutes() + s / 60;
@@ -14155,54 +14403,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (dateEl) dateEl.textContent = formatClockDate(now).toUpperCase();
             const utcEl = document.getElementById('clockUtcOffset');
             if (utcEl) {
-                var tzOff = -(now.getTimezoneOffset());
-                var tzSign = tzOff >= 0 ? '+' : '-';
-                var tzAbs = Math.abs(tzOff);
-                var tzH = String(Math.floor(tzAbs / 60)).padStart(2, '0');
-                var tzM = String(tzAbs % 60).padStart(2, '0');
-                var utcStr = 'UTC' + tzSign + tzH + ':' + tzM;
-                // Map common UTC offsets to timezone names
-                var tzNames = {
-                    '+14:00': 'LINE ISLANDS TIME',
-                    '+13:00': 'TONGA TIME',
-                    '+12:00': 'NEW ZEALAND STANDARD TIME',
-                    '+11:00': 'SOLOMON ISLANDS TIME',
-                    '+10:30': 'LORD HOWE STANDARD TIME',
-                    '+10:00': 'AUSTRALIAN EASTERN STANDARD TIME',
-                    '+09:30': 'AUSTRALIAN CENTRAL STANDARD TIME',
-                    '+09:00': 'JAPAN STANDARD TIME',
-                    '+08:00': 'PHILIPPINE STANDARD TIME',
-                    '+07:00': 'INDOCHINA TIME',
-                    '+06:30': 'MYANMAR TIME',
-                    '+06:00': 'BANGLADESH STANDARD TIME',
-                    '+05:30': 'INDIA STANDARD TIME',
-                    '+05:45': 'NEPAL TIME',
-                    '+05:00': 'PAKISTAN STANDARD TIME',
-                    '+04:30': 'AFGHANISTAN TIME',
-                    '+04:00': 'GULF STANDARD TIME',
-                    '+03:30': 'IRAN STANDARD TIME',
-                    '+03:00': 'ARABIA STANDARD TIME',
-                    '+02:00': 'EASTERN EUROPEAN TIME',
-                    '+01:00': 'CENTRAL EUROPEAN TIME',
-                    '+00:00': 'GREENWICH MEAN TIME',
-                    '-01:00': 'AZORES TIME',
-                    '-02:00': 'SOUTH GEORGIA TIME',
-                    '-03:00': 'ARGENTINA TIME',
-                    '-03:30': 'NEWFOUNDLAND STANDARD TIME',
-                    '-04:00': 'ATLANTIC STANDARD TIME',
-                    '-05:00': 'EASTERN STANDARD TIME',
-                    '-06:00': 'CENTRAL STANDARD TIME',
-                    '-07:00': 'MOUNTAIN STANDARD TIME',
-                    '-08:00': 'PACIFIC STANDARD TIME',
-                    '-09:00': 'ALASKA STANDARD TIME',
-                    '-09:30': 'MARQUESAS TIME',
-                    '-10:00': 'HAWAII-ALEUTIAN STANDARD TIME',
-                    '-11:00': 'SAMOA STANDARD TIME',
-                    '-12:00': 'INTERNATIONAL DATE LINE WEST'
-                };
-                var key = tzSign + tzH + ':' + tzM;
-                var tzName = tzNames[key] || '';
-                utcEl.innerHTML = utcStr + (tzName ? '<br><span style="font-size:10px;opacity:0.8;">' + tzName + '</span>' : '');
+                var info = getUtcOffsetInfo(now);
+                utcEl.innerHTML = info.utcStr + (info.tzName ? '<br><span style="font-size:10px;opacity:0.8;">' + info.tzName + '</span>' : '');
             }
             const status = document.getElementById('clockStatusTime');
             if (status) status.textContent = padClock2(getHours12(now)) + ':' + padClock2(now.getMinutes()) + ' ' + (now.getHours() >= 12 ? 'PM' : 'AM');
@@ -14236,11 +14438,30 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 var monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 dateEl.textContent = monthsShort[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
             }
+            // Keep the (possibly hidden) timezone line current too, so it's
+            // always accurate the instant it's revealed — this is read straight
+            // from the device's real timezone offset, so it flips automatically
+            // if the person changes their system timezone, and can't be typed
+            // in or overridden from this app's own settings.
+            var tzEl = document.getElementById('mainMenuClockTz');
+            if (tzEl) {
+                var info = getUtcOffsetInfo(now);
+                tzEl.textContent = info.utcStr + (info.tzName ? ' ' + info.tzName : '');
+            }
             // Fire again exactly when the next second rolls over (sub-millisecond accuracy)
             setTimeout(updateMainMenuClock, 1000 - now.getMilliseconds());
         }
         // Snap to the very next second boundary before starting
         setTimeout(updateMainMenuClock, 1000 - new Date().getMilliseconds());
+
+        // Click the corner clock (either the time or the date pill) to reveal/hide
+        // the device's real UTC offset + timezone name underneath.
+        function toggleMainMenuClockTz() {
+            var tzEl = document.getElementById('mainMenuClockTz');
+            if (!tzEl) return;
+            var showing = tzEl.style.display !== 'none';
+            tzEl.style.display = showing ? 'none' : 'inline-flex';
+        }
 
         const CLOCK_APP_STORAGE = 'clockAppBgState';
 
@@ -15269,6 +15490,17 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (el) el.style.backgroundPosition = '';
         }
 
+        function updateNameInfoBtnFlashState() {
+            var btn = document.querySelector('.name-info-btn');
+            if (!btn) return;
+            var seen = localStorage.getItem('nameWarningSeen') === 'true';
+            if (seen) {
+                btn.classList.remove('flashing-red');
+            } else {
+                btn.classList.add('flashing-red');
+            }
+        }
+
         function toggleNameWarning(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -15276,6 +15508,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (overlay) {
                 overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
             }
+            // Mark as seen/clicked so the info button stops flashing red and goes back to gray
+            localStorage.setItem('nameWarningSeen', 'true');
+            updateNameInfoBtnFlashState();
         }
 
         function closeNameWarning(event) {
@@ -15294,6 +15529,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Simple one-time flag: show the notice once, cleared when they create their new account
             localStorage.setItem('authorWasReset', 'true');
             localStorage.removeItem('wasAuthorReset');
+            // Data was wiped by the admin (or disappeared from Firebase) — make the
+            // name/nickname info button flash red again until they click it.
+            localStorage.removeItem('nameWarningSeen');
+            updateNameInfoBtnFlashState();
+            // Same for the password info icon.
+            localStorage.removeItem('pwWarningSeen');
+            updatePwExclamFlashState();
             localStorage.removeItem('lastHandledResetAt');
             localStorage.removeItem('accountCreatedOnDevice');
             var notice = document.getElementById('authorResetNotice');
@@ -16239,6 +16481,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // if the page is closed and reopened later.
         var LOGOUT_DURATION_KEY = 'autoLogoutDurationMinutes';
         var LOGOUT_EXPIRES_AT_KEY = 'autoLogoutExpiresAt';
+        // Permanent ("Never") sessions have no expiresAt to fingerprint, so we
+        // tag each login with a random token and store it both locally and in
+        // Firebase meta. This lets us tell "this device's own permanent session"
+        // apart from "a permanent session active on another device" — the same
+        // way the expiresAt-matching trick already does for timed sessions.
+        var SESSION_TOKEN_KEY = 'activeLoginSessionToken';
+        function _genSessionToken() {
+            return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2);
+        }
         var _logoutOptionIds = {
             '10': 'logoutOpt10m',
             '60': 'logoutOpt1h',
@@ -16402,6 +16653,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             localStorage.removeItem('userNameStoredAt');
             localStorage.removeItem('senderPassword');
             localStorage.removeItem(LOGOUT_EXPIRES_AT_KEY);
+            // Inactivity timer expired — make the name/nickname info button flash
+            // red again until they click it.
+            localStorage.removeItem('nameWarningSeen');
+            updateNameInfoBtnFlashState();
+            // Same for the password info icon.
+            localStorage.removeItem('pwWarningSeen');
+            updatePwExclamFlashState();
             // Record when this auto-logout happened so the 1168-hour new-account
             // cooldown can be checked in proceedToMessage / confirmFinalName.
             localStorage.setItem('autoLoggedOutAt', String(Date.now()));
@@ -16923,6 +17181,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             checkForMissedForceLogoutOnLoad();
         }
         document.addEventListener('DOMContentLoaded', resumeAutoLogoutOnLoad);
+        document.addEventListener('DOMContentLoaded', updateNameInfoBtnFlashState);
+        document.addEventListener('DOMContentLoaded', updatePwExclamFlashState);
 
         function checkForMissedForceLogoutOnLoad() {
             if (!window.pmGetSenderId || !window._pmDb) {
@@ -17096,11 +17356,85 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             startAutoLogoutWatcher();
         }
 
+        function updatePwExclamFlashState() {
+            var btn = document.getElementById('senderPwExclam');
+            if (!btn) return;
+            var seen = localStorage.getItem('pwWarningSeen') === 'true';
+            if (seen) {
+                btn.classList.remove('flashing-red');
+            } else {
+                btn.classList.add('flashing-red');
+            }
+        }
+
+        let pwExitConfirmCountdownId = null;
+
+        function openPasswordExitConfirm() {
+            const overlay = document.getElementById('passwordExitConfirmOverlay');
+            if (overlay) overlay.style.display = 'flex';
+            startPwExitConfirmCountdown();
+        }
+
+        function startPwExitConfirmCountdown() {
+            let seconds = 5;
+            const countdownEl = document.getElementById('pwExitConfirmCountdown');
+            const timerWrap = document.querySelector('.password-exit-confirm-timer');
+            const exitBtn = document.getElementById('pwExitConfirmBtn');
+
+            if (countdownEl) countdownEl.textContent = seconds;
+            if (timerWrap) timerWrap.style.display = '';
+            if (exitBtn) {
+                exitBtn.disabled = true;
+                exitBtn.style.opacity = '0.5';
+                exitBtn.style.cursor = 'not-allowed';
+            }
+
+            if (pwExitConfirmCountdownId) clearInterval(pwExitConfirmCountdownId);
+
+            pwExitConfirmCountdownId = setInterval(function() {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(pwExitConfirmCountdownId);
+                    pwExitConfirmCountdownId = null;
+                    if (timerWrap) timerWrap.style.display = 'none';
+                    if (exitBtn) {
+                        exitBtn.disabled = false;
+                        exitBtn.style.opacity = '1';
+                        exitBtn.style.cursor = 'pointer';
+                    }
+                }
+            }, 1000);
+        }
+
+        function closePasswordExitConfirm() {
+            if (pwExitConfirmCountdownId) {
+                clearInterval(pwExitConfirmCountdownId);
+                pwExitConfirmCountdownId = null;
+            }
+            const overlay = document.getElementById('passwordExitConfirmOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        function confirmPasswordExit() {
+            if (pwExitConfirmCountdownId) {
+                clearInterval(pwExitConfirmCountdownId);
+                pwExitConfirmCountdownId = null;
+            }
+            closePasswordExitConfirm();
+            closeModal('senderPassword');
+            openSenderLoginModal();
+        }
+
         function showImportantMessage() {
             const overlay = document.getElementById('importantMessageOverlay');
             if (overlay) {
                 overlay.style.display = 'flex';
             }
+            // Mark as seen/clicked so the password info icon stops flashing red and goes back to gray
+            localStorage.setItem('pwWarningSeen', 'true');
+            updatePwExclamFlashState();
         }
 
         function closeImportantMessage() {
@@ -19357,12 +19691,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // GLOBAL "OPEN MESSAGE ME IMMEDIATELY" or a global duration close —
                 // would then read that leftover senderId as selectedSenderId and get
                 // silently scoped to privateMessages/<that person>/meta instead of
-                // siteConfig/messageMeStatus. Explicitly resetting to "SELECT PERSON"
+                // siteConfig/messageMeStatus. Explicitly resetting to "SELECT ACCOUNT"
                 // on every fresh open closes that gap.
                 resetCloseSpecificPersonSelection();
                 populateCloseSpecificPersonSelect();
                 modal.classList.add('active');
                 modal.style.display = 'flex';
+                var scrollEl = document.getElementById('closeTimeDurationScroll');
+                if (scrollEl) scrollEl.scrollTop = 0;
+                updateCloseSectionHeader();
             }
         }
 
@@ -19396,7 +19733,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             });
             entries.sort(function(a, b) { return a.label.localeCompare(b.label); });
 
-            var html = '<option value="">SELECT PERSON</option>';
+            var html = '<option value="">SELECT ACCOUNT</option>';
             entries.forEach(function(entry) {
                 html += '<option value="' + escapeHtmlPm(entry.senderId) + '">' + escapeHtmlPm(entry.label) + '</option>';
             });
@@ -19421,13 +19758,34 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (label) label.style.color = hasSelection ? '#22c55e' : '#fff';
         }
 
-        // Clears the person dropdown back to "SELECT PERSON" — called alongside
+        // Clears the person dropdown back to "SELECT ACCOUNT" — called alongside
         // clearCloseRadioGroup so a fresh APPLY always starts from a clean slate.
         function resetCloseSpecificPersonSelection() {
             var select = document.getElementById('closeSpecificPersonSelect');
             if (!select) return;
             select.value = '';
             updateCloseSpecificPersonSelection();
+        }
+
+        function updateCloseSectionHeader() {
+            var el = document.getElementById('closeTimeDurationScroll');
+            var header = document.getElementById('closeSectionHeader');
+            var timeMarker = document.getElementById('closeSectionMarkerTime');
+            var accountMarker = document.getElementById('closeSectionMarkerAccount');
+            if (!el || !header || !timeMarker || !accountMarker) return;
+            // A marker counts as "reached" once it's scrolled to (or past) the top
+            // of the visible scroll area, so the header flips right as that
+            // section's content comes into view.
+            var scrollTop = el.scrollTop;
+            var accountY = accountMarker.offsetTop - el.offsetTop;
+            var timeY = timeMarker.offsetTop - el.offsetTop;
+            if (scrollTop >= accountY - 4) {
+                header.textContent = "CHOOSE AN ACCOUNT'S NAME";
+            } else if (scrollTop >= timeY - 4) {
+                header.textContent = 'CHOOSE A TIME';
+            } else {
+                header.textContent = 'CHOOSE A TITLE';
+            }
         }
 
         function scrollCloseTimeDuration() {
@@ -22509,10 +22867,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 closeModal('christmasMessage');
                             }
                             showAuthorResetNotice();
-                            // Only pop up confirmation if this is the sender's device, not the owner's
-                            if (localStorage.getItem(ADMIN_ACCESS_KEY) !== 'true') {
-                                openModal('messageConfirmation');
-                            }
+                            // Don't auto-open the confirmation modal here — this listener
+                            // runs in the background from page load, not from a click, so
+                            // popping the modal open here would surface it on page load
+                            // instead of only when the person clicks "Message Me". The
+                            // cleanup above (clearing local session, freeing the password,
+                            // setting the authorWasReset flag) is enough; the notice will
+                            // show naturally the next time they click Message Me.
                             return;
                         }
                     }
