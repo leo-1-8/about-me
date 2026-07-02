@@ -1074,6 +1074,9 @@
         body.dark-mode .christmas-modal-title {
             color: rgba(255, 255, 255, 0.92) !important;
         }
+        body.dark-mode #closeMessageMeModal .christmas-modal-title {
+            color: #ef4444 !important;
+        }
         body.dark-mode .christmas-textarea {
             background: rgba(20, 24, 40, 0.9) !important;
             color: rgba(255, 255, 255, 0.95) !important;
@@ -6099,16 +6102,14 @@
             text-align: center;
         }
 
-        .clock-battery-wrap,
-        .main-menu-battery-wrap {
+        .clock-battery-wrap {
             display: inline-flex;
             align-items: center;
             flex-shrink: 0;
             gap: 2px;
         }
 
-        .clock-battery-wrap::after,
-        .main-menu-battery-wrap::after {
+        .clock-battery-wrap::after {
             content: '';
             display: block;
             width: 3px;
@@ -6179,28 +6180,6 @@
         .clock-battery-pct.clock-battery-pct--unknown {
             color: rgba(203, 213, 225, 0.85);
             font-size: 6px;
-        }
-
-        .main-menu-battery-wrap {
-            position: fixed;
-            top: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 25000;
-            width: auto;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .main-menu-battery-wrap.active {
-            display: flex;
-        }
-
-        .main-menu-battery {
-            min-width: 38px;
         }
 
         .clock-main {
@@ -9679,6 +9658,54 @@
                 font-size: 20px;
             }
         }
+        /* ── DESKTOP FIXES (min-width: 769px) ────────────────────────────────── */
+        @media (min-width: 769px) {
+
+            /* 1. ABOUT ME / OTHERS buttons — push them higher up */
+            .button-container {
+                position: absolute !important;
+                top: 38% !important;
+                bottom: auto !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: auto !important;
+                flex-direction: row !important;
+                gap: 24px !important;
+            }
+
+            /* 2. bottomStack — full width on desktop, not capped at 500px */
+            #bottomStack {
+                max-width: 860px !important;
+                padding: 0 32px !important;
+                bottom: 28px !important;
+            }
+
+            /* 3. Warning / UPDATES IN box — full width, proper space above for MESSAGE ME label */
+            #mainWarning.warning-message {
+                width: 100% !important;
+                max-width: 860px !important;
+                margin-top: 32px !important; /* space so MESSAGE ME label above doesn't overlap */
+                box-sizing: border-box !important;
+                word-break: break-word !important;
+            }
+
+            /* 4. MESSAGE ME label sits above the box with breathing room */
+            #messageForMeBox {
+                margin-bottom: 8px !important;
+                bottom: calc(100% + 4px) !important;
+            }
+
+            /* 5. ANSWER THIS FORM — pinned to very bottom, below the box */
+            #formLinkBelow {
+                position: fixed !important;
+                bottom: 6px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
     </style>
 </head>
 <body class="intro-pending">
@@ -9789,12 +9816,6 @@
                 <span id="minutes">00</span><span class="time-label">M</span>
                 <span id="seconds">00</span><span class="time-label">S</span>
             </div>
-        </div>
-        <div id="mainMenuBatteryWrap" class="main-menu-battery-wrap" aria-label="Battery">
-            <span class="clock-battery main-menu-battery">
-                <span class="clock-battery-fill" id="mainBatteryFill"></span>
-                <span class="clock-battery-pct clock-battery-pct--unknown" id="mainBatteryPct">--</span>
-            </span>
         </div>
         <div class="button-container" id="mainButtonContainer" style="display: none;">
             <button class="main-button btn-about" onclick="openModal('about')">
@@ -11687,6 +11708,16 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                 <span id="closeCustomTitlePreview" style="display:none; width: 100%; text-align: center; font-size:12px; color:#22c55e; font-family:'Share Tech Mono',monospace;"></span>
                             </span>
                         </label>
+                        <!-- FONT COLOR TITLE -->
+                        <div style="text-align: left; font-size: 11px; color: #999; margin-top: 4px; margin-bottom: 8px; font-weight: normal; letter-spacing: 0.5px;">FONT COLOR TITLE</div>
+                        <div id="closeTitleColorRow" style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px; flex-wrap: wrap;">
+                            <button type="button" class="close-color-swatch" data-color="default" data-target="title" onclick="setCloseColor('title','default',this)" title="Default" style="width:28px;height:28px;border-radius:50%;border:2px solid #22c55e;background:linear-gradient(135deg,#fff 50%,#333 50%);cursor:pointer;flex-shrink:0;box-shadow:0 0 0 2px #22c55e;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#eab308" data-target="title" onclick="setCloseColor('title','#eab308',this)" title="Yellow" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#eab308;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#f97316" data-target="title" onclick="setCloseColor('title','#f97316',this)" title="Orange" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#f97316;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#ef4444" data-target="title" onclick="setCloseColor('title','#ef4444',this)" title="Red" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#ef4444;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#22c55e" data-target="title" onclick="setCloseColor('title','#22c55e',this)" title="Green" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#22c55e;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#3b82f6" data-target="title" onclick="setCloseColor('title','#3b82f6',this)" title="Blue" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#3b82f6;cursor:pointer;flex-shrink:0;"></button>
+                        </div>
                         <div id="closeSectionMarkerTime" style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE A TIME</div>
                         <label class="close-msg-radio-label" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; color: #fff; padding-top: 2px;">
                             <input type="radio" name="closeTime" value="7days" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
@@ -11717,10 +11748,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <input type="radio" name="closeOpenNow" value="openNow" class="close-msg-radio" style="width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #22c55e; margin-top: 2px;" onchange="updateCloseMessageMeSelection()" onclick="toggleCloseRadio(this)">
                             <span class="close-msg-text" style="font-weight: normal;">OPEN MESSAGE ME IMMEDIATELY</span>
                         </label>
+                        <!-- FONT COLOR TIMER -->
+                        <div style="text-align: left; font-size: 11px; color: #999; margin-top: 4px; margin-bottom: 8px; font-weight: normal; letter-spacing: 0.5px;">FONT COLOR TIMER</div>
+                        <div id="closeTimerColorRow" style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px; flex-wrap: wrap;">
+                            <button type="button" class="close-color-swatch" data-color="default" data-target="timer" onclick="setCloseColor('timer','default',this)" title="Default" style="width:28px;height:28px;border-radius:50%;border:2px solid #22c55e;background:linear-gradient(135deg,#fff 50%,#333 50%);cursor:pointer;flex-shrink:0;box-shadow:0 0 0 2px #22c55e;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#eab308" data-target="timer" onclick="setCloseColor('timer','#eab308',this)" title="Yellow" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#eab308;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#f97316" data-target="timer" onclick="setCloseColor('timer','#f97316',this)" title="Orange" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#f97316;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#ef4444" data-target="timer" onclick="setCloseColor('timer','#ef4444',this)" title="Red" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#ef4444;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#22c55e" data-target="timer" onclick="setCloseColor('timer','#22c55e',this)" title="Green" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#22c55e;cursor:pointer;flex-shrink:0;"></button>
+                            <button type="button" class="close-color-swatch" data-color="#3b82f6" data-target="timer" onclick="setCloseColor('timer','#3b82f6',this)" title="Blue" style="width:28px;height:28px;border-radius:50%;border:2px solid transparent;background:#3b82f6;cursor:pointer;flex-shrink:0;"></button>
+                        </div>
                         <!-- Divider + ADD A SPECIFIC PERSON TIMER -->
                         <div id="closeSectionMarkerAccount" style="text-align: left; font-size: 12px; color: #999; margin-top: 8px; font-weight: normal;">CHOOSE AN ACCOUNT'S NAME</div>
                         <div class="close-msg-radio-label" id="closeSpecificPersonRow" style="display: flex; align-items: center; gap: 12px; color: #fff; padding-top: 2px; margin-bottom: 10px;">
-                            <span class="close-msg-text" id="closeSpecificPersonLabel" style="font-weight: normal; flex: 1 1 auto; min-width: 0;">SENDER'S NAME</span>
+                            <span class="close-msg-text" id="closeSpecificPersonLabel" style="font-weight: normal; flex: 1 1 auto; min-width: 0;">ACCOUNT'S NAME</span>
                             <select id="closeSpecificPersonSelect" onchange="updateCloseSpecificPersonSelection()" style="flex: 0 0 auto; max-width: 55%; height: 32px; padding: 0 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: #2a2a2a; color: #999; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box;">
                                 <option value="">SELECT ACCOUNT</option>
                             </select>
@@ -11824,6 +11865,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             <!-- Auto Login button -->
             <button type="button" id="userSettingsAutoLoginBtn" onclick="autoLoginFromSettings()" style="width: 100%; min-width: 0; height: 60px; min-height: 60px; flex-shrink: 0; padding: 0 14px; border: 1px solid rgba(255,140,0,0.6); border-radius: 8px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center; box-shadow: 0 2px 12px rgba(249,115,22,0.35); margin-top: 6px;" onmouseover="this.style.background='linear-gradient(135deg,#fb923c,#f97316)';this.style.boxShadow='0 4px 18px rgba(249,115,22,0.55)'" onmouseout="this.style.background='linear-gradient(135deg,#f97316,#ea580c)';this.style.boxShadow='0 2px 12px rgba(249,115,22,0.35)'">AUTO LOGIN</button>
+
+            <!-- Login / Logout timestamps -->
+            <div id="userSettingsLoginTimestamps" style="width:100%; margin-top:10px; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); box-sizing:border-box; font-size:11px; font-family:monospace; color:rgba(255,255,255,0.55); display:flex; flex-direction:column; gap:5px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:10px; flex-shrink:0;">LOG IN TIME:</span>
+                    <span id="userSettingsLogInTime" style="color:#4ade80; font-weight:700; text-align:right;">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:10px; flex-shrink:0;">LOG OUT TIME:</span>
+                    <span id="userSettingsLogOutTime" style="color:#f87171; font-weight:700; text-align:right;">—</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -13352,7 +13405,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         enableMusicMiniButton();
                         showUpdatesButton();
                         showMainButtons();
-                        updateClockBattery();
+                        
                         setTimeout(function() { try { startBgMusic(); } catch {} }, 100);
                         if (introBox) {
                             introBox.classList.add('fade-out');
@@ -13371,7 +13424,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     enableMusicMiniButton();
                     showUpdatesButton();
                     showMainButtons();
-                    updateClockBattery();
+                    
                     startBgMusic();
                 }
             }
@@ -13648,7 +13701,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             enableMusicMiniButton();
                             showUpdatesButton();
                             showMainButtons();
-                            updateClockBattery();
+                            
                             startBgMusic();
                         }
                     }, 300);
@@ -14495,7 +14548,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 updateClockDisplay(_getTamperProofNow());
                 clockAppRaf = requestAnimationFrame(clockAppLoop);
             }
-            updateClockBattery();
+            
             updateTimerRunDisplay();
             updateStopwatchDisplay();
             updateStopwatchMiniClockHand();
@@ -15398,7 +15451,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 pctEl.classList.add('clock-battery-pct--unknown');
                 if (wrap) {
                     wrap.setAttribute('aria-label', 'Battery level unavailable on this device');
-                    if (wrapId === 'mainMenuBatteryWrap') wrap.classList.remove('active');
                 }
                 return;
             }
@@ -15410,14 +15462,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             pctEl.classList.remove('clock-battery-pct--unknown');
             if (wrap) {
                 wrap.setAttribute('aria-label', 'Battery ' + percent + ' percent' + (charging ? ', charging' : ''));
-                if (wrapId === 'mainMenuBatteryWrap') {
-                    wrap.classList.add('active');
-                }
             }
-        }
-
-        function renderClockBattery(level, charging) {
-            renderBatteryWidget('mainBatteryFill', 'mainBatteryPct', 'mainMenuBatteryWrap', level, charging);
         }
 
         function stopClockBatteryListeners() {
@@ -15426,32 +15471,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 clockBatteryManager.battery.removeEventListener('chargingchange', clockBatteryManager.sync);
                 clockBatteryManager = null;
             }
-        }
-
-        function updateClockBattery() {
-            stopClockBatteryListeners();
-            if (!document.getElementById('mainBatteryFill')) {
-                return;
-            }
-
-            if (!navigator.getBattery) {
-                // Fallback: show 100% battery if API not available
-                renderClockBattery(1, false);
-                return;
-            }
-
-            navigator.getBattery().then(function (battery) {
-                function sync() {
-                    renderClockBattery(battery.level, battery.charging);
-                }
-                sync();
-                battery.addEventListener('levelchange', sync);
-                battery.addEventListener('chargingchange', sync);
-                clockBatteryManager = { battery: battery, sync: sync };
-            }).catch(function (err) {
-                // Fallback on error: show 100% battery
-                renderClockBattery(1, false);
-            });
         }
 
         function startClockApp() {
@@ -16339,7 +16358,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref: fbRef }) {
                                         update(fbRef(window._pmDb, 'privateMessages/' + _loginSafeKey + '/meta'), {
                                             senderPassword: pwVal,
-                                            hasAccountLock: true
+                                            hasAccountLock: true,
+                                            loggedInAt: Date.now()
                                         }).catch(function() {});
                                     }).catch(function() {});
                                 }
@@ -16629,7 +16649,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         logoutMinutes: minutes,
                         logoutExpiresAt: expiresAtVal,
                         isLoggedOut: null,
-                        loggedOutAt: null
+                        loggedOutAt: null,
+                        loggedInAt: Date.now()
                     }).catch(function() {});
                 }).catch(function() {});
             }
@@ -16645,8 +16666,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var loggedOutAtTs = isLoggedOut ? Date.now() : null;
             var updates = {
                 isLoggedOut: isLoggedOut ? true : null,
-                loggedOutAt: loggedOutAtTs
+                loggedOutAt: loggedOutAtTs,
+                loggedInAt: isLoggedOut ? null : undefined
             };
+            if (updates.loggedInAt === undefined) delete updates.loggedInAt;
             // Starting a fresh logout cooldown clears any earlier "ended early" marker
             if (isLoggedOut) updates.cooldownEndedByOwnerAt = null;
             import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref }) {
@@ -19731,6 +19754,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
             stopCloseActiveTimersTicker();
             resetCloseSpecificPersonSelection();
+            if (typeof resetCloseColorSwatches === 'function') resetCloseColorSwatches();
         }
 
         // Fills the "ADD A SPECIFIC PERSON TIMER" dropdown from whatever
@@ -19874,16 +19898,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var header = document.getElementById('closeSectionHeader');
             var timeMarker = document.getElementById('closeSectionMarkerTime');
             var accountMarker = document.getElementById('closeSectionMarkerAccount');
+            var activeTimersMarker = document.getElementById('closeSectionMarkerActiveTimers');
             if (!el || !header || !timeMarker || !accountMarker) return;
-            // A marker counts as "reached" once it's scrolled to (or past) the top
-            // of the visible scroll area, so the header flips right as that
-            // section's content comes into view.
-            var scrollTop = el.scrollTop;
-            var accountY = accountMarker.offsetTop - el.offsetTop;
-            var timeY = timeMarker.offsetTop - el.offsetTop;
-            if (scrollTop >= accountY - 4) {
+            // Use getBoundingClientRect for accurate position detection regardless
+            // of nesting depth — a marker is "reached" when its top edge is at or
+            // above the top edge of the scroll container.
+            var containerTop = el.getBoundingClientRect().top;
+            var timeTop = timeMarker.getBoundingClientRect().top;
+            var accountTop = accountMarker.getBoundingClientRect().top;
+            var activeTimersTop = activeTimersMarker ? activeTimersMarker.getBoundingClientRect().top : Infinity;
+            if (activeTimersTop <= containerTop + 4) {
+                header.textContent = 'TITLE AND TIMER OF USERS';
+            } else if (accountTop <= containerTop + 4) {
                 header.textContent = "CHOOSE AN ACCOUNT'S NAME";
-            } else if (scrollTop >= timeY - 4) {
+            } else if (timeTop <= containerTop + 4) {
                 header.textContent = 'CHOOSE A TIME';
             } else {
                 header.textContent = 'CHOOSE A TITLE';
@@ -19949,6 +19977,46 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (preview) { preview.textContent = ''; preview.style.display = 'none'; }
             updateCloseCustomTitleButtons();
             updateCloseMessageMeSelection();
+        }
+
+        // ── Font color pickers for Close Message Me title and timer ──
+        function resetCloseColorSwatches() {
+            ['closeTitleColorRow', 'closeTimerColorRow'].forEach(function(rowId) {
+                var row = document.getElementById(rowId);
+                if (!row) return;
+                row.querySelectorAll('.close-color-swatch').forEach(function(s) {
+                    s.dataset.selected = 'false';
+                    s.style.boxShadow = '';
+                    s.style.border = '2px solid transparent';
+                });
+            });
+        }
+
+        function setCloseColor(target, color, btn) {
+            var rowId = target === 'title' ? 'closeTitleColorRow' : 'closeTimerColorRow';
+            var row = document.getElementById(rowId);
+            if (!row) return;
+            // Deselect all in row
+            var swatches = row.querySelectorAll('.close-color-swatch');
+            for (var i = 0; i < swatches.length; i++) {
+                swatches[i].dataset.selected = 'false';
+                swatches[i].style.boxShadow = '';
+                swatches[i].style.border = '2px solid transparent';
+                // Restore default swatch border (half/half circle has no outline by default except when selected)
+                if (swatches[i].dataset.color === 'default') {
+                    swatches[i].style.border = '2px solid transparent';
+                }
+            }
+            // Mark this one selected (toggle: click same again to deselect)
+            if (btn.dataset.selected === 'true') {
+                btn.dataset.selected = 'false';
+                btn.style.boxShadow = '';
+                btn.style.border = btn.dataset.color === 'default' ? '2px solid rgba(255,255,255,0.3)' : '2px solid transparent';
+            } else {
+                btn.dataset.selected = 'true';
+                btn.style.boxShadow = '0 0 0 3px #22c55e';
+                btn.style.border = '2px solid #22c55e';
+            }
         }
 
         function toggleCloseRadio(radio) {
@@ -20176,7 +20244,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
                                 messageMeClosedActive: false,
                                 messageMeClosedEndUtcMs: 0,
-                                messageMeClosedTitle: ''
+                                messageMeClosedTitle: '',
+                                messageMeClosedTitleColor: 'default',
+                                messageMeClosedTimerColor: 'default'
                             }).then(function() {
 
                             }).catch(function(e) {
@@ -20216,7 +20286,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         return;
                     }
                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
-                        fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' }).catch(function(e) {
+                        fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' }).catch(function(e) {
                             console.warn('[closeMessageMe] Firebase clear failed:', e);
                         });
                     }).catch(function(e) {
@@ -20270,6 +20340,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 'updating': 'MESSAGE ME IS CURRENTLY UPDATING... PLEASE WAIT.'
             }[selectedTitle];
             
+            // Capture chosen colors from UI into window state for use in _doWriteClose and local preview
+            window._cmmSiteTitleColor = (function(){
+                var btns = document.querySelectorAll('#closeTitleColorRow .close-color-swatch');
+                for (var i=0;i<btns.length;i++){if(btns[i].dataset.selected==='true') return btns[i].dataset.color;}
+                return 'default';
+            })();
+            window._cmmSiteTimerColor = (function(){
+                var btns = document.querySelectorAll('#closeTimerColorRow .close-color-swatch');
+                for (var i=0;i<btns.length;i++){if(btns[i].dataset.selected==='true') return btns[i].dataset.color;}
+                return 'default';
+            })();
+
             // Always fetch a fresh server timestamp before writing endUtcMs
             // so the close timer is immune to device clock manipulation.
             function _doWriteClose(serverNowMs) {
@@ -20298,6 +20380,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(selectedSenderId) + '/meta'), {
                                 messageMeClosedEndUtcMs: endUtcMs,
                                 messageMeClosedTitle: titleText,
+                                messageMeClosedTitleColor: window._cmmSiteTitleColor || 'default',
+                                messageMeClosedTimerColor: window._cmmSiteTimerColor || 'default',
                                 messageMeClosedActive: true,
                                 messageMeClosedSetAt: serverNowMs
                             }).catch(function(e) {
@@ -20328,6 +20412,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 // correctly with any specific-person timer instead of overwriting it.
                 window._cmmSitePerfEndMs = _clickPerfMs + durationMs;
                 window._cmmSiteTitle = titleText;
+                window._cmmSiteTitleColorVal = window._cmmSiteTitleColor || 'default';
+                window._cmmSiteTimerColorVal = window._cmmSiteTimerColor || 'default';
                 _recomputeCloseMessageMeEffective();
 
                 // ── Write to Firebase so the right device(s) update instantly ──
@@ -20346,6 +20432,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), {
                         endUtcMs: endUtcMs,
                         title: titleText,
+                        titleColor: window._cmmSiteTitleColor || 'default',
+                        timerColor: window._cmmSiteTimerColor || 'default',
                         active: true
                     }).catch(function(e) {
                         console.warn('[closeMessageMe] Firebase write failed:', e);
@@ -20405,7 +20493,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // Firebase record — they stay fully independent underneath.
 
         // Apply SITE-wide state received from Firebase (called on first load and on live updates)
-        function applyCloseMessageMeState(endUtcMs, titleText) {
+        function applyCloseMessageMeState(endUtcMs, titleText, titleColor, timerColor) {
             // Always use tamper-proof anchor (synced from server on page load and every 5 min)
             // so changing device clock cannot affect the countdown
             var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
@@ -20414,6 +20502,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var remainingMs = (endUtcMs || 0) - serverNowMs;
             window._cmmSitePerfEndMs = remainingMs > 0 ? (performance.now() + remainingMs) : 0;
             window._cmmSiteTitle = titleText || '';
+            window._cmmSiteTitleColorVal = titleColor || 'default';
+            window._cmmSiteTimerColorVal = timerColor || 'default';
             _recomputeCloseMessageMeEffective();
         }
 
@@ -20422,13 +20512,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // the "ADD A SPECIFIC PERSON TIMER" closure actually show up on that sender's
         // own device: same math as the site-wide version above, just kept in its own
         // slice so it never gets overwritten by (or overwrites) the site-wide one.
-        function applyPersonCloseMessageMeState(endUtcMs, titleText) {
+        function applyPersonCloseMessageMeState(endUtcMs, titleText, titleColor, timerColor) {
             var serverNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
                 ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
                 : Date.now();
             var remainingMs = (endUtcMs || 0) - serverNowMs;
             window._cmmPersonPerfEndMs = remainingMs > 0 ? (performance.now() + remainingMs) : 0;
             window._cmmPersonTitle = titleText || '';
+            window._cmmPersonTitleColorVal = titleColor || 'default';
+            window._cmmPersonTimerColorVal = timerColor || 'default';
             _recomputeCloseMessageMeEffective();
         }
 
@@ -20447,16 +20539,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 window.closeMessageMeEndPerfMs = window._cmmSitePerfEndMs;
                 window.closeMessageMeTitle = window._cmmSiteTitle || '';
+                window.closeMessageMeTitleColor = window._cmmSiteTitleColorVal || 'default';
+                window.closeMessageMeTimerColor = window._cmmSiteTimerColorVal || 'default';
                 startCloseMessageMeRAF();
             } else if (personRemaining > 0) {
 
                 window.closeMessageMeEndPerfMs = window._cmmPersonPerfEndMs;
                 window.closeMessageMeTitle = window._cmmPersonTitle || '';
+                window.closeMessageMeTitleColor = window._cmmPersonTitleColorVal || 'default';
+                window.closeMessageMeTimerColor = window._cmmPersonTimerColorVal || 'default';
                 startCloseMessageMeRAF();
             } else {
 
                 window.closeMessageMeEndPerfMs = 0;
                 window.closeMessageMeTitle = '';
+                window.closeMessageMeTitleColor = 'default';
+                window.closeMessageMeTimerColor = 'default';
                 updateAllCloseMessageMeDisplays();
             }
         }
@@ -20469,11 +20567,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     fb.onValue(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), function(snap) {
                         var val = snap.val();
                         if (val && val.active && val.endUtcMs) {
-                            applyCloseMessageMeState(val.endUtcMs, val.title);
+                            applyCloseMessageMeState(val.endUtcMs, val.title, val.titleColor, val.timerColor);
                         } else {
                             // Clear only the SITE slice — must not stomp on an active
                             // specific-person timer that might be running for this visitor.
-                            applyCloseMessageMeState(0, '');
+                            applyCloseMessageMeState(0, '', 'default', 'default');
                         }
                     }, function(err) {
                         console.warn('[closeMessageMe] Firebase listen error:', err);
@@ -20504,10 +20602,20 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function updateAllCloseMessageMeDisplays() {
             var f = getCloseMessageMeFormatted();
             var title = window.closeMessageMeTitle || '';
+            var titleColorRaw = window.closeMessageMeTitleColor || 'default';
+            var timerColorRaw = window.closeMessageMeTimerColor || 'default';
+
+            // Resolve "default" to theme-aware values (dark = #fff, light = #222)
+            var isDark = document.body.classList.contains('dark-mode');
+            var resolvedTitleColor = (titleColorRaw === 'default') ? (isDark ? '#ffffff' : '#222222') : titleColorRaw;
+            var resolvedTimerColor = (timerColorRaw === 'default') ? '#3b82f6' : timerColorRaw;
 
             // 1. Confirm popup timer
             var confirmTimer = document.getElementById('closeMessageMeTimer');
-            if (confirmTimer) confirmTimer.textContent = f.remainingMs > 0 ? f.text : '0:00:00:00:000';
+            if (confirmTimer) {
+                confirmTimer.textContent = f.remainingMs > 0 ? f.text : '0:00:00:00:000';
+                confirmTimer.style.color = resolvedTimerColor;
+            }
 
             // 2. Message Me modal overlay
             var msgOverlay   = document.getElementById('msgMeClosedOverlay');
@@ -20520,8 +20628,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (f.remainingMs > 0) {
                     msgOverlay.style.display = 'flex';
                     if (msgOrigClose) msgOrigClose.style.setProperty('display', 'none', 'important');
-                    if (msgTitle)     msgTitle.textContent     = title;
+                    if (msgTitle) {
+                        msgTitle.textContent = title;
+                        msgTitle.style.color = resolvedTitleColor;
+                    }
                     if (msgCountdown) {
+                        msgCountdown.style.color = resolvedTimerColor;
                         renderSegmentedCountdown(msgCountdown, msgLabels, f.text);
                     }
                 } else {
@@ -20540,8 +20652,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (f.remainingMs > 0) {
                     loginOverlay.style.display = 'flex';
                     if (loginOrigClose) loginOrigClose.style.setProperty('display', 'none', 'important');
-                    if (loginTitle)     loginTitle.textContent     = title;
+                    if (loginTitle) {
+                        loginTitle.textContent = title;
+                        loginTitle.style.color = resolvedTitleColor;
+                    }
                     if (loginCountdown) {
+                        loginCountdown.style.color = resolvedTimerColor;
                         renderSegmentedCountdown(loginCountdown, loginLabels, f.text);
                     }
                 } else {
@@ -20657,7 +20773,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(senderId) + '/meta'), {
                     messageMeClosedActive: false,
                     messageMeClosedEndUtcMs: 0,
-                    messageMeClosedTitle: ''
+                    messageMeClosedTitle: '',
+                    messageMeClosedTitleColor: 'default',
+                    messageMeClosedTimerColor: 'default'
                 }).then(function() { })
                   .catch(function(e) { console.warn('[closeMessageMe] ' + logLabel + ' auto-clear PERSON failed:', e); });
             }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
@@ -20672,7 +20790,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 && _cmmSiteClearedForEndMs !== window._cmmSitePerfEndMs && _cmmIsOwnerDevice()) {
                 _cmmSiteClearedForEndMs = window._cmmSitePerfEndMs;
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
-                    fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '' })
+                    fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' })
                         .then(function() { })
                         .catch(function(e) { console.warn('[closeMessageMe] Auto-clear SITE failed:', e); });
                 }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
@@ -20797,6 +20915,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // USER SETTINGS modal shows UNKNOWN / EMPTY for that id instead of
         // their old name/password, for the rest of this page session.
         var _userSettingsWipedIds = {};
+        // Stores the last known loggedInAt timestamp per sender so we can keep
+        // displaying it even when Firebase clears it to null on logout.
+        var _userSettingsLastKnownLoginAt = {};
 
         function openUserSettingsModal(senderId) {
             _userSettingsTargetSenderId = senderId || activeConversationSenderId;
@@ -20952,6 +21073,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 if (endActiveTimerBtnEl) endActiveTimerBtnEl.style.display = 'none';
                 if (resetBtn) resetBtn.style.display = 'none';
                 if (autoLoginBtnEl) autoLoginBtnEl.style.display = 'none';
+                var tsBoxEl = document.getElementById('userSettingsLoginTimestamps');
+                if (tsBoxEl) tsBoxEl.style.display = 'none';
                 return;
             } else {
                 if (actionsSection) actionsSection.style.display = '';
@@ -21068,6 +21191,49 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             // Make sure any timer spans we just inserted start ticking
             startInboxSessionCountdowns();
+
+            // LOG IN / LOG OUT timestamps
+            var logInTimeEl  = document.getElementById('userSettingsLogInTime');
+            var logOutTimeEl = document.getElementById('userSettingsLogOutTime');
+            var tsBox        = document.getElementById('userSettingsLoginTimestamps');
+
+            function _fmtUtcLocal(ms) {
+                if (!ms || isNaN(Number(ms))) return '—';
+                var d = new Date(Number(ms));
+                var pad = function(n, z) { return String(n).padStart(z || 2, '0'); };
+                var mo  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+                var day = pad(d.getDate());
+                var yr  = d.getFullYear();
+                var hh  = pad(d.getHours());
+                var mm  = pad(d.getMinutes());
+                var ss  = pad(d.getSeconds());
+                var off = -d.getTimezoneOffset();
+                var offSign = off >= 0 ? '+' : '-';
+                var offH = pad(Math.floor(Math.abs(off) / 60));
+                var offM = pad(Math.abs(off) % 60);
+                return mo + ' ' + day + ', ' + yr + '  ' + hh + ':' + mm + ':' + ss + ' (UTC' + offSign + offH + ':' + offM + ')';
+            }
+
+            // Resolve the raw loggedInAt from Firebase/cache
+            var rawLoggedInAt = (meta.loggedInAt !== undefined && meta.loggedInAt !== null) ? meta.loggedInAt : (cachedConv.loggedInAt || null);
+            var loggedOutAtTs = (meta.loggedOutAt !== undefined && meta.loggedOutAt !== null) ? meta.loggedOutAt : (cachedConv.loggedOutAt || null);
+
+            // When the user is currently logged out, Firebase clears loggedInAt to null.
+            // We must NOT overwrite the displayed login time in that case — keep the last
+            // known value locked until they log in again (which will write a fresh timestamp).
+            if (!_userSettingsLastKnownLoginAt) _userSettingsLastKnownLoginAt = {};
+            var targetKey = _userSettingsTargetSenderId || '__unknown__';
+            if (rawLoggedInAt) {
+                // User is (or was recently) logged in — update our stored value
+                _userSettingsLastKnownLoginAt[targetKey] = rawLoggedInAt;
+            }
+            // Use the live value if available, otherwise fall back to the last
+            // known login time so it stays locked while the user is logged out.
+            var loggedInAt = rawLoggedInAt || _userSettingsLastKnownLoginAt[targetKey] || null;
+
+            if (logInTimeEl)  logInTimeEl.textContent  = _fmtUtcLocal(loggedInAt);
+            if (logOutTimeEl) logOutTimeEl.textContent = _fmtUtcLocal(loggedOutAtTs);
+            if (tsBox) tsBox.style.display = isWiped ? 'none' : 'flex';
         }
 
         function closeUserSettingsModal() {
@@ -21161,6 +21327,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 localStorage.removeItem('wasAuthorReset');
                 localStorage.setItem('accountCreatedOnDevice', '1');
                 try { localStorage.setItem('christmasUserId', targetId); } catch(e) {}
+
+                // Write loggedInAt to Firebase so admin can see the login time
+                if (window._pmDb && window.pmSafeKey) {
+                    import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                        fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(targetId) + '/meta'), {
+                            loggedInAt: Date.now()
+                        }).catch(function() {});
+                    }).catch(function() {});
+                }
 
                 // Clear any cooldown so the user can see the chat immediately
                 localStorage.removeItem('autoLoggedOutAt');
@@ -22055,7 +22230,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         let editConfirmCountdownId = null;
         let nameConfirmCountdownId = null;
         let pendingEditText = null;
-        let originalMessageBeforeEdit = null;
+        let _origMsgBeforeEdit = null;
         let editModalOpenedTime = null;
         let editNoteCountdownId = null;
         let messageEditTimers = {}; // Track timers for each message: { messageId: intervalId }
@@ -22116,7 +22291,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             currentEditingMessageId = messageId;
             currentEditingMessageIndex = messageIndex;
             currentMessageTimestamp = messageTimestamp; // Store the message timestamp
-            originalMessageBeforeEdit = messageText;
+            _origMsgBeforeEdit = messageText;
             
             // Always store the current message ID so it persists across reloads
             localStorage.setItem('EDITING_MESSAGE_ID', messageId);
@@ -22193,7 +22368,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             
             // Check if content is changed and not empty
             const currentText = textarea.value.trim();
-            const originalText = originalMessageBeforeEdit ? originalMessageBeforeEdit.trim() : '';
+            const originalText = _origMsgBeforeEdit ? _origMsgBeforeEdit.trim() : '';
             const isChanged = currentText !== originalText;
             const isNotEmpty = currentText.length > 0;
             
@@ -22292,7 +22467,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 
                 // Revert to original message and show countdown on submit button if not banned
                 if (textarea && newViolationsRemaining > 0) {
-                    textarea.value = originalMessageBeforeEdit;
+                    textarea.value = _origMsgBeforeEdit;
                     
                     if (doneBtn) {
                         const originalText = doneBtn.textContent;
@@ -22423,10 +22598,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             try {
                 if (window.PrivateMessaging && window.PrivateMessaging.ready) {
                     console.log('Updating message:', currentEditingMessageId, 'with text:', newText);
-                    await window.PrivateMessaging.updateMessage(currentEditingMessageId, newText, originalMessageBeforeEdit);
+                    await window.PrivateMessaging.updateMessage(currentEditingMessageId, newText, _origMsgBeforeEdit);
                     console.log('Message updated successfully');
                     pendingEditText = null;
-                    originalMessageBeforeEdit = null;
+                    _origMsgBeforeEdit = null;
                     const editedMessageId = currentEditingMessageId;
                     currentEditingMessageId = null;
                     editModalOpenedTime = null;
@@ -22961,7 +23136,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     if (typeof applyPersonCloseMessageMeState === 'function') {
                         applyPersonCloseMessageMeState(
                             senderConversationMeta.messageMeClosedActive ? senderConversationMeta.messageMeClosedEndUtcMs : 0,
-                            senderConversationMeta.messageMeClosedTitle
+                            senderConversationMeta.messageMeClosedTitle,
+                            senderConversationMeta.messageMeClosedTitleColor || 'default',
+                            senderConversationMeta.messageMeClosedTimerColor || 'default'
                         );
                     }
 
@@ -24947,14 +25124,23 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
             if (!shortDesc || !fullDesc) return;
 
-            // Check if currently expanded by checking if fullDesc is visible
             const isExpanded = fullDesc.classList.contains('expanded');
 
             if (isExpanded) {
-                // Collapse - show short, hide full
+                // Collapse - show short (first sentence), hide full
                 shortDesc.classList.remove('expanded');
                 fullDesc.classList.remove('expanded');
                 seeMoreLink.textContent = tfn('link_see_more');
+                // Re-apply first-sentence truncation for about_fav entries
+                var i18nKey = shortDesc.getAttribute('data-i18n');
+                if (i18nKey && i18nKey.indexOf('about_fav_') === 0) {
+                    var fullText = fullDesc.textContent.trim();
+                    var periodIdx = fullText.indexOf('.');
+                    if (periodIdx !== -1 && periodIdx < fullText.length - 1) {
+                        shortDesc.textContent = fullText.slice(0, periodIdx + 1);
+                        shortDesc.setAttribute('data-i18n', i18nKey); // preserve key
+                    }
+                }
             } else {
                 // Expand - hide short, show full
                 shortDesc.classList.add('expanded');
@@ -24963,31 +25149,35 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
-        // Initialize descriptions to show only first 5 words
+        // Initialize descriptions to show only first sentence for about_fav, first 5 words for others
         function initializeDescriptions() {
             const descriptions = document.querySelectorAll('.description-short');
             descriptions.forEach(desc => {
                 var i18nKey = desc.getAttribute('data-i18n');
-                if (i18nKey && i18nKey.indexOf('about_fav_') === 0) {
-                    return;
-                }
-                // Get the original full text from data attribute or from description-full
                 const descriptionContainer = desc.parentElement;
                 const fullDesc = descriptionContainer.querySelector('.description-full');
+                const seeMoreLink = descriptionContainer.querySelector('.see-more-link');
+
+                if (i18nKey && i18nKey.indexOf('about_fav_') === 0) {
+                    // Truncate to first sentence (up to and including the first period)
+                    const text = desc.textContent.trim();
+                    const periodIdx = text.indexOf('.');
+                    if (periodIdx !== -1 && periodIdx < text.length - 1) {
+                        desc.textContent = text.slice(0, periodIdx + 1);
+                    }
+                    return;
+                }
+
+                // Get the original full text from data attribute or from description-full
                 if (fullDesc) {
                     const fullText = fullDesc.textContent.trim();
                     const words = fullText.split(' ');
                     if (words.length > 5) {
                         const firstFiveWords = words.slice(0, 5).join(' ');
                         desc.textContent = firstFiveWords;
-                        // Store full text in data attribute
                         desc.setAttribute('data-full-text', fullText);
                     } else {
-                        // If 5 words or less, hide the see more link
-                        const seeMoreLink = descriptionContainer.querySelector('.see-more-link');
-                        if (seeMoreLink) {
-                            seeMoreLink.style.display = 'none';
-                        }
+                        if (seeMoreLink) seeMoreLink.style.display = 'none';
                     }
                 }
             });
@@ -25785,9 +25975,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                                             logoutExpiresAt: meta.logoutExpiresAt !== undefined ? meta.logoutExpiresAt : null,
                                             isLoggedOut: meta.isLoggedOut || false,
                                             loggedOutAt: meta.loggedOutAt || null,
+                                            loggedInAt: meta.loggedInAt || null,
                                             messageMeClosedActive: meta.messageMeClosedActive || false,
                                             messageMeClosedEndUtcMs: meta.messageMeClosedEndUtcMs || null,
                                             messageMeClosedTitle: meta.messageMeClosedTitle || '',
+                                            messageMeClosedTitleColor: meta.messageMeClosedTitleColor || 'default',
+                                            messageMeClosedTimerColor: meta.messageMeClosedTimerColor || 'default',
                                             messageMeClosedSetAt: meta.messageMeClosedSetAt || null
                                         });
 
@@ -26285,6 +26478,7 @@ function cdtpRenderCalendar(){
   var ds=document.getElementById('cdtpDateSummary');
   if(ds)ds.textContent=monthsShort[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' at '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+':'+String(_cdtpSec).padStart(2,'0')+' '+_cdtpAmPm;
   cdtpUpdatePrevMonthBtn();
+  cdtpRefreshMonthPicker();
 }
 
 function cdtpUpdatePrevMonthBtn(){
@@ -26310,39 +26504,58 @@ function cdtpChangeMonth(dir){
   // Block navigating to a month before the current month in the current year
   if(newYear===today.getFullYear()&&newMonth<today.getMonth())return;
   _cdtpYear=newYear;_cdtpMonth=newMonth;
-  _cdtpDay=1;_cdtpDaySelected=false;cdtpRenderCalendar();
+  // Keep a selected day so the green highlight moves with the navigation.
+  // Clamp the current _cdtpDay to the days available in the new month.
+  var daysInNew=new Date(newYear,newMonth+1,0).getDate();
+  var minDay=(newYear===today.getFullYear()&&newMonth===today.getMonth())?today.getDate():1;
+  _cdtpDay=Math.max(minDay,Math.min(_cdtpDay||1,daysInNew));
+  _cdtpDaySelected=true;
+  cdtpRenderCalendar();
+}
+
+function cdtpRefreshMonthPicker(){
+  var mp=document.getElementById('cdtpMonthPicker');
+  if(!mp)return;
+  var today=new Date();
+  var buttons=mp.querySelectorAll('button');
+  buttons.forEach(function(btn,idx){
+    // Only disable past months when viewing the current year
+    var isPastMonth=_cdtpYear===today.getFullYear()&&idx<today.getMonth();
+    if(isPastMonth){
+      btn.disabled=true;
+      btn.style.background='rgba(255,255,255,0.03)';
+      btn.style.color='#555';
+      btn.style.cursor='not-allowed';
+      btn.style.opacity='0.4';
+    } else {
+      btn.disabled=false;
+      btn.style.cursor='pointer';
+      btn.style.opacity='1';
+      // Green = currently viewed month; white = selectable
+      btn.style.background=idx===_cdtpMonth?'#22c55e':'rgba(255,255,255,0.1)';
+      btn.style.color=idx===_cdtpMonth?'#111':'#fff';
+    }
+  });
 }
 
 function cdtpToggleMonthPicker(){
   var mp=document.getElementById('cdtpMonthPicker');
   mp.style.display=mp.style.display==='none'?'block':'none';
   if(mp.style.display==='block'){
-    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var today=new Date();
-    var buttons=mp.querySelectorAll('button');
-    buttons.forEach(function(btn,idx){
-      var isPastMonth=_cdtpYear===today.getFullYear()&&idx<today.getMonth();
-      if(isPastMonth){
-        btn.disabled=true;
-        btn.style.background='rgba(255,255,255,0.03)';
-        btn.style.color='#555';
-        btn.style.cursor='not-allowed';
-        btn.style.opacity='0.4';
-      } else {
-        btn.disabled=false;
-        btn.style.cursor='pointer';
-        btn.style.opacity='1';
-        btn.style.background=idx===_cdtpMonth?'#22c55e':'rgba(255,255,255,0.1)';
-        btn.style.color=idx===_cdtpMonth?'#111':'#fff';
-      }
-    });
+    cdtpRefreshMonthPicker();
   }
 }
 
 function cdtpSelectMonth(m){
   var today=new Date();
   if(_cdtpYear===today.getFullYear()&&m<today.getMonth())return; // past month, disallowed
-  _cdtpMonth=m;_cdtpDay=1;_cdtpDaySelected=false;cdtpRenderCalendar();
+  _cdtpMonth=m;
+  // Keep a selected day so green highlight stays visible after month change
+  var daysInNew=new Date(_cdtpYear,m+1,0).getDate();
+  var minDay=(_cdtpYear===today.getFullYear()&&m===today.getMonth())?today.getDate():1;
+  _cdtpDay=Math.max(minDay,Math.min(_cdtpDay||1,daysInNew));
+  _cdtpDaySelected=true;
+  cdtpRenderCalendar();
   document.getElementById('cdtpMonthPicker').style.display='none';
 }
 
