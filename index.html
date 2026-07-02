@@ -11244,7 +11244,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <!-- Close-Message-Me timer overlay (shown when message me is closed) -->
             <div id="loginMeClosedOverlay" class="closed-status-overlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; z-index:100; border-radius:inherit; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:all; text-align:center; padding:24px;">
                 <div id="loginMeClosedTitle" class="closed-status-title" style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; line-height:1.5; max-width:260px;"></div>
-                <div id="loginMeClosedCountdown" style="font-size:24px; font-weight:800; color:#3b82f6; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
+                <div id="loginMeClosedCountdown" style="font-size:24px; font-weight:800; color:#000000; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
                 <div id="loginMeClosedLabels" class="closed-status-labels" style="display:flex; justify-content:center; font-family:monospace; font-size:10px; font-weight:700; letter-spacing:0; margin-top:-6px; gap:0;"></div>
                 <button onclick="closeModal('senderLogin')" style="margin-top:8px; padding:7px 32px; border-radius:8px; border:none; background:#22c55e; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
             </div>
@@ -11372,7 +11372,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <!-- Close-Message-Me timer overlay -->
             <div id="msgMeClosedOverlay" class="closed-status-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:all; text-align:center; padding:24px;">
                 <div id="msgMeClosedTitle" class="closed-status-title" style="font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; line-height:1.5; max-width:260px;"></div>
-                <div id="msgMeClosedCountdown" style="font-size:26px; font-weight:800; color:#3b82f6; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
+                <div id="msgMeClosedCountdown" style="font-size:26px; font-weight:800; color:#000000; letter-spacing:2px; font-family:'Share Tech Mono',monospace; font-variant-numeric:tabular-nums;"></div>
                 <!-- Labels aligned under each segment using the same letter-spacing as the countdown -->
                 <div id="msgMeClosedLabels" class="closed-status-labels" style="display:flex; justify-content:center; font-family:monospace; font-size:10px; font-weight:700; letter-spacing:0; margin-top:-6px; gap:0;"></div>
                 <button onclick="closeModal('christmasMessage')" style="margin-top:8px; padding:7px 32px; border-radius:8px; border:none; background:#22c55e; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
@@ -11427,9 +11427,9 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             </button>
             <div id="christmasViewArea" class="christmas-message-display" style="margin-top:0; display:none;">
                 <div style="display:flex; flex-direction:column; gap:6px;">
-                    <div id="accountCooldownTimerBox" style="display:none; width:100%; padding:8px 12px; background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.6); border-radius:8px; text-align:center; box-sizing:border-box;">
-                        <div style="font-size:9px; font-weight:700; color:#ef4444; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px;">NEW ACCOUNT AVAILABLE IN</div>
-                        <div id="accountCooldownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:14px; font-weight:700; color:#ef4444; letter-spacing:1px;">1168:00:00:000</div>
+                    <div id="accountCooldownTimerBox" style="display:none; width:100%; min-height:56px; flex-shrink:0; padding:8px 12px; background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.6); border-radius:8px; text-align:center; box-sizing:border-box;">
+                        <div style="font-size:9px; font-weight:700; color:#ef4444; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; white-space:nowrap;">NEW ACCOUNT AVAILABLE IN</div>
+                        <div id="accountCooldownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:14px; font-weight:700; color:#ef4444; letter-spacing:1px; white-space:nowrap; font-variant-numeric:tabular-nums;">1168:00:00:000</div>
                     </div>
                     <div class="christmas-view-theme-bar">
                         <button type="button" class="christmas-view-logout-btn" onclick="openLogoutConfirmModal()">Log out</button>
@@ -11867,14 +11867,14 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <button type="button" id="userSettingsAutoLoginBtn" onclick="autoLoginFromSettings()" style="width: 100%; min-width: 0; height: 60px; min-height: 60px; flex-shrink: 0; padding: 0 14px; border: 1px solid rgba(255,140,0,0.6); border-radius: 8px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; letter-spacing: 0.4px; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; text-align: center; box-shadow: 0 2px 12px rgba(249,115,22,0.35); margin-top: 6px;" onmouseover="this.style.background='linear-gradient(135deg,#fb923c,#f97316)';this.style.boxShadow='0 4px 18px rgba(249,115,22,0.55)'" onmouseout="this.style.background='linear-gradient(135deg,#f97316,#ea580c)';this.style.boxShadow='0 2px 12px rgba(249,115,22,0.35)'">AUTO LOGIN</button>
 
             <!-- Login / Logout timestamps -->
-            <div id="userSettingsLoginTimestamps" style="width:100%; margin-top:10px; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); box-sizing:border-box; font-size:11px; font-family:monospace; color:rgba(255,255,255,0.55); display:flex; flex-direction:column; gap:5px;">
+            <div id="userSettingsLoginTimestamps" style="width:100%; margin-top:10px; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); box-sizing:border-box; font-size:8px; font-family:monospace; color:rgba(255,255,255,0.55); display:flex; flex-direction:column; gap:5px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:10px; flex-shrink:0;">LOG IN TIME:</span>
-                    <span id="userSettingsLogInTime" style="color:#4ade80; font-weight:700; text-align:right;">—</span>
+                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:8px; flex-shrink:0;">LOG IN TIME:</span>
+                    <span id="userSettingsLogInTime" style="color:#4ade80; font-weight:700; text-align:right; font-size:8px;">—</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:10px; flex-shrink:0;">LOG OUT TIME:</span>
-                    <span id="userSettingsLogOutTime" style="color:#f87171; font-weight:700; text-align:right;">—</span>
+                    <span style="color:rgba(255,255,255,0.35); letter-spacing:0.5px; font-size:8px; flex-shrink:0;">LOG OUT TIME:</span>
+                    <span id="userSettingsLogOutTime" style="color:#f87171; font-weight:700; text-align:right; font-size:8px;">—</span>
                 </div>
             </div>
         </div>
@@ -14084,6 +14084,40 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var elapsed = performance.now() - _timeAnchorPerfMs;
             return Promise.resolve(new Date(_timeAnchorDeviceMs + elapsed));
         }
+
+        // ── Live OS-timezone-change watcher ──────────────────────────────
+        // Date.getTimezoneOffset() / Intl resolvedOptions().timeZone are only
+        // guaranteed accurate as of when the JS engine's process/tab started.
+        // Most browser engines (esp. mobile Safari/WebView, and some Chrome
+        // builds) snapshot the OS timezone database at startup and do NOT
+        // re-read it just because the user flips their device's timezone in
+        // system Settings while this tab stays open in the background — that
+        // is exactly why "UTC+08:00" looked "stuck" even though the code
+        // above (getUtcOffsetInfo) always computes the offset fresh on every
+        // tick. There's no JS API to force the engine to re-read the OS zone
+        // mid-session; a full reload is what actually re-initializes it.
+        // Fix: poll cheaply for a real change and auto-reload only when one
+        // is detected, so the corner clock / clock app / settings offset
+        // self-heal without the user having to manually refresh.
+        (function _watchForTimezoneChange() {
+            function currentTzKey() {
+                var offset = -(new Date().getTimezoneOffset());
+                var name = '';
+                try { name = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+                return offset + '|' + name;
+            }
+            var _lastTzKey = currentTzKey();
+            setInterval(function() {
+                var key = currentTzKey();
+                if (key !== _lastTzKey) {
+                    _lastTzKey = key;
+                    // Reload so every timezone-derived display (corner clock,
+                    // clock app, settings, message timestamps, countdowns)
+                    // re-initializes against the new OS timezone in one shot.
+                    location.reload();
+                }
+            }, 3000);
+        })();
 
         // NovaAI release countdown (Jan 1, 2027 00:00 UTC)
         let novaAiCountdownInterval = null;
@@ -16355,11 +16389,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             try {
                                 if (window._pmDb && window.pmSafeKey) {
                                     var _loginSafeKey = window.pmSafeKey(senderId);
+                                    // Use server-anchored time — immune to manual device clock changes
+                                    var _loginNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                                        ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                                        : Date.now();
                                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ update, ref: fbRef }) {
                                         update(fbRef(window._pmDb, 'privateMessages/' + _loginSafeKey + '/meta'), {
                                             senderPassword: pwVal,
                                             hasAccountLock: true,
-                                            loggedInAt: Date.now()
+                                            loggedInAt: _loginNowMs
                                         }).catch(function() {});
                                     }).catch(function() {});
                                 }
@@ -16650,7 +16688,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         logoutExpiresAt: expiresAtVal,
                         isLoggedOut: null,
                         loggedOutAt: null,
-                        loggedInAt: Date.now()
+                        loggedInAt: _nowMs
                     }).catch(function() {});
                 }).catch(function() {});
             }
@@ -16663,7 +16701,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (!window._pmDb || !window.pmGetSenderId || !window.pmSafeKey) return;
             var sid = window.pmGetSenderId();
             var sk = window.pmSafeKey(sid);
-            var loggedOutAtTs = isLoggedOut ? Date.now() : null;
+            // Use server-anchored time — immune to manual device clock changes
+            var _logoutNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                : Date.now();
+            var loggedOutAtTs = isLoggedOut ? _logoutNowMs : null;
             var updates = {
                 isLoggedOut: isLoggedOut ? true : null,
                 loggedOutAt: loggedOutAtTs,
@@ -17316,12 +17358,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             if (_rnSL) _rnSL.style.display = 'none';
             var _rnMain = document.getElementById('authorResetNotice');
             if (_rnMain) _rnMain.style.display = 'none';
-            // Mark "now" as handled rather than wiping this to 0 — this device's
-            // senderId is reused for the new account, so if a stale resetSignal from
-            // the reset that just happened is still sitting in Firebase (e.g. the
-            // live listener hadn't deleted it yet), wiping this back to 0 would make
-            // the brand-new account immediately look "reset" again the instant the
-            // listener catches up.
+            // Mark "now" as handled rather than wiping this to 0 — a brand-new
+            // senderId is minted for this account below, but if a stale
+            // resetSignal from the reset that just happened is still sitting
+            // under the OLD id in Firebase (e.g. the live listener hadn't
+            // deleted it yet), wiping this back to 0 would make it look
+            // freshly reset again the instant the listener catches up.
             localStorage.setItem('lastHandledResetAt', String(Date.now()));
             var resetNoticeEl = document.getElementById('authorResetNotice');
             if (resetNoticeEl) resetNoticeEl.style.display = 'none';
@@ -17333,6 +17375,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
                 : Date.now()) + 60 * 60 * 1000;
             localStorage.setItem(LOGOUT_EXPIRES_AT_KEY, String(newAccountExpiresAt));
+            // ── BUGFIX: give every newly-created account its OWN Firebase id ──
+            // pmGetSenderId() used to just read back whatever senderId this
+            // device already had in localStorage (left over from a previous
+            // account). That meant creating account #2 on the same device
+            // pointed at the exact same 'privateMessages/<id>' node as
+            // account #1 — the update() below would overwrite account #1's
+            // senderName/password/messages, wiping it out instead of the two
+            // existing side by side. Minting a fresh, random id here — before
+            // anything (including the local-login backup) reads it — makes
+            // every account creation land on its own untouched node.
+            var myId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            try { localStorage.setItem('christmasUserId', myId); } catch (e) {}
             // Keep a durable local backup of these credentials so that logging out
             // and back in on THIS SAME device/browser always works instantly, even
             // if the Firebase registration below is slow, offline, or never finishes.
@@ -17343,7 +17397,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Register this password in Firebase so others can't reuse it,
             // and store senderName + logout info in meta so the admin inbox can show it
             if (window._pmDb && window.pmGetSenderId) {
-                var myId = window.pmGetSenderId();
                 var hash = 'pw_' + btoa(unescape(encodeURIComponent(password))).replace(/[^a-zA-Z0-9]/g, '_');
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function({ set, update, remove, ref }) {
                     set(ref(window._pmDb, 'usedPasswords/' + hash), { by: myId, at: Date.now() }).catch(function() {});
@@ -19815,6 +19868,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         name: conv.senderName || formatInboxDeviceLabel(conv.lastDeviceName) || senderId,
                         remainingMs: conv.messageMeClosedEndUtcMs - nowMs,
                         title: conv.messageMeClosedTitle || '',
+                        titleColor: conv.messageMeClosedTitleColor || 'default',
+                        timerColor: conv.messageMeClosedTimerColor || 'default',
                         // Fallback for entries written before this field existed, so
                         // they still get a stable (if imperfect) sort position rather
                         // than defaulting to 0 and jumping to the front.
@@ -19849,13 +19904,19 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 var seconds = totalSeconds % 60;
                 var ms = Math.floor(entry.remainingMs % 1000);
                 var timeText = (days > 0 ? days + ':' : '') + String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + ':' + String(ms).padStart(3, '0');
-                var row = '<div style="position:relative; padding:10px 12px; border-radius:8px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.35);">';
-                row += '<span style="position:absolute; left:12px; top:10px;">' + (i + 1) + '.</span>';
+                // Resolve colors: 'default' mirrors the live display — title=white, timer=black(day)/white(night)
+                var _isDarkAdmin = document.body.classList.contains('dark-mode');
+                var resolvedTitleColor = (entry.titleColor && entry.titleColor !== 'default') ? entry.titleColor : '#ffffff';
+                var resolvedTimerColor = (entry.timerColor && entry.timerColor !== 'default') ? entry.timerColor : (_isDarkAdmin ? '#ffffff' : '#000000');
+                var row = '<div style="position:relative; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12);">';
+                row += '<div style="text-align:left; margin-bottom:6px;">';
+                row += '<span style="color:' + resolvedTitleColor + ';">' + (i + 1) + '. ' + escapeHtmlPm(entry.name) + '</span>';
+                row += '</div>';
                 row += '<div style="text-align:center;">';
                 if (entry.title) {
-                    row += '<div style="font-weight:400; opacity:0.85; margin-bottom:2px;">' + escapeHtmlPm(entry.title) + '</div>';
+                    row += '<div style="color:' + resolvedTitleColor + '; font-weight:700; margin-bottom:2px;">' + escapeHtmlPm(entry.title) + '</div>';
                 }
-                row += escapeHtmlPm(entry.name) + ' ' + timeText;
+                row += '<div style="color:' + resolvedTimerColor + ';">' + timeText + '</div>';
                 row += '</div></div>';
                 return row;
             }).join('');
@@ -20017,6 +20078,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 btn.style.boxShadow = '0 0 0 3px #22c55e';
                 btn.style.border = '2px solid #22c55e';
             }
+            // Repaint the currently-checked title/time labels with the new color right away
+            updateCloseMessageMeSelection();
         }
 
         function toggleCloseRadio(radio) {
@@ -20062,17 +20125,32 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         }
 
+        // Read the currently selected swatch color for a given target ('title' or 'timer').
+        // Returns null if the "default" swatch (or nothing) is selected.
+        function _getSelectedCloseColor(target) {
+            var rowId = target === 'title' ? 'closeTitleColorRow' : 'closeTimerColorRow';
+            var row = document.getElementById(rowId);
+            if (!row) return null;
+            var selected = row.querySelector('.close-color-swatch[data-selected="true"]');
+            if (!selected) return null;
+            var c = selected.dataset.color;
+            return (c && c !== 'default') ? c : null;
+        }
+
         function updateCloseMessageMeSelection() {
             const timeRadios = document.getElementsByName('closeTime');
             const titleRadios = document.getElementsByName('closeTitle');
             const openNowRadios = document.getElementsByName('closeOpenNow');
-            
-            // Update time selection colors
+
+            var timerColor = _getSelectedCloseColor('timer') || '#22c55e';
+            var titleColor = _getSelectedCloseColor('title') || '#22c55e';
+
+            // Update time selection colors (reflects FONT COLOR TIMER swatch)
             for (let radio of timeRadios) {
                 const label = radio.closest('.close-msg-radio-label');
                 const textSpan = label.querySelector('.close-msg-text');
                 if (radio.checked) {
-                    textSpan.style.color = '#22c55e';
+                    textSpan.style.color = timerColor;
                 } else {
                     textSpan.style.color = '#fff';
                 }
@@ -20089,12 +20167,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 }
             }
             
-            // Update title selection colors
+            // Update title selection colors (reflects FONT COLOR TITLE swatch)
             for (let radio of titleRadios) {
                 const label = radio.closest('.close-msg-radio-label');
                 const textSpan = label.querySelector('.close-msg-text');
                 if (radio.checked) {
-                    textSpan.style.color = '#22c55e';
+                    textSpan.style.color = titleColor;
                 } else {
                     textSpan.style.color = '#fff';
                 }
@@ -20608,7 +20686,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Resolve "default" to theme-aware values (dark = #fff, light = #222)
             var isDark = document.body.classList.contains('dark-mode');
             var resolvedTitleColor = (titleColorRaw === 'default') ? (isDark ? '#ffffff' : '#222222') : titleColorRaw;
-            var resolvedTimerColor = (timerColorRaw === 'default') ? '#3b82f6' : timerColorRaw;
+            var resolvedTimerColor = (timerColorRaw === 'default') ? (isDark ? '#ffffff' : '#000000') : timerColorRaw;
 
             // 1. Confirm popup timer
             var confirmTimer = document.getElementById('closeMessageMeTimer');
@@ -21198,25 +21276,52 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var tsBox        = document.getElementById('userSettingsLoginTimestamps');
 
             function _fmtUtcLocal(ms) {
-                if (!ms || isNaN(Number(ms))) return '—';
-                var d = new Date(Number(ms));
+                if (!ms || isNaN(Number(ms))) return '---';
+                var utcMs = Number(ms);
+                // getTimezoneOffset() is derived from the device's timezone setting,
+                // NOT the device clock — so it stays correct even if the user
+                // manually changes their system date/time.
+                var tzOffsetMs = -(new Date().getTimezoneOffset()) * 60 * 1000;
+                var localMs = utcMs + tzOffsetMs;
+                // Break localMs into calendar fields via pure UTC math (no local Date methods)
                 var pad = function(n, z) { return String(n).padStart(z || 2, '0'); };
-                var mo  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-                var day = pad(d.getDate());
-                var yr  = d.getFullYear();
-                var hh  = pad(d.getHours());
-                var mm  = pad(d.getMinutes());
-                var ss  = pad(d.getSeconds());
-                var off = -d.getTimezoneOffset();
+                var totalSec = Math.floor(localMs / 1000);
+                var ss = pad(Math.abs(totalSec % 60));
+                var totalMin = Math.floor(totalSec / 60);
+                var mm = pad(Math.abs(totalMin % 60));
+                var totalHr = Math.floor(totalMin / 60);
+                var hh = pad(Math.abs(totalHr % 24));
+                // Day count from epoch (localMs)
+                var dayNum = Math.floor(localMs / 86400000);
+                // Shift epoch (Jan 1 1970) to a date using the Gregorian algorithm
+                var z = dayNum + 719468;
+                var era = Math.floor((z >= 0 ? z : z - 146096) / 146097);
+                var doe = z - era * 146097;
+                var yoe = Math.floor((doe - Math.floor(doe/1460) + Math.floor(doe/36524) - Math.floor(doe/146096)) / 365);
+                var yr = yoe + era * 400;
+                var doy = doe - (365 * yoe + Math.floor(yoe/4) - Math.floor(yoe/100));
+                var mp = Math.floor((5 * doy + 2) / 153);
+                var day = doy - Math.floor((153 * mp + 2) / 5) + 1;
+                var mo = mp < 10 ? mp + 3 : mp - 9;
+                if (mo <= 2) yr++;
+                var moNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var off = -(new Date().getTimezoneOffset());
                 var offSign = off >= 0 ? '+' : '-';
                 var offH = pad(Math.floor(Math.abs(off) / 60));
                 var offM = pad(Math.abs(off) % 60);
-                return mo + ' ' + day + ', ' + yr + '  ' + hh + ':' + mm + ':' + ss + ' (UTC' + offSign + offH + ':' + offM + ')';
+                return moNames[mo - 1] + ' ' + pad(day) + ', ' + yr + '  ' + hh + ':' + mm + ':' + ss + ' (UTC' + offSign + offH + ':' + offM + ')';
             }
 
-            // Resolve the raw loggedInAt from Firebase/cache
-            var rawLoggedInAt = (meta.loggedInAt !== undefined && meta.loggedInAt !== null) ? meta.loggedInAt : (cachedConv.loggedInAt || null);
-            var loggedOutAtTs = (meta.loggedOutAt !== undefined && meta.loggedOutAt !== null) ? meta.loggedOutAt : (cachedConv.loggedOutAt || null);
+            // Resolve the raw loggedInAt from Firebase/cache. Falls through: live meta
+            // passed in -> cached inbox row -> the sender's own live-tracked meta
+            // (senderConversationMeta), which may already have it even when the
+            // admin inbox cache/listener for this modal hasn't populated yet.
+            var _sharedMeta = (typeof senderConversationMeta !== 'undefined' && senderConversationMeta
+                && senderConversationMeta.senderId === _userSettingsTargetSenderId) ? senderConversationMeta : null;
+            var rawLoggedInAt = (meta.loggedInAt !== undefined && meta.loggedInAt !== null) ? meta.loggedInAt
+                : (cachedConv.loggedInAt || (_sharedMeta && _sharedMeta.loggedInAt) || null);
+            var loggedOutAtTs = (meta.loggedOutAt !== undefined && meta.loggedOutAt !== null) ? meta.loggedOutAt
+                : (cachedConv.loggedOutAt || (_sharedMeta && _sharedMeta.loggedOutAt) || null);
 
             // When the user is currently logged out, Firebase clears loggedInAt to null.
             // We must NOT overwrite the displayed login time in that case — keep the last
@@ -21330,9 +21435,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 // Write loggedInAt to Firebase so admin can see the login time
                 if (window._pmDb && window.pmSafeKey) {
+                    // Use server-anchored time — immune to manual device clock changes
+                    var _autoLoginNowMs = (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined')
+                        ? _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs)
+                        : Date.now();
                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                         fb.update(fb.ref(window._pmDb, 'privateMessages/' + window.pmSafeKey(targetId) + '/meta'), {
-                            loggedInAt: Date.now()
+                            loggedInAt: _autoLoginNowMs
                         }).catch(function() {});
                     }).catch(function() {});
                 }
