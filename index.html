@@ -29113,6 +29113,119 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
+<!-- FIX SEE MORE/LESS AND HOBBIES/FAVORITES BUTTONS -->
+<script>
+(function() {
+    function fixSeeMoreLessButtons() {
+        // FIX ALL "SEE MORE" AND "SEE LESS" LINKS
+        var seeMoreLinks = document.querySelectorAll('.see-more-link');
+        seeMoreLinks.forEach(function(link) {
+            if (!link._seeMoreFixed) {
+                link._seeMoreFixed = true;
+                link.style.pointerEvents = 'auto';
+                link.style.touchAction = 'manipulation';
+                link.style.cursor = 'pointer';
+                
+                var onclick = link.getAttribute('onclick');
+                if (onclick) {
+                    link.addEventListener('click', function(e) {
+                        try {
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('See more click error:', err); 
+                        }
+                    });
+                    link.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('See more touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            }
+        });
+        
+        // FIX HOBBIES AND FAVORITES TOGGLE BUTTONS
+        var toggleButtons = document.querySelectorAll('.info-toggle-button');
+        toggleButtons.forEach(function(btn) {
+            if (!btn._toggleFixed) {
+                btn._toggleFixed = true;
+                btn.style.pointerEvents = 'auto';
+                btn.style.touchAction = 'manipulation';
+                btn.style.cursor = 'pointer';
+                
+                var onclick = btn.getAttribute('onclick');
+                if (onclick) {
+                    btn.addEventListener('click', function(e) {
+                        try {
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('Toggle button click error:', err); 
+                        }
+                    });
+                    btn.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('Toggle button touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            }
+        });
+        
+        // FIX PERSONAL DETAILS TOGGLE
+        var personalToggleBtn = document.getElementById('personalToggleBtn');
+        if (personalToggleBtn && !personalToggleBtn._personalFixed) {
+            personalToggleBtn._personalFixed = true;
+            personalToggleBtn.style.pointerEvents = 'auto';
+            personalToggleBtn.style.touchAction = 'manipulation';
+            personalToggleBtn.style.cursor = 'pointer';
+            
+            personalToggleBtn.addEventListener('click', function(e) {
+                try {
+                    var clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    personalToggleBtn.dispatchEvent(clickEvent);
+                } catch(err) { 
+                    console.warn('Personal toggle click error:', err); 
+                }
+            });
+            personalToggleBtn.addEventListener('touchend', function(e) {
+                try {
+                    e.preventDefault();
+                    var clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    personalToggleBtn.dispatchEvent(clickEvent);
+                } catch(err) { 
+                    console.warn('Personal toggle touch error:', err); 
+                }
+            }, { passive: false });
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixSeeMoreLessButtons);
+    } else {
+        fixSeeMoreLessButtons();
+    }
+    
+    setTimeout(fixSeeMoreLessButtons, 300);
+    setTimeout(fixSeeMoreLessButtons, 800);
+    setTimeout(fixSeeMoreLessButtons, 1500);
+    setInterval(fixSeeMoreLessButtons, 2000);
+})();
+</script>
+
 <!-- FIX ALL EYE ICONS ON THE SITE -->
 <script>
 (function() {
