@@ -29000,13 +29000,65 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
+<!-- UNIVERSAL MOBILE CLICK FIX FOR FAVORITE CARDS -->
+<script>
+(function() {
+    function fixFavoriteCards() {
+        var cards = document.querySelectorAll('.favorite-card.clickable');
+        cards.forEach(function(card) {
+            if (card._cardFixed) return;
+            card._cardFixed = true;
+            
+            // Ensure card is clickable
+            card.style.pointerEvents = 'auto';
+            card.style.touchAction = 'manipulation';
+            card.style.cursor = 'pointer';
+            
+            // Add click handler
+            card.addEventListener('click', function(e) {
+                try {
+                    var onclick = card.getAttribute('onclick');
+                    if (onclick) {
+                        // Execute the onclick code
+                        eval(onclick);
+                    }
+                } catch(err) {
+                    console.warn('Card click error:', err);
+                }
+            });
+            
+            // Add touch handler
+            card.addEventListener('touchend', function(e) {
+                try {
+                    var onclick = card.getAttribute('onclick');
+                    if (onclick) {
+                        eval(onclick);
+                    }
+                } catch(err) {
+                    console.warn('Card touch error:', err);
+                }
+            }, { passive: true });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixFavoriteCards);
+    } else {
+        fixFavoriteCards();
+    }
+    
+    // Keep running to catch dynamically added cards
+    setInterval(fixFavoriteCards, 1000);
+})();
+</script>
+
 <!-- UNIVERSAL MOBILE CLICK FIX FOR ALL BUTTONS -->
 <script>
 (function() {
     // Intercept ALL clicks and make sure they work
     function universalClickFix() {
         // Get all clickable elements
-        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close');
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable');
         
         allClickable.forEach(function(el) {
             if (el._universalFixDone) return;
@@ -29017,11 +29069,13 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             el.style.touchAction = 'manipulation';
             el.style.cursor = 'pointer';
             
-            // Add click listener
+            // Add click listener that executes onclick if present
             el.addEventListener('click', function(e) {
                 try {
-                    // If element has onclick attribute, it will fire naturally
-                    // We're just ensuring pointer-events are correct
+                    var onclick = el.getAttribute('onclick');
+                    if (onclick) {
+                        eval(onclick);
+                    }
                 } catch(err) {
                     console.warn('Click error:', err);
                 }
@@ -29230,7 +29284,8 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#settingsEyeBtn', '.settings-eye-btn',
             '#visitsEyeBtn',
             '.name-submit-btn', '.settings-warning-btn',
-            '.christmas-message-link', '.btn-about', '.btn-favorites'
+            '.christmas-message-link', '.btn-about', '.btn-favorites',
+            '.clickable'
         ];
 
         selectors.forEach(function(sel) {
