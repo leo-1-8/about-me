@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5251,6 +5251,8 @@
             opacity: 1 !important;
             visibility: visible !important;
             pointer-events: auto !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
 
@@ -5277,6 +5279,9 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             z-index: 10003;
+            touch-action: manipulation !important;
+            pointer-events: auto !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
         .close-button-left:hover {
@@ -11918,7 +11923,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
         <div class="important-message-box" style="background: rgba(20, 24, 40, 0.95); border-radius: 12px; padding: 24px; max-width: 340px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); position: relative; pointer-events: auto;">
             <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please <span style="color:#ef4444;">remember your password</span> or save it in a secure place. It <span style="color:#ef4444;">cannot be recovered</span> if you forget it, so you'll need it to access your messages.</p>
-            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative;" onmousedown="closeImportantMessage()">OK</button>
+            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative; touch-action: manipulation;" onclick="closeImportantMessage()">OK</button>
         </div>
     </div>
 
@@ -29629,34 +29634,67 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
-<!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable -->
+<!-- COMPREHENSIVE MOBILE FIX - ALL CLICKABILITY ISSUES -->
 <script>
 (function() {
+    var touchStartPos = { x: 0, y: 0 };
+    var touchStartTime = 0;
+
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 0) {
+            touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            touchStartTime = Date.now();
+        }
+    }, { passive: true });
+
     function fixElement(el) {
         if (!el) return;
         try {
             el.style.touchAction = 'manipulation';
             el.style.pointerEvents = 'auto';
+            el.style.webkitTapHighlightColor = 'transparent';
         } catch(err) {}
     }
 
     function fixAll() {
         var selectors = [
+            // Core interactive elements
             'button', 'a[href]', '[role="button"]', '[onclick]',
-            'input', 'textarea', '.main-button', '.favorite-card',
-            '.myapps-app-box', '.settings-open-btn', '.settings-close',
+            'input', 'textarea', 'select',
+            // Main buttons
+            '.main-button', '.favorite-card', '.myapps-app-box',
+            '.settings-open-btn', '.settings-close', '.close-button',
+            '.close-button-left',
+            // Specific IDs
             '#rateUsLink', '.rate-us-link',
             '#settingsEyeBtn', '.settings-eye-btn',
             '#visitsEyeBtn',
+            '#clockDigital',  // Time on main menu
+            '.clock-digital-block',
+            // Name and password modals
             '.name-submit-btn', '.settings-warning-btn',
-            '.christmas-message-link', '.btn-about', '.btn-favorites',
-            '.clickable',
+            '.name-info-btn', '.name-warning-ok-btn',
             '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
-            '#senderPwExclam',
+            '#senderPwExclam', '.settings-caution-ok',
+            '#senderExclaimBtn',
             '.password-exit-cancel-btn', '#pwExitConfirmBtn',
             '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
             '.otp-eye-btn',
-            '.see-more-link', '.info-toggle-button'
+            // My Apps modal
+            '#myAppsModal .myapps-app-box',
+            '.myapps-app-box',
+            // Others modal
+            '#favoritesModal .favorite-card',
+            '#favoritesModal .favorite-card.clickable',
+            '#myAppsCard',
+            '.favorite-card.clickable',
+            // Modal buttons
+            '.modal-action-button', '.modal-action-button.btn-back',
+            '.modal-action-button.btn-exit',
+            // Other
+            '.christmas-message-link', '.btn-about', '.btn-favorites',
+            '.see-more-link', '.info-toggle-button',
+            '[data-i18n-title="aria_close"]'
         ];
 
         selectors.forEach(function(sel) {
@@ -29664,16 +29702,43 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
                 document.querySelectorAll(sel).forEach(fixElement);
             } catch(err) {}
         });
+
+        // Direct ID fixes
+        ['rateUsLink', 'settingsEyeBtn', 'visitsEyeBtn', 'myAppsCard', 'clockDigital', 'senderExclaimBtn'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                fixElement(el);
+                el.style.cursor = 'pointer';
+            }
+        });
     }
 
+    // Prevent scroll-triggered clicks on favorite cards
+    document.addEventListener('scroll', function() {
+        var cards = document.querySelectorAll('.favorite-card.clickable');
+        cards.forEach(function(card) {
+            card.style.pointerEvents = 'none';
+            setTimeout(function() {
+                card.style.pointerEvents = 'auto';
+            }, 300);
+        });
+    }, { passive: true });
+
+    // Run fixAll on load
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', fixAll);
     } else {
         fixAll();
     }
     
-    setTimeout(fixAll, 500);
+    // Run multiple times for dynamic elements
+    setTimeout(fixAll, 300);
+    setTimeout(fixAll, 800);
     setTimeout(fixAll, 1500);
+    setInterval(fixAll, 2000);
+
+    // Re-fix when modals open
+    window._fixAllClickable = fixAll;
 })();
 </script>
 </body>
