@@ -6393,7 +6393,8 @@
             align-items: center;
             justify-content: center;
             z-index: 1;
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
         }
 
         .clock-status-time {
@@ -10793,7 +10794,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     <div id="clockApp" class="clock-app clock-portrait" role="application" aria-label="Clock">
                     <header class="clock-status">
                         <span class="clock-status-title">Clock</span>
-                        <div class="clock-status-center">
+                        <div class="clock-status-center" onclick="toggleClockAppTimeZone()" style="cursor: pointer;">
                             <span class="clock-status-time" id="clockStatusTime" aria-hidden="true">--:--</span>
                         </div>
                         <button type="button" class="clock-app-close" onclick="closeModal('clock')" title="Close" aria-label="Close clock">×</button>
@@ -18704,6 +18705,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 '.rate-us-link',
                 '.christmas-view-btn',
                 '.settings-eye-btn',
+                '#settingsEyeBtn',  // Eye icon for viewing tab
                 // FIX: main menu buttons had 300ms tap delay on Android
                 '.main-button',
                 '.coming-soon-preview-ok',
@@ -18713,6 +18715,21 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 '#loginPwEyeBtn',
                 // FIX: clickable cards inside Others/Favorites modal
                 '.favorite-card.clickable',
+                // FIX: About Me hobbies and favorites buttons
+                '.hobbies-item',
+                '.about-favorites-box',
+                '.info-toggle-button',  // Toggle buttons for hobbies/favorites expand
+                // FIX: See More / See Less buttons in About and What's New sections
+                '.see-more-link',
+                // FIX: Settings buttons (Open, Reset, etc)
+                '.settings-open-btn',
+                // FIX: Main menu time displays (local time / GMT toggle)
+                '#mainMenuClock',
+                '#mainMenuClockDate',
+                '#mainMenuClockTz',
+                // FIX: Clock/time display to show GMT
+                '.clock-status-time',
+                '#clockStatusTime',
             ];
             function addInstantTap(el) {
                 if (el._instantTapDone) return;
@@ -29499,7 +29516,13 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#senderPwExclam',
             '.password-exit-cancel-btn', '#pwExitConfirmBtn',
             '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
-            '.otp-eye-btn'
+            '.otp-eye-btn',
+            '.see-more-link',  // See More/Less buttons in About and What's New
+            '.hobbies-item',   // Hobbies items in About Me
+            '.about-favorites-box',  // Favorites box in About Me
+            '.info-toggle-button',  // Toggle buttons for hobbies/favorites
+            '#mainMenuClock', '#mainMenuClockDate', '#mainMenuClockTz',  // Time displays
+            '#clockStatusTime', '.clock-status-time'  // Clock time display
         ];
 
         selectors.forEach(function(sel) {
