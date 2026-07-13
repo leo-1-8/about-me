@@ -29513,14 +29513,13 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         touchData.isScrolling = false;
     }, false);
     
-    // Detect scroll movement (more than 30px = scrolling, not 15px)
-    // 15px is too sensitive and blocks legitimate taps
+    // Detect scroll movement (more than 15px = scrolling)
     document.addEventListener('touchmove', function(e) {
         var touch = e.touches[0];
         var dx = Math.abs(touch.clientX - touchData.x);
         var dy = Math.abs(touch.clientY - touchData.y);
         
-        if (dx > 30 || dy > 30) {
+        if (dx > 15 || dy > 15) {
             touchData.isScrolling = true;
         }
     }, false);
@@ -29532,13 +29531,26 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     }, true);
     
     // INTERCEPT ALL CLICKS - block if user was scrolling
+    // BUT: Never block clicks on interactive elements (buttons, [onclick], etc)
     // Capture phase (true) intercepts BEFORE onclick handlers fire
     document.addEventListener('click', function(e) {
-        if (touchData.isScrolling) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
+        if (!touchData.isScrolling) return; // Not a scroll-click, allow it
+        
+        var target = e.target;
+        // Don't block clicks on interactive elements
+        if (target.tagName === 'BUTTON' || 
+            target.closest('button') ||
+            target.closest('[onclick]') ||
+            target.closest('a') ||
+            target.getAttribute('onclick') ||
+            target.hasAttribute('onclick')) {
+            return; // Allow click on interactive element
         }
+        
+        // Block the click
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
     }, true);
 })();
 </script>
