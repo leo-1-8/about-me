@@ -29323,20 +29323,25 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     
     function setupSmartButton(selector, callback) {
         var elements = document.querySelectorAll(selector);
-        elements.forEach(function(btn) {
+        var touchTracker = {};
+        
+        elements.forEach(function(btn, index) {
             if (btn._smartButtonFixed) return;
             btn._smartButtonFixed = true;
+            
+            // Use index and class for tracking if no ID
+            var trackKey = btn.id || (selector + '_' + index);
             
             btn.addEventListener('click', function(e) {
                 try {
                     e.stopPropagation();
-                    callback();
+                    callback(btn);
                 } catch(err) { console.warn('Click error:', err); }
             });
             
             btn.addEventListener('touchstart', function(e) {
                 var touch = e.touches[0];
-                touchData[btn.id] = {
+                touchTracker[trackKey] = {
                     x: touch.clientX,
                     y: touch.clientY,
                     time: Date.now(),
@@ -29345,7 +29350,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             }, false);
             
             btn.addEventListener('touchmove', function(e) {
-                var data = touchData[btn.id];
+                var data = touchTracker[trackKey];
                 if (data) {
                     var touch = e.touches[0];
                     var dx = touch.clientX - data.x;
@@ -29357,12 +29362,12 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             }, false);
             
             btn.addEventListener('touchend', function(e) {
-                var data = touchData[btn.id];
+                var data = touchTracker[trackKey];
                 if (!isTrueTap(data)) {
-                    delete touchData[btn.id];
+                    delete touchTracker[trackKey];
                     return;
                 }
-                delete touchData[btn.id];
+                delete touchTracker[trackKey];
                 // Let click event handle it
             }, false);
             
@@ -29401,6 +29406,20 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
                 openMessageInboxGate();
             }
         });
+        
+        // Handle See More/Less links
+        setupSmartButton('.see-more-link', function(el) {
+            if (typeof toggleDescription === 'function') {
+                toggleDescription(el);
+            }
+        });
+        
+        // Handle Hobbies toggle
+        setupSmartButton('.info-toggle-button', function(el) {
+            if (typeof toggleHobbies === 'function') {
+                toggleHobbies();
+            }
+        });
     }
     
     if (document.readyState === 'loading') {
@@ -29411,6 +29430,83 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     
     setTimeout(attachButtonHandlers, 500);
     setTimeout(attachButtonHandlers, 1500);
+})();
+</script>
+
+<!-- UNIVERSAL SMART TOUCH HANDLER - Catches all buttons and interactive elements -->
+<script>
+(function() {
+    var globalTouchData = {};
+    var initDone = false;
+    
+    function isTrueTap(startData) {
+        if (!startData) return false;
+        return !startData.moved && (Date.now() - startData.time) < 500;
+    }
+    
+    function setupUniversalHandler() {
+        if (initDone) return;
+        
+        // Attach to ALL buttons and onclick elements
+        document.addEventListener('touchstart', function(e) {
+            var el = e.target.closest('button, [onclick], .see-more-link, .info-toggle-button, .btn-about, .btn-favorites, [role="button"]');
+            if (!el) return;
+            
+            var touch = e.touches[0];
+            var key = Math.random();
+            globalTouchData[key] = {
+                el: el,
+                x: touch.clientX,
+                y: touch.clientY,
+                time: Date.now(),
+                moved: false,
+                key: key
+            };
+            el._lastTouchKey = key;
+        }, true);
+        
+        document.addEventListener('touchmove', function(e) {
+            var el = e.target.closest('button, [onclick], .see-more-link, .info-toggle-button, .btn-about, .btn-favorites, [role="button"]');
+            if (!el || !el._lastTouchKey) return;
+            
+            var data = globalTouchData[el._lastTouchKey];
+            if (data) {
+                var touch = e.touches[0];
+                var dx = touch.clientX - data.x;
+                var dy = touch.clientY - data.y;
+                if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                    data.moved = true;
+                }
+            }
+        }, true);
+        
+        document.addEventListener('touchend', function(e) {
+            var el = e.target.closest('button, [onclick], .see-more-link, .info-toggle-button, .btn-about, .btn-favorites, [role="button"]');
+            if (!el || !el._lastTouchKey) return;
+            
+            var data = globalTouchData[el._lastTouchKey];
+            if (data && isTrueTap(data)) {
+                e.preventDefault();
+                el.style.pointerEvents = 'auto';
+                el.style.touchAction = 'manipulation';
+            }
+            
+            if (el._lastTouchKey) {
+                delete globalTouchData[el._lastTouchKey];
+                delete el._lastTouchKey;
+            }
+        }, true);
+        
+        initDone = true;
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupUniversalHandler);
+    } else {
+        setupUniversalHandler();
+    }
+    
+    setTimeout(setupUniversalHandler, 100);
 })();
 </script>
 
@@ -29586,7 +29682,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#visitsEyeBtn',
             '.name-submit-btn', '.settings-warning-btn',
             '.christmas-message-link', '.btn-about', '.btn-favorites',
-            '.clickable',
+            '.clickable', '.see-more-link', '.info-toggle-button',
             '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
             '#senderPwExclam',
             '.password-exit-cancel-btn', '#pwExitConfirmBtn',
