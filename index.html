@@ -17,9 +17,21 @@
 
         /* Mobile tap fix: eliminate 300ms click delay and ensure all buttons
            register touch events correctly on iOS/Android */
-        button, [onclick], [role="button"], a, input, select, label {
+        button, [onclick], [role="button"], a, input, select, label, [data-clickable="true"] {
             touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* Mobile touch target minimum size */
+        @media (max-width: 768px) {
+            button, [role="button"], a, input[type="button"], input[type="submit"] {
+                min-height: 48px;
+                min-width: 48px;
+                padding: max(8px, calc((48px - 1em) / 2));
+            }
         }
 
         :root {
@@ -28880,17 +28892,21 @@ var _visitsThemeObserver = new MutationObserver(function() {
 });
 _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-// ── Direct touch fix for visitsEyeBtn ──
+// ── Direct touch fix for visitsEyeBtn (FIXED - no preventDefault blocking) ──
 (function() {
     function attachVisitsEyeTouch() {
         var btn = document.getElementById('visitsEyeBtn');
         if (!btn || btn._visitsTouchDone) return;
         btn._visitsTouchDone = true;
-        btn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
+        // Use click event - more reliable on mobile
+        btn.addEventListener('click', function(e) {
+            openVisitsModal();
+        });
+        // Also add touchend for immediate feedback
+        btn.addEventListener('touchend', function(e) {
             e.stopPropagation();
             openVisitsModal();
-        }, { passive: false });
+        }, { passive: true });
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachVisitsEyeTouch);
@@ -28996,21 +29012,109 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
-<!-- MINIMAL MOBILE TOUCH FIX - NON-INVASIVE -->
+<!-- SETTINGS EYE BUTTON MOBILE FIX -->
 <script>
 (function() {
-    // Just ensure touch-action is set on interactive elements
-    // Does NOT interfere with existing click handlers
+    function setupSettingsEyeBtn() {
+        var btn = document.getElementById('settingsEyeBtn');
+        if (!btn) return;
+        
+        // Add click handler
+        btn.addEventListener('click', function(e) {
+            try {
+                e.stopPropagation();
+                // Call the existing settings toggle function if it exists
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye click error:', err);
+            }
+        });
+        
+        // Add touch handler with passive listener
+        btn.addEventListener('touchend', function(e) {
+            try {
+                e.stopPropagation();
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye touch error:', err);
+            }
+        }, { passive: true });
+        
+        // Ensure button is visible and clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.cursor = 'pointer';
+        btn.style.position = 'relative';
+        btn.style.zIndex = '100';
+    }
     
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
+    } else {
+        setupSettingsEyeBtn();
+    }
+    setTimeout(setupSettingsEyeBtn, 500);
+})();
+</script>
+
+<!-- COMPREHENSIVE MOBILE TOUCH FIX -->
+<script>
+(function() {
+    // Safe click handler - prevents unclickable elements from breaking the page
+    function safeClickHandler(e) {
+        try {
+            var target = e.target;
+            // Only process clicks on actual interactive elements
+            if (!target) return;
+            
+            // List of valid interactive elements
+            var isInteractive = target.tagName === 'BUTTON' ||
+                                target.tagName === 'A' ||
+                                target.tagName === 'INPUT' ||
+                                target.tagName === 'TEXTAREA' ||
+                                target.tagName === 'SELECT' ||
+                                target.getAttribute('role') === 'button' ||
+                                target.onclick ||
+                                target.getAttribute('data-clickable') === 'true' ||
+                                target.classList.contains('clickable') ||
+                                target.closest('button') ||
+                                target.closest('[role="button"]') ||
+                                target.closest('[onclick]');
+            
+            // If click is on unclickable area, just stop - don't break the page
+            if (!isInteractive && !target.closest('.clickable-area')) {
+                // Do nothing - just let it pass through
+                return;
+            }
+        } catch(err) {
+            // Silently fail - never break the page
+            console.warn('Click handler error:', err);
+        }
+    }
+    
+    // Attach safe click delegation
+    document.addEventListener('click', safeClickHandler, true);
+    
+    // Ensure touch-action is set on interactive elements
     function fixElement(el) {
         if (!el) return;
-        if (el.style.touchAction !== 'manipulation') {
+        try {
             el.style.touchAction = 'manipulation';
-        }
-        // Also ensure pointer-events is not none
-        if (el.style.pointerEvents === 'none') {
-            el.style.pointerEvents = 'auto';
-        }
+            // Only remove pointer-events: none if it's actually interactive
+            if (el.style.pointerEvents === 'none') {
+                var isInteractive = el.tagName === 'BUTTON' ||
+                                   el.tagName === 'A' ||
+                                   el.tagName === 'INPUT' ||
+                                   el.getAttribute('role') === 'button' ||
+                                   el.onclick;
+                if (isInteractive) {
+                    el.style.pointerEvents = 'auto';
+                }
+            }
+        } catch(err) {}
     }
 
     function fixAll() {
@@ -29018,7 +29122,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             'button', 'a[href]', '[role="button"]', '[onclick]',
             'input', 'textarea', '.main-button', '.favorite-card',
             '.myapps-app-box', '.settings-open-btn', '.settings-close',
-            // Add missing elements explicitly
             '#rateUsLink', '.rate-us-link',
             '#settingsEyeBtn', '.settings-eye-btn',
             '#visitsEyeBtn',
@@ -29031,13 +29134,21 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             } catch(err) {}
         });
 
-        // Direct ID fixes for the problematic elements
+        // Direct ID fixes
         ['rateUsLink', 'settingsEyeBtn', 'visitsEyeBtn'].forEach(function(id) {
             var el = document.getElementById(id);
             if (el) {
                 fixElement(el);
                 el.style.pointerEvents = 'auto';
                 el.style.cursor = 'pointer';
+                // Ensure minimum touch target size (48x48px for accessibility)
+                if (el.offsetHeight < 48 || el.offsetWidth < 48) {
+                    el.style.minHeight = '48px';
+                    el.style.minWidth = '48px';
+                    el.style.display = 'flex';
+                    el.style.alignItems = 'center';
+                    el.style.justifyContent = 'center';
+                }
             }
         });
     }
@@ -29047,6 +29158,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     } else {
         fixAll();
     }
+    
+    // Re-run after a delay for dynamically added elements
+    setTimeout(fixAll, 500);
+    setTimeout(fixAll, 1500);
 })();
 </script>
 </body>
