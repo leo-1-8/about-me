@@ -29058,7 +29058,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     // Intercept ALL clicks and make sure they work
     function universalClickFix() {
         // Get all clickable elements
-        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable');
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn');
         
         allClickable.forEach(function(el) {
             if (el._universalFixDone) return;
@@ -29110,6 +29110,134 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     setTimeout(universalClickFix, 800);
     setTimeout(universalClickFix, 1500);
     setTimeout(universalClickFix, 3000);
+})();
+</script>
+
+<!-- FIX PASSWORD MODAL BUTTONS - EXCLAMATION & X -->
+<script>
+(function() {
+    function fixPasswordModalButtons() {
+        // X BUTTON (Exit button)
+        var exitBtn = document.getElementById('senderPwExitBtn');
+        if (exitBtn && !exitBtn._fixed) {
+            exitBtn._fixed = true;
+            exitBtn.style.pointerEvents = 'auto';
+            exitBtn.style.touchAction = 'manipulation';
+            exitBtn.addEventListener('click', function(e) {
+                try {
+                    openPasswordExitConfirm();
+                } catch(err) { console.warn('X button error:', err); }
+            });
+            exitBtn.addEventListener('touchend', function(e) {
+                try {
+                    openPasswordExitConfirm();
+                } catch(err) { console.warn('X button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // EXCLAMATION BUTTON (Info/Important message)
+        var exclaimBtn = document.getElementById('senderPwExclam');
+        if (exclaimBtn && !exclaimBtn._fixed) {
+            exclaimBtn._fixed = true;
+            exclaimBtn.style.pointerEvents = 'auto';
+            exclaimBtn.style.touchAction = 'manipulation';
+            exclaimBtn.style.cursor = 'pointer';
+            exclaimBtn.addEventListener('click', function(e) {
+                try {
+                    showImportantMessage();
+                } catch(err) { console.warn('Exclamation button error:', err); }
+            });
+            exclaimBtn.addEventListener('touchend', function(e) {
+                try {
+                    showImportantMessage();
+                } catch(err) { console.warn('Exclamation button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // EYE BUTTON (Toggle password visibility)
+        var eyeBtn = document.getElementById('senderPwEyeBtn');
+        if (eyeBtn && !eyeBtn._fixed) {
+            eyeBtn._fixed = true;
+            eyeBtn.style.pointerEvents = 'auto';
+            eyeBtn.style.touchAction = 'manipulation';
+            eyeBtn.addEventListener('click', function(e) {
+                try {
+                    toggleSenderPwVisibility();
+                } catch(err) { console.warn('Eye button error:', err); }
+            });
+            eyeBtn.addEventListener('touchend', function(e) {
+                try {
+                    toggleSenderPwVisibility();
+                } catch(err) { console.warn('Eye button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // SUBMIT BUTTON
+        var submitBtn = document.getElementById('senderPasswordSubmitBtn');
+        if (submitBtn && !submitBtn._fixed) {
+            submitBtn._fixed = true;
+            submitBtn.style.pointerEvents = 'auto';
+            submitBtn.style.touchAction = 'manipulation';
+            submitBtn.addEventListener('click', function(e) {
+                try {
+                    submitSenderPassword();
+                } catch(err) { console.warn('Submit button error:', err); }
+            });
+            submitBtn.addEventListener('touchend', function(e) {
+                try {
+                    submitSenderPassword();
+                } catch(err) { console.warn('Submit button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // PASSWORD EXIT CONFIRMATION - CANCEL BUTTON
+        var cancelBtn = document.querySelector('.password-exit-cancel-btn');
+        if (cancelBtn && !cancelBtn._fixed) {
+            cancelBtn._fixed = true;
+            cancelBtn.style.pointerEvents = 'auto';
+            cancelBtn.style.touchAction = 'manipulation';
+            cancelBtn.addEventListener('click', function(e) {
+                try {
+                    closePasswordExitConfirm();
+                } catch(err) { console.warn('Cancel button error:', err); }
+            });
+            cancelBtn.addEventListener('touchend', function(e) {
+                try {
+                    closePasswordExitConfirm();
+                } catch(err) { console.warn('Cancel button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // PASSWORD EXIT CONFIRMATION - EXIT BUTTON
+        var confirmExitBtn = document.getElementById('pwExitConfirmBtn');
+        if (confirmExitBtn && !confirmExitBtn._fixed) {
+            confirmExitBtn._fixed = true;
+            confirmExitBtn.style.pointerEvents = 'auto';
+            confirmExitBtn.style.touchAction = 'manipulation';
+            confirmExitBtn.addEventListener('click', function(e) {
+                try {
+                    confirmPasswordExit();
+                } catch(err) { console.warn('Confirm exit button error:', err); }
+            });
+            confirmExitBtn.addEventListener('touchend', function(e) {
+                try {
+                    confirmPasswordExit();
+                } catch(err) { console.warn('Confirm exit button touch error:', err); }
+            }, { passive: true });
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixPasswordModalButtons);
+    } else {
+        fixPasswordModalButtons();
+    }
+    
+    // Run multiple times for dynamic elements
+    setTimeout(fixPasswordModalButtons, 300);
+    setTimeout(fixPasswordModalButtons, 800);
+    setTimeout(fixPasswordModalButtons, 1500);
+    setInterval(fixPasswordModalButtons, 2000);
 })();
 </script>
 
@@ -29285,7 +29413,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#visitsEyeBtn',
             '.name-submit-btn', '.settings-warning-btn',
             '.christmas-message-link', '.btn-about', '.btn-favorites',
-            '.clickable'
+            '.clickable',
+            '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
+            '#senderPwExclam',
+            '.password-exit-cancel-btn', '#pwExitConfirmBtn'
         ];
 
         selectors.forEach(function(sel) {
