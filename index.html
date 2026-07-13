@@ -28996,128 +28996,38 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
-<!-- SIMPLIFIED MASTER MOBILE TOUCH FIX -->
+<!-- MINIMAL MOBILE TOUCH FIX - NON-INVASIVE -->
 <script>
 (function() {
-    'use strict';
-
-    // List of IDs that need touch handling
-    var CLICKABLE_IDS = [
-        'settingsBtn',
-        'loadingDisclaimerBtn',
-        'loadingDisclaimerOk',
-        'userNameInput',
-        'nameFinalConfirmSubmitBtn',
-        'senderPwExitBtn',
-        'senderPwExclam',
-        'settingsCautionOkBtn',
-        'settingsVisitorsOkBtn',
-        'settingsLangNoteOkBtn',
-        'settingsEyeBtn',
-        'settingsCloseBtn',
-        'settingsOpenUpdatesBtn',
-        'settingsResetDefaultsBtn',
-        'themeToggle',
-        'visitsEyeBtn',
-        'mainButtonContainer',
-        'rateUsLink'
-    ];
-
-    // List of CSS selectors for elements that need touch handling
-    var CLICKABLE_SELECTORS = [
-        '.loading-disclaimer-btn',
-        '.name-submit-btn',
-        '.name-info-btn',
-        '.name-warning-ok-btn',
-        '.settings-close',
-        '.settings-open-btn',
-        '.settings-warning-btn',
-        '.settings-caution-ok',
-        '.settings-slider',
-        '#settingsVolumeSlider',
-        '#settingsBrightnessSlider',
-        '.settings-lang-option',
-        '.settings-lang-trigger',
-        '#senderPasswordInput',
-        '#senderPasswordCreateBtn',
-        '.main-button',
-        '.christmas-message-link',
-        '.star-btn',
-        '.favorite-card',
-        '.myapps-app-box',
-        'button[type="submit"]',
-        '.submit-btn',
-        '[role="button"]',
-        'button:not(:disabled)',
-        'a[href]',
-        'input[type="text"]',
-        'input[type="password"]'
-    ];
-
-    function setupTouchHandler(el) {
-        if (!el || el._touchFixed) return;
-        el._touchFixed = true;
-
-        el.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) return;
-            
-            var startX = e.touches[0].clientX;
-            var startY = e.touches[0].clientY;
-            var moved = false;
-
-            function handleMove(mv) {
-                if (Math.abs(mv.touches[0].clientX - startX) > 8 || 
-                    Math.abs(mv.touches[0].clientY - startY) > 8) {
-                    moved = true;
-                }
-            }
-
-            function handleEnd(ev) {
-                el.removeEventListener('touchmove', handleMove);
-                el.removeEventListener('touchend', handleEnd);
-                el.removeEventListener('touchcancel', handleEnd);
-                
-                if (!moved) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    try {
-                        el.click();
-                    } catch(err) {}
-                }
-            }
-
-            el.addEventListener('touchmove', handleMove, { passive: true });
-            el.addEventListener('touchend', handleEnd, { passive: false });
-            el.addEventListener('touchcancel', handleEnd, { passive: false });
-        }, { passive: true });
-    }
-
-    function wireAll() {
-        // Wire by ID
-        CLICKABLE_IDS.forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) setupTouchHandler(el);
-        });
-
-        // Wire by selector
-        CLICKABLE_SELECTORS.forEach(function(selector) {
-            document.querySelectorAll(selector).forEach(function(el) {
-                setupTouchHandler(el);
-            });
-        });
-    }
-
-    // Run multiple times to catch dynamically added elements
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', wireAll);
-    } else {
-        wireAll();
-    }
+    // Just ensure touch-action is set on interactive elements
+    // Does NOT interfere with existing click handlers
     
-    setTimeout(wireAll, 100);
-    setTimeout(wireAll, 500);
-    setTimeout(wireAll, 1500);
-    setTimeout(wireAll, 3000);
+    function fixElement(el) {
+        if (!el) return;
+        if (el.style.touchAction !== 'manipulation') {
+            el.style.touchAction = 'manipulation';
+        }
+    }
+
+    function fixAll() {
+        var selectors = [
+            'button', 'a[href]', '[role="button"]', '[onclick]',
+            'input', 'textarea', '.main-button', '.favorite-card',
+            '.myapps-app-box', '.settings-open-btn', '.settings-close'
+        ];
+
+        selectors.forEach(function(sel) {
+            try {
+                document.querySelectorAll(sel).forEach(fixElement);
+            } catch(err) {}
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixAll);
+    } else {
+        fixAll();
+    }
 })();
 </script>
 </body>
