@@ -28994,39 +28994,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 </script>
 
 
-<div id="tapDiag" style="display:none;position:fixed;top:0;left:0;right:0;background:rgba(255,0,0,0.92);color:#fff;font-size:13px;font-family:monospace;padding:8px 10px;z-index:9999999;word-break:break-all;line-height:1.5;pointer-events:none;"></div>
-<script>
-(function(){
-  var diag = document.getElementById('tapDiag');
-  var diagVisible = false;
-  // Triple-tap anywhere to toggle diagnostic mode
-  var tapCount = 0, tapTimer;
-  document.addEventListener('touchstart', function(e){
-    tapCount++;
-    clearTimeout(tapTimer);
-    tapTimer = setTimeout(function(){ tapCount = 0; }, 600);
-    if(tapCount >= 3){
-      tapCount = 0;
-      diagVisible = !diagVisible;
-      diag.style.display = diagVisible ? 'block' : 'none';
-    }
-    if(!diagVisible) return;
-    var t = e.touches[0];
-    var x = t.clientX, y = t.clientY;
-    // Get element at touch point
-    var el = document.elementFromPoint(x, y);
-    var info = [];
-    var cur = el;
-    for(var i=0;i<6&&cur&&cur!==document.body;i++){
-      var s = window.getComputedStyle(cur);
-      info.push((cur.id?'#'+cur.id:'')+(cur.className&&typeof cur.className==='string'?'.'+cur.className.trim().split(' ').join('.'):'')
-        +' z:'+s.zIndex+' pe:'+s.pointerEvents+' pos:'+s.position);
-      cur = cur.parentElement;
-    }
-    diag.textContent = 'TAP('+Math.round(x)+','+Math.round(y)+'): '+info.join(' > ');
-  }, {passive:true});
-})();
-</script>
+
 
 <!-- ═══════════════════════════════════════════════════════════════════
      MASTER MOBILE TOUCH FIX
@@ -29043,284 +29011,88 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     // Map: element ID or selector → function to call
     var DIRECT_ACTIONS = [
         // Settings panel eye icon
-        { id: 'settingsEyeBtn', fn: function(el) {
-            el.click();
+        { id: 'settingsEyeBtn', fn: function() {
+            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
+            else { var b = document.getElementById('settingsEyeBtn'); if (b) b.click(); }
         }},
         // Settings close button
-        { id: 'settingsCloseBtn', fn: function(el) {
+        { id: 'settingsCloseBtn', fn: function() {
             if (typeof closeSettings === 'function') closeSettings();
-            else { el.click(); }
+            else { var b = document.getElementById('settingsCloseBtn'); if (b) b.click(); }
         }},
         // Settings Open (What's New)
-        { id: 'settingsOpenUpdatesBtn', fn: function(el) {
-            el.click();
+        { id: 'settingsOpenUpdatesBtn', fn: function() {
+            var b = document.getElementById('settingsOpenUpdatesBtn'); if (b) b.click();
         }},
         // Settings Reset
-        { id: 'settingsResetDefaultsBtn', fn: function(el) {
-            el.click();
+        { id: 'settingsResetDefaultsBtn', fn: function() {
+            var b = document.getElementById('settingsResetDefaultsBtn'); if (b) b.click();
         }},
         // Settings theme toggle
-        { id: 'themeToggle', fn: function(el) {
-            el.click();
+        { id: 'themeToggle', fn: function() {
+            var b = document.getElementById('themeToggle'); if (b) b.click();
         }},
         // Visits eye btn inside login modal
-        { id: 'visitsEyeBtn', fn: function(el) {
+        { id: 'visitsEyeBtn', fn: function() {
             if (typeof openVisitsModal === 'function') openVisitsModal();
-            else { el.click(); }
         }},
         // Main nav buttons
         { id: 'mainButtonContainer', fn: null }, // handled by children below
         // Rate Us
-        { id: 'rateUsLink', fn: function(el) {
+        { id: 'rateUsLink', fn: function() {
             if (typeof handleRateUsClick === 'function') handleRateUsClick();
-            else { el.click(); }
         }},
         // Visitors OK
-        { id: 'settingsVisitorsOkBtn', fn: function(el) {
+        { id: 'settingsVisitorsOkBtn', fn: function() {
             if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
-            else { el.click(); }
-        }},
-        // Password modal X button
-        { id: 'senderPwExitBtn', fn: function(el) {
-            if (typeof openPasswordExitConfirm === 'function') openPasswordExitConfirm();
-            else { el.click(); }
-        }},
-        // OTP/PIN eye button on login
-        { id: 'inboxPinEyeBtn', fn: function(el) {
-            var state = el.getAttribute('data-state');
-            var pinInput = document.getElementById('inboxPinInput');
-            if (pinInput) {
-                if (state === 'hidden') {
-                    pinInput.type = 'text';
-                    el.setAttribute('data-state', 'visible');
-                    el.textContent = '👁';
-                } else {
-                    pinInput.type = 'password';
-                    el.setAttribute('data-state', 'hidden');
-                    el.textContent = '👁‍🗨';
-                }
-            }
-            el.click();
-        }},
-        // Password submit button
-        { id: 'senderPasswordSubmitBtn', fn: function(el) {
-            if (typeof submitSenderPassword === 'function') submitSenderPassword();
-            else { el.click(); }
-        }},
-        // Password exit confirm button
-        { id: 'pwExitConfirmBtn', fn: function(el) {
-            if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
-            else { el.click(); }
-        }},
-        // Loading disclaimer ! button (exclamation on loading screen)
-        { id: 'loadingDisclaimerBtn', fn: function(el) {
-            el.click();
-        }},
-        // Loading disclaimer OK button (shown when loading ends)
-        { id: 'loadingDisclaimerOk', fn: function(el) {
-            el.click();
-        }},
-        // Coming soon preview OK button
-        { id: 'comingSoonPreviewOkBtn', fn: function(el) {
-            if (typeof closeModal === 'function') closeModal('comingSoonPreview');
-            else { el.click(); }
+            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
         }},
     ];
 
     var SELECTOR_ACTIONS = [
         // About Me / Others buttons
-        { sel: '.main-button', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                eval(onclick);
-            } else {
-                el.click();
-            }
-        }},
-        // Message Me - Direct onclick execution
+        { sel: '.main-button', fn: null },
+        // Message Me
         { sel: '.christmas-message-link', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
             if (typeof handleMessageMeClick === 'function') {
-                handleMessageMeClick();
-            } else {
-                el.click();
-            }
-        }},
-        // ALL Modal buttons - catch all patterns
-        { sel: 'button[type="button"]', fn: function(el) {
-            // Check if inside a modal
-            var inModal = el.closest('.modal-overlay') || el.closest('.modal-box') || 
-                         el.closest('[id*="Modal"]') || el.closest('[id*="modal"]');
-            if (!inModal) return; // Not in modal, skip
-            
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
+                var onclick = el.getAttribute('onclick');
+                if (onclick && onclick.indexOf('handleMessageMeClick') !== -1) {
+                    handleMessageMeClick();
                     return;
-                } catch(err) {}
+                }
             }
             el.click();
         }},
         // Settings warning/info buttons
-        { sel: '.settings-warning-btn', fn: function(el) {
-            el.click();
-        }},
+        { sel: '.settings-warning-btn', fn: null },
         // Settings open buttons
-        { sel: '.settings-open-btn', fn: function(el) {
-            el.click();
-        }},
+        { sel: '.settings-open-btn', fn: null },
         // Settings OK buttons
-        { sel: '.settings-caution-ok', fn: function(el) {
-            el.click();
-        }},
+        { sel: '.settings-caution-ok', fn: null },
         // Star rating
-        { sel: '.star-btn', fn: function(el) {
-            el.click();
-        }},
+        { sel: '.star-btn', fn: null },
         // Language options
-        { sel: '.settings-lang-option', fn: function(el) {
-            el.click();
-        }},
-        { sel: '.settings-lang-trigger', fn: function(el) {
-            el.click();
-        }},
-        // Favorite cards
-        { sel: '.favorite-card.clickable', fn: function(el) {
-            el.click();
-        }},
-        { sel: '.myapps-app-box', fn: function(el) {
-            el.click();
-        }},
-        // Modal action buttons
-        { sel: '.modal-action-button', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Close buttons in modals
-        { sel: '.close-button', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        { sel: '.close-button-left', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Edit modal buttons
-        { sel: '.edit-modal-btn', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Music control buttons
-        { sel: '.music-control-button', fn: function(el) {
-            el.click();
-        }},
-        { sel: '.play-button', fn: function(el) {
-            el.click();
-        }},
-        { sel: '.music-info-button', fn: function(el) {
-            el.click();
-        }},
-        // Gaming link buttons
-        { sel: '.gaming-link-button', fn: function(el) {
-            el.click();
-        }},
-        // Password modal cancel/exit buttons
-        { sel: '.password-exit-cancel-btn', fn: function(el) {
-            if (typeof closePasswordExitConfirm === 'function') closePasswordExitConfirm();
-            else { el.click(); }
-        }},
-        { sel: '.password-exit-exit-btn', fn: function(el) {
-            if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
-            else { el.click(); }
-        }},
-        // Secret word buttons (backup authentication)
-        { sel: '#secretWordCancel', fn: function(el) {
-            if (typeof cancelSecretWord === 'function') cancelSecretWord();
-            else { el.click(); }
-        }},
-        // Coming soon preview OK button
-        { sel: '.coming-soon-preview-ok', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Loading disclaimer OK button
-        { sel: '.loading-disclaimer-ok', fn: function(el) {
-            el.click();
-        }},
-        // Loading disclaimer ! button
-        { sel: '.loading-disclaimer-btn', fn: function(el) {
-            el.click();
-        }},
-        // See more / toggle links in updates modal
-        { sel: '.see-more-link', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Back buttons
-        { sel: '.back-button', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
-        // Link buttons in modals
-        { sel: 'a[type="button"]', fn: function(el) {
-            var onclick = el.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                    return;
-                } catch(err) {}
-            }
-            el.click();
-        }},
+        { sel: '.settings-lang-option', fn: null },
+        { sel: '.settings-lang-trigger', fn: null },
+        // Favorite cards / Coming soon cards (with and without timer)
+        { sel: '.favorite-card.clickable', fn: null },
+        { sel: '.favorite-card', fn: null },
+        { sel: '[data-type="coming-soon"]', fn: null },
+        { sel: '.coming-soon-card', fn: null },
+        // My apps
+        { sel: '.myapps-app-box', fn: null },
+        // Submit button (multiple selectors to catch all variants)
+        { sel: 'button[type="submit"]', fn: null },
+        { sel: '.submit-btn', fn: null },
+        { sel: '#submitBtn', fn: null },
+        // Gaming, music, singer sections
+        { sel: '[data-category="gaming"]', fn: null },
+        { sel: '[data-category="music"]', fn: null },
+        { sel: '[data-category="singer"]', fn: null },
+        // All interactive elements as fallback
+        { sel: '[role="button"]', fn: null },
+        { sel: 'button:not(:disabled)', fn: null },
+        { sel: 'a[href]', fn: null },
     ];
 
     function makeTouchHandler(actionFn, el) {
@@ -29363,18 +29135,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         el._masterTouchDone = true;
         el.style.touchAction = 'manipulation';
         el.style.webkitTapHighlightColor = 'transparent';
-        // Ensure pointer-events is set properly
-        if (!el.style.pointerEvents || el.style.pointerEvents === 'none') {
-            el.style.pointerEvents = 'auto';
-        }
-        // For small buttons/icons, ensure they have proper z-index
-        if (el.offsetWidth < 50 && el.offsetHeight < 50) {
-            var zIndex = window.getComputedStyle(el).zIndex;
-            if (zIndex === 'auto' || parseInt(zIndex) < 1) {
-                el.style.position = el.style.position || 'relative';
-                el.style.zIndex = '10';
-            }
-        }
         el.addEventListener('touchstart', makeTouchHandler(actionFn, el), { passive: false });
     }
 
@@ -29387,8 +29147,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         });
         // Wire by selector
         SELECTOR_ACTIONS.forEach(function(entry) {
-            var elements = document.querySelectorAll(entry.sel);
-            elements.forEach(function(el) {
+            document.querySelectorAll(entry.sel).forEach(function(el) {
                 wireElement(el, entry.fn || null);
             });
         });
@@ -29400,120 +29159,12 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     } else {
         wireAll();
     }
-    // Aggressive rewiring schedule to catch all dynamic content
-    setTimeout(wireAll, 100);
-    setTimeout(wireAll, 300);
     setTimeout(wireAll, 500);
-    setTimeout(wireAll, 1000);
     setTimeout(wireAll, 1500);
-    setTimeout(wireAll, 2000);
     setTimeout(wireAll, 3000);
-
-    // Watch for specific modal elements and rewire when visible
-    var modalsToWatch = [
-        'senderPasswordModal',
-        'senderLoginModal', 
-        'passwordExitConfirmOverlay',
-        'christmasMessageModal',
-        'aboutModal',
-        'favoritesModal',
-        'gamingModal',
-        'myAppsModal',
-        'calculatorModal',
-        'boxDashModal',
-        'novaAIModal',
-        'clockModal',
-        'updatesModal',
-        'comingSoonPreviewModal',
-        'calendarComingSoonModal',
-        'singerModal',
-        'loadingDisclaimerBtn',
-        'loadingDisclaimerOverlay',
-        'loadingDisclaimerOk'
-    ];
-    
-    var modalObs = new MutationObserver(function() {
-        wireAll();
-    });
-    
-    modalsToWatch.forEach(function(modalId) {
-        var modalEl = document.getElementById(modalId);
-        if (modalEl) {
-            modalObs.observe(modalEl, {
-                attributes: true,
-                attributeFilter: ['class', 'style', 'display'],
-                childList: true,
-                subtree: true
-            });
-        }
-    });
-
-    // Watch for dynamic changes (modals opening, elements becoming visible)
-    var mutationObs = new MutationObserver(function(mutations) {
-        var needsReWire = false;
-        mutations.forEach(function(mut) {
-            if (mut.type === 'attributes') {
-                if (mut.target.classList && 
-                    (mut.target.classList.contains('active') || 
-                     mut.target.classList.contains('visible') ||
-                     mut.target.classList.contains('show'))) {
-                    needsReWire = true;
-                }
-                if (mut.attributeName === 'style' && mut.target.style.display !== 'none') {
-                    needsReWire = true;
-                }
-            }
-            if (mut.type === 'childList' && mut.addedNodes.length > 0) {
-                needsReWire = true;
-            }
-        });
-        if (needsReWire) {
-            wireAll();
-        }
-    });
-    
-    mutationObs.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class', 'style', 'display']
-    });
 
     // Also expose globally so it can be called after modals open
     window._masterTouchWireAll = wireAll;
-
-    // FALLBACK: Document-level catch-all for ANY button-like element
-    // This ensures even previously unknown elements can be clicked
-    document.addEventListener('touchstart', function(e) {
-        var el = e.target;
-        
-        // Check if this element or a parent is clickable
-        while (el && el !== document.body) {
-            var isClickable = (
-                el.tagName === 'BUTTON' ||
-                el.tagName === 'A' ||
-                el.getAttribute('onclick') ||
-                el.getAttribute('role') === 'button' ||
-                el.classList.contains('clickable') ||
-                el.classList.contains('button') ||
-                el.classList.contains('-btn') ||
-                el.classList.contains('link')
-            );
-            
-            if (isClickable && el._masterTouchDone) {
-                // Already has handler, don't interfere
-                break;
-            }
-            
-            if (isClickable && !el._masterTouchDone) {
-                // Found clickable element without handler, wire it now
-                wireElement(el, null);
-                break;
-            }
-            
-            el = el.parentElement;
-        }
-    }, { passive: true, capture: true });
 })();
 </script>
 </body>
