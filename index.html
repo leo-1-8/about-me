@@ -29112,6 +29112,15 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
             else { el.click(); }
         }},
+        // Loading disclaimer OK button (shown when loading ends)
+        { id: 'loadingDisclaimerOk', fn: function(el) {
+            el.click();
+        }},
+        // Coming soon preview OK button
+        { id: 'comingSoonPreviewOkBtn', fn: function(el) {
+            if (typeof closeModal === 'function') closeModal('comingSoonPreview');
+            else { el.click(); }
+        }},
     ];
 
     var SELECTOR_ACTIONS = [
@@ -29256,6 +29265,32 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             if (typeof cancelSecretWord === 'function') cancelSecretWord();
             else { el.click(); }
         }},
+        // Coming soon preview OK button
+        { sel: '.coming-soon-preview-ok', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        // Loading disclaimer OK button
+        { sel: '.loading-disclaimer-ok', fn: function(el) {
+            el.click();
+        }},
+        // See more / toggle links in updates modal
+        { sel: '.see-more-link', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
         // Back buttons
         { sel: '.back-button', fn: function(el) {
             var onclick = el.getAttribute('onclick');
@@ -29379,7 +29414,12 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         'calculatorModal',
         'boxDashModal',
         'novaAIModal',
-        'clockModal'
+        'clockModal',
+        'updatesModal',
+        'comingSoonPreviewModal',
+        'calendarComingSoonModal',
+        'singerModal',
+        'loadingDisclaimerOk'
     ];
     
     var modalObs = new MutationObserver(function() {
