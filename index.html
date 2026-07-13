@@ -29216,118 +29216,87 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
-<!-- FIX PASSWORD MODAL BUTTONS - EXCLAMATION & X -->
+<!-- FIX PASSWORD MODAL BUTTONS - EXCLAMATION & X - Smart Touch Detection -->
 <script>
 (function() {
+    var touchData = {};
+    
+    function isTrueTap(startData) {
+        if (!startData) return false;
+        return !startData.moved && (Date.now() - startData.time) < 500;
+    }
+    
+    function setupPasswordButton(selector, callback) {
+        var btn = document.querySelector(selector);
+        if (!btn || btn._pwFixed) return;
+        btn._pwFixed = true;
+        
+        btn.style.pointerEvents = 'auto';
+        btn.style.touchAction = 'manipulation';
+        
+        btn.addEventListener('click', function(e) {
+            try {
+                callback();
+            } catch(err) { console.warn('Click error:', err); }
+        });
+        
+        btn.addEventListener('touchstart', function(e) {
+            var touch = e.touches[0];
+            touchData[btn.id] = {
+                x: touch.clientX,
+                y: touch.clientY,
+                time: Date.now(),
+                moved: false
+            };
+        }, false);
+        
+        btn.addEventListener('touchmove', function(e) {
+            var data = touchData[btn.id];
+            if (data) {
+                var touch = e.touches[0];
+                var dx = touch.clientX - data.x;
+                var dy = touch.clientY - data.y;
+                if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                    data.moved = true;
+                }
+            }
+        }, false);
+        
+        btn.addEventListener('touchend', function(e) {
+            var data = touchData[btn.id];
+            if (!isTrueTap(data)) {
+                delete touchData[btn.id];
+                return;
+            }
+            delete touchData[btn.id];
+            e.stopPropagation();
+        }, false);
+    }
+    
     function fixPasswordModalButtons() {
-        // X BUTTON (Exit button)
-        var exitBtn = document.getElementById('senderPwExitBtn');
-        if (exitBtn && !exitBtn._fixed) {
-            exitBtn._fixed = true;
-            exitBtn.style.pointerEvents = 'auto';
-            exitBtn.style.touchAction = 'manipulation';
-            exitBtn.addEventListener('click', function(e) {
-                try {
-                    openPasswordExitConfirm();
-                } catch(err) { console.warn('X button error:', err); }
-            });
-            exitBtn.addEventListener('touchend', function(e) {
-                try {
-                    openPasswordExitConfirm();
-                } catch(err) { console.warn('X button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('#senderPwExitBtn', function() {
+            if (typeof openPasswordExitConfirm === 'function') openPasswordExitConfirm();
+        });
         
-        // EXCLAMATION BUTTON (Info/Important message)
-        var exclaimBtn = document.getElementById('senderPwExclam');
-        if (exclaimBtn && !exclaimBtn._fixed) {
-            exclaimBtn._fixed = true;
-            exclaimBtn.style.pointerEvents = 'auto';
-            exclaimBtn.style.touchAction = 'manipulation';
-            exclaimBtn.style.cursor = 'pointer';
-            exclaimBtn.addEventListener('click', function(e) {
-                try {
-                    showImportantMessage();
-                } catch(err) { console.warn('Exclamation button error:', err); }
-            });
-            exclaimBtn.addEventListener('touchend', function(e) {
-                try {
-                    showImportantMessage();
-                } catch(err) { console.warn('Exclamation button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('#senderPwExclam', function() {
+            if (typeof showImportantMessage === 'function') showImportantMessage();
+        });
         
-        // EYE BUTTON (Toggle password visibility)
-        var eyeBtn = document.getElementById('senderPwEyeBtn');
-        if (eyeBtn && !eyeBtn._fixed) {
-            eyeBtn._fixed = true;
-            eyeBtn.style.pointerEvents = 'auto';
-            eyeBtn.style.touchAction = 'manipulation';
-            eyeBtn.addEventListener('click', function(e) {
-                try {
-                    toggleSenderPwVisibility();
-                } catch(err) { console.warn('Eye button error:', err); }
-            });
-            eyeBtn.addEventListener('touchend', function(e) {
-                try {
-                    toggleSenderPwVisibility();
-                } catch(err) { console.warn('Eye button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('#senderPwEyeBtn', function() {
+            if (typeof toggleSenderPwVisibility === 'function') toggleSenderPwVisibility();
+        });
         
-        // SUBMIT BUTTON
-        var submitBtn = document.getElementById('senderPasswordSubmitBtn');
-        if (submitBtn && !submitBtn._fixed) {
-            submitBtn._fixed = true;
-            submitBtn.style.pointerEvents = 'auto';
-            submitBtn.style.touchAction = 'manipulation';
-            submitBtn.addEventListener('click', function(e) {
-                try {
-                    submitSenderPassword();
-                } catch(err) { console.warn('Submit button error:', err); }
-            });
-            submitBtn.addEventListener('touchend', function(e) {
-                try {
-                    submitSenderPassword();
-                } catch(err) { console.warn('Submit button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('#senderPasswordSubmitBtn', function() {
+            if (typeof submitSenderPassword === 'function') submitSenderPassword();
+        });
         
-        // PASSWORD EXIT CONFIRMATION - CANCEL BUTTON
-        var cancelBtn = document.querySelector('.password-exit-cancel-btn');
-        if (cancelBtn && !cancelBtn._fixed) {
-            cancelBtn._fixed = true;
-            cancelBtn.style.pointerEvents = 'auto';
-            cancelBtn.style.touchAction = 'manipulation';
-            cancelBtn.addEventListener('click', function(e) {
-                try {
-                    closePasswordExitConfirm();
-                } catch(err) { console.warn('Cancel button error:', err); }
-            });
-            cancelBtn.addEventListener('touchend', function(e) {
-                try {
-                    closePasswordExitConfirm();
-                } catch(err) { console.warn('Cancel button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('.password-exit-cancel-btn', function() {
+            if (typeof closePasswordExitConfirm === 'function') closePasswordExitConfirm();
+        });
         
-        // PASSWORD EXIT CONFIRMATION - EXIT BUTTON
-        var confirmExitBtn = document.getElementById('pwExitConfirmBtn');
-        if (confirmExitBtn && !confirmExitBtn._fixed) {
-            confirmExitBtn._fixed = true;
-            confirmExitBtn.style.pointerEvents = 'auto';
-            confirmExitBtn.style.touchAction = 'manipulation';
-            confirmExitBtn.addEventListener('click', function(e) {
-                try {
-                    confirmPasswordExit();
-                } catch(err) { console.warn('Confirm exit button error:', err); }
-            });
-            confirmExitBtn.addEventListener('touchend', function(e) {
-                try {
-                    confirmPasswordExit();
-                } catch(err) { console.warn('Confirm exit button touch error:', err); }
-            }, { passive: true });
-        }
+        setupPasswordButton('#pwExitConfirmBtn', function() {
+            if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
+        });
     }
     
     if (document.readyState === 'loading') {
@@ -29336,102 +29305,101 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         fixPasswordModalButtons();
     }
     
-    // Run multiple times for dynamic elements
     setTimeout(fixPasswordModalButtons, 300);
     setTimeout(fixPasswordModalButtons, 800);
     setTimeout(fixPasswordModalButtons, 1500);
-    setInterval(fixPasswordModalButtons, 2000);
 })();
 </script>
 
-<!-- FIX ABOUT ME, OTHERS, RATE US, MESSAGE ME BUTTONS -->
+<!-- FIX ABOUT ME, OTHERS, RATE US, MESSAGE ME BUTTONS - With Smart Touch Detection -->
 <script>
 (function() {
+    var touchData = {};
+    
+    function isTrueTap(startData) {
+        if (!startData) return false;
+        return !startData.moved && (Date.now() - startData.time) < 500;
+    }
+    
+    function setupSmartButton(selector, callback) {
+        var elements = document.querySelectorAll(selector);
+        elements.forEach(function(btn) {
+            if (btn._smartButtonFixed) return;
+            btn._smartButtonFixed = true;
+            
+            btn.addEventListener('click', function(e) {
+                try {
+                    e.stopPropagation();
+                    callback();
+                } catch(err) { console.warn('Click error:', err); }
+            });
+            
+            btn.addEventListener('touchstart', function(e) {
+                var touch = e.touches[0];
+                touchData[btn.id] = {
+                    x: touch.clientX,
+                    y: touch.clientY,
+                    time: Date.now(),
+                    moved: false
+                };
+            }, false);
+            
+            btn.addEventListener('touchmove', function(e) {
+                var data = touchData[btn.id];
+                if (data) {
+                    var touch = e.touches[0];
+                    var dx = touch.clientX - data.x;
+                    var dy = touch.clientY - data.y;
+                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                        data.moved = true;
+                    }
+                }
+            }, false);
+            
+            btn.addEventListener('touchend', function(e) {
+                var data = touchData[btn.id];
+                if (!isTrueTap(data)) {
+                    delete touchData[btn.id];
+                    return;
+                }
+                delete touchData[btn.id];
+                // Let click event handle it
+            }, false);
+            
+            btn.style.touchAction = 'manipulation';
+            btn.style.pointerEvents = 'auto';
+        });
+    }
+    
     function attachButtonHandlers() {
-        // ABOUT ME BUTTON
-        var aboutBtns = document.querySelectorAll('.btn-about');
-        aboutBtns.forEach(function(btn) {
-            if (btn._aboutFixed) return;
-            btn._aboutFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openModal('about');
-                } catch(err) { console.warn('About Me click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openModal('about');
-                } catch(err) { console.warn('About Me touch error:', err); }
-            }, { passive: true });
+        setupSmartButton('.btn-about', function() {
+            if (typeof openModal === 'function') {
+                openModal('about');
+            }
         });
         
-        // OTHERS BUTTON
-        var othersBtns = document.querySelectorAll('.btn-favorites');
-        othersBtns.forEach(function(btn) {
-            if (btn._othersFixed) return;
-            btn._othersFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openModal('favorites');
-                } catch(err) { console.warn('Others click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openModal('favorites');
-                } catch(err) { console.warn('Others touch error:', err); }
-            }, { passive: true });
+        setupSmartButton('.btn-favorites', function() {
+            if (typeof openModal === 'function') {
+                openModal('favorites');
+            }
         });
         
-        // RATE US BUTTON
-        var rateBtn = document.getElementById('rateUsLink');
-        if (rateBtn && !rateBtn._rateFixed) {
-            rateBtn._rateFixed = true;
-            rateBtn.addEventListener('click', function(e) {
-                try {
-                    e.stopPropagation();
-                    handleRateUsClick();
-                } catch(err) { console.warn('Rate Us click error:', err); }
-            });
-            rateBtn.addEventListener('touchend', function(e) {
-                try {
-                    e.stopPropagation();
-                    handleRateUsClick();
-                } catch(err) { console.warn('Rate Us touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // MESSAGE ME BUTTON - both handlers
-        var messageBtns = document.querySelectorAll('[onclick*="handleMessageMeClick"]');
-        messageBtns.forEach(function(btn) {
-            if (btn._messageFixed) return;
-            btn._messageFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    handleMessageMeClick();
-                } catch(err) { console.warn('Message Me click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    handleMessageMeClick();
-                } catch(err) { console.warn('Message Me touch error:', err); }
-            }, { passive: true });
+        setupSmartButton('#rateUsLink', function() {
+            if (typeof handleRateUsClick === 'function') {
+                handleRateUsClick();
+            }
         });
         
-        // Also fix the gate version
-        var gateBtns = document.querySelectorAll('[onclick*="openMessageInboxGate"]');
-        gateBtns.forEach(function(btn) {
-            if (btn._gateFixed) return;
-            btn._gateFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openMessageInboxGate();
-                } catch(err) { console.warn('Message gate click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openMessageInboxGate();
-                } catch(err) { console.warn('Message gate touch error:', err); }
-            }, { passive: true });
+        setupSmartButton('[onclick*="handleMessageMeClick"]', function() {
+            if (typeof handleMessageMeClick === 'function') {
+                handleMessageMeClick();
+            }
+        });
+        
+        setupSmartButton('[onclick*="openMessageInboxGate"]', function() {
+            if (typeof openMessageInboxGate === 'function') {
+                openMessageInboxGate();
+            }
         });
     }
     
@@ -29441,68 +29409,170 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         attachButtonHandlers();
     }
     
-    // Re-run for dynamic elements
     setTimeout(attachButtonHandlers, 500);
     setTimeout(attachButtonHandlers, 1500);
 })();
 </script>
 
-<!-- SETTINGS EYE BUTTON MOBILE FIX -->
+<!-- SETTINGS EYE BUTTON MOBILE FIX - Smart Touch Detection -->
 <script>
 (function() {
-    function setupSettingsEyeBtn() {
-        var btn = document.getElementById('settingsEyeBtn');
-        if (!btn) return;
-        
-        // Add click handler
-        btn.addEventListener('click', function(e) {
-            try {
-                e.stopPropagation();
-                // Call the existing settings toggle function if it exists
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
+    var touchStartData = {};
+    
+    function isTrueTap(startData) {
+        // Return true only if movement is minimal (less than 10px) and time is short (less than 500ms)
+        return !startData.moved && (Date.now() - startData.time) < 500;
+    }
+    
+    function setupSmartTouchButton(selector, callback) {
+        var elements = document.querySelectorAll(selector);
+        elements.forEach(function(btn) {
+            if (btn._smartTouchFixed) return;
+            btn._smartTouchFixed = true;
+            
+            // Click handler (primary - works for mouse and auto-converted touches)
+            btn.addEventListener('click', function(e) {
+                try {
+                    e.stopPropagation();
+                    callback();
+                } catch(err) {
+                    console.warn('Click error:', err);
                 }
-            } catch(err) {
-                console.warn('Settings eye click error:', err);
+            });
+            
+            // Touch handlers - only fire on actual taps
+            btn.addEventListener('touchstart', function(e) {
+                var touch = e.touches[0];
+                touchStartData[btn.id] = {
+                    x: touch.clientX,
+                    y: touch.clientY,
+                    time: Date.now(),
+                    moved: false
+                };
+            }, false);
+            
+            btn.addEventListener('touchmove', function(e) {
+                var data = touchStartData[btn.id];
+                if (data) {
+                    var touch = e.touches[0];
+                    var dx = touch.clientX - data.x;
+                    var dy = touch.clientY - data.y;
+                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                        data.moved = true;
+                    }
+                }
+            }, false);
+            
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    var data = touchStartData[btn.id];
+                    if (data && isTrueTap(data)) {
+                        e.preventDefault();
+                        callback();
+                    }
+                    delete touchStartData[btn.id];
+                } catch(err) {
+                    console.warn('Touch error:', err);
+                }
+            }, false);
+            
+            btn.style.pointerEvents = 'auto';
+            btn.style.cursor = 'pointer';
+            btn.style.touchAction = 'manipulation';
+        });
+    }
+    
+    function init() {
+        setupSmartTouchButton('#settingsEyeBtn', function() {
+            if (typeof toggleSystemSettings === 'function') {
+                toggleSystemSettings();
             }
         });
         
-        // Add touch handler with passive listener
-        btn.addEventListener('touchend', function(e) {
-            try {
-                e.stopPropagation();
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
-                }
-            } catch(err) {
-                console.warn('Settings eye touch error:', err);
+        setupSmartTouchButton('#visitsEyeBtn', function() {
+            if (typeof toggleSystemSettings === 'function') {
+                toggleSystemSettings();
             }
-        }, { passive: true });
+        });
         
-        // Ensure button is visible and clickable
-        btn.style.pointerEvents = 'auto';
-        btn.style.cursor = 'pointer';
-        btn.style.position = 'relative';
-        btn.style.zIndex = '100';
+        // Fix password exclamation mark
+        setupSmartTouchButton('#senderPwExclam', function() {
+            if (typeof showPwExclam === 'function') {
+                showPwExclam();
+            }
+        });
+        
+        // Fix create account confirmation buttons
+        setupSmartTouchButton('#pwExitConfirmBtn', function() {
+            if (typeof confirmPasswordExit === 'function') {
+                confirmPasswordExit();
+            }
+        });
     }
     
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        setupSettingsEyeBtn();
+        init();
     }
-    setTimeout(setupSettingsEyeBtn, 500);
+    
+    setTimeout(init, 300);
+    setTimeout(init, 800);
 })();
 </script>
 
-<!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable -->
+<!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable (NO passive touchend) -->
 <script>
 (function() {
+    var touchData = {};
+    
+    function isTrueTap(startData) {
+        if (!startData) return false;
+        return !startData.moved && (Date.now() - startData.time) < 500;
+    }
+    
     function fixElement(el) {
-        if (!el) return;
+        if (!el || el._touchFixed) return;
+        el._touchFixed = true;
+        
         try {
             el.style.touchAction = 'manipulation';
             el.style.pointerEvents = 'auto';
+            
+            // Touch tracking for scroll detection
+            el.addEventListener('touchstart', function(e) {
+                var touch = e.touches[0];
+                touchData[el.id || el.className] = {
+                    x: touch.clientX,
+                    y: touch.clientY,
+                    time: Date.now(),
+                    moved: false
+                };
+            }, false);
+            
+            el.addEventListener('touchmove', function(e) {
+                var key = el.id || el.className;
+                if (touchData[key]) {
+                    var touch = e.touches[0];
+                    var dx = touch.clientX - touchData[key].x;
+                    var dy = touch.clientY - touchData[key].y;
+                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                        touchData[key].moved = true;
+                    }
+                }
+            }, false);
+            
+            el.addEventListener('touchend', function(e) {
+                var key = el.id || el.className;
+                // Only trigger if it was a real tap (no significant movement)
+                if (!isTrueTap(touchData[key])) {
+                    delete touchData[key];
+                    return;
+                }
+                delete touchData[key];
+                // Let the click event handle it (avoid double firing)
+            }, false);
+            
         } catch(err) {}
     }
 
