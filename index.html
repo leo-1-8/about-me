@@ -10144,7 +10144,7 @@
 </head>
 <body class="intro-pending">
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: none;">
+    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: auto;">
         <button type="button" class="loading-disclaimer-btn" id="loadingDisclaimerBtn" aria-label="Disclaimer" title="Disclaimer">!</button>
         <div class="loading-disclaimer-overlay" id="loadingDisclaimerOverlay" aria-hidden="true">
             <div class="loading-disclaimer-modal" role="dialog" aria-labelledby="loadingDisclaimerTitle" aria-modal="true">
@@ -29010,6 +29010,43 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
     // Map: element ID or selector → function to call
     var DIRECT_ACTIONS = [
+        // Loading screen disclaimer button
+        { id: 'loadingDisclaimerBtn', fn: function() {
+            var b = document.getElementById('loadingDisclaimerBtn'); if (b) b.click();
+        }},
+        // Loading screen disclaimer OK button
+        { id: 'loadingDisclaimerOk', fn: function() {
+            var b = document.getElementById('loadingDisclaimerOk'); if (b) b.click();
+        }},
+        // Create account confirmation modal buttons
+        { id: 'userNameInput', fn: null },
+        // Message confirmation modal close button
+        { sel: '#messageConfirmationModal .close-button', fn: function(el) { el.click(); }},
+        // Final name confirmation buttons
+        { id: 'nameFinalConfirmSubmitBtn', fn: function() {
+            if (typeof confirmFinalName === 'function') confirmFinalName();
+            else { var b = document.getElementById('nameFinalConfirmSubmitBtn'); if (b) b.click(); }
+        }},
+        // Password modal buttons
+        { id: 'senderPwExitBtn', fn: function() {
+            if (typeof openPasswordExitConfirm === 'function') openPasswordExitConfirm();
+            else { var b = document.getElementById('senderPwExitBtn'); if (b) b.click(); }
+        }},
+        { id: 'senderPwExclam', fn: function() {
+            if (typeof showImportantMessage === 'function') showImportantMessage();
+            else { var b = document.getElementById('senderPwExclam'); if (b) b.click(); }
+        }},
+        // Settings caution OK buttons
+        { id: 'settingsCautionOkBtn', fn: function() {
+            var b = document.getElementById('settingsCautionOkBtn'); if (b) b.click();
+        }},
+        { id: 'settingsVisitorsOkBtn', fn: function() {
+            if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
+            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
+        }},
+        { id: 'settingsLangNoteOkBtn', fn: function() {
+            var b = document.getElementById('settingsLangNoteOkBtn'); if (b) b.click();
+        }},
         // Settings panel eye icon
         { id: 'settingsEyeBtn', fn: function() {
             if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
@@ -29050,6 +29087,26 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     ];
 
     var SELECTOR_ACTIONS = [
+        // Loading disclaimer button
+        { sel: '.loading-disclaimer-btn', fn: null },
+        // Confirmation modal buttons
+        { sel: '.name-submit-btn', fn: null },
+        { sel: '.name-info-btn', fn: null },
+        { sel: '.name-warning-ok-btn', fn: null },
+        // Settings buttons and controls
+        { sel: '.settings-close', fn: null },
+        { sel: '.settings-open-btn', fn: null },
+        { sel: '.settings-warning-btn', fn: null },
+        { sel: '.settings-caution-ok', fn: null },
+        { sel: '.settings-slider', fn: null },
+        { sel: '#settingsVolumeSlider', fn: null },
+        { sel: '#settingsBrightnessSlider', fn: null },
+        { sel: '#themeToggle', fn: null },
+        { sel: '.settings-lang-option', fn: null },
+        { sel: '.settings-lang-trigger', fn: null },
+        // Password modal inputs and buttons
+        { sel: '#senderPasswordInput', fn: null },
+        { sel: '#senderPasswordCreateBtn', fn: null },
         // About Me / Others buttons
         { sel: '.main-button', fn: null },
         // Message Me
@@ -29063,17 +29120,8 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             }
             el.click();
         }},
-        // Settings warning/info buttons
-        { sel: '.settings-warning-btn', fn: null },
-        // Settings open buttons
-        { sel: '.settings-open-btn', fn: null },
-        // Settings OK buttons
-        { sel: '.settings-caution-ok', fn: null },
         // Star rating
         { sel: '.star-btn', fn: null },
-        // Language options
-        { sel: '.settings-lang-option', fn: null },
-        { sel: '.settings-lang-trigger', fn: null },
         // Favorite cards / Coming soon cards (with and without timer)
         { sel: '.favorite-card.clickable', fn: null },
         { sel: '.favorite-card', fn: null },
@@ -29089,10 +29137,14 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         { sel: '[data-category="gaming"]', fn: null },
         { sel: '[data-category="music"]', fn: null },
         { sel: '[data-category="singer"]', fn: null },
+        // Text inputs in modals
+        { sel: '#userNameInput', fn: null },
         // All interactive elements as fallback
         { sel: '[role="button"]', fn: null },
         { sel: 'button:not(:disabled)', fn: null },
         { sel: 'a[href]', fn: null },
+        { sel: 'input[type="text"]', fn: null },
+        { sel: 'input[type="password"]', fn: null },
     ];
 
     function makeTouchHandler(actionFn, el) {
