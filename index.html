@@ -29043,47 +29043,55 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     // Map: element ID or selector → function to call
     var DIRECT_ACTIONS = [
         // Settings panel eye icon
-        { id: 'settingsEyeBtn', fn: function() {
-            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
-            else { var b = document.getElementById('settingsEyeBtn'); if (b) b.click(); }
+        { id: 'settingsEyeBtn', fn: function(el) {
+            el.click();
         }},
         // Settings close button
-        { id: 'settingsCloseBtn', fn: function() {
+        { id: 'settingsCloseBtn', fn: function(el) {
             if (typeof closeSettings === 'function') closeSettings();
-            else { var b = document.getElementById('settingsCloseBtn'); if (b) b.click(); }
+            else { el.click(); }
         }},
         // Settings Open (What's New)
-        { id: 'settingsOpenUpdatesBtn', fn: function() {
-            var b = document.getElementById('settingsOpenUpdatesBtn'); if (b) b.click();
+        { id: 'settingsOpenUpdatesBtn', fn: function(el) {
+            el.click();
         }},
         // Settings Reset
-        { id: 'settingsResetDefaultsBtn', fn: function() {
-            var b = document.getElementById('settingsResetDefaultsBtn'); if (b) b.click();
+        { id: 'settingsResetDefaultsBtn', fn: function(el) {
+            el.click();
         }},
         // Settings theme toggle
-        { id: 'themeToggle', fn: function() {
-            var b = document.getElementById('themeToggle'); if (b) b.click();
+        { id: 'themeToggle', fn: function(el) {
+            el.click();
         }},
         // Visits eye btn inside login modal
-        { id: 'visitsEyeBtn', fn: function() {
+        { id: 'visitsEyeBtn', fn: function(el) {
             if (typeof openVisitsModal === 'function') openVisitsModal();
+            else { el.click(); }
         }},
         // Main nav buttons
         { id: 'mainButtonContainer', fn: null }, // handled by children below
         // Rate Us
-        { id: 'rateUsLink', fn: function() {
+        { id: 'rateUsLink', fn: function(el) {
             if (typeof handleRateUsClick === 'function') handleRateUsClick();
+            else { el.click(); }
         }},
         // Visitors OK
-        { id: 'settingsVisitorsOkBtn', fn: function() {
+        { id: 'settingsVisitorsOkBtn', fn: function(el) {
             if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
-            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
+            else { el.click(); }
         }},
     ];
 
     var SELECTOR_ACTIONS = [
         // About Me / Others buttons
-        { sel: '.main-button', fn: null },
+        { sel: '.main-button', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                eval(onclick);
+            } else {
+                el.click();
+            }
+        }},
         // Message Me
         { sel: '.christmas-message-link', fn: function(el) {
             if (typeof handleMessageMeClick === 'function') {
@@ -29096,19 +29104,35 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             el.click();
         }},
         // Settings warning/info buttons
-        { sel: '.settings-warning-btn', fn: null },
+        { sel: '.settings-warning-btn', fn: function(el) {
+            el.click();
+        }},
         // Settings open buttons
-        { sel: '.settings-open-btn', fn: null },
+        { sel: '.settings-open-btn', fn: function(el) {
+            el.click();
+        }},
         // Settings OK buttons
-        { sel: '.settings-caution-ok', fn: null },
+        { sel: '.settings-caution-ok', fn: function(el) {
+            el.click();
+        }},
         // Star rating
-        { sel: '.star-btn', fn: null },
+        { sel: '.star-btn', fn: function(el) {
+            el.click();
+        }},
         // Language options
-        { sel: '.settings-lang-option', fn: null },
-        { sel: '.settings-lang-trigger', fn: null },
+        { sel: '.settings-lang-option', fn: function(el) {
+            el.click();
+        }},
+        { sel: '.settings-lang-trigger', fn: function(el) {
+            el.click();
+        }},
         // Favorite cards
-        { sel: '.favorite-card.clickable', fn: null },
-        { sel: '.myapps-app-box', fn: null },
+        { sel: '.favorite-card.clickable', fn: function(el) {
+            el.click();
+        }},
+        { sel: '.myapps-app-box', fn: function(el) {
+            el.click();
+        }},
     ];
 
     function makeTouchHandler(actionFn, el) {
@@ -29151,6 +29175,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         el._masterTouchDone = true;
         el.style.touchAction = 'manipulation';
         el.style.webkitTapHighlightColor = 'transparent';
+        // Ensure pointer-events is set properly
+        if (!el.style.pointerEvents || el.style.pointerEvents === 'none') {
+            el.style.pointerEvents = 'auto';
+        }
         el.addEventListener('touchstart', makeTouchHandler(actionFn, el), { passive: false });
     }
 
@@ -29178,6 +29206,34 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     setTimeout(wireAll, 500);
     setTimeout(wireAll, 1500);
     setTimeout(wireAll, 3000);
+
+    // Watch for dynamic changes (modals opening, elements becoming visible)
+    var mutationObs = new MutationObserver(function(mutations) {
+        var needsReWire = false;
+        mutations.forEach(function(mut) {
+            if (mut.type === 'attributes') {
+                if (mut.target.classList && 
+                    (mut.target.classList.contains('active') || 
+                     mut.target.classList.contains('visible') ||
+                     mut.target.classList.contains('show'))) {
+                    needsReWire = true;
+                }
+            }
+            if (mut.type === 'childList' && mut.addedNodes.length > 0) {
+                needsReWire = true;
+            }
+        });
+        if (needsReWire) {
+            setTimeout(wireAll, 50);
+        }
+    });
+    
+    mutationObs.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style', 'display']
+    });
 
     // Also expose globally so it can be called after modals open
     window._masterTouchWireAll = wireAll;
