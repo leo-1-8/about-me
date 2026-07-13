@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,7 +63,6 @@
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
-            touch-action: pan-y;
         }
 
         html {
@@ -28892,7 +28891,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             openVisitsModal();
         });
         // Also add touchend for immediate feedback
-        btn
+        btn.addEventListener('touchend', function(e) {
+            e.stopPropagation();
+            openVisitsModal();
+        }, { passive: true });
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachVisitsEyeTouch);
@@ -29056,7 +29058,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     // Intercept ALL clicks and make sure they work
     function universalClickFix() {
         // Get all clickable elements
-        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn, #loginPwEyeBtn, #otpEyeBtn, #inboxPinEyeBtn, .otp-eye-btn');
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn, #loginPwEyeBtn, #otpEyeBtn, #inboxPinEyeBtn, .otp-eye-btn, .see-more-link, .info-toggle-button');
         
         allClickable.forEach(function(el) {
             if (el._universalFixDone) return;
@@ -29108,6 +29110,140 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     setTimeout(universalClickFix, 800);
     setTimeout(universalClickFix, 1500);
     setTimeout(universalClickFix, 3000);
+})();
+</script>
+
+<!-- FIX SEE MORE/LESS AND HOBBIES/FAVORITES BUTTONS -->
+<script>
+(function() {
+    function fixSeeMoreLessButtons() {
+        // FIX ALL "SEE MORE" AND "SEE LESS" LINKS
+        var seeMoreLinks = document.querySelectorAll('.see-more-link');
+        seeMoreLinks.forEach(function(link) {
+            // Always ensure these properties are set
+            link.style.pointerEvents = 'auto';
+            link.style.touchAction = 'manipulation';
+            link.style.cursor = 'pointer';
+            
+            if (!link._seeMoreFixed) {
+                link._seeMoreFixed = true;
+                
+                var onclick = link.getAttribute('onclick');
+                if (onclick) {
+                    // Add click listener
+                    link.addEventListener('click', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('See more click error:', err); 
+                        }
+                    });
+                    
+                    // Add touch listener that executes onclick
+                    link.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('See more touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            }
+        });
+        
+        // FIX HOBBIES AND FAVORITES TOGGLE BUTTONS
+        var toggleButtons = document.querySelectorAll('.info-toggle-button');
+        toggleButtons.forEach(function(btn) {
+            // Always ensure these properties are set
+            btn.style.pointerEvents = 'auto';
+            btn.style.touchAction = 'manipulation';
+            btn.style.cursor = 'pointer';
+            
+            if (!btn._toggleFixed) {
+                btn._toggleFixed = true;
+                
+                var onclick = btn.getAttribute('onclick');
+                if (onclick) {
+                    btn.addEventListener('click', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('Toggle button click error:', err); 
+                        }
+                    });
+                    
+                    btn.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            eval(onclick);
+                        } catch(err) { 
+                            console.warn('Toggle button touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            }
+        });
+        
+        // FIX PERSONAL DETAILS TOGGLE
+        var personalToggleBtn = document.getElementById('personalToggleBtn');
+        if (personalToggleBtn) {
+            personalToggleBtn.style.pointerEvents = 'auto';
+            personalToggleBtn.style.touchAction = 'manipulation';
+            personalToggleBtn.style.cursor = 'pointer';
+            
+            if (!personalToggleBtn._personalFixed) {
+                personalToggleBtn._personalFixed = true;
+                
+                personalToggleBtn.addEventListener('click', function(e) {
+                    try {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var clickEvent = new MouseEvent('click', {
+                            view: window,
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        personalToggleBtn.dispatchEvent(clickEvent);
+                    } catch(err) { 
+                        console.warn('Personal toggle click error:', err); 
+                    }
+                });
+                
+                personalToggleBtn.addEventListener('touchend', function(e) {
+                    try {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var clickEvent = new MouseEvent('click', {
+                            view: window,
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        personalToggleBtn.dispatchEvent(clickEvent);
+                    } catch(err) { 
+                        console.warn('Personal toggle touch error:', err); 
+                    }
+                }, { passive: false });
+            }
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixSeeMoreLessButtons);
+    } else {
+        fixSeeMoreLessButtons();
+    }
+    
+    setTimeout(fixSeeMoreLessButtons, 300);
+    setTimeout(fixSeeMoreLessButtons, 800);
+    setTimeout(fixSeeMoreLessButtons, 1500);
+    setInterval(fixSeeMoreLessButtons, 2000);
 })();
 </script>
 
@@ -29445,7 +29581,53 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
-<!-- SETTINGS EYE BUTTON - Already handled by main script, no duplicate needed -->
+<!-- SETTINGS EYE BUTTON MOBILE FIX -->
+<script>
+(function() {
+    function setupSettingsEyeBtn() {
+        var btn = document.getElementById('settingsEyeBtn');
+        if (!btn) return;
+        
+        // Add click handler
+        btn.addEventListener('click', function(e) {
+            try {
+                e.stopPropagation();
+                // Call the existing settings toggle function if it exists
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye click error:', err);
+            }
+        });
+        
+        // Add touch handler with passive listener
+        btn.addEventListener('touchend', function(e) {
+            try {
+                e.stopPropagation();
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye touch error:', err);
+            }
+        }, { passive: true });
+        
+        // Ensure button is visible and clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.cursor = 'pointer';
+        btn.style.position = 'relative';
+        btn.style.zIndex = '100';
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
+    } else {
+        setupSettingsEyeBtn();
+    }
+    setTimeout(setupSettingsEyeBtn, 500);
+})();
+</script>
 
 <!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable -->
 <script>
@@ -29473,7 +29655,8 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#senderPwExclam',
             '.password-exit-cancel-btn', '#pwExitConfirmBtn',
             '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
-            '.otp-eye-btn'
+            '.otp-eye-btn',
+            '.see-more-link', '.info-toggle-button'
         ];
 
         selectors.forEach(function(sel) {
@@ -29491,97 +29674,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     
     setTimeout(fixAll, 500);
     setTimeout(fixAll, 1500);
-})();
-</script>
-
-<!-- MOBILE SCROLL PROTECTION - Prevent clicks while scrolling (MAIN FIX) -->
-<script>
-(function() {
-    var touchData = {
-        x: 0,
-        y: 0,
-        time: 0,
-        isScrolling: false
-    };
-    
-    // Track touch start position
-    document.addEventListener('touchstart', function(e) {
-        var touch = e.touches[0];
-        touchData.x = touch.clientX;
-        touchData.y = touch.clientY;
-        touchData.time = Date.now();
-        touchData.isScrolling = false;
-    }, false);
-    
-    // Detect scroll movement (more than 15px = scrolling)
-    document.addEventListener('touchmove', function(e) {
-        var touch = e.touches[0];
-        var dx = Math.abs(touch.clientX - touchData.x);
-        var dy = Math.abs(touch.clientY - touchData.y);
-        
-        if (dx > 15 || dy > 15) {
-            touchData.isScrolling = true;
-        }
-    }, false);
-    
-    // Reset on touch end — use capture phase (true) so this runs BEFORE any
-    // element-level touchend handlers that call el.click().
-    document.addEventListener('touchend', function(e) {
-        touchData.isScrolling = false;
-    }, true);
-    
-    // INTERCEPT ALL CLICKS - block if user was scrolling
-    // BUT: Never block clicks on interactive elements (buttons, [onclick], etc)
-    // Capture phase (true) intercepts BEFORE onclick handlers fire
-    document.addEventListener('click', function(e) {
-        if (!touchData.isScrolling) return; // Not a scroll-click, allow it
-        
-        var target = e.target;
-        // Don't block clicks on interactive elements
-        if (target.tagName === 'BUTTON' || 
-            target.closest('button') ||
-            target.closest('[onclick]') ||
-            target.closest('a') ||
-            target.getAttribute('onclick') ||
-            target.hasAttribute('onclick')) {
-            return; // Allow click on interactive element
-        }
-        
-        // Block the click
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
-    }, true);
-})();
-</script>
-
-<!-- DISABLE ZOOM - PREVENT PINCH AND DOUBLE-TAP -->
-<script>
-(function() {
-    // Prevent pinch zoom
-    document.addEventListener('touchmove', function(e) {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-    
-    // Prevent double-tap zoom
-    var lastTap = 0;
-    document.addEventListener('touchend', function(e) {
-        var currentTime = new Date().getTime();
-        var tapLength = currentTime - lastTap;
-        if (tapLength < 500 && tapLength > 0) {
-            e.preventDefault();
-        }
-        lastTap = currentTime;
-    }, { passive: false });
-    
-    // Prevent wheel zoom (Ctrl + scroll)
-    document.addEventListener('wheel', function(e) {
-        if (e.ctrlKey) {
-            e.preventDefault();
-        }
-    }, { passive: false });
 })();
 </script>
 </body>
