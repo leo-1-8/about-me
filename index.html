@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,13 +13,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        /* Mobile tap fix: eliminate 300ms click delay and ensure all buttons
-           register touch events correctly on iOS/Android */
-        button, [onclick], [role="button"], a, input, select, label {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -83,15 +76,11 @@
 
         @media (orientation: portrait) and (max-width: 768px) {
             html, body {
-                /* CRITICAL FIX: overflow:hidden on root breaks Android touch hit-testing.
-                   Non-fixed elements become unclickable. Body must be the scroll container. */
-                overflow-x: hidden;
-                overflow-y: auto;
-                height: auto;
-                min-height: 100vh;
-                position: relative;
+                overflow: hidden !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                position: fixed;
                 width: 100%;
-                -webkit-overflow-scrolling: touch;
             }
             .loading-screen {
                 display: flex !important;
@@ -121,7 +110,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 96;
+            z-index: 9999;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
         }
 
@@ -315,7 +304,7 @@
             right: clamp(14px, 4vw, 24px);
             top: clamp(14px, 3vh, 22px);
             left: auto;
-            z-index: 97;
+            z-index: 10001;
             width: clamp(26px, 6.5vw, 30px);
             height: clamp(26px, 6.5vw, 30px);
             border-radius: 8px;
@@ -344,7 +333,7 @@
         .loading-disclaimer-overlay {
             position: fixed;
             inset: 0;
-            z-index: 98;
+            z-index: 10002;
             display: none;
             align-items: center;
             justify-content: center;
@@ -440,7 +429,7 @@
             position: fixed;
             top: 14px;
             right: 14px;
-            z-index: 150;
+            z-index: 25001;
             border: none;
             padding: 0;
             background: transparent;
@@ -458,7 +447,7 @@
             position: fixed;
             top: 14px;
             right: 14px;
-            z-index: 150;
+            z-index: 25001;
             width: 44px;
             height: 44px;
             border-radius: 999px;
@@ -529,25 +518,13 @@
             height: 100vh;
             height: 100dvh;
             height: var(--vv-height, 100dvh);
-            z-index: 300;
+            z-index: 26000;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            /* FIXED: backdrop-filter removed entirely — it creates a GPU compositing layer on Android
-               that causes ALL touch events on child buttons to be dropped silently. */
-            background: rgba(2, 8, 18, 0.88);
-            /* FIXED: pointer-events on the overlay background itself — the settings-card inside
-               gets pointer-events:auto so buttons still work, but the dark overlay behind it
-               won't block clicks on modals that open on top (inbox, conversation, userSettings) */
-            pointer-events: none;
-        }
-        .settings-overlay.show {
-            display: flex;
-        }
-        /* The actual settings card MUST receive clicks */
-        .settings-card {
-            pointer-events: auto;
+            background: rgba(2, 8, 18, 0.62);
+            backdrop-filter: blur(6px);
         }
         body.dark-mode .settings-overlay {
             background: rgba(2, 8, 18, 0.7);
@@ -1057,7 +1034,7 @@
         .settings-caution-overlay {
             position: fixed;
             inset: 0;
-            z-index: 350;
+            z-index: 27000;
             display: none;
             align-items: center;
             justify-content: center;
@@ -1774,7 +1751,7 @@
         }
 
         .button-container {
-            z-index: 105;
+            z-index: 100;
             visibility: visible;
             opacity: 1;
         }
@@ -2399,7 +2376,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 102;
+            z-index: 10006;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -2691,7 +2668,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 97;
+            z-index: 10001;
         }
 
         .name-warning-box {
@@ -2947,17 +2924,14 @@
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.78);
-            z-index: 500;
+            z-index: 999999;
             justify-content: center;
             align-items: center;
-            pointer-events: auto;
         }
         #userSettingsModal.active {
             display: flex;
         }
         .user-settings-box {
-            pointer-events: auto; /* the actual modal content IS clickable */
-        }
             background: #1a2035;
             border: 1px solid rgba(255,255,255,0.13);
             border-radius: 16px;
@@ -3419,7 +3393,7 @@
             border-radius: 12px;
             padding: 20px 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 101;
+            z-index: 10005;
             text-align: center;
             width: min(420px, calc(100vw - 32px));
             max-width: calc(100vw - 32px);
@@ -4005,7 +3979,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.55);
-            z-index: 110;
+            z-index: 10020;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -4528,7 +4502,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 200;
+            z-index: 25100;
             padding: 20px;
             pointer-events: auto !important;
         }
@@ -4676,7 +4650,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 97;
+            z-index: 10001;
             padding: 20px;
             pointer-events: auto !important;
         }
@@ -4795,7 +4769,7 @@
             position: fixed;
             top: 10px;
             right: 10px;
-            z-index: 120;
+            z-index: 11000;
             padding: 6px 14px 6px 12px;
             border-radius: 999px;
             border: none;
@@ -4941,7 +4915,7 @@
             display: none;
             flex-direction: column;
             gap: 10px;
-            z-index: 119;
+            z-index: 10999;
         }
 
         .music-mini-panel-header {
@@ -5059,7 +5033,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 200;
+            z-index: 25100;
             animation: fadeIn 0.3s ease;
             pointer-events: auto;
         }
@@ -5163,7 +5137,7 @@
 
         /* Keep What's New above settings when opened from settings */
         #updatesModal {
-            z-index: 400;
+            z-index: 28010;
         }
 
         /* Keep the secret inbox gate / quiz above settings when triggered from the
@@ -5174,7 +5148,7 @@
         #messageConversationModal,
         #closeMessageMeModal,
         #closeMessageMeConfirmModal {
-            z-index: 400;
+            z-index: 28010;
         }
 
         .modal-overlay.active {
@@ -5248,12 +5222,10 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            z-index: 50 !important;
+            z-index: 1000 !important;
             opacity: 1 !important;
             visibility: visible !important;
             pointer-events: auto !important;
-            touch-action: manipulation !important;
-            -webkit-tap-highlight-color: transparent !important;
         }
 
 
@@ -5279,10 +5251,7 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            z-index: 99;
-            touch-action: manipulation !important;
-            pointer-events: auto !important;
-            -webkit-tap-highlight-color: transparent !important;
+            z-index: 10003;
         }
 
         .close-button-left:hover {
@@ -5624,7 +5593,7 @@
                 align-items: center;
                 visibility: visible !important;
                 opacity: 1 !important;
-                z-index: 105 !important;
+                z-index: 100 !important;
             }
 
             .main-button {
@@ -5917,14 +5886,6 @@
             letter-spacing: 1px;
         }
 
-        /* When the element itself is both info-label and a flex row wrapper, cancel margin */
-        .name-with-button.info-label,
-        .hobbies-with-button.info-label,
-        .favorites-with-button.info-label {
-            margin-bottom: 0;
-            align-items: center;
-        }
-
         .info-value {
             font-size: 18px;
             color: #333;
@@ -5940,14 +5901,6 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            width: 100%;
-        }
-
-        .name-with-button span,
-        .hobbies-with-button span,
-        .favorites-with-button span {
-            flex: 1;
-            min-width: 0;
         }
 
         .favorites-title-with-button {
@@ -5966,17 +5919,13 @@
             cursor: pointer;
             font-size: 18px;
             color: white;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
             flex-shrink: 0;
             font-weight: bold;
-            position: relative;
-            z-index: 1;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .info-toggle-button.disabled {
@@ -7841,7 +7790,7 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            z-index: 100;
+            z-index: 10004;
             width: 36px;
             height: 36px;
             font-size: 22px;
@@ -8166,7 +8115,7 @@
             align-items: center;
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
-            z-index: 98;
+            z-index: 10002;
         }
 
         .music-info-button:hover {
@@ -8202,7 +8151,7 @@
             line-height: 1.6;
             display: none;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            z-index: 97;
+            z-index: 10001;
             backdrop-filter: blur(10px);
         }
 
@@ -8256,7 +8205,7 @@
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            z-index: 999;
+            z-index: 100050;
             text-align: center;
             font-size: 18px;
             font-weight: 600;
@@ -8278,7 +8227,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 998;
+            z-index: 100049;
             display: none;
         }
 
@@ -8496,7 +8445,7 @@
             left: 50%;
             transform: translateX(-50%);
             bottom: 4px;
-            z-index: 100;
+            z-index: 10004;
             font-size: 12px;
             width: auto;
             text-align: center;
@@ -8757,7 +8706,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             font-weight: 700;
-            z-index: 101;
+            z-index: 10005;
             display: none;
         }
 
@@ -8772,7 +8721,7 @@
             padding: 20px 24px;
             border-radius: 14px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-            z-index: 995;
+            z-index: 99998;
             width: 90%;
             max-width: 640px;
             display: none;
@@ -8819,7 +8768,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
-            z-index: 996;
+            z-index: 99999;
             pointer-events: auto;
             touch-action: manipulation;
         }
@@ -8833,7 +8782,7 @@
         .updated-splash-overlay {
             position: fixed;
             inset: 0;
-            z-index: 997;
+            z-index: 100000;
             display: none;
             align-items: center;
             justify-content: center;
@@ -9066,8 +9015,6 @@
 
             .name-with-button, .hobbies-with-button, .favorites-with-button {
                 gap: 8px;
-                align-items: center;
-                margin-bottom: 0;
             }
 
             .personal-info-container {
@@ -9120,18 +9067,21 @@
                 padding: 20px 15px;
                 padding-top: 80px;
                 padding-bottom: 100px;
-                /* FIX: Don't set height:100vh + overflow-y:auto here — that makes main-content
-                   a nested scroll container inside overflow:hidden body, which kills Android touch.
-                   Let body scroll normally instead. */
-                height: auto;
+                height: 100vh;
+                height: var(--vv-height, 100dvh);
+                max-height: 100vh;
+                max-height: var(--vv-height, 100dvh);
                 min-height: 100vh;
-                max-height: none;
-                overflow-y: visible;
+                min-height: var(--vv-height, 100dvh);
+                overflow-y: auto;
                 overflow-x: hidden;
                 width: 100%;
                 box-sizing: border-box;
                 gap: 0;
                 background: #ffffff;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                transform: translateZ(0);
             }
 
             .countdown-container {
@@ -9189,7 +9139,7 @@
                 align-items: center;
                 visibility: visible !important;
                 opacity: 1 !important;
-                z-index: 105 !important;
+                z-index: 100 !important;
             }
 
             .main-button {
@@ -9491,7 +9441,7 @@
                 align-items: center;
                 visibility: visible !important;
                 opacity: 1 !important;
-                z-index: 105 !important;
+                z-index: 100 !important;
             }
 
             .main-button {
@@ -9846,7 +9796,7 @@
                 align-items: center;
                 visibility: visible !important;
                 opacity: 1 !important;
-                z-index: 105 !important;
+                z-index: 100 !important;
             }
 
             .main-button {
@@ -10172,7 +10122,7 @@
 </head>
 <body class="intro-pending">
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: auto;">
+    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: none;">
         <button type="button" class="loading-disclaimer-btn" id="loadingDisclaimerBtn" aria-label="Disclaimer" title="Disclaimer">!</button>
         <div class="loading-disclaimer-overlay" id="loadingDisclaimerOverlay" aria-hidden="true">
             <div class="loading-disclaimer-modal" role="dialog" aria-labelledby="loadingDisclaimerTitle" aria-modal="true">
@@ -10198,14 +10148,15 @@
             position: fixed;
             top: 14px;
             left: 14px;
-            z-index: 150;
+            z-index: 25001;
             height: 24px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 0 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
             font-family: var(--font-timer);
             font-size: 13px;
             font-weight: 700;
@@ -10213,41 +10164,39 @@
             color: #1e293b;
             font-feature-settings: 'zero' 0;
             cursor: pointer;
-            touch-action: manipulation;
-            pointer-events: auto;
         ">--:--:-- AM</div>
         <div id="mainMenuClockDate" onclick="toggleMainMenuClockTz()" style="
             position: fixed;
             top: 36px;
             left: 14px;
-            z-index: 150;
+            z-index: 25001;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 2px 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
             font-family: var(--font-timer);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.04em;
             color: #1e293b;
             cursor: pointer;
-            touch-action: manipulation;
-            pointer-events: auto;
         ">---</div>
         <div id="mainMenuClockTz" onclick="toggleMainMenuClockTz()" style="
             display: none;
             position: fixed;
             top: 58px;
             left: 14px;
-            z-index: 150;
+            z-index: 25001;
             max-width: 220px;
             align-items: center;
             justify-content: center;
             padding: 3px 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
             font-family: var(--font-timer);
             font-size: 9px;
             font-weight: 700;
@@ -10256,8 +10205,6 @@
             text-align: center;
             line-height: 1.3;
             cursor: pointer;
-            touch-action: manipulation;
-            pointer-events: auto;
         ">UTC+00:00</div>
         <button type="button" id="settingsBtn" class="settings-button" aria-label="Open settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -10297,12 +10244,12 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:101 !important; pointer-events:auto !important;">
-            <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; pointer-events:auto !important;">
-                <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap; pointer-events:auto;">
-                    <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0; pointer-events:auto;">RATE US!</span>
-                    <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe" style="width:auto; pointer-events:auto;">
-                        <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px; width:auto; pointer-events:auto;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
+            <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+                <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap;">
+                    <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0;">RATE US!</span>
+                    <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe" style="width:auto;">
+                        <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px; width:auto;">
                             MESSAGE ME
                         </div>
                     </div>
@@ -10314,12 +10261,12 @@
             </div>
         </div>
         <!-- ANSWER THIS FORM — pinned independently, no longer stacked directly under the box -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:102 !important; pointer-events:auto !important;">
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
                 rel="noopener noreferrer"
-                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer; pointer-events:auto;"
+                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer;"
                 data-i18n="form_answer"
             >ANSWER THIS FORM</a>
         </div>
@@ -10548,27 +10495,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div class="modal-content">
                 <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">Others</h2>
                 <div class="favorites-grid">
-                    <div class="favorite-card clickable" data-action="openModal('gaming')">
+                    <div class="favorite-card clickable" onclick="openModal('gaming')">
                         <div class="favorite-icon">🎮</div>
                         <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
                         <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
-                    <div class="favorite-card clickable" data-action="openModal('music')">
+                    <div class="favorite-card clickable" onclick="openModal('music')">
                         <div class="favorite-icon">🎵</div>
                         <div class="favorite-title" data-i18n="others_music">Music</div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
                     </div>
-                    <div class="favorite-card clickable" data-action="openModal('singer')">
+                    <div class="favorite-card clickable" onclick="openModal('singer')">
                         <div class="favorite-icon">🎤</div>
                         <div class="favorite-title" data-i18n="others_singer">SINGER</div>
                         <div class="favorite-description" data-i18n="others_singer_desc">i can't live without my fav singers😭.</div>
                     </div>
-                    <div class="favorite-card clickable" id="myAppsCard" data-action="openModal('myApps')">
+                    <div class="favorite-card clickable" id="myAppsCard" onclick="openModal('myApps')">
                         <div class="favorite-icon">📱</div>
                         <div class="favorite-title" data-i18n="others_apps">My Apps</div>
                         <div class="favorite-description" data-i18n="others_apps_desc">This is my apps that i created right now</div>
                     </div>
-                    <div class="favorite-card clickable" data-action="openChristmasEventPart2()">
+                    <div class="favorite-card clickable" onclick="openChristmasEventPart2()">
                         <div class="favorite-icon">⌛</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="fav-card-timer-wrap">
@@ -10581,12 +10528,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <div class="fav-cd-col"><span id="favCdSecs" class="fav-cd-num fav-cd-s">--</span><span class="fav-cd-lbl">S</span></div>
                         </div>
                     </div>
-                    <div class="favorite-card clickable" data-action="showNotAvailableNow()">
+                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="favorite-description">STAY TUNED</div>
                     </div>
-                    <div class="favorite-card clickable" data-action="showNotAvailableNow()">
+                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="favorite-description">STAY TUNED</div>
@@ -10603,7 +10550,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             </div>
         </div>
 
-<div id="christmasEventPart2Modal" style="display:none; position:absolute; inset:0; z-index:96; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
+<div id="christmasEventPart2Modal" style="display:none; position:absolute; inset:0; z-index:9999; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
     <!-- Blurred background card -->
     <div style="position:absolute;inset:0;z-index:1;">
         <div style="position:absolute;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);"></div>
@@ -10728,27 +10675,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div class="modal-content">
                 <p class="modal-text">This is my apps that i created right now</p>
                 <div class="myapps-grid">
-                    <div class="myapps-app-box" data-action="openModal('boxDash')" title="Box Dash">
+                    <div class="myapps-app-box" onclick="openModal('boxDash')" title="Box Dash">
                         <span class="myapps-app-emoji">📦</span>
                         <span class="myapps-app-label">Box Dash</span>
                     </div>
-                    <div class="myapps-app-box" data-action="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
+                    <div class="myapps-app-box" onclick="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
                         <span class="myapps-app-emoji">🧮</span>
                         <span class="myapps-app-label">Calculator</span>
                     </div>
-                    <div class="myapps-app-box" data-action="openModal('calendarComingSoon')" title="Calendar">
+                    <div class="myapps-app-box" onclick="openModal('calendarComingSoon')" title="Calendar">
                         <span class="myapps-app-emoji">🗓️</span>
                         <span class="myapps-app-label">Calendar</span>
                     </div>
-                    <div class="myapps-app-box" data-action="openModal('clock')" title="Open Clock">
+                    <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
                         <span class="myapps-app-emoji">🕒</span>
                         <span class="myapps-app-label">Clock</span>
                     </div>
-                    <div class="myapps-app-box" data-action="openModal('mapsComingSoon')" title="Maps">
+                    <div class="myapps-app-box" onclick="openModal('mapsComingSoon')" title="Maps">
                         <span class="myapps-app-emoji">🗾</span>
                         <span class="myapps-app-label">Maps</span>
                     </div>
-                    <div class="myapps-app-box" data-action="openModal('novaAI')" title="Open NovaAI">
+                    <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
                         <span class="myapps-app-emoji">🤖</span>
                         <span class="myapps-app-label">NovaAI</span>
                     </div>
@@ -11926,7 +11873,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         </div>
 
         <!-- ── VISITS MODAL (inside login overlay so z-index works correctly) ── -->
-        <div id="visitsModal" style="display:none; position:absolute; inset:0; z-index:96; align-items:center; justify-content:center; pointer-events:all;" onclick="closeVisitsModal()">
+        <div id="visitsModal" style="display:none; position:absolute; inset:0; z-index:9999; align-items:center; justify-content:center; pointer-events:all;" onclick="closeVisitsModal()">
             <div style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);"></div>
             <div id="visitsModalBox" style="position:relative; z-index:1; min-width:220px; padding:28px 32px 24px; border-radius:16px; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
                 <div style="font-size:13px; font-weight:900; letter-spacing:2px; margin-bottom:18px;">VISITS</div>
@@ -11946,10 +11893,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
 
     <!-- Important Message Modal (Overlay inside Password Modal) -->
-    <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 97; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
+    <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
         <div class="important-message-box" style="background: rgba(20, 24, 40, 0.95); border-radius: 12px; padding: 24px; max-width: 340px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); position: relative; pointer-events: auto;">
             <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please <span style="color:#ef4444;">remember your password</span> or save it in a secure place. It <span style="color:#ef4444;">cannot be recovered</span> if you forget it, so you'll need it to access your messages.</p>
-            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 98; position: relative; touch-action: manipulation;" onclick="closeImportantMessage()">OK</button>
+            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative;" onmousedown="closeImportantMessage()">OK</button>
         </div>
     </div>
 
@@ -11967,7 +11914,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <button class="close-button" id="christmasMessageOuterClose" onclick="closeModal('christmasMessage')" title="Close">×</button>
             <div class="christmas-modal-title">
                 <span class="christmas-warning-btn" onclick="toggleChristmasWarning(event); event.stopPropagation();">!</span>
-                ME<span class="clickable-s" id="messageMeS" style="cursor:pointer;user-select:none;" title="">S</span><span class="clickable-s" style="cursor:pointer;user-select:none;">S</span>AGE ME
+                MESSAGE ME
             </div>
             <div style="position: relative;">
                 <textarea
@@ -12496,7 +12443,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Unban Confirmation Modal -->
-    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO UNBAN THIS PERSON?</div>
             <div id="unbanCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
@@ -12507,7 +12454,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO BAN THIS PERSON?</div>
             <div id="banCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
@@ -12519,7 +12466,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Reset Data Confirmation Modal -->
-    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto !important;">
+    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto !important;">
         <div style="background:#1a2035; border:1px solid rgba(239,68,68,0.3); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">🗑️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:6px;">RESET THIS PERSON'S DATA?</div>
@@ -13188,7 +13135,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version" id="settingsVersionEl" style="cursor:pointer; user-select:none;" title="v. 1.8">v. 1.8</div>
+                    <div class="settings-version">v. 1.8</div>
                     <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
         </div>
@@ -13808,8 +13755,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     _settingsHoldFired = false;
                     _settingsHoldTimer = setTimeout(function() {
                         _settingsHoldFired = true;
-                        if (typeof closeSettings === 'function') closeSettings();
-                        setTimeout(function() { openMessageInboxGate(); }, 100);
+                        openMessageInboxGate();
                     }, 3000);
                 }
                 function _cancelSettingsHold() {
@@ -15876,11 +15822,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function toggleMainMenuClockTz() {
             var tzEl = document.getElementById('mainMenuClockTz');
             if (!tzEl) return;
-            if (tzEl.style.display === 'none' || tzEl.style.display === '') {
-                tzEl.style.display = 'inline-flex';
-            } else {
-                tzEl.style.display = 'none';
-            }
+            var showing = tzEl.style.display !== 'none';
+            tzEl.style.display = showing ? 'none' : 'inline-flex';
         }
 
         const CLOCK_APP_STORAGE = 'clockAppBgState';
@@ -19305,29 +19248,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
 
-                // Hide bottomStack visually — NEVER use pointer-events:none (it blocks all buttons when modal closes)
+                // Hide bottomStack so it never intercepts clicks on the modal
                 var _bs = document.getElementById('bottomStack');
                 if (_bs) {
                     _bs.style.visibility = 'hidden';
-                    _bs.style.pointerEvents = 'auto';
+                    _bs.style.pointerEvents = 'none';
                 }
-
-                // CRITICAL FIX: When inbox/conversation/userSettings opens, hide the settings overlay
-                // completely so it cannot block clicks on desktop. The modals are at z-index 28010
-                // but settings overlay stacking context still interferes on desktop.
-                var _settingsModalsAbove = ['messageInbox','messageConversation','closeMessageMe','closeMessageMeConfirm','updates','messageInboxGate','secretQuiz','secretWord'];
-                if (_settingsModalsAbove.indexOf(type) !== -1) {
-                    var _so = document.getElementById('settingsOverlay');
-                    if (_so && _so.classList.contains('show')) {
-                        _so.style.visibility = 'hidden';
-                        _so.style.pointerEvents = 'none';
-                        _so.setAttribute('data-hidden-by-modal', type);
-                    }
-                }
-                
-                // Also always restore userSettingsModal z-index in case it was lowered
-                var _usm = document.getElementById('userSettingsModal');
-                if (_usm) _usm.style.zIndex = '';
 
                 // Re-attach instant-tap listeners so there is zero 300ms tap delay on first touch
                 if (typeof window._instantTapAttachAll === 'function') {
@@ -19602,27 +19528,15 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 document.documentElement.style.overflow = 'auto';
             }
 
-            // Restore bottomStack visibility when no modal is open
+            // FIX: Restore bottomStack only if no other modal is still open
             var _anyOpen = document.querySelector('.modal-overlay.active');
-            var _bs = document.getElementById('bottomStack');
-            if (_bs) {
-                _bs.style.pointerEvents = 'auto'; // ALWAYS restore pointer-events
-                if (!_anyOpen) {
+            if (!_anyOpen) {
+                var _bs = document.getElementById('bottomStack');
+                if (_bs) {
                     _bs.style.visibility = '';
+                    _bs.style.pointerEvents = '';
                 }
             }
-            
-            // Restore settings overlay if it was hidden by this modal
-            var _so = document.getElementById('settingsOverlay');
-            if (_so && _so.getAttribute('data-hidden-by-modal') === type) {
-                _so.removeAttribute('data-hidden-by-modal');
-                _so.style.visibility = '';
-                _so.style.pointerEvents = '';
-            }
-            
-            // Always restore userSettingsModal z-index
-            var _usm = document.getElementById('userSettingsModal');
-            if (_usm) _usm.style.zIndex = '';
             // When leaving My Favorites, resume background music smoothly if it was playing before
             if (type === 'favorites') {
                 maybeResumeBgMusic();
@@ -22804,15 +22718,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             // Show modal immediately with what we have, then keep it live
             _populateUserSettingsModal(meta);
             modal.classList.add('active');
-            modal.style.zIndex = ''; // Always reset z-index when opening
-            
-            // Hide settings overlay so it doesn't block userSettings on desktop
-            var _so = document.getElementById('settingsOverlay');
-            if (_so && _so.classList.contains('show')) {
-                _so.style.visibility = 'hidden';
-                _so.style.pointerEvents = 'none';
-                _so.setAttribute('data-hidden-by-modal', 'userSettings');
-            }
 
             // Attach scroll-to-top button listener every time the modal opens
             (function() {
@@ -23136,14 +23041,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function closeUserSettingsModal() {
             var modal = document.getElementById('userSettingsModal');
             if (modal) modal.classList.remove('active');
-            
-            // Restore settings overlay if it was hidden for userSettings
-            var _so = document.getElementById('settingsOverlay');
-            if (_so && _so.getAttribute('data-hidden-by-modal') === 'userSettings') {
-                _so.removeAttribute('data-hidden-by-modal');
-                _so.style.visibility = '';
-                _so.style.pointerEvents = '';
-            }
             // Reset scroll position and hide scroll button
             var _box = document.querySelector('.user-settings-box');
             if (_box) _box.scrollTop = 0;
@@ -24183,7 +24080,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function showOriginalMessage(originalText, timestamp) {
             const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:97;padding:20px;';
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10001;padding:20px;';
             modal.innerHTML = '<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:30px;max-width:500px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.8);"><div style="font-size:20px;font-weight:700;margin-bottom:10px;font-family:Poppins,sans-serif;">BEFORE EDIT</div><div style="font-size:12px;margin-bottom:15px;color:#ff9800;font-style:italic;">Original message sent at ' + timestamp + '</div><div style="background:#2a2a2a;padding:15px;border-radius:6px;margin-bottom:20px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word;font-family:Poppins,sans-serif;font-weight:600;font-style:italic;color:#d0d0d0;">' + escapeHtmlPm(originalText) + '</div><button type="button" style="width:100%;padding:10px;background:#3399ff;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;" onclick="this.parentElement.parentElement.remove()">CLOSE</button></div>';
             document.body.appendChild(modal);
             modal.onclick = function(e) {
@@ -28288,7 +28185,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </script>
 
 <!-- Custom Date Time Picker Modal -->
-<div id="applyConfirmOverlay" style="display:none;position:fixed;inset:0;z-index:997;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
+<div id="applyConfirmOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
   <div id="applyConfirmBox" onclick="event.stopPropagation()" style="background:#111;border-radius:16px;padding:24px;width:300px;max-width:90vw;box-shadow:0 8px 40px rgba(0,0,0,0.8);font-family:'Share Tech Mono',monospace;color:#fff;text-align:center;">
     <div style="font-size:14px;font-weight:800;letter-spacing:0.5px;margin-bottom:14px;">ARE YOU SURE YOU WANT TO APPLY THIS?</div>
     <div id="applyConfirmTimer" style="font-size:13px;color:#888;margin-bottom:18px;">3</div>
@@ -28961,16 +28858,15 @@ var _visitsThemeObserver = new MutationObserver(function() {
 });
 _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-// ── visitsEyeBtn touch fix ──
+// ── Direct touch fix for visitsEyeBtn ──
 (function() {
     function attachVisitsEyeTouch() {
         var btn = document.getElementById('visitsEyeBtn');
         if (!btn || btn._visitsTouchDone) return;
         btn._visitsTouchDone = true;
-        btn.style.pointerEvents = 'auto';
-        btn.style.touchAction = 'manipulation';
-        btn.addEventListener('touchend', function(e) {
+        btn.addEventListener('touchstart', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             openVisitsModal();
         }, { passive: false });
     }
@@ -28979,7 +28875,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     } else {
         attachVisitsEyeTouch();
     }
-    setTimeout(attachVisitsEyeTouch, 500);
+    setTimeout(attachVisitsEyeTouch, 800);
 })();
 </script>
 
@@ -29075,368 +28971,5 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
-
-
-
-<!-- COMPREHENSIVE MOBILE FIX - ALL CLICKABILITY ISSUES -->
-<script>
-(function() {
-    var touchStartPos = { x: 0, y: 0 };
-    var touchStartTime = 0;
-
-    document.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 0) {
-            touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            touchStartTime = Date.now();
-        }
-    }, { passive: true });
-
-    function fixElement(el) {
-        if (!el) return;
-        try {
-            el.style.touchAction = 'manipulation';
-            el.style.pointerEvents = 'auto';
-            el.style.webkitTapHighlightColor = 'transparent';
-        } catch(err) {}
-    }
-
-    function fixAll() {
-        var selectors = [
-            // Core interactive elements
-            'button', 'a[href]', '[role="button"]', '[onclick]',
-            'input', 'textarea', 'select',
-            // Main buttons
-            '.main-button', '.favorite-card', '.myapps-app-box',
-            '.settings-open-btn', '.settings-close', '.close-button',
-            '.close-button-left',
-            // Specific IDs
-            '#rateUsLink', '.rate-us-link',
-            '#settingsEyeBtn', '.settings-eye-btn',
-            '#visitsEyeBtn',
-            '#clockDigital',  // Time on main menu
-            '.clock-digital-block',
-            // Name and password modals
-            '.name-submit-btn', '.settings-warning-btn',
-            '.name-info-btn', '.name-warning-ok-btn',
-            '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
-            '#senderPwExclam', '.settings-caution-ok',
-            '#senderExclaimBtn',
-            '.password-exit-cancel-btn', '#pwExitConfirmBtn',
-            '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
-            '.otp-eye-btn',
-            // My Apps modal
-            '#myAppsModal .myapps-app-box',
-            '.myapps-app-box',
-            // Others modal
-            '#favoritesModal .favorite-card',
-            '#favoritesModal .favorite-card.clickable',
-            '#myAppsCard',
-            '.favorite-card.clickable',
-            // Modal buttons
-            '.modal-action-button', '.modal-action-button.btn-back',
-            '.modal-action-button.btn-exit',
-            // Other
-            '.christmas-message-link', '.btn-about', '.btn-favorites',
-            '.see-more-link', '.info-toggle-button',
-            '[data-i18n-title="aria_close"]'
-        ];
-
-        selectors.forEach(function(sel) {
-            try {
-                document.querySelectorAll(sel).forEach(fixElement);
-            } catch(err) {}
-        });
-
-        // Direct ID fixes
-        ['rateUsLink', 'settingsEyeBtn', 'visitsEyeBtn', 'myAppsCard', 'clockDigital', 'senderExclaimBtn'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) {
-                fixElement(el);
-                el.style.cursor = 'pointer';
-            }
-        });
-    }
-
-    // Prevent scroll-triggered clicks on favorite cards
-    document.addEventListener('scroll', function() {
-        var cards = document.querySelectorAll('.favorite-card.clickable');
-        cards.forEach(function(card) {
-            card.style.pointerEvents = 'none';
-            setTimeout(function() {
-                card.style.pointerEvents = 'auto';
-            }, 300);
-        });
-    }, { passive: true });
-
-    // Run fixAll on load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixAll);
-    } else {
-        fixAll();
-    }
-    
-    // Run multiple times for dynamic elements
-    setTimeout(fixAll, 300);
-    setTimeout(fixAll, 800);
-    setTimeout(fixAll, 1500);
-    setInterval(fixAll, 2000);
-
-    // Re-fix when modals open
-    window._fixAllClickable = fixAll;
-})();
-</script>
-
-<!-- FAVORITE CARD TOUCH FIX: Prevents scroll from triggering card opens -->
-<script>
-(function() {
-    function setupTouchItems(selector) {
-        document.querySelectorAll(selector).forEach(function(card) {
-            if (card._cardTouchDone) return;
-            card._cardTouchDone = true;
-
-            var startX, startY, moved;
-
-            card.addEventListener('touchstart', function(e) {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                moved = false;
-            }, { passive: true });
-
-            card.addEventListener('touchmove', function(e) {
-                if (!e.touches[0]) return;
-                var dx = Math.abs(e.touches[0].clientX - startX);
-                var dy = Math.abs(e.touches[0].clientY - startY);
-                if (dx > 8 || dy > 8) moved = true;
-            }, { passive: true });
-
-            card.addEventListener('touchend', function(e) {
-                if (moved) return;
-                e.preventDefault();
-                var action = card.getAttribute('data-action');
-                if (action) {
-                    try { eval(action); } catch(err) {}
-                }
-            }, { passive: false });
-        });
-    }
-
-    function setupAll() {
-        setupTouchItems('.favorite-card.clickable[data-action]');
-        setupTouchItems('.myapps-app-box[data-action]');
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupAll);
-    } else {
-        setupAll();
-    }
-    setTimeout(setupAll, 500);
-    setInterval(setupAll, 2000);
-})();
-</script>
-
-<!-- MAIN MENU CLOCK TOUCH FIX -->
-<script>
-(function() {
-    function fixClockTap() {
-        ['mainMenuClock','mainMenuClockDate','mainMenuClockTz'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (!el || el._clockFixed) return;
-            el._clockFixed = true;
-            var sx, sy, mv;
-            el.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
-            el.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
-            el.addEventListener('touchend', function(e) {
-                if (mv) return;
-                e.preventDefault();
-                if (typeof toggleMainMenuClockTz === 'function') toggleMainMenuClockTz();
-            }, { passive: false });
-        });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixClockTap);
-    } else {
-        fixClockTap();
-    }
-    setTimeout(fixClockTap, 500);
-})();
-</script>
-
-<!-- SETTINGS EYE BTN DIRECT FIX -->
-<script>
-(function() {
-    function fixSettingsEye() {
-        var btn = document.getElementById('settingsEyeBtn');
-        if (!btn || btn._eyeFixed) return;
-        btn._eyeFixed = true;
-        btn.style.pointerEvents = 'auto';
-        btn.style.touchAction = 'manipulation';
-        btn.style.cursor = 'pointer';
-        btn.style.position = 'relative';
-        btn.style.zIndex = '9999';
-
-        var startX, startY, moved;
-        btn.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            moved = false;
-        }, { passive: true });
-        btn.addEventListener('touchmove', function(e) {
-            if (Math.abs(e.touches[0].clientX - startX) > 6 || Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
-        }, { passive: true });
-        btn.addEventListener('touchend', function(e) {
-            if (moved) return;
-            e.preventDefault();
-            e.stopPropagation();
-            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
-        }, { passive: false });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixSettingsEye);
-    } else {
-        fixSettingsEye();
-    }
-    setTimeout(fixSettingsEye, 500);
-    setTimeout(fixSettingsEye, 1500);
-})();
-</script>
-
-<!-- EXCLAMATION POINT DIRECT FIX -->
-<script>
-(function() {
-    function fixExclam() {
-        var btn = document.getElementById('senderPwExclam');
-        if (!btn || btn._exclamFixed) return;
-        btn._exclamFixed = true;
-        btn.style.pointerEvents = 'auto';
-        btn.style.touchAction = 'manipulation';
-        btn.style.cursor = 'pointer';
-        btn.style.zIndex = '9999';
-        btn.style.position = 'relative';
-
-        var startX, startY, moved;
-        btn.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            moved = false;
-        }, { passive: true });
-        btn.addEventListener('touchmove', function(e) {
-            if (Math.abs(e.touches[0].clientX - startX) > 6 || Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
-        }, { passive: true });
-        btn.addEventListener('touchend', function(e) {
-            if (moved) return;
-            e.preventDefault();
-            e.stopPropagation();
-            if (typeof showImportantMessage === 'function') showImportantMessage();
-        }, { passive: false });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixExclam);
-    } else {
-        fixExclam();
-    }
-    setTimeout(fixExclam, 800);
-    setTimeout(fixExclam, 2000);
-})();
-</script>
-
-<!-- ABOUT ME GREEN BUTTON DIRECT FIX -->
-<script>
-(function() {
-    function fixAboutBtns() {
-        // Personal toggle button
-        var toggleBtn = document.getElementById('personalToggleBtn');
-        if (toggleBtn && !toggleBtn._abFixed) {
-            toggleBtn._abFixed = true;
-            toggleBtn.style.pointerEvents = 'auto';
-            toggleBtn.style.touchAction = 'manipulation';
-            toggleBtn.style.zIndex = '9999';
-            toggleBtn.style.position = 'relative';
-            var sx, sy, mv;
-            toggleBtn.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; mv = false; }, { passive: true });
-            toggleBtn.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
-            toggleBtn.addEventListener('touchend', function(e) {
-                if (mv) return;
-                e.preventDefault(); e.stopPropagation();
-                toggleBtn.click();
-            }, { passive: false });
-        }
-        // All green buttons inside about modal
-        document.querySelectorAll('#aboutModal button, #aboutModal [onclick], #aboutModal .info-toggle-button').forEach(function(el) {
-            if (el._abFixed) return;
-            el._abFixed = true;
-            el.style.pointerEvents = 'auto';
-            el.style.touchAction = 'manipulation';
-            el.style.position = 'relative';
-            el.style.zIndex = '100';
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixAboutBtns);
-    } else {
-        fixAboutBtns();
-    }
-    setTimeout(fixAboutBtns, 500);
-    setTimeout(fixAboutBtns, 1500);
-    setInterval(fixAboutBtns, 2000);
-})();
-</script>
-<!-- ADMIN PANEL TRIGGER WIRING -->
-<script>
-(function() {
-    function wireAdminTriggers() {
-        // Wire version number (v. 1.8) — 5 clicks opens inbox gate
-        var versionEl = document.getElementById('settingsVersionEl');
-        if (versionEl && !versionEl._adminWired) {
-            versionEl._adminWired = true;
-            versionEl.style.cursor = 'pointer';
-            versionEl.style.userSelect = 'none';
-            versionEl.style.touchAction = 'manipulation';
-            versionEl.addEventListener('click', function() {
-                if (typeof settingsVersionClickHandler === 'function') settingsVersionClickHandler();
-            });
-            // Touch support
-            var sx, sy, mv;
-            versionEl.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
-            versionEl.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
-            versionEl.addEventListener('touchend', function(e) {
-                if (mv) return;
-                e.preventDefault();
-                if (typeof settingsVersionClickHandler === 'function') settingsVersionClickHandler();
-            }, { passive: false });
-        }
-
-        // Wire S letters in MESSAGE ME — 10 clicks triggers admin
-        document.querySelectorAll('#messageMeS, .clickable-s').forEach(function(el) {
-            if (el._adminWired) return;
-            el._adminWired = true;
-            el.style.cursor = 'pointer';
-            el.style.touchAction = 'manipulation';
-            el.addEventListener('click', function() {
-                if (typeof christmasSClickHandler === 'function') christmasSClickHandler();
-            });
-            var sx, sy, mv;
-            el.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
-            el.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
-            el.addEventListener('touchend', function(e) {
-                if (mv) return;
-                e.preventDefault();
-                if (typeof christmasSClickHandler === 'function') christmasSClickHandler();
-            }, { passive: false });
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', wireAdminTriggers);
-    } else {
-        wireAdminTriggers();
-    }
-    setTimeout(wireAdminTriggers, 800);
-    setTimeout(wireAdminTriggers, 2000);
-})();
-</script>
 </body>
 </html>
