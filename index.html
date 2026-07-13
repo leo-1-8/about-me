@@ -10266,7 +10266,7 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important; pointer-events:none !important;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important; pointer-events:auto !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; pointer-events:auto !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap; pointer-events:auto;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0; pointer-events:auto;">RATE US!</span>
@@ -10283,7 +10283,7 @@
             </div>
         </div>
         <!-- ANSWER THIS FORM — pinned independently, no longer stacked directly under the box -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important; pointer-events:none !important;">
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important; pointer-events:auto !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
@@ -28880,17 +28880,21 @@ var _visitsThemeObserver = new MutationObserver(function() {
 });
 _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-// ── Direct touch fix for visitsEyeBtn ──
+// ── Direct touch fix for visitsEyeBtn (FIXED - no preventDefault blocking) ──
 (function() {
     function attachVisitsEyeTouch() {
         var btn = document.getElementById('visitsEyeBtn');
         if (!btn || btn._visitsTouchDone) return;
         btn._visitsTouchDone = true;
-        btn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
+        // Use click event - more reliable on mobile
+        btn.addEventListener('click', function(e) {
+            openVisitsModal();
+        });
+        // Also add touchend for immediate feedback
+        btn.addEventListener('touchend', function(e) {
             e.stopPropagation();
             openVisitsModal();
-        }, { passive: false });
+        }, { passive: true });
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachVisitsEyeTouch);
@@ -28996,60 +29000,528 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
-<!-- ENHANCED MOBILE TOUCH FIX - Prevents accidental opens during scroll -->
+<!-- UNIVERSAL MOBILE CLICK FIX FOR FAVORITE CARDS -->
 <script>
 (function() {
-    var touchStartPos = { x: 0, y: 0 };
-    var touchStartTime = 0;
-    var SCROLL_THRESHOLD = 10; // pixels
-    var TOUCH_TIME_THRESHOLD = 500; // milliseconds
+    function fixFavoriteCards() {
+        var cards = document.querySelectorAll('.favorite-card.clickable');
+        cards.forEach(function(card) {
+            if (card._cardFixed) return;
+            card._cardFixed = true;
+            
+            // Ensure card is clickable
+            card.style.pointerEvents = 'auto';
+            card.style.touchAction = 'manipulation';
+            card.style.cursor = 'pointer';
+            
+            // Add click handler
+            card.addEventListener('click', function(e) {
+                try {
+                    var onclick = card.getAttribute('onclick');
+                    if (onclick) {
+                        // Execute the onclick code
+                        eval(onclick);
+                    }
+                } catch(err) {
+                    console.warn('Card click error:', err);
+                }
+            });
+            
+            // Add touch handler
+            card.addEventListener('touchend', function(e) {
+                try {
+                    var onclick = card.getAttribute('onclick');
+                    if (onclick) {
+                        eval(onclick);
+                    }
+                } catch(err) {
+                    console.warn('Card touch error:', err);
+                }
+            }, { passive: true });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixFavoriteCards);
+    } else {
+        fixFavoriteCards();
+    }
+    
+    // Keep running to catch dynamically added cards
+    setInterval(fixFavoriteCards, 1000);
+})();
+</script>
 
-    // Track touch start position and time
-    document.addEventListener('touchstart', function(e) {
-        touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        touchStartTime = Date.now();
-    }, { passive: true });
+<!-- UNIVERSAL MOBILE CLICK FIX FOR ALL BUTTONS -->
+<script>
+(function() {
+    // Intercept ALL clicks and make sure they work
+    function universalClickFix() {
+        // Get all clickable elements
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn, #loginPwEyeBtn, #otpEyeBtn, #inboxPinEyeBtn, .otp-eye-btn');
+        
+        allClickable.forEach(function(el) {
+            if (el._universalFixDone) return;
+            el._universalFixDone = true;
+            
+            // Fix pointer events
+            el.style.pointerEvents = 'auto';
+            el.style.touchAction = 'manipulation';
+            el.style.cursor = 'pointer';
+            
+            // Add click listener that executes onclick if present
+            el.addEventListener('click', function(e) {
+                try {
+                    var onclick = el.getAttribute('onclick');
+                    if (onclick) {
+                        eval(onclick);
+                    }
+                } catch(err) {
+                    console.warn('Click error:', err);
+                }
+            });
+            
+            // Add touch listener
+            el.addEventListener('touchend', function(e) {
+                try {
+                    // Trigger click event manually for touch
+                    var clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    el.dispatchEvent(clickEvent);
+                } catch(err) {
+                    console.warn('Touch error:', err);
+                }
+            }, { passive: true });
+        });
+    }
+    
+    // Run immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', universalClickFix);
+    } else {
+        universalClickFix();
+    }
+    
+    // Run multiple times to catch dynamic elements
+    setTimeout(universalClickFix, 300);
+    setTimeout(universalClickFix, 800);
+    setTimeout(universalClickFix, 1500);
+    setTimeout(universalClickFix, 3000);
+})();
+</script>
 
+<!-- FIX ALL EYE ICONS ON THE SITE -->
+<script>
+(function() {
+    function fixAllEyeButtons() {
+        // LIST OF ALL EYE BUTTON IDs
+        var eyeButtonIds = [
+            'senderPwEyeBtn',      // Password creation modal
+            'loginPwEyeBtn',       // Login modal
+            'otpEyeBtn',           // OTP modal
+            'inboxPinEyeBtn',      // Inbox PIN
+            'settingsEyeBtn',      // Settings
+            'visitsEyeBtn'         // Visits
+        ];
+        
+        eyeButtonIds.forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (btn) {
+                // Always ensure these properties are set
+                btn.style.pointerEvents = 'auto';
+                btn.style.touchAction = 'manipulation';
+                btn.style.cursor = 'pointer';
+                
+                if (!btn._eyeFixed) {
+                    btn._eyeFixed = true;
+                    
+                    // For buttons without onclick, dispatch click on touch
+                    if (!btn.getAttribute('onclick')) {
+                        btn.addEventListener('touchend', function(e) {
+                            try {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // Dispatch a synthetic click event to trigger existing listeners
+                                var clickEvent = new MouseEvent('click', {
+                                    view: window,
+                                    bubbles: true,
+                                    cancelable: true
+                                });
+                                btn.dispatchEvent(clickEvent);
+                            } catch(err) { 
+                                console.warn('Eye touch dispatch error:', err); 
+                            }
+                        }, { passive: false });
+                    } else {
+                        // For buttons with onclick, add both listeners
+                        var onclick = btn.getAttribute('onclick');
+                        btn.addEventListener('click', function(e) {
+                            try { eval(onclick); } catch(err) { }
+                        });
+                        btn.addEventListener('touchend', function(e) {
+                            try { 
+                                e.preventDefault();
+                                eval(onclick); 
+                            } catch(err) { }
+                        }, { passive: false });
+                    }
+                }
+            }
+        });
+        
+        // Fix all eye buttons by class - ensure pointer-events and touch-action
+        var eyeButtonClasses = ['.otp-eye-btn', '.settings-eye-btn'];
+        eyeButtonClasses.forEach(function(cls) {
+            document.querySelectorAll(cls).forEach(function(btn) {
+                btn.style.pointerEvents = 'auto';
+                btn.style.touchAction = 'manipulation';
+                btn.style.cursor = 'pointer';
+                
+                if (!btn._eyeClassFixed) {
+                    btn._eyeClassFixed = true;
+                    
+                    // Add touch listener that dispatches click for event listeners
+                    btn.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            var clickEvent = new MouseEvent('click', {
+                                view: window,
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            btn.dispatchEvent(clickEvent);
+                        } catch(err) { 
+                            console.warn('Eye class touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixAllEyeButtons);
+    } else {
+        fixAllEyeButtons();
+    }
+    
+    setTimeout(fixAllEyeButtons, 300);
+    setTimeout(fixAllEyeButtons, 800);
+    setTimeout(fixAllEyeButtons, 1500);
+    setInterval(fixAllEyeButtons, 2000);
+})();
+</script>
+
+<!-- FIX PASSWORD MODAL BUTTONS - EXCLAMATION & X -->
+<script>
+(function() {
+    function fixPasswordModalButtons() {
+        // X BUTTON (Exit button)
+        var exitBtn = document.getElementById('senderPwExitBtn');
+        if (exitBtn && !exitBtn._fixed) {
+            exitBtn._fixed = true;
+            exitBtn.style.pointerEvents = 'auto';
+            exitBtn.style.touchAction = 'manipulation';
+            exitBtn.addEventListener('click', function(e) {
+                try {
+                    openPasswordExitConfirm();
+                } catch(err) { console.warn('X button error:', err); }
+            });
+            exitBtn.addEventListener('touchend', function(e) {
+                try {
+                    openPasswordExitConfirm();
+                } catch(err) { console.warn('X button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // EXCLAMATION BUTTON (Info/Important message)
+        var exclaimBtn = document.getElementById('senderPwExclam');
+        if (exclaimBtn && !exclaimBtn._fixed) {
+            exclaimBtn._fixed = true;
+            exclaimBtn.style.pointerEvents = 'auto';
+            exclaimBtn.style.touchAction = 'manipulation';
+            exclaimBtn.style.cursor = 'pointer';
+            exclaimBtn.addEventListener('click', function(e) {
+                try {
+                    showImportantMessage();
+                } catch(err) { console.warn('Exclamation button error:', err); }
+            });
+            exclaimBtn.addEventListener('touchend', function(e) {
+                try {
+                    showImportantMessage();
+                } catch(err) { console.warn('Exclamation button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // EYE BUTTON (Toggle password visibility)
+        var eyeBtn = document.getElementById('senderPwEyeBtn');
+        if (eyeBtn && !eyeBtn._fixed) {
+            eyeBtn._fixed = true;
+            eyeBtn.style.pointerEvents = 'auto';
+            eyeBtn.style.touchAction = 'manipulation';
+            eyeBtn.addEventListener('click', function(e) {
+                try {
+                    toggleSenderPwVisibility();
+                } catch(err) { console.warn('Eye button error:', err); }
+            });
+            eyeBtn.addEventListener('touchend', function(e) {
+                try {
+                    toggleSenderPwVisibility();
+                } catch(err) { console.warn('Eye button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // SUBMIT BUTTON
+        var submitBtn = document.getElementById('senderPasswordSubmitBtn');
+        if (submitBtn && !submitBtn._fixed) {
+            submitBtn._fixed = true;
+            submitBtn.style.pointerEvents = 'auto';
+            submitBtn.style.touchAction = 'manipulation';
+            submitBtn.addEventListener('click', function(e) {
+                try {
+                    submitSenderPassword();
+                } catch(err) { console.warn('Submit button error:', err); }
+            });
+            submitBtn.addEventListener('touchend', function(e) {
+                try {
+                    submitSenderPassword();
+                } catch(err) { console.warn('Submit button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // PASSWORD EXIT CONFIRMATION - CANCEL BUTTON
+        var cancelBtn = document.querySelector('.password-exit-cancel-btn');
+        if (cancelBtn && !cancelBtn._fixed) {
+            cancelBtn._fixed = true;
+            cancelBtn.style.pointerEvents = 'auto';
+            cancelBtn.style.touchAction = 'manipulation';
+            cancelBtn.addEventListener('click', function(e) {
+                try {
+                    closePasswordExitConfirm();
+                } catch(err) { console.warn('Cancel button error:', err); }
+            });
+            cancelBtn.addEventListener('touchend', function(e) {
+                try {
+                    closePasswordExitConfirm();
+                } catch(err) { console.warn('Cancel button touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // PASSWORD EXIT CONFIRMATION - EXIT BUTTON
+        var confirmExitBtn = document.getElementById('pwExitConfirmBtn');
+        if (confirmExitBtn && !confirmExitBtn._fixed) {
+            confirmExitBtn._fixed = true;
+            confirmExitBtn.style.pointerEvents = 'auto';
+            confirmExitBtn.style.touchAction = 'manipulation';
+            confirmExitBtn.addEventListener('click', function(e) {
+                try {
+                    confirmPasswordExit();
+                } catch(err) { console.warn('Confirm exit button error:', err); }
+            });
+            confirmExitBtn.addEventListener('touchend', function(e) {
+                try {
+                    confirmPasswordExit();
+                } catch(err) { console.warn('Confirm exit button touch error:', err); }
+            }, { passive: true });
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixPasswordModalButtons);
+    } else {
+        fixPasswordModalButtons();
+    }
+    
+    // Run multiple times for dynamic elements
+    setTimeout(fixPasswordModalButtons, 300);
+    setTimeout(fixPasswordModalButtons, 800);
+    setTimeout(fixPasswordModalButtons, 1500);
+    setInterval(fixPasswordModalButtons, 2000);
+})();
+</script>
+
+<!-- FIX ABOUT ME, OTHERS, RATE US, MESSAGE ME BUTTONS -->
+<script>
+(function() {
+    function attachButtonHandlers() {
+        // ABOUT ME BUTTON
+        var aboutBtns = document.querySelectorAll('.btn-about');
+        aboutBtns.forEach(function(btn) {
+            if (btn._aboutFixed) return;
+            btn._aboutFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openModal('about');
+                } catch(err) { console.warn('About Me click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openModal('about');
+                } catch(err) { console.warn('About Me touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // OTHERS BUTTON
+        var othersBtns = document.querySelectorAll('.btn-favorites');
+        othersBtns.forEach(function(btn) {
+            if (btn._othersFixed) return;
+            btn._othersFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openModal('favorites');
+                } catch(err) { console.warn('Others click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openModal('favorites');
+                } catch(err) { console.warn('Others touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // RATE US BUTTON
+        var rateBtn = document.getElementById('rateUsLink');
+        if (rateBtn && !rateBtn._rateFixed) {
+            rateBtn._rateFixed = true;
+            rateBtn.addEventListener('click', function(e) {
+                try {
+                    e.stopPropagation();
+                    handleRateUsClick();
+                } catch(err) { console.warn('Rate Us click error:', err); }
+            });
+            rateBtn.addEventListener('touchend', function(e) {
+                try {
+                    e.stopPropagation();
+                    handleRateUsClick();
+                } catch(err) { console.warn('Rate Us touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // MESSAGE ME BUTTON - both handlers
+        var messageBtns = document.querySelectorAll('[onclick*="handleMessageMeClick"]');
+        messageBtns.forEach(function(btn) {
+            if (btn._messageFixed) return;
+            btn._messageFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    handleMessageMeClick();
+                } catch(err) { console.warn('Message Me click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    handleMessageMeClick();
+                } catch(err) { console.warn('Message Me touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // Also fix the gate version
+        var gateBtns = document.querySelectorAll('[onclick*="openMessageInboxGate"]');
+        gateBtns.forEach(function(btn) {
+            if (btn._gateFixed) return;
+            btn._gateFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openMessageInboxGate();
+                } catch(err) { console.warn('Message gate click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openMessageInboxGate();
+                } catch(err) { console.warn('Message gate touch error:', err); }
+            }, { passive: true });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachButtonHandlers);
+    } else {
+        attachButtonHandlers();
+    }
+    
+    // Re-run for dynamic elements
+    setTimeout(attachButtonHandlers, 500);
+    setTimeout(attachButtonHandlers, 1500);
+})();
+</script>
+
+<!-- SETTINGS EYE BUTTON MOBILE FIX -->
+<script>
+(function() {
+    function setupSettingsEyeBtn() {
+        var btn = document.getElementById('settingsEyeBtn');
+        if (!btn) return;
+        
+        // Add click handler
+        btn.addEventListener('click', function(e) {
+            try {
+                e.stopPropagation();
+                // Call the existing settings toggle function if it exists
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye click error:', err);
+            }
+        });
+        
+        // Add touch handler with passive listener
+        btn.addEventListener('touchend', function(e) {
+            try {
+                e.stopPropagation();
+                if (typeof toggleSystemSettings === 'function') {
+                    toggleSystemSettings();
+                }
+            } catch(err) {
+                console.warn('Settings eye touch error:', err);
+            }
+        }, { passive: true });
+        
+        // Ensure button is visible and clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.cursor = 'pointer';
+        btn.style.position = 'relative';
+        btn.style.zIndex = '100';
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
+    } else {
+        setupSettingsEyeBtn();
+    }
+    setTimeout(setupSettingsEyeBtn, 500);
+})();
+</script>
+
+<!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable -->
+<script>
+(function() {
     function fixElement(el) {
         if (!el) return;
-        el.style.touchAction = 'manipulation';
-        el.style.pointerEvents = 'auto';
-        el.style.cursor = 'pointer';
-    }
-
-    // Enhanced touch handler for list items - only open on deliberate tap, not scroll
-    function attachSmartClickListener(el, clickCallback) {
-        if (!el || el._smartClickDone) return;
-        el._smartClickDone = true;
-
-        el.addEventListener('touchend', function(e) {
-            var touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-            var touchDuration = Date.now() - touchStartTime;
-            
-            // Calculate movement distance
-            var moveX = Math.abs(touchEndPos.x - touchStartPos.x);
-            var moveY = Math.abs(touchEndPos.y - touchStartPos.y);
-            var totalMove = Math.sqrt(moveX * moveX + moveY * moveY);
-
-            // Only trigger if: minimal movement AND reasonable tap duration
-            if (totalMove < SCROLL_THRESHOLD && touchDuration < TOUCH_TIME_THRESHOLD) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (clickCallback) clickCallback();
-            }
-        }, { passive: false });
+        try {
+            el.style.touchAction = 'manipulation';
+            el.style.pointerEvents = 'auto';
+        } catch(err) {}
     }
 
     function fixAll() {
-        // Fix basic interactivity for all buttons and inputs
         var selectors = [
             'button', 'a[href]', '[role="button"]', '[onclick]',
             'input', 'textarea', '.main-button', '.favorite-card',
-            '.settings-open-btn', '.settings-close',
+            '.myapps-app-box', '.settings-open-btn', '.settings-close',
             '#rateUsLink', '.rate-us-link',
+            '#settingsEyeBtn', '.settings-eye-btn',
+            '#visitsEyeBtn',
             '.name-submit-btn', '.settings-warning-btn',
-            // Exclamation point confirmation button
-            '.confirm-btn', '[data-confirm]', '.exclamation-btn'
+            '.christmas-message-link', '.btn-about', '.btn-favorites',
+            '.clickable',
+            '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
+            '#senderPwExclam',
+            '.password-exit-cancel-btn', '#pwExitConfirmBtn',
+            '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
+            '.otp-eye-btn'
         ];
 
         selectors.forEach(function(sel) {
@@ -29057,47 +29529,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
                 document.querySelectorAll(sel).forEach(fixElement);
             } catch(err) {}
         });
-
-        // SPECIAL FIX: Eye button in settings (direct ID)
-        var settingsEyeBtn = document.getElementById('settingsEyeBtn');
-        if (settingsEyeBtn) {
-            fixElement(settingsEyeBtn);
-            // Force click registration on touch
-            attachSmartClickListener(settingsEyeBtn, function() {
-                settingsEyeBtn.click();
-            });
-        }
-
-        // SPECIAL FIX: Visits eye button
-        var visitsEyeBtn = document.getElementById('visitsEyeBtn');
-        if (visitsEyeBtn) {
-            fixElement(visitsEyeBtn);
-            attachSmartClickListener(visitsEyeBtn, function() {
-                if (typeof openVisitsModal === 'function') openVisitsModal();
-            });
-        }
-
-        // SPECIAL FIX: List items (Gaming, Music, Singer, Apps) - smart click only
-        var listItems = document.querySelectorAll('.myapps-app-box, .game-item, .music-item, .singer-item, [data-app-box]');
-        listItems.forEach(function(item) {
-            if (!item._listItemFixed) {
-                item._listItemFixed = true;
-                fixElement(item);
-                attachSmartClickListener(item, function() {
-                    // Trigger the existing click handler
-                    item.click();
-                });
-            }
-        });
-
-        // SPECIAL FIX: Exclamation point in confirmation dialog
-        var confirmExclamation = document.querySelector('.confirm-exclamation, [data-confirm-info], .exclamation-mark');
-        if (confirmExclamation) {
-            fixElement(confirmExclamation);
-            attachSmartClickListener(confirmExclamation, function() {
-                confirmExclamation.click();
-            });
-        }
     }
 
     if (document.readyState === 'loading') {
@@ -29105,11 +29536,9 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     } else {
         fixAll();
     }
-
-    // Re-run fixes when content changes
+    
     setTimeout(fixAll, 500);
-    setTimeout(fixAll, 1000);
-    setTimeout(fixAll, 2000);
+    setTimeout(fixAll, 1500);
 })();
 </script>
 </body>
