@@ -110,7 +110,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 90;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
         }
 
@@ -304,7 +304,7 @@
             right: clamp(14px, 4vw, 24px);
             top: clamp(14px, 3vh, 22px);
             left: auto;
-            z-index: 10001;
+            z-index: 100;
             width: clamp(26px, 6.5vw, 30px);
             height: clamp(26px, 6.5vw, 30px);
             border-radius: 8px;
@@ -333,7 +333,7 @@
         .loading-disclaimer-overlay {
             position: fixed;
             inset: 0;
-            z-index: 10002;
+            z-index: 105;
             display: none;
             align-items: center;
             justify-content: center;
@@ -429,7 +429,7 @@
             position: fixed;
             top: 14px;
             right: 14px;
-            z-index: 25001;
+            z-index: 210;
             border: none;
             padding: 0;
             background: transparent;
@@ -447,7 +447,7 @@
             position: fixed;
             top: 14px;
             right: 14px;
-            z-index: 25001;
+            z-index: 210;
             width: 44px;
             height: 44px;
             border-radius: 999px;
@@ -518,13 +518,12 @@
             height: 100vh;
             height: 100dvh;
             height: var(--vv-height, 100dvh);
-            z-index: 26000;
+            z-index: 200;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: rgba(2, 8, 18, 0.62);
-            backdrop-filter: blur(6px);
+            background: rgba(2, 8, 18, 0.88);
         }
         body.dark-mode .settings-overlay {
             background: rgba(2, 8, 18, 0.7);
@@ -1034,7 +1033,7 @@
         .settings-caution-overlay {
             position: fixed;
             inset: 0;
-            z-index: 27000;
+            z-index: 280;
             display: none;
             align-items: center;
             justify-content: center;
@@ -2376,7 +2375,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 10006;
+            z-index: 140;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -2668,7 +2667,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10001;
+            z-index: 100;
         }
 
         .name-warning-box {
@@ -2924,7 +2923,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.78);
-            z-index: 999999;
+            z-index: 500;
             justify-content: center;
             align-items: center;
         }
@@ -3393,7 +3392,7 @@
             border-radius: 12px;
             padding: 20px 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 10005;
+            z-index: 130;
             text-align: center;
             width: min(420px, calc(100vw - 32px));
             max-width: calc(100vw - 32px);
@@ -3979,7 +3978,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.55);
-            z-index: 10020;
+            z-index: 160;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -4502,7 +4501,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 25100;
+            z-index: 250;
             padding: 20px;
             pointer-events: auto !important;
         }
@@ -4650,7 +4649,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10001;
+            z-index: 100;
             padding: 20px;
             pointer-events: auto !important;
         }
@@ -4769,7 +4768,7 @@
             position: fixed;
             top: 10px;
             right: 10px;
-            z-index: 11000;
+            z-index: 180;
             padding: 6px 14px 6px 12px;
             border-radius: 999px;
             border: none;
@@ -4915,7 +4914,7 @@
             display: none;
             flex-direction: column;
             gap: 10px;
-            z-index: 10999;
+            z-index: 179;
         }
 
         .music-mini-panel-header {
@@ -5033,7 +5032,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 25100;
+            z-index: 250;
             animation: fadeIn 0.3s ease;
             pointer-events: auto;
         }
@@ -5137,7 +5136,7 @@
 
         /* Keep What's New above settings when opened from settings */
         #updatesModal {
-            z-index: 28010;
+            z-index: 300;
         }
 
         /* Keep the secret inbox gate / quiz above settings when triggered from the
@@ -5148,7 +5147,7 @@
         #messageConversationModal,
         #closeMessageMeModal,
         #closeMessageMeConfirmModal {
-            z-index: 28010;
+            z-index: 300;
         }
 
         .modal-overlay.active {
@@ -5222,7 +5221,7 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            z-index: 1000 !important;
+            z-index: 80 !important;
             opacity: 1 !important;
             visibility: visible !important;
             pointer-events: auto !important;
@@ -5251,7 +5250,7 @@
             align-items: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            z-index: 10003;
+            z-index: 110;
         }
 
         .close-button-left:hover {
@@ -7790,7 +7789,7 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            z-index: 10004;
+            z-index: 120;
             width: 36px;
             height: 36px;
             font-size: 22px;
@@ -8115,7 +8114,7 @@
             align-items: center;
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
-            z-index: 10002;
+            z-index: 105;
         }
 
         .music-info-button:hover {
@@ -8151,7 +8150,7 @@
             line-height: 1.6;
             display: none;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            z-index: 10001;
+            z-index: 100;
             backdrop-filter: blur(10px);
         }
 
@@ -8205,7 +8204,7 @@
             padding: 30px 40px;
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            z-index: 100050;
+            z-index: 450;
             text-align: center;
             font-size: 18px;
             font-weight: 600;
@@ -8227,7 +8226,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 100049;
+            z-index: 449;
             display: none;
         }
 
@@ -8445,7 +8444,7 @@
             left: 50%;
             transform: translateX(-50%);
             bottom: 4px;
-            z-index: 10004;
+            z-index: 120;
             font-size: 12px;
             width: auto;
             text-align: center;
@@ -8706,7 +8705,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             font-weight: 700;
-            z-index: 10005;
+            z-index: 130;
             display: none;
         }
 
@@ -8721,7 +8720,7 @@
             padding: 20px 24px;
             border-radius: 14px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-            z-index: 99998;
+            z-index: 420;
             width: 90%;
             max-width: 640px;
             display: none;
@@ -8768,7 +8767,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
-            z-index: 99999;
+            z-index: 430;
             pointer-events: auto;
             touch-action: manipulation;
         }
@@ -8782,7 +8781,7 @@
         .updated-splash-overlay {
             position: fixed;
             inset: 0;
-            z-index: 100000;
+            z-index: 440;
             display: none;
             align-items: center;
             justify-content: center;
@@ -10148,7 +10147,7 @@
             position: fixed;
             top: 14px;
             left: 14px;
-            z-index: 25001;
+            z-index: 210;
             height: 24px;
             display: inline-flex;
             align-items: center;
@@ -10169,7 +10168,7 @@
             position: fixed;
             top: 36px;
             left: 14px;
-            z-index: 25001;
+            z-index: 210;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -10189,7 +10188,7 @@
             position: fixed;
             top: 58px;
             left: 14px;
-            z-index: 25001;
+            z-index: 210;
             max-width: 220px;
             align-items: center;
             justify-content: center;
@@ -10550,7 +10549,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             </div>
         </div>
 
-<div id="christmasEventPart2Modal" style="display:none; position:absolute; inset:0; z-index:9999; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
+<div id="christmasEventPart2Modal" style="display:none; position:absolute; inset:0; z-index:90; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
     <!-- Blurred background card -->
     <div style="position:absolute;inset:0;z-index:1;">
         <div style="position:absolute;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);"></div>
@@ -11873,7 +11872,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         </div>
 
         <!-- ── VISITS MODAL (inside login overlay so z-index works correctly) ── -->
-        <div id="visitsModal" style="display:none; position:absolute; inset:0; z-index:9999; align-items:center; justify-content:center; pointer-events:all;" onclick="closeVisitsModal()">
+        <div id="visitsModal" style="display:none; position:absolute; inset:0; z-index:90; align-items:center; justify-content:center; pointer-events:all;" onclick="closeVisitsModal()">
             <div style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);"></div>
             <div id="visitsModalBox" style="position:relative; z-index:1; min-width:220px; padding:28px 32px 24px; border-radius:16px; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
                 <div style="font-size:13px; font-weight:900; letter-spacing:2px; margin-bottom:18px;">VISITS</div>
@@ -11893,10 +11892,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
 
     <!-- Important Message Modal (Overlay inside Password Modal) -->
-    <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
+    <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 100; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
         <div class="important-message-box" style="background: rgba(20, 24, 40, 0.95); border-radius: 12px; padding: 24px; max-width: 340px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); position: relative; pointer-events: auto;">
             <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please <span style="color:#ef4444;">remember your password</span> or save it in a secure place. It <span style="color:#ef4444;">cannot be recovered</span> if you forget it, so you'll need it to access your messages.</p>
-            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative;" onmousedown="closeImportantMessage()">OK</button>
+            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 105; position: relative;" onmousedown="closeImportantMessage()">OK</button>
         </div>
     </div>
 
@@ -12443,7 +12442,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Unban Confirmation Modal -->
-    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="unbanConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO UNBAN THIS PERSON?</div>
             <div id="unbanCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
@@ -12454,7 +12453,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
+    <div class="modal-overlay" id="banConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE TO BAN THIS PERSON?</div>
             <div id="banCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
@@ -12466,7 +12465,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     </div>
 
     <!-- Reset Data Confirmation Modal -->
-    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto !important;">
+    <div class="modal-overlay" id="resetDataConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:500; justify-content:center; align-items:center; pointer-events:auto !important;">
         <div style="background:#1a2035; border:1px solid rgba(239,68,68,0.3); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
             <div style="font-size:36px; margin-bottom:14px;">🗑️</div>
             <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:6px;">RESET THIS PERSON'S DATA?</div>
@@ -24080,7 +24079,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
         function showOriginalMessage(originalText, timestamp) {
             const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:10001;padding:20px;';
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;';
             modal.innerHTML = '<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:30px;max-width:500px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.8);"><div style="font-size:20px;font-weight:700;margin-bottom:10px;font-family:Poppins,sans-serif;">BEFORE EDIT</div><div style="font-size:12px;margin-bottom:15px;color:#ff9800;font-style:italic;">Original message sent at ' + timestamp + '</div><div style="background:#2a2a2a;padding:15px;border-radius:6px;margin-bottom:20px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word;font-family:Poppins,sans-serif;font-weight:600;font-style:italic;color:#d0d0d0;">' + escapeHtmlPm(originalText) + '</div><button type="button" style="width:100%;padding:10px;background:#3399ff;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;" onclick="this.parentElement.parentElement.remove()">CLOSE</button></div>';
             document.body.appendChild(modal);
             modal.onclick = function(e) {
