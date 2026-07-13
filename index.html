@@ -28996,227 +28996,128 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     MASTER MOBILE TOUCH FIX
-     Bypasses Android's broken click-event delivery inside:
-       • backdrop-filter compositing layers
-       • overflow:hidden scroll containers
-       • nested stacking contexts
-     Strategy: intercept touchend, call the element's action directly.
-     ═══════════════════════════════════════════════════════════════════ -->
+<!-- SIMPLIFIED MASTER MOBILE TOUCH FIX -->
 <script>
 (function() {
     'use strict';
 
-    // Map: element ID or selector → function to call
-    var DIRECT_ACTIONS = [
-        // Loading screen disclaimer button
-        { id: 'loadingDisclaimerBtn', fn: function() {
-            var b = document.getElementById('loadingDisclaimerBtn'); if (b) b.click();
-        }},
-        // Loading screen disclaimer OK button
-        { id: 'loadingDisclaimerOk', fn: function() {
-            var b = document.getElementById('loadingDisclaimerOk'); if (b) b.click();
-        }},
-        // Create account confirmation modal buttons
-        { id: 'userNameInput', fn: null },
-        // Message confirmation modal close button
-        { sel: '#messageConfirmationModal .close-button', fn: function(el) { el.click(); }},
-        // Final name confirmation buttons
-        { id: 'nameFinalConfirmSubmitBtn', fn: function() {
-            if (typeof confirmFinalName === 'function') confirmFinalName();
-            else { var b = document.getElementById('nameFinalConfirmSubmitBtn'); if (b) b.click(); }
-        }},
-        // Password modal buttons
-        { id: 'senderPwExitBtn', fn: function() {
-            if (typeof openPasswordExitConfirm === 'function') openPasswordExitConfirm();
-            else { var b = document.getElementById('senderPwExitBtn'); if (b) b.click(); }
-        }},
-        { id: 'senderPwExclam', fn: function() {
-            if (typeof showImportantMessage === 'function') showImportantMessage();
-            else { var b = document.getElementById('senderPwExclam'); if (b) b.click(); }
-        }},
-        // Settings caution OK buttons
-        { id: 'settingsCautionOkBtn', fn: function() {
-            var b = document.getElementById('settingsCautionOkBtn'); if (b) b.click();
-        }},
-        { id: 'settingsVisitorsOkBtn', fn: function() {
-            if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
-            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
-        }},
-        { id: 'settingsLangNoteOkBtn', fn: function() {
-            var b = document.getElementById('settingsLangNoteOkBtn'); if (b) b.click();
-        }},
-        // Settings panel eye icon
-        { id: 'settingsEyeBtn', fn: function() {
-            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
-            else { var b = document.getElementById('settingsEyeBtn'); if (b) b.click(); }
-        }},
-        // Settings close button
-        { id: 'settingsCloseBtn', fn: function() {
-            if (typeof closeSettings === 'function') closeSettings();
-            else { var b = document.getElementById('settingsCloseBtn'); if (b) b.click(); }
-        }},
-        // Settings Open (What's New)
-        { id: 'settingsOpenUpdatesBtn', fn: function() {
-            var b = document.getElementById('settingsOpenUpdatesBtn'); if (b) b.click();
-        }},
-        // Settings Reset
-        { id: 'settingsResetDefaultsBtn', fn: function() {
-            var b = document.getElementById('settingsResetDefaultsBtn'); if (b) b.click();
-        }},
-        // Settings theme toggle
-        { id: 'themeToggle', fn: function() {
-            var b = document.getElementById('themeToggle'); if (b) b.click();
-        }},
-        // Visits eye btn inside login modal
-        { id: 'visitsEyeBtn', fn: function() {
-            if (typeof openVisitsModal === 'function') openVisitsModal();
-        }},
-        // Main nav buttons
-        { id: 'mainButtonContainer', fn: null }, // handled by children below
-        // Rate Us
-        { id: 'rateUsLink', fn: function() {
-            if (typeof handleRateUsClick === 'function') handleRateUsClick();
-        }},
-        // Visitors OK
-        { id: 'settingsVisitorsOkBtn', fn: function() {
-            if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
-            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
-        }},
+    // List of IDs that need touch handling
+    var CLICKABLE_IDS = [
+        'settingsBtn',
+        'loadingDisclaimerBtn',
+        'loadingDisclaimerOk',
+        'userNameInput',
+        'nameFinalConfirmSubmitBtn',
+        'senderPwExitBtn',
+        'senderPwExclam',
+        'settingsCautionOkBtn',
+        'settingsVisitorsOkBtn',
+        'settingsLangNoteOkBtn',
+        'settingsEyeBtn',
+        'settingsCloseBtn',
+        'settingsOpenUpdatesBtn',
+        'settingsResetDefaultsBtn',
+        'themeToggle',
+        'visitsEyeBtn',
+        'mainButtonContainer',
+        'rateUsLink'
     ];
 
-    var SELECTOR_ACTIONS = [
-        // Loading disclaimer button
-        { sel: '.loading-disclaimer-btn', fn: null },
-        // Confirmation modal buttons
-        { sel: '.name-submit-btn', fn: null },
-        { sel: '.name-info-btn', fn: null },
-        { sel: '.name-warning-ok-btn', fn: null },
-        // Settings buttons and controls
-        { sel: '.settings-close', fn: null },
-        { sel: '.settings-open-btn', fn: null },
-        { sel: '.settings-warning-btn', fn: null },
-        { sel: '.settings-caution-ok', fn: null },
-        { sel: '.settings-slider', fn: null },
-        { sel: '#settingsVolumeSlider', fn: null },
-        { sel: '#settingsBrightnessSlider', fn: null },
-        { sel: '#themeToggle', fn: null },
-        { sel: '.settings-lang-option', fn: null },
-        { sel: '.settings-lang-trigger', fn: null },
-        // Password modal inputs and buttons
-        { sel: '#senderPasswordInput', fn: null },
-        { sel: '#senderPasswordCreateBtn', fn: null },
-        // About Me / Others buttons
-        { sel: '.main-button', fn: null },
-        // Message Me
-        { sel: '.christmas-message-link', fn: function(el) {
-            if (typeof handleMessageMeClick === 'function') {
-                var onclick = el.getAttribute('onclick');
-                if (onclick && onclick.indexOf('handleMessageMeClick') !== -1) {
-                    handleMessageMeClick();
-                    return;
-                }
-            }
-            el.click();
-        }},
-        // Star rating
-        { sel: '.star-btn', fn: null },
-        // Favorite cards / Coming soon cards (with and without timer)
-        { sel: '.favorite-card.clickable', fn: null },
-        { sel: '.favorite-card', fn: null },
-        { sel: '[data-type="coming-soon"]', fn: null },
-        { sel: '.coming-soon-card', fn: null },
-        // My apps
-        { sel: '.myapps-app-box', fn: null },
-        // Submit button (multiple selectors to catch all variants)
-        { sel: 'button[type="submit"]', fn: null },
-        { sel: '.submit-btn', fn: null },
-        { sel: '#submitBtn', fn: null },
-        // Gaming, music, singer sections
-        { sel: '[data-category="gaming"]', fn: null },
-        { sel: '[data-category="music"]', fn: null },
-        { sel: '[data-category="singer"]', fn: null },
-        // Text inputs in modals
-        { sel: '#userNameInput', fn: null },
-        // All interactive elements as fallback
-        { sel: '[role="button"]', fn: null },
-        { sel: 'button:not(:disabled)', fn: null },
-        { sel: 'a[href]', fn: null },
-        { sel: 'input[type="text"]', fn: null },
-        { sel: 'input[type="password"]', fn: null },
+    // List of CSS selectors for elements that need touch handling
+    var CLICKABLE_SELECTORS = [
+        '.loading-disclaimer-btn',
+        '.name-submit-btn',
+        '.name-info-btn',
+        '.name-warning-ok-btn',
+        '.settings-close',
+        '.settings-open-btn',
+        '.settings-warning-btn',
+        '.settings-caution-ok',
+        '.settings-slider',
+        '#settingsVolumeSlider',
+        '#settingsBrightnessSlider',
+        '.settings-lang-option',
+        '.settings-lang-trigger',
+        '#senderPasswordInput',
+        '#senderPasswordCreateBtn',
+        '.main-button',
+        '.christmas-message-link',
+        '.star-btn',
+        '.favorite-card',
+        '.myapps-app-box',
+        'button[type="submit"]',
+        '.submit-btn',
+        '[role="button"]',
+        'button:not(:disabled)',
+        'a[href]',
+        'input[type="text"]',
+        'input[type="password"]'
     ];
 
-    function makeTouchHandler(actionFn, el) {
-        return function touchHandler(e) {
-            if (e.touches && e.touches.length > 1) return; // ignore multi-touch
-            var startX = (e.touches || e.changedTouches)[0].clientX;
-            var startY = (e.touches || e.changedTouches)[0].clientY;
+    function setupTouchHandler(el) {
+        if (!el || el._touchFixed) return;
+        el._touchFixed = true;
+
+        el.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) return;
+            
+            var startX = e.touches[0].clientX;
+            var startY = e.touches[0].clientY;
             var moved = false;
 
-            function onMove(mv) {
-                var t = mv.touches[0];
-                if (Math.abs(t.clientX - startX) > 8 || Math.abs(t.clientY - startY) > 8) {
+            function handleMove(mv) {
+                if (Math.abs(mv.touches[0].clientX - startX) > 8 || 
+                    Math.abs(mv.touches[0].clientY - startY) > 8) {
                     moved = true;
                 }
             }
-            function onEnd(ev) {
-                el.removeEventListener('touchmove', onMove);
-                el.removeEventListener('touchend', onEnd);
-                el.removeEventListener('touchcancel', onEnd);
-                if (moved) return;
-                ev.preventDefault(); // stop ghost click
-                ev.stopPropagation();
-                try {
-                    if (actionFn) {
-                        actionFn(el);
-                    } else {
+
+            function handleEnd(ev) {
+                el.removeEventListener('touchmove', handleMove);
+                el.removeEventListener('touchend', handleEnd);
+                el.removeEventListener('touchcancel', handleEnd);
+                
+                if (!moved) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    try {
                         el.click();
-                    }
-                } catch(err) {}
+                    } catch(err) {}
+                }
             }
 
-            el.addEventListener('touchmove', onMove, { passive: true });
-            el.addEventListener('touchend', onEnd, { passive: false });
-            el.addEventListener('touchcancel', onEnd, { passive: false });
-        };
-    }
-
-    function wireElement(el, actionFn) {
-        if (!el || el._masterTouchDone) return;
-        el._masterTouchDone = true;
-        el.style.touchAction = 'manipulation';
-        el.style.webkitTapHighlightColor = 'transparent';
-        el.addEventListener('touchstart', makeTouchHandler(actionFn, el), { passive: false });
+            el.addEventListener('touchmove', handleMove, { passive: true });
+            el.addEventListener('touchend', handleEnd, { passive: false });
+            el.addEventListener('touchcancel', handleEnd, { passive: false });
+        }, { passive: true });
     }
 
     function wireAll() {
         // Wire by ID
-        DIRECT_ACTIONS.forEach(function(entry) {
-            if (!entry.id) return;
-            var el = document.getElementById(entry.id);
-            if (el) wireElement(el, entry.fn);
+        CLICKABLE_IDS.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) setupTouchHandler(el);
         });
+
         // Wire by selector
-        SELECTOR_ACTIONS.forEach(function(entry) {
-            document.querySelectorAll(entry.sel).forEach(function(el) {
-                wireElement(el, entry.fn || null);
+        CLICKABLE_SELECTORS.forEach(function(selector) {
+            document.querySelectorAll(selector).forEach(function(el) {
+                setupTouchHandler(el);
             });
         });
     }
 
-    // Run now, after DOM, and after delays (for dynamically shown elements)
+    // Run multiple times to catch dynamically added elements
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', wireAll);
     } else {
         wireAll();
     }
+    
+    setTimeout(wireAll, 100);
     setTimeout(wireAll, 500);
     setTimeout(wireAll, 1500);
     setTimeout(wireAll, 3000);
-
-    // Also expose globally so it can be called after modals open
-    window._masterTouchWireAll = wireAll;
 })();
 </script>
 </body>
