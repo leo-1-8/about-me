@@ -28891,6 +28891,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             openVisitsModal();
         });
         // Also add touchend for immediate feedback
+        btn
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachVisitsEyeTouch);
@@ -29535,6 +29536,53 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     
     setTimeout(fixAll, 500);
     setTimeout(fixAll, 1500);
+})();
+</script>
+
+<!-- MOBILE SCROLL PROTECTION - Prevent clicks while scrolling (MAIN FIX) -->
+<script>
+(function() {
+    var touchData = {
+        x: 0,
+        y: 0,
+        time: 0,
+        isScrolling: false
+    };
+    
+    // Track touch start position
+    document.addEventListener('touchstart', function(e) {
+        var touch = e.touches[0];
+        touchData.x = touch.clientX;
+        touchData.y = touch.clientY;
+        touchData.time = Date.now();
+        touchData.isScrolling = false;
+    }, false);
+    
+    // Detect scroll movement (more than 15px = scrolling)
+    document.addEventListener('touchmove', function(e) {
+        var touch = e.touches[0];
+        var dx = Math.abs(touch.clientX - touchData.x);
+        var dy = Math.abs(touch.clientY - touchData.y);
+        
+        if (dx > 15 || dy > 15) {
+            touchData.isScrolling = true;
+        }
+    }, false);
+    
+    // Reset on touch end
+    document.addEventListener('touchend', function(e) {
+        touchData.isScrolling = false;
+    }, false);
+    
+    // INTERCEPT ALL CLICKS - block if user was scrolling
+    // Capture phase (true) intercepts BEFORE onclick handlers fire
+    document.addEventListener('click', function(e) {
+        if (touchData.isScrolling) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }, true);
 })();
 </script>
 </body>
