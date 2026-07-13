@@ -17,21 +17,9 @@
 
         /* Mobile tap fix: eliminate 300ms click delay and ensure all buttons
            register touch events correctly on iOS/Android */
-        button, [onclick], [role="button"], a, input, select, label, [data-clickable="true"] {
+        button, [onclick], [role="button"], a, input, select, label {
             touch-action: manipulation;
-            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        /* Mobile touch target minimum size */
-        @media (max-width: 768px) {
-            button, [role="button"], a, input[type="button"], input[type="submit"] {
-                min-height: 48px;
-                min-width: 48px;
-                padding: max(8px, calc((48px - 1em) / 2));
-            }
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -10278,7 +10266,7 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important; pointer-events:none !important;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important; pointer-events:auto !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; pointer-events:auto !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap; pointer-events:auto;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0; pointer-events:auto;">RATE US!</span>
@@ -10295,7 +10283,7 @@
             </div>
         </div>
         <!-- ANSWER THIS FORM — pinned independently, no longer stacked directly under the box -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important; pointer-events:none !important;">
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important; pointer-events:auto !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
@@ -29012,6 +29000,168 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
+<!-- UNIVERSAL MOBILE CLICK FIX FOR ALL BUTTONS -->
+<script>
+(function() {
+    // Intercept ALL clicks and make sure they work
+    function universalClickFix() {
+        // Get all clickable elements
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close');
+        
+        allClickable.forEach(function(el) {
+            if (el._universalFixDone) return;
+            el._universalFixDone = true;
+            
+            // Fix pointer events
+            el.style.pointerEvents = 'auto';
+            el.style.touchAction = 'manipulation';
+            el.style.cursor = 'pointer';
+            
+            // Add click listener
+            el.addEventListener('click', function(e) {
+                try {
+                    // If element has onclick attribute, it will fire naturally
+                    // We're just ensuring pointer-events are correct
+                } catch(err) {
+                    console.warn('Click error:', err);
+                }
+            });
+            
+            // Add touch listener
+            el.addEventListener('touchend', function(e) {
+                try {
+                    // Trigger click event manually for touch
+                    var clickEvent = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    el.dispatchEvent(clickEvent);
+                } catch(err) {
+                    console.warn('Touch error:', err);
+                }
+            }, { passive: true });
+        });
+    }
+    
+    // Run immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', universalClickFix);
+    } else {
+        universalClickFix();
+    }
+    
+    // Run multiple times to catch dynamic elements
+    setTimeout(universalClickFix, 300);
+    setTimeout(universalClickFix, 800);
+    setTimeout(universalClickFix, 1500);
+    setTimeout(universalClickFix, 3000);
+})();
+</script>
+
+<!-- FIX ABOUT ME, OTHERS, RATE US, MESSAGE ME BUTTONS -->
+<script>
+(function() {
+    function attachButtonHandlers() {
+        // ABOUT ME BUTTON
+        var aboutBtns = document.querySelectorAll('.btn-about');
+        aboutBtns.forEach(function(btn) {
+            if (btn._aboutFixed) return;
+            btn._aboutFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openModal('about');
+                } catch(err) { console.warn('About Me click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openModal('about');
+                } catch(err) { console.warn('About Me touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // OTHERS BUTTON
+        var othersBtns = document.querySelectorAll('.btn-favorites');
+        othersBtns.forEach(function(btn) {
+            if (btn._othersFixed) return;
+            btn._othersFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openModal('favorites');
+                } catch(err) { console.warn('Others click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openModal('favorites');
+                } catch(err) { console.warn('Others touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // RATE US BUTTON
+        var rateBtn = document.getElementById('rateUsLink');
+        if (rateBtn && !rateBtn._rateFixed) {
+            rateBtn._rateFixed = true;
+            rateBtn.addEventListener('click', function(e) {
+                try {
+                    e.stopPropagation();
+                    handleRateUsClick();
+                } catch(err) { console.warn('Rate Us click error:', err); }
+            });
+            rateBtn.addEventListener('touchend', function(e) {
+                try {
+                    e.stopPropagation();
+                    handleRateUsClick();
+                } catch(err) { console.warn('Rate Us touch error:', err); }
+            }, { passive: true });
+        }
+        
+        // MESSAGE ME BUTTON - both handlers
+        var messageBtns = document.querySelectorAll('[onclick*="handleMessageMeClick"]');
+        messageBtns.forEach(function(btn) {
+            if (btn._messageFixed) return;
+            btn._messageFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    handleMessageMeClick();
+                } catch(err) { console.warn('Message Me click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    handleMessageMeClick();
+                } catch(err) { console.warn('Message Me touch error:', err); }
+            }, { passive: true });
+        });
+        
+        // Also fix the gate version
+        var gateBtns = document.querySelectorAll('[onclick*="openMessageInboxGate"]');
+        gateBtns.forEach(function(btn) {
+            if (btn._gateFixed) return;
+            btn._gateFixed = true;
+            btn.addEventListener('click', function(e) {
+                try {
+                    openMessageInboxGate();
+                } catch(err) { console.warn('Message gate click error:', err); }
+            });
+            btn.addEventListener('touchend', function(e) {
+                try {
+                    openMessageInboxGate();
+                } catch(err) { console.warn('Message gate touch error:', err); }
+            }, { passive: true });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachButtonHandlers);
+    } else {
+        attachButtonHandlers();
+    }
+    
+    // Re-run for dynamic elements
+    setTimeout(attachButtonHandlers, 500);
+    setTimeout(attachButtonHandlers, 1500);
+})();
+</script>
+
 <!-- SETTINGS EYE BUTTON MOBILE FIX -->
 <script>
 (function() {
@@ -29060,60 +29210,14 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 })();
 </script>
 
-<!-- COMPREHENSIVE MOBILE TOUCH FIX -->
+<!-- MOBILE TOUCH FIX - Ensure all interactive elements are clickable -->
 <script>
 (function() {
-    // Safe click handler - prevents unclickable elements from breaking the page
-    function safeClickHandler(e) {
-        try {
-            var target = e.target;
-            // Only process clicks on actual interactive elements
-            if (!target) return;
-            
-            // List of valid interactive elements
-            var isInteractive = target.tagName === 'BUTTON' ||
-                                target.tagName === 'A' ||
-                                target.tagName === 'INPUT' ||
-                                target.tagName === 'TEXTAREA' ||
-                                target.tagName === 'SELECT' ||
-                                target.getAttribute('role') === 'button' ||
-                                target.onclick ||
-                                target.getAttribute('data-clickable') === 'true' ||
-                                target.classList.contains('clickable') ||
-                                target.closest('button') ||
-                                target.closest('[role="button"]') ||
-                                target.closest('[onclick]');
-            
-            // If click is on unclickable area, just stop - don't break the page
-            if (!isInteractive && !target.closest('.clickable-area')) {
-                // Do nothing - just let it pass through
-                return;
-            }
-        } catch(err) {
-            // Silently fail - never break the page
-            console.warn('Click handler error:', err);
-        }
-    }
-    
-    // Attach safe click delegation
-    document.addEventListener('click', safeClickHandler, true);
-    
-    // Ensure touch-action is set on interactive elements
     function fixElement(el) {
         if (!el) return;
         try {
             el.style.touchAction = 'manipulation';
-            // Only remove pointer-events: none if it's actually interactive
-            if (el.style.pointerEvents === 'none') {
-                var isInteractive = el.tagName === 'BUTTON' ||
-                                   el.tagName === 'A' ||
-                                   el.tagName === 'INPUT' ||
-                                   el.getAttribute('role') === 'button' ||
-                                   el.onclick;
-                if (isInteractive) {
-                    el.style.pointerEvents = 'auto';
-                }
-            }
+            el.style.pointerEvents = 'auto';
         } catch(err) {}
     }
 
@@ -29125,31 +29229,14 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '#rateUsLink', '.rate-us-link',
             '#settingsEyeBtn', '.settings-eye-btn',
             '#visitsEyeBtn',
-            '.name-submit-btn', '.settings-warning-btn'
+            '.name-submit-btn', '.settings-warning-btn',
+            '.christmas-message-link', '.btn-about', '.btn-favorites'
         ];
 
         selectors.forEach(function(sel) {
             try {
                 document.querySelectorAll(sel).forEach(fixElement);
             } catch(err) {}
-        });
-
-        // Direct ID fixes
-        ['rateUsLink', 'settingsEyeBtn', 'visitsEyeBtn'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) {
-                fixElement(el);
-                el.style.pointerEvents = 'auto';
-                el.style.cursor = 'pointer';
-                // Ensure minimum touch target size (48x48px for accessibility)
-                if (el.offsetHeight < 48 || el.offsetWidth < 48) {
-                    el.style.minHeight = '48px';
-                    el.style.minWidth = '48px';
-                    el.style.display = 'flex';
-                    el.style.alignItems = 'center';
-                    el.style.justifyContent = 'center';
-                }
-            }
         });
     }
 
@@ -29159,7 +29246,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         fixAll();
     }
     
-    // Re-run after a delay for dynamically added elements
     setTimeout(fixAll, 500);
     setTimeout(fixAll, 1500);
 })();
