@@ -5916,6 +5916,14 @@
             letter-spacing: 1px;
         }
 
+        /* When the element itself is both info-label and a flex row wrapper, cancel margin */
+        .name-with-button.info-label,
+        .hobbies-with-button.info-label,
+        .favorites-with-button.info-label {
+            margin-bottom: 0;
+            align-items: center;
+        }
+
         .info-value {
             font-size: 18px;
             color: #333;
@@ -5931,6 +5939,14 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            width: 100%;
+        }
+
+        .name-with-button span,
+        .hobbies-with-button span,
+        .favorites-with-button span {
+            flex: 1;
+            min-width: 0;
         }
 
         .favorites-title-with-button {
@@ -5949,13 +5965,17 @@
             cursor: pointer;
             font-size: 18px;
             color: white;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
             flex-shrink: 0;
             font-weight: bold;
+            position: relative;
+            z-index: 1;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .info-toggle-button.disabled {
@@ -9045,6 +9065,8 @@
 
             .name-with-button, .hobbies-with-button, .favorites-with-button {
                 gap: 8px;
+                align-items: center;
+                margin-bottom: 0;
             }
 
             .personal-info-container {
@@ -10182,8 +10204,7 @@
             justify-content: center;
             padding: 0 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
             font-family: var(--font-timer);
             font-size: 13px;
             font-weight: 700;
@@ -10191,6 +10212,8 @@
             color: #1e293b;
             font-feature-settings: 'zero' 0;
             cursor: pointer;
+            touch-action: manipulation;
+            pointer-events: auto;
         ">--:--:-- AM</div>
         <div id="mainMenuClockDate" onclick="toggleMainMenuClockTz()" style="
             position: fixed;
@@ -10202,14 +10225,15 @@
             justify-content: center;
             padding: 2px 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.75);
             font-family: var(--font-timer);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.04em;
             color: #1e293b;
             cursor: pointer;
+            touch-action: manipulation;
+            pointer-events: auto;
         ">---</div>
         <div id="mainMenuClockTz" onclick="toggleMainMenuClockTz()" style="
             display: none;
@@ -10222,8 +10246,7 @@
             justify-content: center;
             padding: 3px 12px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
             font-family: var(--font-timer);
             font-size: 9px;
             font-weight: 700;
@@ -10232,6 +10255,8 @@
             text-align: center;
             line-height: 1.3;
             cursor: pointer;
+            touch-action: manipulation;
+            pointer-events: auto;
         ">UTC+00:00</div>
         <button type="button" id="settingsBtn" class="settings-button" aria-label="Open settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -10522,27 +10547,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div class="modal-content">
                 <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">Others</h2>
                 <div class="favorites-grid">
-                    <div class="favorite-card clickable" onclick="openModal('gaming')">
+                    <div class="favorite-card clickable" data-action="openModal('gaming')">
                         <div class="favorite-icon">🎮</div>
                         <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
                         <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="openModal('music')">
+                    <div class="favorite-card clickable" data-action="openModal('music')">
                         <div class="favorite-icon">🎵</div>
                         <div class="favorite-title" data-i18n="others_music">Music</div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="openModal('singer')">
+                    <div class="favorite-card clickable" data-action="openModal('singer')">
                         <div class="favorite-icon">🎤</div>
                         <div class="favorite-title" data-i18n="others_singer">SINGER</div>
                         <div class="favorite-description" data-i18n="others_singer_desc">i can't live without my fav singers😭.</div>
                     </div>
-                    <div class="favorite-card clickable" id="myAppsCard" onclick="openModal('myApps')">
+                    <div class="favorite-card clickable" id="myAppsCard" data-action="openModal('myApps')">
                         <div class="favorite-icon">📱</div>
                         <div class="favorite-title" data-i18n="others_apps">My Apps</div>
                         <div class="favorite-description" data-i18n="others_apps_desc">This is my apps that i created right now</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="openChristmasEventPart2()">
+                    <div class="favorite-card clickable" data-action="openChristmasEventPart2()">
                         <div class="favorite-icon">⌛</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="fav-card-timer-wrap">
@@ -10555,12 +10580,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                             <div class="fav-cd-col"><span id="favCdSecs" class="fav-cd-num fav-cd-s">--</span><span class="fav-cd-lbl">S</span></div>
                         </div>
                     </div>
-                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
+                    <div class="favorite-card clickable" data-action="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="favorite-description">STAY TUNED</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="showNotAvailableNow()">
+                    <div class="favorite-card clickable" data-action="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
                         <div class="favorite-description">STAY TUNED</div>
@@ -10702,27 +10727,27 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <div class="modal-content">
                 <p class="modal-text">This is my apps that i created right now</p>
                 <div class="myapps-grid">
-                    <div class="myapps-app-box" onclick="openModal('boxDash')" title="Box Dash">
+                    <div class="myapps-app-box" data-action="openModal('boxDash')" title="Box Dash">
                         <span class="myapps-app-emoji">📦</span>
                         <span class="myapps-app-label">Box Dash</span>
                     </div>
-                    <div class="myapps-app-box" onclick="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
+                    <div class="myapps-app-box" data-action="closeModal('myApps'); openModal('calculator');" title="Open Calculator">
                         <span class="myapps-app-emoji">🧮</span>
                         <span class="myapps-app-label">Calculator</span>
                     </div>
-                    <div class="myapps-app-box" onclick="openModal('calendarComingSoon')" title="Calendar">
+                    <div class="myapps-app-box" data-action="openModal('calendarComingSoon')" title="Calendar">
                         <span class="myapps-app-emoji">🗓️</span>
                         <span class="myapps-app-label">Calendar</span>
                     </div>
-                    <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
+                    <div class="myapps-app-box" data-action="openModal('clock')" title="Open Clock">
                         <span class="myapps-app-emoji">🕒</span>
                         <span class="myapps-app-label">Clock</span>
                     </div>
-                    <div class="myapps-app-box" onclick="openModal('mapsComingSoon')" title="Maps">
+                    <div class="myapps-app-box" data-action="openModal('mapsComingSoon')" title="Maps">
                         <span class="myapps-app-emoji">🗾</span>
                         <span class="myapps-app-label">Maps</span>
                     </div>
-                    <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
+                    <div class="myapps-app-box" data-action="openModal('novaAI')" title="Open NovaAI">
                         <span class="myapps-app-emoji">🤖</span>
                         <span class="myapps-app-label">NovaAI</span>
                     </div>
@@ -11941,7 +11966,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             <button class="close-button" id="christmasMessageOuterClose" onclick="closeModal('christmasMessage')" title="Close">×</button>
             <div class="christmas-modal-title">
                 <span class="christmas-warning-btn" onclick="toggleChristmasWarning(event); event.stopPropagation();">!</span>
-                MESSAGE ME
+                ME<span class="clickable-s" id="messageMeS" style="cursor:pointer;user-select:none;" title="">S</span><span class="clickable-s" style="cursor:pointer;user-select:none;">S</span>AGE ME
             </div>
             <div style="position: relative;">
                 <textarea
@@ -13162,7 +13187,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
 
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version">v. 1.8</div>
+                    <div class="settings-version" id="settingsVersionEl" style="cursor:pointer; user-select:none;" title="v. 1.8">v. 1.8</div>
                     <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
         </div>
@@ -15849,7 +15874,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function toggleMainMenuClockTz() {
             var tzEl = document.getElementById('mainMenuClockTz');
             if (!tzEl) return;
-            var showing = tzEl.style.display !== 'none';
+            var computed = window.getComputedStyle(tzEl).display;
+            var showing = computed !== 'none';
             tzEl.style.display = showing ? 'none' : 'inline-flex';
         }
 
@@ -29739,6 +29765,259 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
     // Re-fix when modals open
     window._fixAllClickable = fixAll;
+})();
+</script>
+
+<!-- FAVORITE CARD TOUCH FIX: Prevents scroll from triggering card opens -->
+<script>
+(function() {
+    function setupTouchItems(selector) {
+        document.querySelectorAll(selector).forEach(function(card) {
+            if (card._cardTouchDone) return;
+            card._cardTouchDone = true;
+
+            var startX, startY, moved;
+
+            card.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                moved = false;
+            }, { passive: true });
+
+            card.addEventListener('touchmove', function(e) {
+                if (!e.touches[0]) return;
+                var dx = Math.abs(e.touches[0].clientX - startX);
+                var dy = Math.abs(e.touches[0].clientY - startY);
+                if (dx > 8 || dy > 8) moved = true;
+            }, { passive: true });
+
+            card.addEventListener('touchend', function(e) {
+                if (moved) return;
+                e.preventDefault();
+                var action = card.getAttribute('data-action');
+                if (action) {
+                    try { eval(action); } catch(err) {}
+                }
+            }, { passive: false });
+        });
+    }
+
+    function setupAll() {
+        setupTouchItems('.favorite-card.clickable[data-action]');
+        setupTouchItems('.myapps-app-box[data-action]');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupAll);
+    } else {
+        setupAll();
+    }
+    setTimeout(setupAll, 500);
+    setInterval(setupAll, 2000);
+})();
+</script>
+
+<!-- MAIN MENU CLOCK TOUCH FIX -->
+<script>
+(function() {
+    function fixClockTap() {
+        ['mainMenuClock','mainMenuClockDate','mainMenuClockTz'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el || el._clockFixed) return;
+            el._clockFixed = true;
+            var sx, sy, mv;
+            el.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
+            el.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
+            el.addEventListener('touchend', function(e) {
+                if (mv) return;
+                e.preventDefault();
+                if (typeof toggleMainMenuClockTz === 'function') toggleMainMenuClockTz();
+            }, { passive: false });
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixClockTap);
+    } else {
+        fixClockTap();
+    }
+    setTimeout(fixClockTap, 500);
+})();
+</script>
+
+<!-- SETTINGS EYE BTN DIRECT FIX -->
+<script>
+(function() {
+    function fixSettingsEye() {
+        var btn = document.getElementById('settingsEyeBtn');
+        if (!btn || btn._eyeFixed) return;
+        btn._eyeFixed = true;
+        btn.style.pointerEvents = 'auto';
+        btn.style.touchAction = 'manipulation';
+        btn.style.cursor = 'pointer';
+        btn.style.position = 'relative';
+        btn.style.zIndex = '9999';
+
+        var startX, startY, moved;
+        btn.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            moved = false;
+        }, { passive: true });
+        btn.addEventListener('touchmove', function(e) {
+            if (Math.abs(e.touches[0].clientX - startX) > 6 || Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
+        }, { passive: true });
+        btn.addEventListener('touchend', function(e) {
+            if (moved) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
+        }, { passive: false });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixSettingsEye);
+    } else {
+        fixSettingsEye();
+    }
+    setTimeout(fixSettingsEye, 500);
+    setTimeout(fixSettingsEye, 1500);
+})();
+</script>
+
+<!-- EXCLAMATION POINT DIRECT FIX -->
+<script>
+(function() {
+    function fixExclam() {
+        var btn = document.getElementById('senderPwExclam');
+        if (!btn || btn._exclamFixed) return;
+        btn._exclamFixed = true;
+        btn.style.pointerEvents = 'auto';
+        btn.style.touchAction = 'manipulation';
+        btn.style.cursor = 'pointer';
+        btn.style.zIndex = '9999';
+        btn.style.position = 'relative';
+
+        var startX, startY, moved;
+        btn.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            moved = false;
+        }, { passive: true });
+        btn.addEventListener('touchmove', function(e) {
+            if (Math.abs(e.touches[0].clientX - startX) > 6 || Math.abs(e.touches[0].clientY - startY) > 6) moved = true;
+        }, { passive: true });
+        btn.addEventListener('touchend', function(e) {
+            if (moved) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof showImportantMessage === 'function') showImportantMessage();
+        }, { passive: false });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixExclam);
+    } else {
+        fixExclam();
+    }
+    setTimeout(fixExclam, 800);
+    setTimeout(fixExclam, 2000);
+})();
+</script>
+
+<!-- ABOUT ME GREEN BUTTON DIRECT FIX -->
+<script>
+(function() {
+    function fixAboutBtns() {
+        // Personal toggle button
+        var toggleBtn = document.getElementById('personalToggleBtn');
+        if (toggleBtn && !toggleBtn._abFixed) {
+            toggleBtn._abFixed = true;
+            toggleBtn.style.pointerEvents = 'auto';
+            toggleBtn.style.touchAction = 'manipulation';
+            toggleBtn.style.zIndex = '9999';
+            toggleBtn.style.position = 'relative';
+            var sx, sy, mv;
+            toggleBtn.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; mv = false; }, { passive: true });
+            toggleBtn.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
+            toggleBtn.addEventListener('touchend', function(e) {
+                if (mv) return;
+                e.preventDefault(); e.stopPropagation();
+                toggleBtn.click();
+            }, { passive: false });
+        }
+        // All green buttons inside about modal
+        document.querySelectorAll('#aboutModal button, #aboutModal [onclick], #aboutModal .info-toggle-button').forEach(function(el) {
+            if (el._abFixed) return;
+            el._abFixed = true;
+            el.style.pointerEvents = 'auto';
+            el.style.touchAction = 'manipulation';
+            el.style.position = 'relative';
+            el.style.zIndex = '100';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixAboutBtns);
+    } else {
+        fixAboutBtns();
+    }
+    setTimeout(fixAboutBtns, 500);
+    setTimeout(fixAboutBtns, 1500);
+    setInterval(fixAboutBtns, 2000);
+})();
+</script>
+<!-- ADMIN PANEL TRIGGER WIRING -->
+<script>
+(function() {
+    function wireAdminTriggers() {
+        // Wire version number (v. 1.8) — 5 clicks opens inbox gate
+        var versionEl = document.getElementById('settingsVersionEl');
+        if (versionEl && !versionEl._adminWired) {
+            versionEl._adminWired = true;
+            versionEl.style.cursor = 'pointer';
+            versionEl.style.userSelect = 'none';
+            versionEl.style.touchAction = 'manipulation';
+            versionEl.addEventListener('click', function() {
+                if (typeof settingsVersionClickHandler === 'function') settingsVersionClickHandler();
+            });
+            // Touch support
+            var sx, sy, mv;
+            versionEl.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
+            versionEl.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
+            versionEl.addEventListener('touchend', function(e) {
+                if (mv) return;
+                e.preventDefault();
+                if (typeof settingsVersionClickHandler === 'function') settingsVersionClickHandler();
+            }, { passive: false });
+        }
+
+        // Wire S letters in MESSAGE ME — 10 clicks triggers admin
+        document.querySelectorAll('#messageMeS, .clickable-s').forEach(function(el) {
+            if (el._adminWired) return;
+            el._adminWired = true;
+            el.style.cursor = 'pointer';
+            el.style.touchAction = 'manipulation';
+            el.addEventListener('click', function() {
+                if (typeof christmasSClickHandler === 'function') christmasSClickHandler();
+            });
+            var sx, sy, mv;
+            el.addEventListener('touchstart', function(e) { sx=e.touches[0].clientX; sy=e.touches[0].clientY; mv=false; }, { passive: true });
+            el.addEventListener('touchmove', function(e) { if(Math.abs(e.touches[0].clientX-sx)>6||Math.abs(e.touches[0].clientY-sy)>6) mv=true; }, { passive: true });
+            el.addEventListener('touchend', function(e) {
+                if (mv) return;
+                e.preventDefault();
+                if (typeof christmasSClickHandler === 'function') christmasSClickHandler();
+            }, { passive: false });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', wireAdminTriggers);
+    } else {
+        wireAdminTriggers();
+    }
+    setTimeout(wireAdminTriggers, 800);
+    setTimeout(wireAdminTriggers, 2000);
 })();
 </script>
 </body>
