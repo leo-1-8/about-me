@@ -29112,6 +29112,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
             else { el.click(); }
         }},
+        // Loading disclaimer ! button (exclamation on loading screen)
+        { id: 'loadingDisclaimerBtn', fn: function(el) {
+            el.click();
+        }},
         // Loading disclaimer OK button (shown when loading ends)
         { id: 'loadingDisclaimerOk', fn: function(el) {
             el.click();
@@ -29280,6 +29284,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         { sel: '.loading-disclaimer-ok', fn: function(el) {
             el.click();
         }},
+        // Loading disclaimer ! button
+        { sel: '.loading-disclaimer-btn', fn: function(el) {
+            el.click();
+        }},
         // See more / toggle links in updates modal
         { sel: '.see-more-link', fn: function(el) {
             var onclick = el.getAttribute('onclick');
@@ -29419,6 +29427,8 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         'comingSoonPreviewModal',
         'calendarComingSoonModal',
         'singerModal',
+        'loadingDisclaimerBtn',
+        'loadingDisclaimerOverlay',
         'loadingDisclaimerOk'
     ];
     
