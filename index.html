@@ -29080,6 +29080,38 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
             else { el.click(); }
         }},
+        // Password modal X button
+        { id: 'senderPwExitBtn', fn: function(el) {
+            if (typeof openPasswordExitConfirm === 'function') openPasswordExitConfirm();
+            else { el.click(); }
+        }},
+        // OTP/PIN eye button on login
+        { id: 'inboxPinEyeBtn', fn: function(el) {
+            var state = el.getAttribute('data-state');
+            var pinInput = document.getElementById('inboxPinInput');
+            if (pinInput) {
+                if (state === 'hidden') {
+                    pinInput.type = 'text';
+                    el.setAttribute('data-state', 'visible');
+                    el.textContent = '👁';
+                } else {
+                    pinInput.type = 'password';
+                    el.setAttribute('data-state', 'hidden');
+                    el.textContent = '👁‍🗨';
+                }
+            }
+            el.click();
+        }},
+        // Password submit button
+        { id: 'senderPasswordSubmitBtn', fn: function(el) {
+            if (typeof submitSenderPassword === 'function') submitSenderPassword();
+            else { el.click(); }
+        }},
+        // Password exit confirm button
+        { id: 'pwExitConfirmBtn', fn: function(el) {
+            if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
+            else { el.click(); }
+        }},
     ];
 
     var SELECTOR_ACTIONS = [
@@ -29092,14 +29124,34 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
                 el.click();
             }
         }},
-        // Message Me
+        // Message Me - Direct onclick execution
         { sel: '.christmas-message-link', fn: function(el) {
-            if (typeof handleMessageMeClick === 'function') {
-                var onclick = el.getAttribute('onclick');
-                if (onclick && onclick.indexOf('handleMessageMeClick') !== -1) {
-                    handleMessageMeClick();
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
                     return;
-                }
+                } catch(err) {}
+            }
+            if (typeof handleMessageMeClick === 'function') {
+                handleMessageMeClick();
+            } else {
+                el.click();
+            }
+        }},
+        // ALL Modal buttons - catch all patterns
+        { sel: 'button[type="button"]', fn: function(el) {
+            // Check if inside a modal
+            var inModal = el.closest('.modal-overlay') || el.closest('.modal-box') || 
+                         el.closest('[id*="Modal"]') || el.closest('[id*="modal"]');
+            if (!inModal) return; // Not in modal, skip
+            
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
             }
             el.click();
         }},
@@ -29131,6 +29183,99 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             el.click();
         }},
         { sel: '.myapps-app-box', fn: function(el) {
+            el.click();
+        }},
+        // Modal action buttons
+        { sel: '.modal-action-button', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        // Close buttons in modals
+        { sel: '.close-button', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        { sel: '.close-button-left', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        // Edit modal buttons
+        { sel: '.edit-modal-btn', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        // Music control buttons
+        { sel: '.music-control-button', fn: function(el) {
+            el.click();
+        }},
+        { sel: '.play-button', fn: function(el) {
+            el.click();
+        }},
+        { sel: '.music-info-button', fn: function(el) {
+            el.click();
+        }},
+        // Gaming link buttons
+        { sel: '.gaming-link-button', fn: function(el) {
+            el.click();
+        }},
+        // Password modal cancel/exit buttons
+        { sel: '.password-exit-cancel-btn', fn: function(el) {
+            if (typeof closePasswordExitConfirm === 'function') closePasswordExitConfirm();
+            else { el.click(); }
+        }},
+        { sel: '.password-exit-exit-btn', fn: function(el) {
+            if (typeof confirmPasswordExit === 'function') confirmPasswordExit();
+            else { el.click(); }
+        }},
+        // Secret word buttons (backup authentication)
+        { sel: '#secretWordCancel', fn: function(el) {
+            if (typeof cancelSecretWord === 'function') cancelSecretWord();
+            else { el.click(); }
+        }},
+        // Back buttons
+        { sel: '.back-button', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
+            el.click();
+        }},
+        // Link buttons in modals
+        { sel: 'a[type="button"]', fn: function(el) {
+            var onclick = el.getAttribute('onclick');
+            if (onclick) {
+                try {
+                    eval(onclick);
+                    return;
+                } catch(err) {}
+            }
             el.click();
         }},
     ];
@@ -29179,6 +29324,14 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         if (!el.style.pointerEvents || el.style.pointerEvents === 'none') {
             el.style.pointerEvents = 'auto';
         }
+        // For small buttons/icons, ensure they have proper z-index
+        if (el.offsetWidth < 50 && el.offsetHeight < 50) {
+            var zIndex = window.getComputedStyle(el).zIndex;
+            if (zIndex === 'auto' || parseInt(zIndex) < 1) {
+                el.style.position = el.style.position || 'relative';
+                el.style.zIndex = '10';
+            }
+        }
         el.addEventListener('touchstart', makeTouchHandler(actionFn, el), { passive: false });
     }
 
@@ -29191,7 +29344,8 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         });
         // Wire by selector
         SELECTOR_ACTIONS.forEach(function(entry) {
-            document.querySelectorAll(entry.sel).forEach(function(el) {
+            var elements = document.querySelectorAll(entry.sel);
+            elements.forEach(function(el) {
                 wireElement(el, entry.fn || null);
             });
         });
@@ -29203,9 +29357,46 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     } else {
         wireAll();
     }
+    // Aggressive rewiring schedule to catch all dynamic content
+    setTimeout(wireAll, 100);
+    setTimeout(wireAll, 300);
     setTimeout(wireAll, 500);
+    setTimeout(wireAll, 1000);
     setTimeout(wireAll, 1500);
+    setTimeout(wireAll, 2000);
     setTimeout(wireAll, 3000);
+
+    // Watch for specific modal elements and rewire when visible
+    var modalsToWatch = [
+        'senderPasswordModal',
+        'senderLoginModal', 
+        'passwordExitConfirmOverlay',
+        'christmasMessageModal',
+        'aboutModal',
+        'favoritesModal',
+        'gamingModal',
+        'myAppsModal',
+        'calculatorModal',
+        'boxDashModal',
+        'novaAIModal',
+        'clockModal'
+    ];
+    
+    var modalObs = new MutationObserver(function() {
+        wireAll();
+    });
+    
+    modalsToWatch.forEach(function(modalId) {
+        var modalEl = document.getElementById(modalId);
+        if (modalEl) {
+            modalObs.observe(modalEl, {
+                attributes: true,
+                attributeFilter: ['class', 'style', 'display'],
+                childList: true,
+                subtree: true
+            });
+        }
+    });
 
     // Watch for dynamic changes (modals opening, elements becoming visible)
     var mutationObs = new MutationObserver(function(mutations) {
@@ -29218,13 +29409,16 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
                      mut.target.classList.contains('show'))) {
                     needsReWire = true;
                 }
+                if (mut.attributeName === 'style' && mut.target.style.display !== 'none') {
+                    needsReWire = true;
+                }
             }
             if (mut.type === 'childList' && mut.addedNodes.length > 0) {
                 needsReWire = true;
             }
         });
         if (needsReWire) {
-            setTimeout(wireAll, 50);
+            wireAll();
         }
     });
     
@@ -29237,6 +29431,39 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
     // Also expose globally so it can be called after modals open
     window._masterTouchWireAll = wireAll;
+
+    // FALLBACK: Document-level catch-all for ANY button-like element
+    // This ensures even previously unknown elements can be clicked
+    document.addEventListener('touchstart', function(e) {
+        var el = e.target;
+        
+        // Check if this element or a parent is clickable
+        while (el && el !== document.body) {
+            var isClickable = (
+                el.tagName === 'BUTTON' ||
+                el.tagName === 'A' ||
+                el.getAttribute('onclick') ||
+                el.getAttribute('role') === 'button' ||
+                el.classList.contains('clickable') ||
+                el.classList.contains('button') ||
+                el.classList.contains('-btn') ||
+                el.classList.contains('link')
+            );
+            
+            if (isClickable && el._masterTouchDone) {
+                // Already has handler, don't interfere
+                break;
+            }
+            
+            if (isClickable && !el._masterTouchDone) {
+                // Found clickable element without handler, wire it now
+                wireElement(el, null);
+                break;
+            }
+            
+            el = el.parentElement;
+        }
+    }, { passive: true, capture: true });
 })();
 </script>
 </body>
