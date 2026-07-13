@@ -22,22 +22,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Additional: ensure all clickable divs have proper touch behavior */
-        .main-button, .christmas-message-link, .rate-us-link,
-        #visitsEyeBtn, #settingsBtn, #rateUsLink,
-        .christmas-message-link-wrapper, [onclick] {
-            touch-action: manipulation !important;
-            -webkit-tap-highlight-color: transparent !important;
-            cursor: pointer;
-        }
-
-        /* Prevent any overflow:hidden on main-content from clipping touch targets on mobile */
-        @media (max-width: 768px) {
-            #mainContent {
-                overflow: visible !important;
-            }
-        }
-
         :root {
             --font-timer: 'Share Tech Mono', 'JetBrains Mono', 'Segoe UI Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace;
             --vv-bottom-offset: 0px;
@@ -99,11 +83,8 @@
 
         @media (orientation: portrait) and (max-width: 768px) {
             html, body {
-                /* FIX: overflow:hidden on html/body breaks touch hit-testing on Android/iOS.
-                   Taps on non-fixed elements (buttons, links) don't register because the browser
-                   can't map touch coordinates to layout positions when the root is overflow:hidden.
-                   Only position:fixed elements (settings btn z:25001) were immune.
-                   Solution: let html/body scroll normally. */
+                /* CRITICAL FIX: overflow:hidden on root breaks Android touch hit-testing.
+                   Non-fixed elements become unclickable. Body must be the scroll container. */
                 overflow-x: hidden;
                 overflow-y: auto;
                 height: auto;
@@ -556,6 +537,16 @@
             background: rgba(2, 8, 18, 0.62);
             backdrop-filter: blur(6px);
         }
+        /* FIX: On mobile, backdrop-filter on settings-overlay creates a GPU compositing layer.
+           Android drops touch events on child buttons inside overflow:hidden containers within
+           compositing layers. Disable blur on mobile — use darker solid bg instead. */
+        @media (max-width: 768px) {
+            .settings-overlay {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: rgba(2, 8, 18, 0.88) !important;
+            }
+        }
         body.dark-mode .settings-overlay {
             background: rgba(2, 8, 18, 0.7);
         }
@@ -571,7 +562,11 @@
             border: 1px solid rgba(139, 191, 255, 0.22);
             border-radius: 12px;
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
-            overflow: hidden;
+            /* FIX: overflow:hidden inside a backdrop-filter compositing layer (settings-overlay)
+               causes Android Chrome to drop touch events on child buttons.
+               Use overflow:clip (no scroll, but no stacking context break) instead.
+               Fallback: visible — border-radius clipping still works via the parent. */
+            overflow: clip;
             color: rgba(235, 244, 255, 0.95);
             display: flex;
             flex-direction: column;
@@ -9097,8 +9092,9 @@
                 padding: 20px 15px;
                 padding-top: 80px;
                 padding-bottom: 100px;
-                /* FIX: Don't constrain height or set overflow here — this created a nested
-                   scroll container that broke touch events. Let body be the scroller. */
+                /* FIX: Don't set height:100vh + overflow-y:auto here — that makes main-content
+                   a nested scroll container inside overflow:hidden body, which kills Android touch.
+                   Let body scroll normally instead. */
                 height: auto;
                 min-height: 100vh;
                 max-height: none;
@@ -9108,9 +9104,6 @@
                 box-sizing: border-box;
                 gap: 0;
                 background: #ffffff;
-                -webkit-backface-visibility: hidden;
-                backface-visibility: hidden;
-                transform: translateZ(0);
             }
 
             .countdown-container {
@@ -10250,14 +10243,14 @@
             </svg>
         </button>
         <div class="button-container" id="mainButtonContainer" style="display: none;">
-            <button class="main-button btn-about" onclick="openModal('about')" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent;">
+            <button class="main-button btn-about" onclick="openModal('about')">
                 <span class="btn-sweep"></span>
                 <span class="christmas-deco-left">🎁</span>
                 <span class="christmas-deco-right">❄️</span>
                 <span data-i18n="btn_about">About Me</span>
             </button>
             <div class="favorites-and-whatsnew-row">
-                <button class="main-button btn-favorites" onclick="openModal('favorites')" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent;">
+                <button class="main-button btn-favorites" onclick="openModal('favorites')">
                     <span class="btn-sweep"></span>
                     <span class="christmas-deco-left">⛄</span>
                     <span class="christmas-deco-right">🎀</span>
@@ -10276,9 +10269,9 @@
         <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important; pointer-events:none !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; pointer-events:auto !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap; pointer-events:auto;">
-                    <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0; pointer-events:auto; touch-action:manipulation; -webkit-tap-highlight-color:transparent; cursor:pointer; min-width:48px; min-height:44px; display:inline-flex; align-items:center;">RATE US!</span>
+                    <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0; pointer-events:auto;">RATE US!</span>
                     <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe" style="width:auto; pointer-events:auto;">
-                        <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px; width:auto; pointer-events:auto; touch-action:manipulation; -webkit-tap-highlight-color:transparent; cursor:pointer; min-height:44px;">
+                        <div class="christmas-message-link update16-rainbow-title" onclick="handleMessageMeClick()" data-i18n="about_message_for_me" style="position:relative; display:inline-flex; align-items:center; gap:6px; width:auto; pointer-events:auto;">
                             MESSAGE ME
                         </div>
                     </div>
@@ -29001,59 +28994,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 </script>
 
 
-<!-- MOBILE TOUCH FIX: Force touchstart→click bridge for all key interactive elements.
-     Android WebView and some mobile browsers suppress click events when overflow geometry
-     is mismatched. touchstart with preventDefault() forces immediate response. -->
-<script>
-(function() {
-    function addTouchBridge(selector, handler) {
-        // Run now and again after DOM settles
-        function attach() {
-            document.querySelectorAll(selector).forEach(function(el) {
-                if (el._touchBridged) return;
-                el._touchBridged = true;
-                el.addEventListener('touchstart', function(e) {
-                    e.stopPropagation();
-                    // Don't preventDefault on buttons — let the native click fire too,
-                    // but add a direct call so it works even if click is suppressed
-                }, { passive: true });
-                el.addEventListener('touchend', function(e) {
-                    e.stopPropagation();
-                    // Simulate click if it doesn't fire within 300ms
-                    var fired = false;
-                    var onc = function() { fired = true; };
-                    el.addEventListener('click', onc, { once: true });
-                    setTimeout(function() {
-                        el.removeEventListener('click', onc);
-                        if (!fired) { el.click(); }
-                    }, 350);
-                }, { passive: true });
-            });
-        }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', attach);
-        } else {
-            attach();
-        }
-        setTimeout(attach, 500);
-        setTimeout(attach, 1500);
-    }
-
-    // Main nav buttons
-    addTouchBridge('.main-button', null);
-    // Rate Us
-    addTouchBridge('#rateUsLink', null);
-    // Message Me
-    addTouchBridge('#christmasLinkWrapperAboutMe, .christmas-message-link', null);
-    // Eye icon
-    addTouchBridge('#visitsEyeBtn', null);
-    // Settings button
-    addTouchBridge('#settingsBtn', null);
-    // All role=button spans/divs
-    addTouchBridge('[role="button"]', null);
-})();
-</script>
-
 <div id="tapDiag" style="display:none;position:fixed;top:0;left:0;right:0;background:rgba(255,0,0,0.92);color:#fff;font-size:13px;font-family:monospace;padding:8px 10px;z-index:9999999;word-break:break-all;line-height:1.5;pointer-events:none;"></div>
 <script>
 (function(){
@@ -29085,6 +29025,162 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     }
     diag.textContent = 'TAP('+Math.round(x)+','+Math.round(y)+'): '+info.join(' > ');
   }, {passive:true});
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MASTER MOBILE TOUCH FIX
+     Bypasses Android's broken click-event delivery inside:
+       • backdrop-filter compositing layers
+       • overflow:hidden scroll containers
+       • nested stacking contexts
+     Strategy: intercept touchend, call the element's action directly.
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+    'use strict';
+
+    // Map: element ID or selector → function to call
+    var DIRECT_ACTIONS = [
+        // Settings panel eye icon
+        { id: 'settingsEyeBtn', fn: function() {
+            if (typeof openSettingsVisitors === 'function') openSettingsVisitors();
+            else { var b = document.getElementById('settingsEyeBtn'); if (b) b.click(); }
+        }},
+        // Settings close button
+        { id: 'settingsCloseBtn', fn: function() {
+            if (typeof closeSettings === 'function') closeSettings();
+            else { var b = document.getElementById('settingsCloseBtn'); if (b) b.click(); }
+        }},
+        // Settings Open (What's New)
+        { id: 'settingsOpenUpdatesBtn', fn: function() {
+            var b = document.getElementById('settingsOpenUpdatesBtn'); if (b) b.click();
+        }},
+        // Settings Reset
+        { id: 'settingsResetDefaultsBtn', fn: function() {
+            var b = document.getElementById('settingsResetDefaultsBtn'); if (b) b.click();
+        }},
+        // Settings theme toggle
+        { id: 'themeToggle', fn: function() {
+            var b = document.getElementById('themeToggle'); if (b) b.click();
+        }},
+        // Visits eye btn inside login modal
+        { id: 'visitsEyeBtn', fn: function() {
+            if (typeof openVisitsModal === 'function') openVisitsModal();
+        }},
+        // Main nav buttons
+        { id: 'mainButtonContainer', fn: null }, // handled by children below
+        // Rate Us
+        { id: 'rateUsLink', fn: function() {
+            if (typeof handleRateUsClick === 'function') handleRateUsClick();
+        }},
+        // Visitors OK
+        { id: 'settingsVisitorsOkBtn', fn: function() {
+            if (typeof closeSettingsVisitors === 'function') closeSettingsVisitors();
+            else { var b = document.getElementById('settingsVisitorsOkBtn'); if (b) b.click(); }
+        }},
+    ];
+
+    var SELECTOR_ACTIONS = [
+        // About Me / Others buttons
+        { sel: '.main-button', fn: null },
+        // Message Me
+        { sel: '.christmas-message-link', fn: function(el) {
+            if (typeof handleMessageMeClick === 'function') {
+                var onclick = el.getAttribute('onclick');
+                if (onclick && onclick.indexOf('handleMessageMeClick') !== -1) {
+                    handleMessageMeClick();
+                    return;
+                }
+            }
+            el.click();
+        }},
+        // Settings warning/info buttons
+        { sel: '.settings-warning-btn', fn: null },
+        // Settings open buttons
+        { sel: '.settings-open-btn', fn: null },
+        // Settings OK buttons
+        { sel: '.settings-caution-ok', fn: null },
+        // Star rating
+        { sel: '.star-btn', fn: null },
+        // Language options
+        { sel: '.settings-lang-option', fn: null },
+        { sel: '.settings-lang-trigger', fn: null },
+        // Favorite cards
+        { sel: '.favorite-card.clickable', fn: null },
+        { sel: '.myapps-app-box', fn: null },
+    ];
+
+    function makeTouchHandler(actionFn, el) {
+        return function touchHandler(e) {
+            if (e.touches && e.touches.length > 1) return; // ignore multi-touch
+            var startX = (e.touches || e.changedTouches)[0].clientX;
+            var startY = (e.touches || e.changedTouches)[0].clientY;
+            var moved = false;
+
+            function onMove(mv) {
+                var t = mv.touches[0];
+                if (Math.abs(t.clientX - startX) > 8 || Math.abs(t.clientY - startY) > 8) {
+                    moved = true;
+                }
+            }
+            function onEnd(ev) {
+                el.removeEventListener('touchmove', onMove);
+                el.removeEventListener('touchend', onEnd);
+                el.removeEventListener('touchcancel', onEnd);
+                if (moved) return;
+                ev.preventDefault(); // stop ghost click
+                ev.stopPropagation();
+                try {
+                    if (actionFn) {
+                        actionFn(el);
+                    } else {
+                        el.click();
+                    }
+                } catch(err) {}
+            }
+
+            el.addEventListener('touchmove', onMove, { passive: true });
+            el.addEventListener('touchend', onEnd, { passive: false });
+            el.addEventListener('touchcancel', onEnd, { passive: false });
+        };
+    }
+
+    function wireElement(el, actionFn) {
+        if (!el || el._masterTouchDone) return;
+        el._masterTouchDone = true;
+        el.style.touchAction = 'manipulation';
+        el.style.webkitTapHighlightColor = 'transparent';
+        el.addEventListener('touchstart', makeTouchHandler(actionFn, el), { passive: false });
+    }
+
+    function wireAll() {
+        // Wire by ID
+        DIRECT_ACTIONS.forEach(function(entry) {
+            if (!entry.id) return;
+            var el = document.getElementById(entry.id);
+            if (el) wireElement(el, entry.fn);
+        });
+        // Wire by selector
+        SELECTOR_ACTIONS.forEach(function(entry) {
+            document.querySelectorAll(entry.sel).forEach(function(el) {
+                wireElement(el, entry.fn || null);
+            });
+        });
+    }
+
+    // Run now, after DOM, and after delays (for dynamically shown elements)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', wireAll);
+    } else {
+        wireAll();
+    }
+    setTimeout(wireAll, 500);
+    setTimeout(wireAll, 1500);
+    setTimeout(wireAll, 3000);
+
+    // Also expose globally so it can be called after modals open
+    window._masterTouchWireAll = wireAll;
 })();
 </script>
 </body>
