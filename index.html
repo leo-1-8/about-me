@@ -11711,7 +11711,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
     <div class="modal-overlay" id="senderPasswordModal">
         <div class="message-confirmation-box" onclick="event.stopPropagation();" style="max-width:380px; width:90%;">
             <!-- Exclamation/Info icon on the LEFT - SMALLER -->
-            <div id="senderPwExclam" style="position:absolute; top:16px; left:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transform: rotate(180deg); z-index:2;" onclick="showImportantMessage()" title="Important information">i</div>
+            <div id="senderPwExclam" style="position:absolute; top:16px; left:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transform: rotate(180deg); z-index:2; touch-action: manipulation;" onclick="showImportantMessage()" title="Important information">i</div>
             <button type="button" id="senderPwExitBtn" onclick="openPasswordExitConfirm()" title="Exit" aria-label="Exit" style="position:absolute; top:16px; right:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; border: none; padding: 0; line-height: 1; font-family: inherit; z-index:2;">✕</button>
             <div class="confirmation-header" style="margin-bottom: 20px; margin-top: -12px;">
                 <h3 class="confirmation-title" style="text-align: center; margin: 0;">PASSWORD</h3>
@@ -29448,42 +29448,22 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 <!-- SETTINGS EYE BUTTON MOBILE FIX -->
 <script>
 (function() {
+    // The settingsEyeBtn click handler (openSettingsVisitors) is already bound in the
+    // main window.onload script. This block just ensures the button's CSS properties
+    // are set correctly for mobile tap — no duplicate event handlers needed.
     function setupSettingsEyeBtn() {
         var btn = document.getElementById('settingsEyeBtn');
         if (!btn) return;
-        
-        // Add click handler
-        btn.addEventListener('click', function(e) {
-            try {
-                e.stopPropagation();
-                // Call the existing settings toggle function if it exists
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
-                }
-            } catch(err) {
-                console.warn('Settings eye click error:', err);
-            }
-        });
-        
-        // Add touch handler with passive listener
-        btn.addEventListener('touchend', function(e) {
-            try {
-                e.stopPropagation();
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
-                }
-            } catch(err) {
-                console.warn('Settings eye touch error:', err);
-            }
-        }, { passive: true });
-        
-        // Ensure button is visible and clickable
         btn.style.pointerEvents = 'auto';
         btn.style.cursor = 'pointer';
         btn.style.position = 'relative';
         btn.style.zIndex = '100';
+        // Guarantee the instant-tap handler is attached (it should already be via
+        // window._instantTapAttachAll, but run it here as insurance).
+        if (typeof window._instantTapAttachAll === 'function') {
+            window._instantTapAttachAll();
+        }
     }
-    
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
     } else {
@@ -29570,10 +29550,12 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         }
     }, false);
     
-    // Reset on touch end
+    // Reset on touch end — use capture phase (true) so this runs BEFORE any
+    // element-level touchend handlers that call el.click() (instant-tap fix).
+    // That way isScrolling is already false when the synthetic click is dispatched.
     document.addEventListener('touchend', function(e) {
         touchData.isScrolling = false;
-    }, false);
+    }, true);
     
     // INTERCEPT ALL CLICKS - block if user was scrolling
     // Capture phase (true) intercepts BEFORE onclick handlers fire
