@@ -29058,7 +29058,7 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     // Intercept ALL clicks and make sure they work
     function universalClickFix() {
         // Get all clickable elements
-        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn');
+        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn, #loginPwEyeBtn, #otpEyeBtn, #inboxPinEyeBtn, .otp-eye-btn');
         
         allClickable.forEach(function(el) {
             if (el._universalFixDone) return;
@@ -29110,6 +29110,109 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     setTimeout(universalClickFix, 800);
     setTimeout(universalClickFix, 1500);
     setTimeout(universalClickFix, 3000);
+})();
+</script>
+
+<!-- FIX ALL EYE ICONS ON THE SITE -->
+<script>
+(function() {
+    function fixAllEyeButtons() {
+        // LIST OF ALL EYE BUTTON IDs
+        var eyeButtonIds = [
+            'senderPwEyeBtn',      // Password creation modal
+            'loginPwEyeBtn',       // Login modal
+            'otpEyeBtn',           // OTP modal
+            'inboxPinEyeBtn',      // Inbox PIN
+            'settingsEyeBtn',      // Settings
+            'visitsEyeBtn'         // Visits
+        ];
+        
+        eyeButtonIds.forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (btn) {
+                // Always ensure these properties are set
+                btn.style.pointerEvents = 'auto';
+                btn.style.touchAction = 'manipulation';
+                btn.style.cursor = 'pointer';
+                
+                if (!btn._eyeFixed) {
+                    btn._eyeFixed = true;
+                    
+                    // For buttons without onclick, dispatch click on touch
+                    if (!btn.getAttribute('onclick')) {
+                        btn.addEventListener('touchend', function(e) {
+                            try {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // Dispatch a synthetic click event to trigger existing listeners
+                                var clickEvent = new MouseEvent('click', {
+                                    view: window,
+                                    bubbles: true,
+                                    cancelable: true
+                                });
+                                btn.dispatchEvent(clickEvent);
+                            } catch(err) { 
+                                console.warn('Eye touch dispatch error:', err); 
+                            }
+                        }, { passive: false });
+                    } else {
+                        // For buttons with onclick, add both listeners
+                        var onclick = btn.getAttribute('onclick');
+                        btn.addEventListener('click', function(e) {
+                            try { eval(onclick); } catch(err) { }
+                        });
+                        btn.addEventListener('touchend', function(e) {
+                            try { 
+                                e.preventDefault();
+                                eval(onclick); 
+                            } catch(err) { }
+                        }, { passive: false });
+                    }
+                }
+            }
+        });
+        
+        // Fix all eye buttons by class - ensure pointer-events and touch-action
+        var eyeButtonClasses = ['.otp-eye-btn', '.settings-eye-btn'];
+        eyeButtonClasses.forEach(function(cls) {
+            document.querySelectorAll(cls).forEach(function(btn) {
+                btn.style.pointerEvents = 'auto';
+                btn.style.touchAction = 'manipulation';
+                btn.style.cursor = 'pointer';
+                
+                if (!btn._eyeClassFixed) {
+                    btn._eyeClassFixed = true;
+                    
+                    // Add touch listener that dispatches click for event listeners
+                    btn.addEventListener('touchend', function(e) {
+                        try {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            var clickEvent = new MouseEvent('click', {
+                                view: window,
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            btn.dispatchEvent(clickEvent);
+                        } catch(err) { 
+                            console.warn('Eye class touch error:', err); 
+                        }
+                    }, { passive: false });
+                }
+            });
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixAllEyeButtons);
+    } else {
+        fixAllEyeButtons();
+    }
+    
+    setTimeout(fixAllEyeButtons, 300);
+    setTimeout(fixAllEyeButtons, 800);
+    setTimeout(fixAllEyeButtons, 1500);
+    setInterval(fixAllEyeButtons, 2000);
 })();
 </script>
 
@@ -29416,7 +29519,9 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
             '.clickable',
             '#senderPwExitBtn', '#senderPwEyeBtn', '#senderPasswordSubmitBtn',
             '#senderPwExclam',
-            '.password-exit-cancel-btn', '#pwExitConfirmBtn'
+            '.password-exit-cancel-btn', '#pwExitConfirmBtn',
+            '#loginPwEyeBtn', '#otpEyeBtn', '#inboxPinEyeBtn',
+            '.otp-eye-btn'
         ];
 
         selectors.forEach(function(sel) {
