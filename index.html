@@ -29007,19 +29007,38 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
         if (el.style.touchAction !== 'manipulation') {
             el.style.touchAction = 'manipulation';
         }
+        // Also ensure pointer-events is not none
+        if (el.style.pointerEvents === 'none') {
+            el.style.pointerEvents = 'auto';
+        }
     }
 
     function fixAll() {
         var selectors = [
             'button', 'a[href]', '[role="button"]', '[onclick]',
             'input', 'textarea', '.main-button', '.favorite-card',
-            '.myapps-app-box', '.settings-open-btn', '.settings-close'
+            '.myapps-app-box', '.settings-open-btn', '.settings-close',
+            // Add missing elements explicitly
+            '#rateUsLink', '.rate-us-link',
+            '#settingsEyeBtn', '.settings-eye-btn',
+            '#visitsEyeBtn',
+            '.name-submit-btn', '.settings-warning-btn'
         ];
 
         selectors.forEach(function(sel) {
             try {
                 document.querySelectorAll(sel).forEach(fixElement);
             } catch(err) {}
+        });
+
+        // Direct ID fixes for the problematic elements
+        ['rateUsLink', 'settingsEyeBtn', 'visitsEyeBtn'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                fixElement(el);
+                el.style.pointerEvents = 'auto';
+                el.style.cursor = 'pointer';
+            }
         });
     }
 
