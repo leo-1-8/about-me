@@ -534,18 +534,9 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: rgba(2, 8, 18, 0.62);
-            backdrop-filter: blur(6px);
-        }
-        /* FIX: On mobile, backdrop-filter on settings-overlay creates a GPU compositing layer.
-           Android drops touch events on child buttons inside overflow:hidden containers within
-           compositing layers. Disable blur on mobile — use darker solid bg instead. */
-        @media (max-width: 768px) {
-            .settings-overlay {
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-                background: rgba(2, 8, 18, 0.88) !important;
-            }
+            /* FIXED: backdrop-filter removed entirely — it creates a GPU compositing layer on Android
+               that causes ALL touch events on child buttons to be dropped silently. */
+            background: rgba(2, 8, 18, 0.88);
         }
         body.dark-mode .settings-overlay {
             background: rgba(2, 8, 18, 0.7);
@@ -562,11 +553,7 @@
             border: 1px solid rgba(139, 191, 255, 0.22);
             border-radius: 12px;
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
-            /* FIX: overflow:hidden inside a backdrop-filter compositing layer (settings-overlay)
-               causes Android Chrome to drop touch events on child buttons.
-               Use overflow:clip (no scroll, but no stacking context break) instead.
-               Fallback: visible — border-radius clipping still works via the parent. */
-            overflow: clip;
+            overflow: hidden;
             color: rgba(235, 244, 255, 0.95);
             display: flex;
             flex-direction: column;
@@ -13807,7 +13794,8 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     _settingsHoldFired = false;
                     _settingsHoldTimer = setTimeout(function() {
                         _settingsHoldFired = true;
-                        openMessageInboxGate();
+                        if (typeof closeSettings === 'function') closeSettings();
+                        setTimeout(function() { openMessageInboxGate(); }, 100);
                     }, 3000);
                 }
                 function _cancelSettingsHold() {
@@ -15874,9 +15862,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         function toggleMainMenuClockTz() {
             var tzEl = document.getElementById('mainMenuClockTz');
             if (!tzEl) return;
-            var computed = window.getComputedStyle(tzEl).display;
-            var showing = computed !== 'none';
-            tzEl.style.display = showing ? 'none' : 'inline-flex';
+            if (tzEl.style.display === 'none' || tzEl.style.display === '') {
+                tzEl.style.display = 'inline-flex';
+            } else {
+                tzEl.style.display = 'none';
+            }
         }
 
         const CLOCK_APP_STORAGE = 'clockAppBgState';
@@ -19301,11 +19291,11 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
 
-                // Hide bottomStack so it never intercepts clicks on the modal
+                // Hide bottomStack visually — NEVER use pointer-events:none (it blocks all buttons when modal closes)
                 var _bs = document.getElementById('bottomStack');
                 if (_bs) {
                     _bs.style.visibility = 'hidden';
-                    _bs.style.pointerEvents = 'none';
+                    _bs.style.pointerEvents = 'auto';
                 }
 
                 // Re-attach instant-tap listeners so there is zero 300ms tap delay on first touch
@@ -19581,13 +19571,13 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 document.documentElement.style.overflow = 'auto';
             }
 
-            // FIX: Restore bottomStack only if no other modal is still open
+            // Restore bottomStack visibility when no modal is open
             var _anyOpen = document.querySelector('.modal-overlay.active');
-            if (!_anyOpen) {
-                var _bs = document.getElementById('bottomStack');
-                if (_bs) {
+            var _bs = document.getElementById('bottomStack');
+            if (_bs) {
+                _bs.style.pointerEvents = 'auto'; // ALWAYS restore pointer-events
+                if (!_anyOpen) {
                     _bs.style.visibility = '';
-                    _bs.style.pointerEvents = '';
                 }
             }
             // When leaving My Favorites, resume background music smoothly if it was playing before
@@ -28911,28 +28901,25 @@ var _visitsThemeObserver = new MutationObserver(function() {
 });
 _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-// ── Direct touch fix for visitsEyeBtn (FIXED - no preventDefault blocking) ──
+// ── visitsEyeBtn touch fix ──
 (function() {
     function attachVisitsEyeTouch() {
         var btn = document.getElementById('visitsEyeBtn');
         if (!btn || btn._visitsTouchDone) return;
         btn._visitsTouchDone = true;
-        // Use click event - more reliable on mobile
-        btn.addEventListener('click', function(e) {
-            openVisitsModal();
-        });
-        // Also add touchend for immediate feedback
+        btn.style.pointerEvents = 'auto';
+        btn.style.touchAction = 'manipulation';
         btn.addEventListener('touchend', function(e) {
-            e.stopPropagation();
+            e.preventDefault();
             openVisitsModal();
-        }, { passive: true });
+        }, { passive: false });
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachVisitsEyeTouch);
     } else {
         attachVisitsEyeTouch();
     }
-    setTimeout(attachVisitsEyeTouch, 800);
+    setTimeout(attachVisitsEyeTouch, 500);
 })();
 </script>
 
@@ -29030,635 +29017,6 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
-
-<!-- UNIVERSAL MOBILE CLICK FIX FOR FAVORITE CARDS -->
-<script>
-(function() {
-    function fixFavoriteCards() {
-        var cards = document.querySelectorAll('.favorite-card.clickable');
-        cards.forEach(function(card) {
-            if (card._cardFixed) return;
-            card._cardFixed = true;
-            
-            // Ensure card is clickable
-            card.style.pointerEvents = 'auto';
-            card.style.touchAction = 'manipulation';
-            card.style.cursor = 'pointer';
-            
-            // Add click handler
-            card.addEventListener('click', function(e) {
-                try {
-                    var onclick = card.getAttribute('onclick');
-                    if (onclick) {
-                        // Execute the onclick code
-                        eval(onclick);
-                    }
-                } catch(err) {
-                    console.warn('Card click error:', err);
-                }
-            });
-            
-            // Add touch handler
-            card.addEventListener('touchend', function(e) {
-                try {
-                    var onclick = card.getAttribute('onclick');
-                    if (onclick) {
-                        eval(onclick);
-                    }
-                } catch(err) {
-                    console.warn('Card touch error:', err);
-                }
-            }, { passive: true });
-        });
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixFavoriteCards);
-    } else {
-        fixFavoriteCards();
-    }
-    
-    // Keep running to catch dynamically added cards
-    setInterval(fixFavoriteCards, 1000);
-})();
-</script>
-
-<!-- UNIVERSAL MOBILE CLICK FIX FOR ALL BUTTONS -->
-<script>
-(function() {
-    // Intercept ALL clicks and make sure they work
-    function universalClickFix() {
-        // Get all clickable elements
-        var allClickable = document.querySelectorAll('button, [onclick], [role="button"], a, .main-button, .christmas-message-link, .rate-us-link, .favorites-and-whatsnew-row, .settings-open-btn, .settings-close, .favorite-card.clickable, .clickable, #senderPwExitBtn, #senderPwEyeBtn, #senderPasswordSubmitBtn, #senderPwExclam, .password-exit-cancel-btn, #pwExitConfirmBtn, #loginPwEyeBtn, #otpEyeBtn, #inboxPinEyeBtn, .otp-eye-btn, .see-more-link, .info-toggle-button');
-        
-        allClickable.forEach(function(el) {
-            if (el._universalFixDone) return;
-            el._universalFixDone = true;
-            
-            // Fix pointer events
-            el.style.pointerEvents = 'auto';
-            el.style.touchAction = 'manipulation';
-            el.style.cursor = 'pointer';
-            
-            // Add click listener that executes onclick if present
-            el.addEventListener('click', function(e) {
-                try {
-                    var onclick = el.getAttribute('onclick');
-                    if (onclick) {
-                        eval(onclick);
-                    }
-                } catch(err) {
-                    console.warn('Click error:', err);
-                }
-            });
-            
-            // Add touch listener
-            el.addEventListener('touchend', function(e) {
-                try {
-                    // Trigger click event manually for touch
-                    var clickEvent = new MouseEvent('click', {
-                        view: window,
-                        bubbles: true,
-                        cancelable: true
-                    });
-                    el.dispatchEvent(clickEvent);
-                } catch(err) {
-                    console.warn('Touch error:', err);
-                }
-            }, { passive: true });
-        });
-    }
-    
-    // Run immediately
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', universalClickFix);
-    } else {
-        universalClickFix();
-    }
-    
-    // Run multiple times to catch dynamic elements
-    setTimeout(universalClickFix, 300);
-    setTimeout(universalClickFix, 800);
-    setTimeout(universalClickFix, 1500);
-    setTimeout(universalClickFix, 3000);
-})();
-</script>
-
-<!-- FIX SEE MORE/LESS AND HOBBIES/FAVORITES BUTTONS -->
-<script>
-(function() {
-    function fixSeeMoreLessButtons() {
-        // FIX ALL "SEE MORE" AND "SEE LESS" LINKS
-        var seeMoreLinks = document.querySelectorAll('.see-more-link');
-        seeMoreLinks.forEach(function(link) {
-            // Always ensure these properties are set
-            link.style.pointerEvents = 'auto';
-            link.style.touchAction = 'manipulation';
-            link.style.cursor = 'pointer';
-            
-            if (!link._seeMoreFixed) {
-                link._seeMoreFixed = true;
-                
-                var onclick = link.getAttribute('onclick');
-                if (onclick) {
-                    // Add click listener
-                    link.addEventListener('click', function(e) {
-                        try {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            eval(onclick);
-                        } catch(err) { 
-                            console.warn('See more click error:', err); 
-                        }
-                    });
-                    
-                    // Add touch listener that executes onclick
-                    link.addEventListener('touchend', function(e) {
-                        try {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            eval(onclick);
-                        } catch(err) { 
-                            console.warn('See more touch error:', err); 
-                        }
-                    }, { passive: false });
-                }
-            }
-        });
-        
-        // FIX HOBBIES AND FAVORITES TOGGLE BUTTONS
-        var toggleButtons = document.querySelectorAll('.info-toggle-button');
-        toggleButtons.forEach(function(btn) {
-            // Always ensure these properties are set
-            btn.style.pointerEvents = 'auto';
-            btn.style.touchAction = 'manipulation';
-            btn.style.cursor = 'pointer';
-            
-            if (!btn._toggleFixed) {
-                btn._toggleFixed = true;
-                
-                var onclick = btn.getAttribute('onclick');
-                if (onclick) {
-                    btn.addEventListener('click', function(e) {
-                        try {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            eval(onclick);
-                        } catch(err) { 
-                            console.warn('Toggle button click error:', err); 
-                        }
-                    });
-                    
-                    btn.addEventListener('touchend', function(e) {
-                        try {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            eval(onclick);
-                        } catch(err) { 
-                            console.warn('Toggle button touch error:', err); 
-                        }
-                    }, { passive: false });
-                }
-            }
-        });
-        
-        // FIX PERSONAL DETAILS TOGGLE
-        var personalToggleBtn = document.getElementById('personalToggleBtn');
-        if (personalToggleBtn) {
-            personalToggleBtn.style.pointerEvents = 'auto';
-            personalToggleBtn.style.touchAction = 'manipulation';
-            personalToggleBtn.style.cursor = 'pointer';
-            
-            if (!personalToggleBtn._personalFixed) {
-                personalToggleBtn._personalFixed = true;
-                
-                personalToggleBtn.addEventListener('click', function(e) {
-                    try {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        var clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true
-                        });
-                        personalToggleBtn.dispatchEvent(clickEvent);
-                    } catch(err) { 
-                        console.warn('Personal toggle click error:', err); 
-                    }
-                });
-                
-                personalToggleBtn.addEventListener('touchend', function(e) {
-                    try {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        var clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true
-                        });
-                        personalToggleBtn.dispatchEvent(clickEvent);
-                    } catch(err) { 
-                        console.warn('Personal toggle touch error:', err); 
-                    }
-                }, { passive: false });
-            }
-        }
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixSeeMoreLessButtons);
-    } else {
-        fixSeeMoreLessButtons();
-    }
-    
-    setTimeout(fixSeeMoreLessButtons, 300);
-    setTimeout(fixSeeMoreLessButtons, 800);
-    setTimeout(fixSeeMoreLessButtons, 1500);
-    setInterval(fixSeeMoreLessButtons, 2000);
-})();
-</script>
-
-<!-- FIX ALL EYE ICONS ON THE SITE -->
-<script>
-(function() {
-    function fixAllEyeButtons() {
-        // LIST OF ALL EYE BUTTON IDs
-        var eyeButtonIds = [
-            'senderPwEyeBtn',      // Password creation modal
-            'loginPwEyeBtn',       // Login modal
-            'otpEyeBtn',           // OTP modal
-            'inboxPinEyeBtn',      // Inbox PIN
-            'settingsEyeBtn',      // Settings
-            'visitsEyeBtn'         // Visits
-        ];
-        
-        eyeButtonIds.forEach(function(id) {
-            var btn = document.getElementById(id);
-            if (btn) {
-                // Always ensure these properties are set
-                btn.style.pointerEvents = 'auto';
-                btn.style.touchAction = 'manipulation';
-                btn.style.cursor = 'pointer';
-                
-                if (!btn._eyeFixed) {
-                    btn._eyeFixed = true;
-                    
-                    // For buttons without onclick, dispatch click on touch
-                    if (!btn.getAttribute('onclick')) {
-                        btn.addEventListener('touchend', function(e) {
-                            try {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                // Dispatch a synthetic click event to trigger existing listeners
-                                var clickEvent = new MouseEvent('click', {
-                                    view: window,
-                                    bubbles: true,
-                                    cancelable: true
-                                });
-                                btn.dispatchEvent(clickEvent);
-                            } catch(err) { 
-                                console.warn('Eye touch dispatch error:', err); 
-                            }
-                        }, { passive: false });
-                    } else {
-                        // For buttons with onclick, add both listeners
-                        var onclick = btn.getAttribute('onclick');
-                        btn.addEventListener('click', function(e) {
-                            try { eval(onclick); } catch(err) { }
-                        });
-                        btn.addEventListener('touchend', function(e) {
-                            try { 
-                                e.preventDefault();
-                                eval(onclick); 
-                            } catch(err) { }
-                        }, { passive: false });
-                    }
-                }
-            }
-        });
-        
-        // Fix all eye buttons by class - ensure pointer-events and touch-action
-        var eyeButtonClasses = ['.otp-eye-btn', '.settings-eye-btn'];
-        eyeButtonClasses.forEach(function(cls) {
-            document.querySelectorAll(cls).forEach(function(btn) {
-                btn.style.pointerEvents = 'auto';
-                btn.style.touchAction = 'manipulation';
-                btn.style.cursor = 'pointer';
-                
-                if (!btn._eyeClassFixed) {
-                    btn._eyeClassFixed = true;
-                    
-                    // Add touch listener that dispatches click for event listeners
-                    btn.addEventListener('touchend', function(e) {
-                        try {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var clickEvent = new MouseEvent('click', {
-                                view: window,
-                                bubbles: true,
-                                cancelable: true
-                            });
-                            btn.dispatchEvent(clickEvent);
-                        } catch(err) { 
-                            console.warn('Eye class touch error:', err); 
-                        }
-                    }, { passive: false });
-                }
-            });
-        });
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixAllEyeButtons);
-    } else {
-        fixAllEyeButtons();
-    }
-    
-    setTimeout(fixAllEyeButtons, 300);
-    setTimeout(fixAllEyeButtons, 800);
-    setTimeout(fixAllEyeButtons, 1500);
-    setInterval(fixAllEyeButtons, 2000);
-})();
-</script>
-
-<!-- FIX PASSWORD MODAL BUTTONS - EXCLAMATION & X -->
-<script>
-(function() {
-    function fixPasswordModalButtons() {
-        // X BUTTON (Exit button)
-        var exitBtn = document.getElementById('senderPwExitBtn');
-        if (exitBtn && !exitBtn._fixed) {
-            exitBtn._fixed = true;
-            exitBtn.style.pointerEvents = 'auto';
-            exitBtn.style.touchAction = 'manipulation';
-            exitBtn.addEventListener('click', function(e) {
-                try {
-                    openPasswordExitConfirm();
-                } catch(err) { console.warn('X button error:', err); }
-            });
-            exitBtn.addEventListener('touchend', function(e) {
-                try {
-                    openPasswordExitConfirm();
-                } catch(err) { console.warn('X button touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // EXCLAMATION BUTTON (Info/Important message)
-        var exclaimBtn = document.getElementById('senderPwExclam');
-        if (exclaimBtn && !exclaimBtn._fixed) {
-            exclaimBtn._fixed = true;
-            exclaimBtn.style.pointerEvents = 'auto';
-            exclaimBtn.style.touchAction = 'manipulation';
-            exclaimBtn.style.cursor = 'pointer';
-            exclaimBtn.addEventListener('click', function(e) {
-                try {
-                    showImportantMessage();
-                } catch(err) { console.warn('Exclamation button error:', err); }
-            });
-            exclaimBtn.addEventListener('touchend', function(e) {
-                try {
-                    showImportantMessage();
-                } catch(err) { console.warn('Exclamation button touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // EYE BUTTON (Toggle password visibility)
-        var eyeBtn = document.getElementById('senderPwEyeBtn');
-        if (eyeBtn && !eyeBtn._fixed) {
-            eyeBtn._fixed = true;
-            eyeBtn.style.pointerEvents = 'auto';
-            eyeBtn.style.touchAction = 'manipulation';
-            eyeBtn.addEventListener('click', function(e) {
-                try {
-                    toggleSenderPwVisibility();
-                } catch(err) { console.warn('Eye button error:', err); }
-            });
-            eyeBtn.addEventListener('touchend', function(e) {
-                try {
-                    toggleSenderPwVisibility();
-                } catch(err) { console.warn('Eye button touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // SUBMIT BUTTON
-        var submitBtn = document.getElementById('senderPasswordSubmitBtn');
-        if (submitBtn && !submitBtn._fixed) {
-            submitBtn._fixed = true;
-            submitBtn.style.pointerEvents = 'auto';
-            submitBtn.style.touchAction = 'manipulation';
-            submitBtn.addEventListener('click', function(e) {
-                try {
-                    submitSenderPassword();
-                } catch(err) { console.warn('Submit button error:', err); }
-            });
-            submitBtn.addEventListener('touchend', function(e) {
-                try {
-                    submitSenderPassword();
-                } catch(err) { console.warn('Submit button touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // PASSWORD EXIT CONFIRMATION - CANCEL BUTTON
-        var cancelBtn = document.querySelector('.password-exit-cancel-btn');
-        if (cancelBtn && !cancelBtn._fixed) {
-            cancelBtn._fixed = true;
-            cancelBtn.style.pointerEvents = 'auto';
-            cancelBtn.style.touchAction = 'manipulation';
-            cancelBtn.addEventListener('click', function(e) {
-                try {
-                    closePasswordExitConfirm();
-                } catch(err) { console.warn('Cancel button error:', err); }
-            });
-            cancelBtn.addEventListener('touchend', function(e) {
-                try {
-                    closePasswordExitConfirm();
-                } catch(err) { console.warn('Cancel button touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // PASSWORD EXIT CONFIRMATION - EXIT BUTTON
-        var confirmExitBtn = document.getElementById('pwExitConfirmBtn');
-        if (confirmExitBtn && !confirmExitBtn._fixed) {
-            confirmExitBtn._fixed = true;
-            confirmExitBtn.style.pointerEvents = 'auto';
-            confirmExitBtn.style.touchAction = 'manipulation';
-            confirmExitBtn.addEventListener('click', function(e) {
-                try {
-                    confirmPasswordExit();
-                } catch(err) { console.warn('Confirm exit button error:', err); }
-            });
-            confirmExitBtn.addEventListener('touchend', function(e) {
-                try {
-                    confirmPasswordExit();
-                } catch(err) { console.warn('Confirm exit button touch error:', err); }
-            }, { passive: true });
-        }
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixPasswordModalButtons);
-    } else {
-        fixPasswordModalButtons();
-    }
-    
-    // Run multiple times for dynamic elements
-    setTimeout(fixPasswordModalButtons, 300);
-    setTimeout(fixPasswordModalButtons, 800);
-    setTimeout(fixPasswordModalButtons, 1500);
-    setInterval(fixPasswordModalButtons, 2000);
-})();
-</script>
-
-<!-- FIX ABOUT ME, OTHERS, RATE US, MESSAGE ME BUTTONS -->
-<script>
-(function() {
-    function attachButtonHandlers() {
-        // ABOUT ME BUTTON
-        var aboutBtns = document.querySelectorAll('.btn-about');
-        aboutBtns.forEach(function(btn) {
-            if (btn._aboutFixed) return;
-            btn._aboutFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openModal('about');
-                } catch(err) { console.warn('About Me click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openModal('about');
-                } catch(err) { console.warn('About Me touch error:', err); }
-            }, { passive: true });
-        });
-        
-        // OTHERS BUTTON
-        var othersBtns = document.querySelectorAll('.btn-favorites');
-        othersBtns.forEach(function(btn) {
-            if (btn._othersFixed) return;
-            btn._othersFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openModal('favorites');
-                } catch(err) { console.warn('Others click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openModal('favorites');
-                } catch(err) { console.warn('Others touch error:', err); }
-            }, { passive: true });
-        });
-        
-        // RATE US BUTTON
-        var rateBtn = document.getElementById('rateUsLink');
-        if (rateBtn && !rateBtn._rateFixed) {
-            rateBtn._rateFixed = true;
-            rateBtn.addEventListener('click', function(e) {
-                try {
-                    e.stopPropagation();
-                    handleRateUsClick();
-                } catch(err) { console.warn('Rate Us click error:', err); }
-            });
-            rateBtn.addEventListener('touchend', function(e) {
-                try {
-                    e.stopPropagation();
-                    handleRateUsClick();
-                } catch(err) { console.warn('Rate Us touch error:', err); }
-            }, { passive: true });
-        }
-        
-        // MESSAGE ME BUTTON - both handlers
-        var messageBtns = document.querySelectorAll('[onclick*="handleMessageMeClick"]');
-        messageBtns.forEach(function(btn) {
-            if (btn._messageFixed) return;
-            btn._messageFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    handleMessageMeClick();
-                } catch(err) { console.warn('Message Me click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    handleMessageMeClick();
-                } catch(err) { console.warn('Message Me touch error:', err); }
-            }, { passive: true });
-        });
-        
-        // Also fix the gate version
-        var gateBtns = document.querySelectorAll('[onclick*="openMessageInboxGate"]');
-        gateBtns.forEach(function(btn) {
-            if (btn._gateFixed) return;
-            btn._gateFixed = true;
-            btn.addEventListener('click', function(e) {
-                try {
-                    openMessageInboxGate();
-                } catch(err) { console.warn('Message gate click error:', err); }
-            });
-            btn.addEventListener('touchend', function(e) {
-                try {
-                    openMessageInboxGate();
-                } catch(err) { console.warn('Message gate touch error:', err); }
-            }, { passive: true });
-        });
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', attachButtonHandlers);
-    } else {
-        attachButtonHandlers();
-    }
-    
-    // Re-run for dynamic elements
-    setTimeout(attachButtonHandlers, 500);
-    setTimeout(attachButtonHandlers, 1500);
-})();
-</script>
-
-<!-- SETTINGS EYE BUTTON MOBILE FIX -->
-<script>
-(function() {
-    function setupSettingsEyeBtn() {
-        var btn = document.getElementById('settingsEyeBtn');
-        if (!btn) return;
-        
-        // Add click handler
-        btn.addEventListener('click', function(e) {
-            try {
-                e.stopPropagation();
-                // Call the existing settings toggle function if it exists
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
-                }
-            } catch(err) {
-                console.warn('Settings eye click error:', err);
-            }
-        });
-        
-        // Add touch handler with passive listener
-        btn.addEventListener('touchend', function(e) {
-            try {
-                e.stopPropagation();
-                if (typeof toggleSystemSettings === 'function') {
-                    toggleSystemSettings();
-                }
-            } catch(err) {
-                console.warn('Settings eye touch error:', err);
-            }
-        }, { passive: true });
-        
-        // Ensure button is visible and clickable
-        btn.style.pointerEvents = 'auto';
-        btn.style.cursor = 'pointer';
-        btn.style.position = 'relative';
-        btn.style.zIndex = '100';
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupSettingsEyeBtn);
-    } else {
-        setupSettingsEyeBtn();
-    }
-    setTimeout(setupSettingsEyeBtn, 500);
-})();
-</script>
 
 <!-- COMPREHENSIVE MOBILE FIX - ALL CLICKABILITY ISSUES -->
 <script>
