@@ -8433,6 +8433,15 @@
             font-size: 12px;
             width: auto;
             text-align: center;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        .form-link-below a {
+            color: #2e7d32 !important;
+            font-weight: 700 !important;
+            font-style: italic !important;
+            text-decoration: none !important;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body.intro-visible .form-link-below {
@@ -13035,7 +13044,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 </div>
                 <div style="font-weight:900; margin-bottom:6px;"><span data-i18n="visitors_viewing_now">Viewing Now:</span> <span id="settingsViewingNowCount">0</span></div>
                 <div style="font-weight:900; margin-bottom:6px;"><span data-i18n="visitors_visits">Visits:</span> <span id="settingsVisitorsCount">0</span></div>
-                <div style="font-weight:900;">Reviews: <span id="settingsReviewCount">0</span></div>
+
             </div>
             <button type="button" class="settings-caution-ok" id="settingsVisitorsOkBtn" data-i18n="btn_ok">OK</button>
         </div>
@@ -18534,16 +18543,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
         // area with window.visualViewport and expose the difference as a CSS variable so the
         // fixed elements lift themselves above whatever Chrome's toolbar is currently covering.
         function updateVisualViewportOffset() {
-            if (!window.visualViewport) return;
-            var offset = window.innerHeight - (window.visualViewport.height + window.visualViewport.offsetTop);
-            if (!isFinite(offset) || offset < 0) offset = 0;
+            var offset = 0;
+            if (window.visualViewport) {
+                offset = window.innerHeight - (window.visualViewport.height + window.visualViewport.offsetTop);
+                if (!isFinite(offset) || offset < 0) offset = 0;
+            }
             document.documentElement.style.setProperty('--vv-bottom-offset', offset + 'px');
         }
+        // Run immediately so fixed elements are positioned correctly on first paint
+        updateVisualViewportOffset();
         if (window.visualViewport) {
-            updateVisualViewportOffset();
             window.visualViewport.addEventListener('resize', updateVisualViewportOffset);
             window.visualViewport.addEventListener('scroll', updateVisualViewportOffset);
         }
+        // Fallback: also listen on window resize/scroll for browsers without visualViewport
+        window.addEventListener('resize', updateVisualViewportOffset);
+        window.addEventListener('scroll', updateVisualViewportOffset);
         window.addEventListener('orientationchange', function() {
             setTimeout(updateVisualViewportOffset, 300);
         });
@@ -28503,6 +28518,26 @@ function resetCloseCustomDateTime(){
     40%       { opacity: 0.15; text-shadow: none; }
     60%       { opacity: 0.15; text-shadow: none; }
 }
+/* Ensure Christmas Event Part 2 Modal displays properly on all devices */
+#christmasEventPart2Modal[style*="display: flex"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+/* Mobile-specific fix for touch devices */
+@media (max-width: 768px) {
+    #christmasEventPart2Modal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        overflow: visible !important;
+    }
+}
 </style>
 <div id="christmasEventPart2Modal" style="display:none; position:fixed; inset:0; z-index:9999998; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
     <!-- Blurred background card -->
@@ -28609,7 +28644,9 @@ function resetCloseCustomDateTime(){
     window.openChristmasEventPart2 = function() {
         var modal = document.getElementById('christmasEventPart2Modal');
         if (!modal) return;
-        modal.style.display = 'flex';
+        // Use setAttribute to ensure inline style with !important equivalent behavior
+        modal.setAttribute('style', 'display:flex !important; position:fixed !important; inset:0 !important; z-index:9999998 !important; align-items:center !important; justify-content:center !important; will-change:transform; touch-action:manipulation; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;');
+        document.body.style.overflow = 'hidden';
         startXmasBorderAnim();
         startXmasSnow();
         startXmasCountdown();
@@ -28617,7 +28654,10 @@ function resetCloseCustomDateTime(){
 
     window.closeChristmasEventPart2 = function() {
         var modal = document.getElementById('christmasEventPart2Modal');
-        if (modal) modal.style.display = 'none';
+        if (modal) {
+            modal.setAttribute('style', 'display:none; position:fixed; inset:0; z-index:9999998; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;');
+        }
+        document.body.style.overflow = '';
         _xmasAnimRunning = false;
         _xmasSnowRunning = false;
         stopXmasCountdown();
