@@ -2224,14 +2224,6 @@
             height: 100%;
             height: 100dvh;
             min-height: -webkit-fill-available;
-            display: none !important;
-        }
-
-        #senderLoginModal.modal-overlay.active {
-            display: flex !important;
-            pointer-events: auto !important;
-            visibility: visible !important;
-            opacity: 1 !important;
         }
 
         body.dark-mode #senderLoginModal.modal-overlay {
@@ -2934,6 +2926,8 @@
             z-index: 999999;
             justify-content: center;
             align-items: center;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            padding-top: env(safe-area-inset-top, 0px);
         }
         #userSettingsModal.active {
             display: flex;
@@ -2945,6 +2939,7 @@
             padding: 28px 18px 24px 24px;
             width: min(92%, 420px);
             max-height: 85vh;
+            max-height: 85dvh;
             overflow-y: auto;
             box-shadow: 0 12px 48px rgba(0,0,0,0.65);
             position: relative;
@@ -2954,36 +2949,18 @@
             scrollbar-width: thin;
             scrollbar-color: rgba(255,255,255,0.35) transparent;
         }
-
-        /* Auto-hiding scrollbar for System Settings Box */
-        .user-settings-box {
-            overflow-y: auto;
-            scrollbar-width: auto;
-            scrollbar-color: rgba(255,255,255,0.4) transparent;
-        }
-
         .user-settings-box::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
-
         .user-settings-box::-webkit-scrollbar-track {
             background: transparent;
         }
-
         .user-settings-box::-webkit-scrollbar-thumb {
-            background-color: rgba(255,255,255,0.4);
-            border-radius: 6px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background-color: rgba(255,255,255,0.35);
+            border-radius: 8px;
         }
-
-        .user-settings-box:hover::-webkit-scrollbar-thumb,
-        .user-settings-box::-webkit-scrollbar-thumb:active {
-            opacity: 1;
-        }
-
         .user-settings-box::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(255,255,255,0.6);
+            background-color: rgba(255,255,255,0.55);
         }
         .user-settings-scroll-top-btn {
             position: sticky;
@@ -3471,14 +3448,6 @@
             align-items: flex-start;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            display: none !important;
-        }
-
-        #christmasMessageModal.modal-overlay.active {
-            display: flex !important;
-            pointer-events: auto !important;
-            visibility: visible !important;
-            opacity: 1 !important;
         }
 
         #christmasMessageModal.modal-overlay.message-view-closed {
@@ -5183,7 +5152,7 @@
         }
 
         .modal-overlay.active {
-            display: flex !important;
+            display: flex;
         }
 
         .modal-box {
@@ -8971,6 +8940,57 @@
             overflow-wrap: break-word;
         }
 
+        /* Coming Soon countdown timer inside cards */
+        .cs-countdown-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px 0 0;
+        }
+        .cs-countdown-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        .cs-cd-seg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+        }
+        .cs-cd-num {
+            font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #667eea;
+            line-height: 1;
+            letter-spacing: 0.5px;
+        }
+        body.dark-mode .cs-cd-num {
+            color: #a78bfa;
+        }
+        .cs-cd-lbl {
+            font-size: 9px;
+            font-weight: 800;
+            color: #999;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+        body.dark-mode .cs-cd-lbl {
+            color: #aaa;
+        }
+        .cs-cd-sep {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 0 1px;
+            padding-bottom: 10px;
+            line-height: 1;
+        }
+        body.dark-mode .cs-cd-sep {
+            color: #a78bfa;
+        }
+
         @media (max-width: 768px) {
             .modal-box {
                 width: 95%;
@@ -10121,9 +10141,10 @@
                 bottom: calc(100% + 4px) !important;
             }
 
-            /* 5. ANSWER THIS FORM — pinned to very bottom, below the box */
+            /* 5. ANSWER THIS FORM — horizontally centered, stays at bottom */
             #formLinkBelow {
                 position: fixed !important;
+                top: auto !important;
                 bottom: 4px !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
@@ -10144,11 +10165,12 @@
             #messageForMeBox {
                 margin-bottom: -14px !important;
             }
-            /* ANSWER THIS FORM — detached from the box, pinned all the way to the bottom of the screen.
-               + var(--vv-bottom-offset) keeps it clear of Chrome's bottom toolbar on Android while
-               staying tight to the screen edge on IG/FB in-app browsers and desktop (offset stays 0 there). */
+            /* ANSWER THIS FORM — horizontally centered, stays at bottom */
             #formLinkBelow {
-                bottom: calc(4px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
+                top: auto !important;
+                bottom: 4px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
             }
         }
     </style>
@@ -10278,7 +10300,7 @@
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
         <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
-            <div class="warning-message" id="mainWarning" style="display: block !important; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
+            <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0;">RATE US!</span>
                     <div class="christmas-message-link-wrapper" id="christmasLinkWrapperAboutMe" style="width:auto;">
@@ -10293,8 +10315,8 @@
                 </div>
             </div>
         </div>
-        <!-- ANSWER THIS FORM — pinned independently, no longer stacked directly under the box -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
+        <!-- ANSWER THIS FORM — horizontally centered, pinned near bottom -->
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
@@ -10551,12 +10573,32 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
-                        <div class="favorite-description">STAY TUNED</div>
+                        <div class="favorite-description cs-countdown-wrap">
+                            <div class="cs-countdown-row">
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown1D">--</span><span class="cs-cd-lbl">D</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown1H">--</span><span class="cs-cd-lbl">H</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown1M">--</span><span class="cs-cd-lbl">M</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown1S">--</span><span class="cs-cd-lbl">S</span></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
-                        <div class="favorite-description">STAY TUNED</div>
+                        <div class="favorite-description cs-countdown-wrap">
+                            <div class="cs-countdown-row">
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2D">--</span><span class="cs-cd-lbl">D</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2H">--</span><span class="cs-cd-lbl">H</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2M">--</span><span class="cs-cd-lbl">M</span></span>
+                                <span class="cs-cd-sep">:</span>
+                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2S">--</span><span class="cs-cd-lbl">S</span></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="christmasMessageDisplay" style="display:none; margin-top: 30px; padding: 20px; background: #fff5f5; border-radius: 12px; border: 2px solid #ffcdd2;">
@@ -11706,12 +11748,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             </div>
 
             <button class="close-button" id="senderLoginOuterClose" onclick="closeModal('senderLogin')" title="Close" style="width:26px; height:26px; top:14px; right:14px; font-size:16px;">×</button>
-            <button type="button" id="visitsEyeBtn" onclick="openVisitsModal()" title="Visits" style="position:absolute; top:14px; left:14px; width:26px; height:26px; border:none; background:none; cursor:pointer; padding:0; display:none !important; align-items:center; justify-content:center; color:inherit; opacity:0.7;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
-            </button>
             <div class="confirmation-header" style="display:flex; align-items:center; justify-content:center; margin-bottom:20px; margin-top:-12px;">
                 <h3 class="confirmation-title" style="flex:1; text-align:center; margin:0; font-size:20px;">LOG IN</h3>
             </div>
@@ -11727,7 +11763,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
                     <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" placeholder="Input password..."
-                        style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
+                        style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
@@ -14576,6 +14612,107 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
         });
 
+        // ── COMING SOON COUNTDOWN (Sep 1 2026 12:00 PM — tamperproof) ──────────────
+        (function() {
+            // Target: September 1, 2026 12:00:00 PM UTC+8 (Philippines time)
+            // Hardcoded as UTC ms so device timezone/clock changes have zero effect
+            var CS_TARGET_UTC_MS = Date.UTC(2026, 8, 1, 4, 0, 0, 0); // Sep 1 2026 12:00 PHT = 04:00 UTC
+
+            var _csServerAnchorMs = null;   // real UTC ms fetched from server
+            var _csPerfAnchorMs   = null;   // performance.now() at time of server fetch
+            var _csInterval       = null;
+            var _csFetchPending   = false;
+
+            // Reuse the global tamperproof anchor if available, else get server time
+            function csGetNowMs() {
+                if (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined') {
+                    return _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs);
+                }
+                if (_csServerAnchorMs !== null && _csPerfAnchorMs !== null) {
+                    return _csServerAnchorMs + (performance.now() - _csPerfAnchorMs);
+                }
+                return null; // not ready yet
+            }
+
+            function csFormat(ms) {
+                if (ms <= 0) return { d:'00', h:'00', m:'00', s:'00' };
+                var totalSec = Math.floor(ms / 1000);
+                var s = totalSec % 60;
+                var totalMin = Math.floor(totalSec / 60);
+                var m = totalMin % 60;
+                var totalHr = Math.floor(totalMin / 60);
+                var h = totalHr % 24;
+                var d = Math.floor(totalHr / 24);
+                function p(n) { return String(n).padStart(2,'0'); }
+                return { d: p(d), h: p(h), m: p(m), s: p(s) };
+            }
+
+            function csUpdateDOM(v) {
+                var ids = [['csCountdown1D','csCountdown1H','csCountdown1M','csCountdown1S'],
+                           ['csCountdown2D','csCountdown2H','csCountdown2M','csCountdown2S']];
+                ids.forEach(function(g) {
+                    var eD = document.getElementById(g[0]);
+                    var eH = document.getElementById(g[1]);
+                    var eM = document.getElementById(g[2]);
+                    var eS = document.getElementById(g[3]);
+                    if (eD) eD.textContent = v.d;
+                    if (eH) eH.textContent = v.h;
+                    if (eM) eM.textContent = v.m;
+                    if (eS) eS.textContent = v.s;
+                });
+            }
+
+            function csTick() {
+                var nowMs = csGetNowMs();
+                if (nowMs === null) {
+                    // server time not yet available — show dashes and wait
+                    csUpdateDOM({ d:'--', h:'--', m:'--', s:'--' });
+                    return;
+                }
+                var diff = CS_TARGET_UTC_MS - nowMs;
+                var v = csFormat(diff);
+                csUpdateDOM(v);
+
+                // Periodically re-anchor against server (every 10 minutes) for long sessions
+                if (_csServerAnchorMs !== null && _csPerfAnchorMs !== null && !_csFetchPending) {
+                    var elapsedSinceAnchor = performance.now() - _csPerfAnchorMs;
+                    if (elapsedSinceAnchor > 600000) { // 10 min
+                        _csFetchPending = true;
+                        getServerTimeWithOffset().then(function(data) {
+                            _csFetchPending = false;
+                            if (data && data.now) {
+                                _csServerAnchorMs = data.now.getTime();
+                                _csPerfAnchorMs   = performance.now();
+                            }
+                        }).catch(function() { _csFetchPending = false; });
+                    }
+                }
+            }
+
+            function csStart() {
+                if (_csInterval) clearInterval(_csInterval);
+                csTick();
+                _csInterval = setInterval(csTick, 1000);
+            }
+
+            // Bootstrap: use global anchor if ready, else fetch server time
+            if (typeof _timeAnchorDeviceMs !== 'undefined' && typeof _timeAnchorPerfMs !== 'undefined') {
+                csStart();
+            } else if (typeof getServerTimeWithOffset === 'function') {
+                getServerTimeWithOffset().then(function(data) {
+                    if (data && data.now) {
+                        _csServerAnchorMs = data.now.getTime();
+                        _csPerfAnchorMs   = performance.now();
+                    }
+                    csStart();
+                }).catch(function() { csStart(); });
+            } else {
+                // Last resort: wait 2s for anchors to be set, then start
+                setTimeout(function() { csStart(); }, 2000);
+            }
+        })();
+        // ── End Coming Soon Countdown ────────────────────────────────────────────
+
         function toggleUpdateDetails() {
             const details = document.getElementById('update1-details');
             const topToggle = document.getElementById('update1-toggle-top');
@@ -17375,10 +17512,10 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     autoNotice.style.display = 'none';
                 }
             }
-            const eyeOpen = document.getElementById('senderPwEyeOpen');
-            const eyeClosed = document.getElementById('senderPwEyeClosed');
-            if (eyeOpen) eyeOpen.style.display = 'none';
-            if (eyeClosed) eyeClosed.style.display = 'inline-flex';
+            var _loginEyeOpen = document.getElementById('senderPwEyeOpen');
+            var _loginEyeClosed = document.getElementById('senderPwEyeClosed');
+            if (_loginEyeOpen) _loginEyeOpen.style.display = 'none';
+            if (_loginEyeClosed) _loginEyeClosed.style.display = 'inline-flex';
             // Show reset notice on login modal if author reset this user
             var resetNoticeSL = document.getElementById('authorResetNoticeSenderLogin');
             if (resetNoticeSL) {
