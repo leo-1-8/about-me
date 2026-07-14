@@ -532,7 +532,7 @@
         .settings-card {
             width: min(760px, calc(100vw - 40px));
             max-height: min(92vh, calc(100vh - 40px));
-            max-height: min(92vh, calc(100dvh - 40px));
+            max-height: min(92dvh, calc(100dvh - 40px));
             background: linear-gradient(180deg, #102847 0%, #0a1a31 100%);
             border: 1px solid rgba(139, 191, 255, 0.22);
             border-radius: 12px;
@@ -554,7 +554,7 @@
             .settings-card {
                 width: min(100vw - 24px, 760px) !important;
                 height: auto !important;
-                max-height: 90vh !important;
+                max-height: calc(90dvh - env(safe-area-inset-bottom, 0px) - var(--vv-bottom-offset, 0px)) !important;
                 overflow-y: auto !important;
             }
         }
@@ -10141,11 +10141,11 @@
                 bottom: calc(100% + 4px) !important;
             }
 
-            /* 5. ANSWER THIS FORM — horizontally centered, stays at bottom */
+            /* 5. ANSWER THIS FORM — horizontally centered, below the updates box */
             #formLinkBelow {
                 position: fixed !important;
                 top: auto !important;
-                bottom: 4px !important;
+                bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
                 width: auto !important;
@@ -10159,16 +10159,16 @@
                + var(--vv-bottom-offset) lifts it above Chrome's own retractable bottom toolbar,
                which (unlike a hardware notch) is NOT reported by env(safe-area-inset-bottom). */
             #bottomStack {
-                bottom: calc(34px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
+                bottom: calc(56px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
             }
             /* MESSAGE ME — nudged down, closer to the box */
             #messageForMeBox {
                 margin-bottom: -14px !important;
             }
-            /* ANSWER THIS FORM — horizontally centered, stays at bottom */
+            /* ANSWER THIS FORM — horizontally centered, below the updates box on mobile */
             #formLinkBelow {
                 top: auto !important;
-                bottom: 4px !important;
+                bottom: calc(30px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
             }
@@ -10299,7 +10299,7 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(44px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(56px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0;">RATE US!</span>
@@ -10315,8 +10315,8 @@
                 </div>
             </div>
         </div>
-        <!-- ANSWER THIS FORM — horizontally centered, pinned near bottom -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
+        <!-- ANSWER THIS FORM — horizontally centered, higher so not hidden by browser nav -->
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(30px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
@@ -10588,17 +10588,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                     <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
                         <div class="favorite-title">COMING SOON</div>
-                        <div class="favorite-description cs-countdown-wrap">
-                            <div class="cs-countdown-row">
-                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2D">--</span><span class="cs-cd-lbl">D</span></span>
-                                <span class="cs-cd-sep">:</span>
-                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2H">--</span><span class="cs-cd-lbl">H</span></span>
-                                <span class="cs-cd-sep">:</span>
-                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2M">--</span><span class="cs-cd-lbl">M</span></span>
-                                <span class="cs-cd-sep">:</span>
-                                <span class="cs-cd-seg"><span class="cs-cd-num" id="csCountdown2S">--</span><span class="cs-cd-lbl">S</span></span>
-                            </div>
-                        </div>
+                        <div class="favorite-description">STAY TUNED</div>
                     </div>
                 </div>
                 <div id="christmasMessageDisplay" style="display:none; margin-top: 30px; padding: 20px; background: #fff5f5; border-radius: 12px; border: 2px solid #ffcdd2;">
@@ -14648,8 +14638,7 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             }
 
             function csUpdateDOM(v) {
-                var ids = [['csCountdown1D','csCountdown1H','csCountdown1M','csCountdown1S'],
-                           ['csCountdown2D','csCountdown2H','csCountdown2M','csCountdown2S']];
+                var ids = [['csCountdown1D','csCountdown1H','csCountdown1M','csCountdown1S']];
                 ids.forEach(function(g) {
                     var eD = document.getElementById(g[0]);
                     var eH = document.getElementById(g[1]);
