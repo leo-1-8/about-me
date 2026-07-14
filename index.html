@@ -543,6 +543,21 @@
             flex-direction: column;
             min-height: 0;
         }
+        @media (max-width: 768px) {
+            .settings-overlay {
+                padding: 12px;
+                display: none;
+            }
+            .settings-overlay.show {
+                display: flex !important;
+            }
+            .settings-card {
+                width: min(100vw - 24px, 760px) !important;
+                height: auto !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
+        }
         .settings-card-header {
             display: flex;
             align-items: center;
@@ -2226,9 +2241,6 @@
         #senderLoginModal #loginPasswordInput::placeholder {
             color: #888888;
         }
-        #senderLoginModal #loginPwEyeBtn {
-            color: #000000;
-        }
         /* Logout option buttons in login modal */
         #senderLoginModal .logout-opt {
             background: transparent;
@@ -2245,9 +2257,6 @@
         }
         body.dark-mode #senderLoginModal #loginNameInput::placeholder,
         body.dark-mode #senderLoginModal #loginPasswordInput::placeholder {
-            color: #aaaaaa;
-        }
-        body.dark-mode #senderLoginModal #loginPwEyeBtn {
             color: #aaaaaa;
         }
         body.dark-mode #senderLoginModal .logout-opt {
@@ -10251,12 +10260,12 @@
             </div>
         </div>
         <!-- ANSWER THIS FORM — pinned independently, no longer stacked directly under the box -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; width:auto !important; max-width:100% !important; box-sizing:border-box !important; z-index:10006 !important;">
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(4px + env(safe-area-inset-bottom, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
                 rel="noopener noreferrer"
-                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer;"
+                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer; display:inline-block;"
                 data-i18n="form_answer"
             >ANSWER THIS FORM</a>
         </div>
@@ -10504,19 +10513,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         <div class="favorite-icon">📱</div>
                         <div class="favorite-title" data-i18n="others_apps">My Apps</div>
                         <div class="favorite-description" data-i18n="others_apps_desc">This is my apps that i created right now</div>
-                    </div>
-                    <div class="favorite-card clickable" onclick="openChristmasEventPart2()">
-                        <div class="favorite-icon">⌛</div>
-                        <div class="favorite-title">COMING SOON</div>
-                        <div class="fav-card-timer-wrap">
-                            <div class="fav-cd-col"><span id="favCdDays" class="fav-cd-num fav-cd-d">--</span><span class="fav-cd-lbl">D</span></div>
-                            <span class="fav-cd-sep">:</span>
-                            <div class="fav-cd-col"><span id="favCdHrs"  class="fav-cd-num fav-cd-h">--</span><span class="fav-cd-lbl">H</span></div>
-                            <span class="fav-cd-sep">:</span>
-                            <div class="fav-cd-col"><span id="favCdMins" class="fav-cd-num fav-cd-m">--</span><span class="fav-cd-lbl">M</span></div>
-                            <span class="fav-cd-sep">:</span>
-                            <div class="fav-cd-col"><span id="favCdSecs" class="fav-cd-num fav-cd-s">--</span><span class="fav-cd-lbl">S</span></div>
-                        </div>
                     </div>
                     <div class="favorite-card clickable" onclick="showNotAvailableNow()">
                         <div class="favorite-icon">⏳</div>
@@ -11701,14 +11697,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
-                    <button type="button" id="loginPwEyeBtn" onclick="if(!isLoginAttemptLockedOut()){toggleLoginPwVisibility()}" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; transition:opacity 0.2s ease;">
-                        <span id="loginPwEyeOpen" style="display:none;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                        <span id="loginPwEyeClosed" style="display:inline-flex;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16"></path></svg>
-                        </span>
-                    </button>
                 </div>
                 <!-- Submit button -->
                 <button type="button" id="loginSubmitBtn" class="name-submit-btn" style="width:100%; opacity:0.45; cursor:not-allowed;" disabled onclick="attemptSenderLogin()">Submit</button>
@@ -17337,8 +17325,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var pwIn = document.getElementById('loginPasswordInput');
             var btn = document.getElementById('loginSubmitBtn');
             var err = document.getElementById('loginErrorMsg');
-            var eyeOpen = document.getElementById('loginPwEyeOpen');
-            var eyeClosed = document.getElementById('loginPwEyeClosed');
             if (nameIn) nameIn.value = '';
             if (pwIn) { pwIn.value = ''; pwIn.type = 'password'; }
             if (btn) { btn.disabled = true; btn.style.opacity = '0.45'; btn.style.cursor = 'not-allowed'; }
@@ -17369,18 +17355,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             initLogoutOptionsUi();
             updateLoginSubmitState();
             openModal('senderLogin'); startLoginReleaseTimer();
-        }
-
-        function toggleLoginPwVisibility() {
-            var input = document.getElementById('loginPasswordInput');
-            var eyeOpen = document.getElementById('loginPwEyeOpen');
-            var eyeClosed = document.getElementById('loginPwEyeClosed');
-            if (!input) return;
-            var isHidden = input.type === 'password';
-            input.type = isHidden ? 'text' : 'password';
-            if (eyeOpen) eyeOpen.style.display = isHidden ? 'inline-flex' : 'none';
-            if (eyeClosed) eyeClosed.style.display = isHidden ? 'none' : 'inline-flex';
-            input.focus();
         }
 
         function updateLoginSubmitState() {
@@ -18073,9 +18047,6 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var submitBtn = document.getElementById('loginSubmitBtn');
             if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; submitBtn.style.cursor = ''; }
             
-            // Re-enable eye icon
-            var eyeBtn = document.getElementById('loginPwEyeBtn');
-            if (eyeBtn) { eyeBtn.disabled = false; eyeBtn.style.opacity = '1'; eyeBtn.style.cursor = 'pointer'; }
         }
 
         function getLoginAttemptLockoutEndTime() {
@@ -18164,14 +18135,12 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
             var nameInput = document.getElementById('loginNameInput');
             var pwInput = document.getElementById('loginPasswordInput');
             var submitBtn = document.getElementById('loginSubmitBtn');
-            var eyeBtn = document.getElementById('loginPwEyeBtn');
 
             if (!isLoginAttemptLockedOut()) {
                 if (lockoutBox) lockoutBox.style.display = 'none';
                 if (nameInput) nameInput.disabled = false;
                 if (pwInput) pwInput.disabled = false;
                 if (submitBtn) submitBtn.disabled = false;
-                if (eyeBtn) { eyeBtn.disabled = false; eyeBtn.style.opacity = '1'; eyeBtn.style.cursor = 'pointer'; }
                 _loginAttemptRateLimitRafId = null;
                 return;
             }
@@ -28506,257 +28475,7 @@ function resetCloseCustomDateTime(){
 }
 // ── End Custom Date Time Picker ──
 </script>
-
-<!-- ── CHRISTMAS EVENT PART 2 MODAL ── -->
-<style>
-@keyframes xmasLightBlink1 {
-    0%, 100% { opacity: 1; text-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 40px currentColor; }
-    50%       { opacity: 0.2; text-shadow: none; }
-}
-@keyframes xmasLightBlink2 {
-    0%, 100% { opacity: 1; text-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 40px currentColor; }
-    40%       { opacity: 0.15; text-shadow: none; }
-    60%       { opacity: 0.15; text-shadow: none; }
-}
-/* Ensure Christmas Event Part 2 Modal displays properly on all devices */
-#christmasEventPart2Modal[style*="display: flex"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-/* Mobile-specific fix for touch devices */
-@media (max-width: 768px) {
-    #christmasEventPart2Modal {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        overflow: visible !important;
-    }
-}
-</style>
-<div id="christmasEventPart2Modal" style="display:none; position:fixed; inset:0; z-index:9999998; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;">
-    <!-- Blurred background card -->
-    <div style="position:absolute;inset:0;z-index:1;">
-        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);"></div>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-            <div style="filter:blur(15px);position:relative;width:420px;max-width:90vw;">
-                <svg style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:3;pointer-events:none;" id="xmasBorderSVG" viewBox="0 0 420 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect id="xmasRedRect"   fill="none" stroke="#ff2200" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" x="3" y="3" width="414" height="294" rx="20" style="filter:drop-shadow(0 0 8px #ff2200) drop-shadow(0 0 16px #ff4400);"/>
-                    <rect id="xmasGreenRect" fill="none" stroke="#00ff44" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" x="3" y="3" width="414" height="294" rx="20" style="filter:drop-shadow(0 0 8px #00ff44) drop-shadow(0 0 16px #00cc33);"/>
-                </svg>
-                <!-- Santa hat -->
-                <svg style="position:absolute;top:-13px;left:-5px;width:26px;height:36px;z-index:10;overflow:visible;" viewBox="0 0 40 55" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="rotate(-38, 20, 28)">
-                        <polygon points="20,10 2,28 38,28" fill="#cc0000"/>
-                        <rect x="0" y="26" width="40" height="12" rx="6" fill="white"/>
-                        <line x1="20" y1="10" x2="15" y2="17" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="13" cy="20" r="5" fill="white"/>
-                    </g>
-                </svg>
-                <div style="position:relative;z-index:2;border-radius:20px;padding:30px 30px 100px 30px;overflow:hidden;background:linear-gradient(135deg,#e00000 0%,#6b0000 30%,#004d00 70%,#00c400 100%);box-shadow:0 0 60px rgba(220,0,0,0.35),0 0 60px rgba(0,180,0,0.35),0 20px 60px rgba(0,0,0,0.6);">
-                    <canvas id="xmasSnowCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;border-radius:20px;"></canvas>
-                    <div style="position:relative;z-index:2;font-size:18px;font-weight:900;letter-spacing:2px;text-align:center;font-family:'Arial Black','Trebuchet MS',sans-serif;background-image:linear-gradient(90deg,#ff2200,#00ff44,#ff2200,#00ff44,#ff2200);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">CHRISTMAS EVENT</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="216" height="22" viewBox="0 0 216 22" style="display:block;margin:-10px auto 0;position:relative;z-index:2;">
-                        <line x1="9" y1="4" x2="207" y2="4" stroke="#555" stroke-width="1.5"/>
-                        <rect x="7" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="9" cy="11" rx="5" ry="7" fill="#ff2200"><animate attributeName="opacity" values="1;0.25;1" dur="1.5s" begin="0.0s" repeatCount="indefinite"/></ellipse>
-                        <rect x="25" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="27" cy="11" rx="5" ry="7" fill="#00ff44"><animate attributeName="opacity" values="1;0.25;1" dur="1.7s" begin="0.3s" repeatCount="indefinite"/></ellipse>
-                        <rect x="43" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="45" cy="11" rx="5" ry="7" fill="#ffcc00"><animate attributeName="opacity" values="1;0.25;1" dur="1.9s" begin="0.6s" repeatCount="indefinite"/></ellipse>
-                        <rect x="61" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="63" cy="11" rx="5" ry="7" fill="#00aaff"><animate attributeName="opacity" values="1;0.25;1" dur="2.1s" begin="0.2s" repeatCount="indefinite"/></ellipse>
-                        <rect x="79" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="81" cy="11" rx="5" ry="7" fill="#ff2200"><animate attributeName="opacity" values="1;0.25;1" dur="1.5s" begin="0.8s" repeatCount="indefinite"/></ellipse>
-                        <rect x="97" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="99" cy="11" rx="5" ry="7" fill="#00ff44"><animate attributeName="opacity" values="1;0.25;1" dur="1.7s" begin="0.4s" repeatCount="indefinite"/></ellipse>
-                        <rect x="115" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="117" cy="11" rx="5" ry="7" fill="#ffcc00"><animate attributeName="opacity" values="1;0.25;1" dur="1.9s" begin="1.0s" repeatCount="indefinite"/></ellipse>
-                        <rect x="133" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="135" cy="11" rx="5" ry="7" fill="#00aaff"><animate attributeName="opacity" values="1;0.25;1" dur="2.1s" begin="0.1s" repeatCount="indefinite"/></ellipse>
-                        <rect x="151" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="153" cy="11" rx="5" ry="7" fill="#ff2200"><animate attributeName="opacity" values="1;0.25;1" dur="1.5s" begin="0.7s" repeatCount="indefinite"/></ellipse>
-                        <rect x="169" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="171" cy="11" rx="5" ry="7" fill="#00ff44"><animate attributeName="opacity" values="1;0.25;1" dur="1.7s" begin="0.5s" repeatCount="indefinite"/></ellipse>
-                        <rect x="187" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="189" cy="11" rx="5" ry="7" fill="#ffcc00"><animate attributeName="opacity" values="1;0.25;1" dur="1.9s" begin="0.9s" repeatCount="indefinite"/></ellipse>
-                        <rect x="205" y="2" width="4" height="3" rx="1" fill="#666"/><ellipse cx="207" cy="11" rx="5" ry="7" fill="#00aaff"><animate attributeName="opacity" values="1;0.25;1" dur="2.1s" begin="0.3s" repeatCount="indefinite"/></ellipse>
-                    </svg>
-                </div>
-                <!-- Candy canes -->
-                <svg width="58" height="58" viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" overflow="visible" style="position:absolute;bottom:-25px;left:-22px;z-index:10;transform:rotate(25deg);transform-origin:center center;">
-                    <g transform="rotate(15, 22, 75)"><path d="M22,75 L22,30 Q22,8 35,8 Q48,8 48,22 Q48,36 35,36" fill="none" stroke="#222" stroke-width="10" stroke-linecap="round"/><path d="M22,75 L22,30 Q22,8 35,8 Q48,8 48,22 Q48,36 35,36" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/><path d="M22,75 L22,30 Q22,8 35,8 Q48,8 48,22 Q48,36 35,36" fill="none" stroke="#cc0000" stroke-width="8" stroke-linecap="round" stroke-dasharray="8 8"/></g>
-                    <g transform="rotate(-15, 52, 75)"><path d="M52,75 L52,30 Q52,8 39,8 Q26,8 26,22 Q26,36 39,36" fill="none" stroke="#222" stroke-width="10" stroke-linecap="round"/><path d="M52,75 L52,30 Q52,8 39,8 Q26,8 26,22 Q26,36 39,36" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/><path d="M52,75 L52,30 Q52,8 39,8 Q26,8 26,22 Q26,36 39,36" fill="none" stroke="#cc0000" stroke-width="8" stroke-linecap="round" stroke-dasharray="8 8" stroke-dashoffset="8"/></g>
-                </svg>
-                <!-- Gift -->
-                <svg width="32" height="32" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg" overflow="visible" style="position:absolute;bottom:0px;right:-5px;z-index:11;transform:rotate(-15deg);transform-origin:center center;filter:blur(2px);">
-                    <rect x="5" y="22" width="45" height="30" rx="2" fill="#cc0000" stroke="#880000" stroke-width="1"/>
-                    <rect x="3" y="16" width="49" height="10" rx="2" fill="#aa0000" stroke="#880000" stroke-width="1"/>
-                    <rect x="24" y="16" width="7" height="36" fill="#ffcc00"/>
-                    <rect x="3" y="18" width="49" height="6" fill="#ffcc00"/>
-                    <ellipse cx="20" cy="14" rx="9" ry="6" fill="#ffcc00" transform="rotate(-30 20 14)"/>
-                    <ellipse cx="35" cy="14" rx="9" ry="6" fill="#ffcc00" transform="rotate(30 35 14)"/>
-                    <circle cx="27" cy="16" r="4" fill="#ffd700"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-    <!-- Foreground content (above blur) -->
-    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all;text-align:center;">
-        <div style="font-family:'Arial Black',sans-serif;font-size:22px;font-weight:900;letter-spacing:3px;color:white;text-shadow:0 0 12px #ff2200,0 0 24px #00ff44;margin-bottom:10px;">COMING VERY SOON!!!</div>
-        <div style="font-family:'Trebuchet MS',sans-serif;font-size:14px;color:#ffe;margin-top:10px;letter-spacing:1px;">CAN YOU GUESS WHAT IT IS?</div>
-        <!-- Countdown -->
-        <div style="display:flex;align-items:flex-start;justify-content:center;gap:0;margin-top:14px;">
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <span id="xmasCdDays" style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#00ff44;letter-spacing:3px;text-shadow:0 0 12px #00ff44,0 0 24px #00cc33;animation:xmasLightBlink1 1.8s ease-in-out infinite;">--</span>
-                <span style="font-family:sans-serif;font-size:10px;color:#ccc;letter-spacing:2px;margin-top:2px;">D</span>
-            </div>
-            <span style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#fff;text-shadow:0 0 8px #fff;padding:0 3px;">:</span>
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <span id="xmasCdHrs" style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#00aaff;letter-spacing:3px;text-shadow:0 0 12px #00aaff,0 0 24px #0077cc;animation:xmasLightBlink2 2.1s ease-in-out infinite 0.4s;">--</span>
-                <span style="font-family:sans-serif;font-size:10px;color:#ccc;letter-spacing:2px;margin-top:2px;">H</span>
-            </div>
-            <span style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#fff;text-shadow:0 0 8px #fff;padding:0 3px;">:</span>
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <span id="xmasCdMins" style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#ffcc00;letter-spacing:3px;text-shadow:0 0 12px #ffcc00,0 0 24px #ffaa00;animation:xmasLightBlink1 1.6s ease-in-out infinite 0.8s;">--</span>
-                <span style="font-family:sans-serif;font-size:10px;color:#ccc;letter-spacing:2px;margin-top:2px;">M</span>
-            </div>
-            <span style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#fff;text-shadow:0 0 8px #fff;padding:0 3px;">:</span>
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <span id="xmasCdSecs" style="font-family:'Arial Black',monospace;font-size:26px;font-weight:900;color:#ff2200;letter-spacing:3px;text-shadow:0 0 12px #ff2200,0 0 24px #cc1100;animation:xmasLightBlink2 1.9s ease-in-out infinite 0.2s;">--</span>
-                <span style="font-family:sans-serif;font-size:10px;color:#ccc;letter-spacing:2px;margin-top:2px;">S</span>
-            </div>
-        </div>
-        <!-- Button -->
-        <button onclick="closeChristmasEventPart2()" style="margin-top:20px;padding:12px 28px;background:linear-gradient(135deg,#00cc44,#009933);border:none;border-radius:25px;color:white;font-family:'Arial Black',sans-serif;font-size:14px;font-weight:900;letter-spacing:1px;cursor:pointer;box-shadow:0 0 20px rgba(0,255,68,0.7);transition:transform 0.1s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            I'M SO EXCITED!
-        </button>
-    </div>
-</div>
-
 <script>
-// ── Christmas Event Part 2 Modal ──
-(function() {
-    var _xmasAnimRunning = false;
-    var _xmasSnowRunning = false;
-    var _xmasCountdownInterval = null;
-    var _xmasServerAnchor = null;
-    var _xmasPerfAnchor = null;
-    var _xmasLastSyncPerf = null;
-    var XMAS_SYNC_MS = 60000;
-    var XMAS_TARGET_MS = new Date(2026, 8, 1, 12, 0, 0, 0).getTime(); // Sep 1 2026 12:00 local
-    window.XMAS_TARGET_MS = XMAS_TARGET_MS;
-
-    window.openChristmasEventPart2 = function() {
-        var modal = document.getElementById('christmasEventPart2Modal');
-        if (!modal) return;
-        // Use setAttribute to ensure inline style with !important equivalent behavior
-        modal.setAttribute('style', 'display:flex !important; position:fixed !important; inset:0 !important; z-index:9999998 !important; align-items:center !important; justify-content:center !important; will-change:transform; touch-action:manipulation; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;');
-        document.body.style.overflow = 'hidden';
-        startXmasBorderAnim();
-        startXmasSnow();
-        startXmasCountdown();
-    };
-
-    window.closeChristmasEventPart2 = function() {
-        var modal = document.getElementById('christmasEventPart2Modal');
-        if (modal) {
-            modal.setAttribute('style', 'display:none; position:fixed; inset:0; z-index:9999998; align-items:center; justify-content:center; will-change:transform; touch-action:manipulation;');
-        }
-        document.body.style.overflow = '';
-        _xmasAnimRunning = false;
-        _xmasSnowRunning = false;
-        stopXmasCountdown();
-    };
-
-    function startXmasBorderAnim() {
-        var redRect   = document.getElementById('xmasRedRect');
-        var greenRect = document.getElementById('xmasGreenRect');
-        if (!redRect || !greenRect) return;
-        var perimeter = redRect.getTotalLength ? redRect.getTotalLength() : 1428;
-        var dashLen = 380;
-        var gap = perimeter - dashLen;
-        redRect.style.strokeDasharray   = dashLen + ' ' + gap;
-        greenRect.style.strokeDasharray = dashLen + ' ' + gap;
-        var offset = 0;
-        _xmasAnimRunning = true;
-        (function anim() {
-            if (!_xmasAnimRunning) return;
-            offset -= 15;
-            if (offset <= -perimeter) offset = 0;
-            redRect.style.strokeDashoffset   = offset;
-            greenRect.style.strokeDashoffset = offset - perimeter / 2;
-            requestAnimationFrame(anim);
-        })();
-    }
-
-    function startXmasSnow() {
-        var canvas = document.getElementById('xmasSnowCanvas');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        canvas.width  = canvas.offsetWidth  || 420;
-        canvas.height = canvas.offsetHeight || 300;
-        var flakes = [];
-        for (var i = 0; i < 15; i++) {
-            flakes.push({ x: Math.random(), y: Math.random(), r: Math.random()*2.5+1, speed: Math.random()*0.4+0.15, drift: (Math.random()-0.5)*0.3, opacity: Math.random()*0.6+0.4, angle: Math.random()*Math.PI*2, spin: (Math.random()-0.5)*0.05 });
-        }
-        _xmasSnowRunning = true;
-        (function loop() {
-            if (!_xmasSnowRunning) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var j = 0; j < flakes.length; j++) {
-                var f = flakes[j];
-                var x = f.x * canvas.width, y = f.y * canvas.height, r = f.r;
-                ctx.save(); ctx.translate(x, y); ctx.rotate(f.angle);
-                ctx.globalAlpha = f.opacity; ctx.strokeStyle = 'white'; ctx.lineWidth = r * 0.4;
-                for (var k = 0; k < 6; k++) { ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,r*3); ctx.moveTo(0,r); ctx.lineTo(r,r*2); ctx.moveTo(0,r); ctx.lineTo(-r,r*2); ctx.stroke(); ctx.rotate(Math.PI/3); }
-                ctx.restore();
-                f.y += f.speed / canvas.height * 10; f.x += f.drift / canvas.width * 5; f.angle += f.spin;
-                if (f.y > 1) { f.y = 0; f.x = Math.random(); }
-                if (f.x < 0) f.x = 1; if (f.x > 1) f.x = 0;
-            }
-            requestAnimationFrame(loop);
-        })();
-    }
-
-    function stopXmasCountdown() {
-        if (_xmasCountdownInterval) { clearInterval(_xmasCountdownInterval); _xmasCountdownInterval = null; }
-    }
-
-    function startXmasCountdown() {
-        stopXmasCountdown();
-        _xmasServerAnchor = null; _xmasPerfAnchor = null; _xmasLastSyncPerf = null;
-
-        function tick() {
-            if (!_xmasServerAnchor || _xmasPerfAnchor === null) return;
-            var perfNow = performance.now();
-            var now = new Date(_xmasServerAnchor.getTime() + (perfNow - _xmasPerfAnchor));
-            var diff = XMAS_TARGET_MS - now.getTime();
-            var diffSec = Math.max(0, Math.floor(diff / 1000));
-            var days  = Math.floor(diffSec / 86400);
-            var rem   = diffSec % 86400;
-            var hours = Math.floor(rem / 3600);
-            var mins  = Math.floor((rem % 3600) / 60);
-            var secs  = rem % 60;
-            document.getElementById('xmasCdDays').textContent = String(days).padStart(2,'0');
-            document.getElementById('xmasCdHrs').textContent  = String(hours).padStart(2,'0');
-            document.getElementById('xmasCdMins').textContent = String(mins).padStart(2,'0');
-            document.getElementById('xmasCdSecs').textContent = String(secs).padStart(2,'0');
-            if (_xmasLastSyncPerf !== null && perfNow - _xmasLastSyncPerf > XMAS_SYNC_MS) {
-                _xmasLastSyncPerf = perfNow;
-                getServerTimeNow().then(function(serverNow) {
-                    if (serverNow) { _xmasServerAnchor = serverNow; _xmasPerfAnchor = performance.now(); }
-                });
-            }
-        }
-
-        getServerTimeNow().then(function(now) {
-            if (now) {
-                _xmasServerAnchor = now;
-                _xmasPerfAnchor = performance.now();
-                _xmasLastSyncPerf = _xmasPerfAnchor;
-                tick();
-                _xmasCountdownInterval = setInterval(tick, 1000);
-            }
-        });
-    }
-
-
-})();
 </script>
 
 <!-- ── VISITS MODAL ── -->
