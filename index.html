@@ -2648,7 +2648,8 @@
         body.dark-mode #senderPasswordInput::placeholder {
             color: #aaaaaa;
         }
-        body.dark-mode #senderPwEyeBtn {
+        body.dark-mode #senderPwEyeBtn,
+        body.dark-mode #loginPwEyeBtn {
             color: #aaaaaa !important;
         }
 
@@ -10153,11 +10154,11 @@
                 bottom: calc(100% + 4px) !important;
             }
 
-            /* 5. ANSWER THIS FORM — horizontally centered, below the updates box */
+            /* 5. ANSWER THIS FORM — centered below the updates box */
             #formLinkBelow {
                 position: fixed !important;
                 top: auto !important;
-                bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+                bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
                 width: auto !important;
@@ -10177,10 +10178,10 @@
             #messageForMeBox {
                 margin-bottom: -14px !important;
             }
-            /* ANSWER THIS FORM — horizontally centered, below the updates box on mobile */
+            /* ANSWER THIS FORM — centered below the updates box */
             #formLinkBelow {
                 top: auto !important;
-                bottom: calc(14px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
+                bottom: calc(18px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important;
                 left: 50% !important;
                 transform: translateX(-50%) !important;
             }
@@ -10328,7 +10329,7 @@
             </div>
         </div>
         <!-- ANSWER THIS FORM — horizontally centered, higher so not hidden by browser nav -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(14px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
+        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(18px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
             <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
                 target="_blank"
@@ -11765,10 +11766,18 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 <!-- Password input row -->
                 <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
                     <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" placeholder="Input password..."
-                        style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
+                        style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
                         oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
                         onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
                         onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
+                    <button type="button" id="loginPwEyeBtn" data-state="hidden" onclick="toggleLoginPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#555555; display:flex; align-items:center;">
+                        <span id="loginPwEyeOpen" style="display:none;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                        <span id="loginPwEyeClosed" style="display:inline-flex;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16"></path></svg>
+                        </span>
+                    </button>
                 </div>
                 <!-- Submit button -->
                 <button type="button" id="loginSubmitBtn" class="name-submit-btn" style="width:100%; opacity:0.45; cursor:not-allowed;" disabled onclick="attemptSenderLogin()">Submit</button>
@@ -13629,7 +13638,22 @@ FEEL FREE TO EXPLORE, AND ENJOY YOUR STAY!</div>
                 document.body.style.overflow = '';
                 document.documentElement.style.overflow = '';
             }
-            window.closeSettings = closeSettings;
+            
+            function toggleLoginPwVisibility() {
+                const input = document.getElementById('loginPasswordInput');
+                const eyeOpen = document.getElementById('loginPwEyeOpen');
+                const eyeClosed = document.getElementById('loginPwEyeClosed');
+                const eyeBtn = document.getElementById('loginPwEyeBtn');
+                if (!input) return;
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                if (eyeOpen) eyeOpen.style.display = isHidden ? 'inline-flex' : 'none';
+                if (eyeClosed) eyeClosed.style.display = isHidden ? 'none' : 'inline-flex';
+                if (eyeBtn) eyeBtn.dataset.state = isHidden ? 'visible' : 'hidden';
+            }
+            window.toggleLoginPwVisibility = toggleLoginPwVisibility;
+
+window.closeSettings = closeSettings;
 
             // RATE US! — opens System Settings and jumps straight to the
             // "PLEASE LEAVE A STAR RATING" label
@@ -28468,12 +28492,21 @@ function openCustomDateTimePicker(){
   cdtpRenderCalendar();cdtpRenderTime();cdtpShowTab('date');
   document.getElementById('cdtpYearPicker').style.display='none';
   var ov=document.getElementById('customDTPOverlay');
-  if(ov){ov.style.display='flex';}
+  if(ov){
+    ov.style.display='flex';
+    // Lock body scroll so the fixed overlay stays centered
+    document.body.style.overflow='hidden';
+    document.documentElement.style.overflow='hidden';
+  }
 }
 
 function closeCDTP(){
   if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}
-  var ov=document.getElementById('customDTPOverlay');if(ov)ov.style.display='none';
+  var ov=document.getElementById('customDTPOverlay');
+  if(ov) ov.style.display='none';
+  // Restore body scroll
+  document.body.style.overflow='';
+  document.documentElement.style.overflow='';
 }
 
 
