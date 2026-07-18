@@ -8605,7 +8605,8 @@
             opacity: 1;
             color: #111111;
             font-weight: 700;
-            transform: scale(1.13);
+            font-size: 13.5px;
+            transform: none;
         }
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
 
@@ -8751,10 +8752,10 @@
             overflow: hidden;
             z-index: 0;
             box-shadow: none !important;
-            /* Promote to own compositing layer to prevent white flash during scroll on mobile */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             isolation: isolate;
+            contain: paint;
         }
 
         #musicModal .song-item.song-playing::before {
@@ -8768,6 +8769,7 @@
             background: conic-gradient(#b8a000 0deg, #b8a000 90deg, transparent 90deg, transparent 180deg, #1a6abf 180deg, #1a6abf 270deg, transparent 270deg, transparent 360deg);
             animation: rotateBorder 3.5s linear infinite;
             z-index: -2;
+            will-change: transform;
         }
 
         #musicModal .song-item.song-playing::after {
@@ -8775,7 +8777,8 @@
             position: absolute;
             inset: 3px;
             border-radius: 13px;
-            background: #ffffff;
+            /* Match the actual card background so no white bleed on scroll */
+            background: rgba(255, 255, 255, 0.95);
             z-index: -1;
             box-shadow: none;
         }
@@ -8786,7 +8789,7 @@
         }
 
         body.dark-mode #musicModal .song-item.song-playing::after {
-            background: rgb(18, 28, 48);
+            background: rgba(18, 28, 48, 0.98);
             box-shadow: none;
         }
 
@@ -29727,7 +29730,7 @@ window.closeSettings = closeSettings;
 
             const activeIdx = getActiveIdx(lines, currentTime);
             const curr = activeIdx >= 0 ? lines[activeIdx] : null;
-            span.textContent = (curr && curr.text !== '♪') ? curr.text : '';
+            span.textContent = (curr && curr.text !== '♪') ? curr.text.replace(/^\[[^\]]*\]\s*/, '') : '';
 
             // Move "See full lyrics" button below lyrics when text wraps to multiple lines
             const display = document.getElementById('lyricsDisplay-' + songId);
@@ -29763,7 +29766,7 @@ window.closeSettings = closeSettings;
             if (leftPanel) {
                 if (lines) {
                     leftPanel.innerHTML = lines.map((l, i) =>
-                        `<span class="fl-left-line" data-idx="${i}">${l.text}</span>`
+                        `<span class="fl-left-line" data-idx="${i}">${l.text.replace(/^\[[^\]]*\]\s*/, '')}</span>`
                     ).join('\n');
                 } else {
                     leftPanel.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
@@ -29776,7 +29779,7 @@ window.closeSettings = closeSettings;
                         const mins = Math.floor(l.t / 60);
                         const secs = (l.t % 60).toFixed(2).padStart(5, '0');
                         const ts = `${mins}:${secs}`;
-                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${l.text}</span></span>`;
+                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${l.text.replace(/^\[[^\]]*\]\s*/, '')}</span></span>`;
                     }).join('\n');
                 } else {
                     scroll.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
