@@ -5436,6 +5436,7 @@
         .music-list {
             padding-top: 10px;
             padding-left: 10px;
+            padding-bottom: 20px;
         }
 
         .updates-scroll-body {
@@ -8221,7 +8222,7 @@
             flex: 1 !important;
             max-height: none !important;
             overflow-y: auto !important;
-            padding-bottom: 0 !important;
+            padding-bottom: 20px !important;
         }
 
         .gaming-image-container {
@@ -8596,6 +8597,9 @@
             transform: scale(1);
             transform-origin: left center;
             transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease, font-size 0.25s ease;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
         #flLeftPanel .fl-left-line.fl-left-active {
             opacity: 1;
@@ -8654,6 +8658,8 @@
             border-radius: 6px;
             transition: color 0.2s, background 0.2s, font-size 0.2s;
             color: inherit;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         #fullLyricsModalScroll .fl-ts {
             display: none;
@@ -8661,6 +8667,9 @@
         #fullLyricsModalScroll .fl-text {
             flex: 1;
             min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
         #fullLyricsModalScroll .fl-line.fl-active {
             color: #111111;
@@ -8716,8 +8725,8 @@
             margin-bottom: 20px;
         }
         #musicModal .music-list .song-item:last-child {
-            margin-bottom: 12px;
-            padding-bottom: 0;
+            margin-bottom: 0;
+            padding-bottom: 26px;
         }
         #musicModal .music-list .song-item:last-child .music-player-container {
             margin-bottom: 0;
@@ -8742,6 +8751,10 @@
             overflow: hidden;
             z-index: 0;
             box-shadow: none !important;
+            /* Promote to own compositing layer to prevent white flash during scroll on mobile */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            isolation: isolate;
         }
 
         #musicModal .song-item.song-playing::before {
@@ -8762,7 +8775,7 @@
             position: absolute;
             inset: 3px;
             border-radius: 13px;
-            background: rgb(255, 255, 255);
+            background: #ffffff;
             z-index: -1;
             box-shadow: none;
         }
@@ -12488,12 +12501,12 @@
                         <span id="mnpTotal">0:00</span>
                     </div>
                     <div id="mnpControls">
-                        <button id="mnpRestartBtn" title="Restart" onclick="mnpRestart()">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg>
-                        </button>
                         <button id="mnpPlayPauseBtn" title="Play/Pause" onclick="mnpToggle()">
                             <svg id="mnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
                             <svg id="mnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
+                        </button>
+                        <button id="mnpRestartBtn" title="Restart" onclick="mnpRestart()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg>
                         </button>
                         <button id="mnpLyricsBtn" title="See full lyrics" onclick="mnpOpenLyrics()">See full lyrics</button>
                     </div>
@@ -20507,6 +20520,19 @@ window.closeSettings = closeSettings;
                 document.body.style.overflow = 'hidden';
                 document.documentElement.style.overflow = 'hidden';
 
+                // When music modal opens, trigger load() for any audio that hasn't loaded yet
+                // This fixes the 0:00 stuck duration issue on mobile where preload="metadata" is ignored
+                if (type === 'music') {
+                    if (typeof songIds !== 'undefined') {
+                        songIds.forEach(function(sid) {
+                            var aud = document.getElementById('musicPlayer-' + sid);
+                            if (aud && aud.readyState === 0) {
+                                aud.load();
+                            }
+                        });
+                    }
+                }
+
                 if (type === 'messageConfirmation' || type === 'nameFinalConfirm' || type === 'senderPassword') {
                     applyConfirmationModalBackdrop();
                 }
@@ -27990,13 +28016,25 @@ window.closeSettings = closeSettings;
         });
 
         // ── Now Playing Bar ──
+        var _mnpHideTimer = null;
+        function _mnpScheduleHide() {
+            if (_mnpHideTimer) clearTimeout(_mnpHideTimer);
+            _mnpHideTimer = setTimeout(function() {
+                var bar = document.getElementById('musicNowPlayingBar');
+                if (bar && !currentPlayingSong) bar.style.display = 'none';
+                _mnpHideTimer = null;
+            }, 20000);
+        }
         function mnpUpdate() {
             const bar = document.getElementById('musicNowPlayingBar');
             if (!bar) return;
             if (!currentPlayingSong) {
-                bar.style.display = 'none';
+                // Don't hide immediately — schedule hide after 20 seconds of no song
+                _mnpScheduleHide();
                 return;
             }
+            // A song is playing/paused — cancel any pending hide timer
+            if (_mnpHideTimer) { clearTimeout(_mnpHideTimer); _mnpHideTimer = null; }
             const sid = currentPlayingSong;
             const audio = document.getElementById('musicPlayer-' + sid);
             if (!audio) { bar.style.display = 'none'; return; }
