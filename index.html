@@ -8703,18 +8703,26 @@
             padding: 2px 8px 2px 0;
             font-size: 12px;
             opacity: 0.55;
-            transform: scale(1);
-            transform-origin: left center;
-            transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease, font-size 0.25s ease;
+            transform: none;
+            transition: opacity 0.25s ease, color 0.25s ease, font-size 0.25s ease;
+            /* Clamp inactive lines to 1 line with ellipsis */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Active line: allow wrapping into multiple rows */
+        #flLeftPanel .fl-left-line.fl-left-active {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: unset !important;
             word-break: break-word;
             overflow-wrap: break-word;
-            white-space: normal;
         }
         #flLeftPanel .fl-left-line.fl-left-active {
             opacity: 1;
             color: #111111;
             font-weight: 700;
-            transform: scale(1.13);
+            font-size: 13.5px;
         }
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
         #flLeftPanel .fl-left-line.fl-left-past {
@@ -31801,11 +31809,44 @@ window.closeSettings = closeSettings;
 
                 // Only update highlight + scroll when the active line actually changes
                 if (leftPanel._lastIdx !== idx) {
+                    const prevIdx = leftPanel._lastIdx;
                     leftPanel._lastIdx = idx;
+
                     leftLines.forEach((el, i) => {
+                        const wasActive = el.classList.contains('fl-left-active');
                         el.classList.toggle('fl-left-active', i === idx);
                         el.classList.toggle('fl-left-past', i < idx);
+
+                        // Restore full text when a line leaves active state
+                        if (wasActive && i !== idx && el.dataset.origText) {
+                            el.textContent = el.dataset.origText;
+                            delete el.dataset.origText;
+                        }
                     });
+
+                    // When a line becomes active, split long lines into 2 rows of ~15 words
+                    if (idx >= 0 && leftLines[idx]) {
+                        const activeEl = leftLines[idx];
+                        const rawText = lines[idx].text;
+                        const words = rawText.split(' ');
+                        if (words.length > 15) {
+                            // Store original so we can restore it when no longer active
+                            if (!activeEl.dataset.origText) {
+                                activeEl.dataset.origText = rawText;
+                            }
+                            // Split into rows of 15 words each
+                            const rows = [];
+                            for (let wi = 0; wi < words.length; wi += 15) {
+                                rows.push(words.slice(wi, wi + 15).join(' '));
+                            }
+                            activeEl.innerHTML = rows.map(function(r) {
+                                return '<span style="display:block">' +
+                                    r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+                                    '</span>';
+                            }).join('');
+                        }
+                    }
+
                     // Scroll to keep newly active line centered
                     if (!leftPanel._userScrolling && idx >= 0 && leftLines[idx]) {
                         const el = leftLines[idx];
