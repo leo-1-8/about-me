@@ -8104,6 +8104,9 @@
             align-items: center;
             padding: 8px 16px 10px;
             gap: 10px;
+            position: relative;
+            z-index: 1;
+            pointer-events: auto;
         }
         #mnpTitle {
             flex: 1;
@@ -8116,6 +8119,7 @@
             overflow: hidden;
             min-width: 0;
             position: relative;
+            pointer-events: none;
         }
         body:not(.dark-mode) #mnpTitle {
             color: #1565c0;
@@ -8149,6 +8153,9 @@
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
         }
         #mnpRestartBtn, #mnpPlayPauseBtn {
             background: none;
@@ -8195,6 +8202,31 @@
         #mnpLyricsBtn:hover {
             background: rgba(102,126,234,0.4);
             color: #fff;
+        }
+        #mnpQueueBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #f5e642;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 50%;
+            transition: color 0.2s, background 0.2s;
+            opacity: 0.85;
+        }
+        body:not(.dark-mode) #mnpQueueBtn {
+            color: #c8a800;
+        }
+        #mnpQueueBtn:hover {
+            background: rgba(245,230,66,0.15);
+            color: #ffe94d;
+            opacity: 1;
+        }
+        body:not(.dark-mode) #mnpQueueBtn:hover {
+            background: rgba(200,168,0,0.12);
+            color: #a07800;
         }
 
         .modal-music {
@@ -8428,11 +8460,15 @@
         .music-progress-container {
             width: 100%;
             margin-top: 15px;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .music-progress-container.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .music-progress-bar-wrapper {
@@ -8725,9 +8761,10 @@
             transition: width 0.2s linear;
         }
         body.dark-mode .fl-progress-bar { background: #faed7a; }
-        .fl-playback-row { display:flex; justify-content:center; align-items:center; margin-top:12px; position:relative; }
-        .fl-playback-row #flRestartBtn { position:absolute; left:calc(50% + 28px); }
-        .fl-playpause-btn { background:none; border:none; cursor:pointer; color:#111111; padding:0; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s, transform 0.15s; opacity:0.9; -webkit-tap-highlight-color:transparent; outline:none; }
+        .fl-playback-row { display:flex; justify-content:center; align-items:center; margin-top:12px; position:relative; gap:0; }
+        .fl-playback-row #flRestartBtn { position:absolute; left:calc(50% + 34px); }
+        .fl-playback-row #flQueueBtn { position:absolute; left:calc(50% - 34px); transform:translateX(-100%); }
+        .fl-playpause-btn { background:none; border:none; cursor:pointer; color:#111111; padding:6px; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s, transform 0.15s; opacity:0.9; -webkit-tap-highlight-color:transparent; outline:none; border-radius:50%; }
         .fl-playpause-btn:hover { opacity:1; transform:scale(1.1); }
         body.dark-mode .fl-playpause-btn { color:#faed7a; }
         /* ── End Full Lyrics Modal ── */
@@ -8738,6 +8775,7 @@
 
         .song-item {
             margin-bottom: 20px;
+            position: relative;
         }
         #musicModal .music-list .song-item:last-child {
             margin-bottom: 0;
@@ -8811,6 +8849,55 @@
             flex-wrap: nowrap;
             margin-top: 10px;
             position: relative;
+        }
+        /* Add to Queue button — hidden by default, shows on hover, takes no space */
+        .song-queue-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #667eea;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 3px 0;
+            margin-top: 4px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            opacity: 0.72;
+            transition: opacity 0.2s, color 0.2s;
+            position: absolute;
+            bottom: 6px;
+            left: 12px;
+            pointer-events: auto;
+        }
+        .song-queue-btn:hover {
+            opacity: 1 !important;
+            color: #4a5dcc;
+        }
+        body.dark-mode .song-queue-btn {
+            color: #a0b4ff;
+        }
+        body.dark-mode .song-queue-btn:hover {
+            color: #c4d0ff;
+        }
+        /* Hide when this song is playing */
+        .song-item.song-playing .song-queue-btn {
+            display: none !important;
+        }
+        /* Hide all queue btns when nothing is playing */
+        .song-queue-btn {
+            display: none !important;
+        }
+        /* Show queue btns on all non-playing songs when any song is playing */
+        #musicModal.has-playing .song-queue-btn {
+            display: inline-flex !important;
+        }
+        #musicModal.has-playing .song-item.song-playing .song-queue-btn {
+            display: none !important;
         }
         .song-controls .play-button svg {
             width: 44px;
@@ -11893,6 +11980,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('ariboyfriend')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-ariboyfriend"><span class="lyrics-line" id="lyricsLine-ariboyfriend"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariboyfriend')">See full lyrics</button></div>
                             
                         </div>
@@ -11917,6 +12005,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('breakfree')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-breakfree"><span class="lyrics-line" id="lyricsLine-breakfree"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('breakfree')">See full lyrics</button></div>
                             
                         </div>
@@ -11941,6 +12030,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('breakupgf')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-breakupgf"><span class="lyrics-line" id="lyricsLine-breakupgf"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('breakupgf')">See full lyrics</button></div>
                             
                         </div>
@@ -11965,6 +12055,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('eternalsunshine')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-eternalsunshine"><span class="lyrics-line" id="lyricsLine-eternalsunshine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('eternalsunshine')">See full lyrics</button></div>
                             
                         </div>
@@ -11989,6 +12080,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('goodnightngo')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-goodnightngo"><span class="lyrics-line" id="lyricsLine-goodnightngo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('goodnightngo')">See full lyrics</button></div>
                             
                         </div>
@@ -12013,6 +12105,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('hatethat')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-hatethat"><span class="lyrics-line" id="lyricsLine-hatethat"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('hatethat')">See full lyrics</button></div>
                             
                         </div>
@@ -12037,6 +12130,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('ariintro')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-ariintro"><span class="lyrics-line" id="lyricsLine-ariintro"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariintro')">See full lyrics</button></div>
                             
                         </div>
@@ -12061,6 +12155,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('iwishihatedyou')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-iwishihatedyou"><span class="lyrics-line" id="lyricsLine-iwishihatedyou"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('iwishihatedyou')">See full lyrics</button></div>
                             
                         </div>
@@ -12085,6 +12180,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('aripastlife')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-aripastlife"><span class="lyrics-line" id="lyricsLine-aripastlife"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aripastlife')">See full lyrics</button></div>
                             
                         </div>
@@ -12109,6 +12205,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('positions')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-positions"><span class="lyrics-line" id="lyricsLine-positions"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('positions')">See full lyrics</button></div>
                             
                         </div>
@@ -12134,6 +12231,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('supernatural')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-supernatural"><span class="lyrics-line" id="lyricsLine-supernatural"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('supernatural')">See full lyrics</button></div>
                             
                         </div>
@@ -12158,6 +12256,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('alltoowell')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-alltoowell"><span class="lyrics-line" id="lyricsLine-alltoowell"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('alltoowell')">See full lyrics</button></div>
                             
                         </div>
@@ -12182,6 +12281,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('antihero')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-antihero"><span class="lyrics-line" id="lyricsLine-antihero"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('antihero')">See full lyrics</button></div>
                             
                         </div>
@@ -12206,6 +12306,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('august')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-august"><span class="lyrics-line" id="lyricsLine-august"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('august')">See full lyrics</button></div>
                             
                         </div>
@@ -12230,6 +12331,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('backtodecember')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-backtodecember"><span class="lyrics-line" id="lyricsLine-backtodecember"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('backtodecember')">See full lyrics</button></div>
                             
                         </div>
@@ -12254,6 +12356,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('blankspace')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-blankspace"><span class="lyrics-line" id="lyricsLine-blankspace"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('blankspace')">See full lyrics</button></div>
                             
                         </div>
@@ -12278,6 +12381,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('opalite')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-opalite"><span class="lyrics-line" id="lyricsLine-opalite"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('opalite')">See full lyrics</button></div>
                             
                         </div>
@@ -12303,6 +12407,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('red')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-red"><span class="lyrics-line" id="lyricsLine-red"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('red')">See full lyrics</button></div>
                             
                         </div>
@@ -12327,6 +12432,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('slut')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-slut"><span class="lyrics-line" id="lyricsLine-slut"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('slut')">See full lyrics</button></div>
                             
                         </div>
@@ -12351,6 +12457,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('opheila')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-opheila"><span class="lyrics-line" id="lyricsLine-opheila"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('opheila')">See full lyrics</button></div>
                             
                         </div>
@@ -12375,6 +12482,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('aboutyou')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-aboutyou"><span class="lyrics-line" id="lyricsLine-aboutyou"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aboutyou')">See full lyrics</button></div>
                             
                         </div>
@@ -12399,6 +12507,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('backburner')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-backburner"><span class="lyrics-line" id="lyricsLine-backburner"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('backburner')">See full lyrics</button></div>
                             
                         </div>
@@ -12423,6 +12532,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('confident')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-confident"><span class="lyrics-line" id="lyricsLine-confident"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('confident')">See full lyrics</button></div>
                             
                         </div>
@@ -12447,6 +12557,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('cooloff')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-cooloff"><span class="lyrics-line" id="lyricsLine-cooloff"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('cooloff')">See full lyrics</button></div>
                             
                         </div>
@@ -12472,6 +12583,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('happierthanever')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-happierthanever"><span class="lyrics-line" id="lyricsLine-happierthanever"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('happierthanever')">See full lyrics</button></div>
                             
                         </div>
@@ -12496,6 +12608,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('weeknd')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-weeknd"><span class="lyrics-line" id="lyricsLine-weeknd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('weeknd')">See full lyrics</button></div>
                             
                         </div>
@@ -12520,6 +12633,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('lastnightonearth')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-lastnightonearth"><span class="lyrics-line" id="lyricsLine-lastnightonearth"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('lastnightonearth')">See full lyrics</button></div>
                             
                         </div>
@@ -12544,6 +12658,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('libulibong')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-libulibong"><span class="lyrics-line" id="lyricsLine-libulibong"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('libulibong')">See full lyrics</button></div>
                             
                         </div>
@@ -12568,6 +12683,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('lifetime')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-lifetime"><span class="lyrics-line" id="lyricsLine-lifetime"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('lifetime')">See full lyrics</button></div>
                             
                         </div>
@@ -12592,6 +12708,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('wavetolove')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-wavetolove"><span class="lyrics-line" id="lyricsLine-wavetolove"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('wavetolove')">See full lyrics</button></div>
                             
                         </div>
@@ -12616,6 +12733,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('multo')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-multo"><span class="lyrics-line" id="lyricsLine-multo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('multo')">See full lyrics</button></div>
                             
                         </div>
@@ -12640,6 +12758,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('nailang')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-nailang"><span class="lyrics-line" id="lyricsLine-nailang"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nailang')">See full lyrics</button></div>
                             
                         </div>
@@ -12664,6 +12783,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('nvmd')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-nvmd"><span class="lyrics-line" id="lyricsLine-nvmd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nvmd')">See full lyrics</button></div>
                             
                         </div>
@@ -12688,6 +12808,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('oras')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-oras"><span class="lyrics-line" id="lyricsLine-oras"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('oras')">See full lyrics</button></div>
                             
                         </div>
@@ -12712,6 +12833,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('palayosamundo')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-palayosamundo"><span class="lyrics-line" id="lyricsLine-palayosamundo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('palayosamundo')">See full lyrics</button></div>
                             
                         </div>
@@ -12736,6 +12858,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('superfar')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-superfar"><span class="lyrics-line" id="lyricsLine-superfar"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('superfar')">See full lyrics</button></div>
                             
                         </div>
@@ -12760,6 +12883,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('wedonttalkanymore')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-wedonttalkanymore"><span class="lyrics-line" id="lyricsLine-wedonttalkanymore"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('wedonttalkanymore')">See full lyrics</button></div>
                             
                         </div>
@@ -12784,6 +12908,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('sabrina')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-sabrina"><span class="lyrics-line" id="lyricsLine-sabrina"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('sabrina')">See full lyrics</button></div>
                             
                         </div>
@@ -12808,6 +12933,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('charli360')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-charli360"><span class="lyrics-line" id="lyricsLine-charli360"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('charli360')">See full lyrics</button></div>
                             
                         </div>
@@ -12832,6 +12958,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button class="song-queue-btn" onclick="addToQueue('bazzimine')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-bazzimine"><span class="lyrics-line" id="lyricsLine-bazzimine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('bazzimine')">See full lyrics</button></div>
                             
                         </div>
@@ -12852,6 +12979,9 @@
                         <span id="mnpTotal">0:00</span>
                     </div>
                     <div id="mnpControls">
+                        <button id="mnpQueueBtn" title="View Queue" onclick="openQueueModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>
+                        </button>
                         <button id="mnpPlayPauseBtn" title="Play/Pause" onclick="mnpToggle()">
                             <svg id="mnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
                             <svg id="mnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
@@ -28146,6 +28276,8 @@ window.closeSettings = closeSettings;
                 if (miniButton) miniButton.style.display = 'none';
                 if (panel) panel.style.display = 'none';
                 if (inlineControls) inlineControls.classList.remove('active');
+                const musicModalEl = document.getElementById('musicModal');
+                if (musicModalEl) musicModalEl.classList.add('has-playing');
                 return;
             }
 
@@ -28191,6 +28323,16 @@ window.closeSettings = closeSettings;
 
             if (panel) {
                 panel.style.display = isMiniPanelOpen ? 'flex' : 'none';
+            }
+
+            // Sync has-playing on musicModal for queue btn visibility
+            const musicModalEl = document.getElementById('musicModal');
+            if (musicModalEl) {
+                if (currentPlayingSong !== null) {
+                    musicModalEl.classList.add('has-playing');
+                } else {
+                    musicModalEl.classList.remove('has-playing');
+                }
             }
         }
 
@@ -28357,6 +28499,8 @@ window.closeSettings = closeSettings;
                             currentPlayingSong = null;
                             updateMiniMusicUI();
                         }
+                        // ── Play next from queue ──
+                        if (window._onSongEnded) window._onSongEnded(songId);
                     });
 
                     audio.addEventListener('error', function(e) {
@@ -28378,7 +28522,87 @@ window.closeSettings = closeSettings;
             
             // Setup progress bar seeking after all audio elements are initialized
             setupProgressBarSeeking();
+
+            // ── Restore music state from localStorage ──
+            (function scheduleMusicStateRestore() {
+                // Defer until after all scripts (including musicQueue) are defined
+                setTimeout(function restoreMusicState() {
+                    try {
+                        var saved = localStorage.getItem('musicState');
+                        if (!saved) return;
+                        var state = JSON.parse(saved);
+
+                        // Restore queue
+                        if (Array.isArray(state.queue) && state.queue.length > 0) {
+                            if (typeof musicQueue !== 'undefined') musicQueue = state.queue;
+                        }
+
+                        // Restore song progress positions
+                        if (state.times && typeof state.times === 'object') {
+                            Object.keys(state.times).forEach(function(sid) {
+                                var t = state.times[sid];
+                                if (!t || t <= 0) return;
+                                lastKnownTime[sid] = t;
+                                var audio = document.getElementById('musicPlayer-' + sid);
+                                if (audio) {
+                                    function applyTime() {
+                                        if (audio.duration && isFinite(audio.duration)) {
+                                            audio.currentTime = Math.min(t, audio.duration - 0.5);
+                                        } else {
+                                            // duration not ready yet, set directly and update UI after
+                                            audio.currentTime = t;
+                                        }
+                                        var bar = document.getElementById('musicProgressBar-' + sid);
+                                        var cur = document.getElementById('currentTime-' + sid);
+                                        var tot = document.getElementById('totalTime-' + sid);
+                                        if (bar && audio.duration) bar.style.width = ((Math.min(t, audio.duration) / audio.duration) * 100) + '%';
+                                        if (cur) cur.textContent = formatTime(t);
+                                        if (tot && audio.duration) tot.textContent = formatTime(audio.duration);
+                                    }
+                                    if (audio.readyState >= 1) { applyTime(); }
+                                    else { audio.addEventListener('loadedmetadata', applyTime, { once: true }); }
+                                }
+                            });
+                        }
+
+                        // Restore which song was active (as paused — no auto-play)
+                        if (state.activeSong) {
+                            var sid = state.activeSong;
+                            currentPlayingSong = sid;
+                            var btn = document.querySelector('button[data-song="' + sid + '"]');
+                            var songItem = btn ? btn.closest('.song-item') : null;
+                            if (songItem) { songItem.classList.add('song-playing', 'song-paused'); }
+                            var progressContainer = document.getElementById('musicProgressContainer-' + sid);
+                            if (progressContainer) progressContainer.classList.add('active');
+                            if (typeof mnpUpdate === 'function') mnpUpdate();
+                            if (typeof updateMiniMusicUI === 'function') updateMiniMusicUI();
+                        }
+                    } catch(e) {
+                        console.warn('Could not restore music state:', e);
+                    }
+                }, 300);
+            })();
         });
+
+        // ── Save music state to localStorage on page leave ──
+        function saveMusicState() {
+            try {
+                var times = {};
+                songIds.forEach(function(sid) {
+                    var audio = document.getElementById('musicPlayer-' + sid);
+                    var t = (audio && audio.currentTime > 0) ? audio.currentTime : (lastKnownTime[sid] || 0);
+                    if (t > 0) times[sid] = t;
+                });
+                var state = {
+                    queue: (typeof musicQueue !== 'undefined') ? musicQueue.slice() : [],
+                    times: times,
+                    activeSong: currentPlayingSong || null
+                };
+                localStorage.setItem('musicState', JSON.stringify(state));
+            } catch(e) {}
+        }
+        window.addEventListener('beforeunload', saveMusicState);
+        window.addEventListener('pagehide', saveMusicState);
 
         // ── Now Playing Bar ──
         var _mnpHideTimer = null;
@@ -28496,6 +28720,7 @@ window.closeSettings = closeSettings;
                 }
                 if (prevSongItem) {
                     prevSongItem.classList.remove('song-playing');
+                    prevSongItem.classList.remove('song-paused');
                 }
                 if (prevProgress) prevProgress.classList.remove('active');
                 // Reset progress bar UI and time display to 0:00
@@ -28522,7 +28747,7 @@ window.closeSettings = closeSettings;
                             playButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>`;
                             playButton.classList.remove('playing');
                             playButton.classList.add('paused');
-                            if (songItem) songItem.classList.add('song-playing');
+                            if (songItem) { songItem.classList.add('song-playing'); songItem.classList.remove('song-paused'); }
                             if (progressContainer) progressContainer.classList.add('active');
                             currentPlayingSong = songId;
                             mnpUpdate();
@@ -28554,7 +28779,7 @@ window.closeSettings = closeSettings;
                 audio.pause();
                 playButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>`;
                 playButton.classList.remove('paused', 'playing');
-                if (songItem) songItem.classList.remove('song-playing');
+                if (songItem) { songItem.classList.add('song-paused'); }
                 if (progressContainer) progressContainer.classList.remove('active');
                 // Keep currentPlayingSong set so the bottom bar stays visible and can resume
                 mnpUpdate();
@@ -30806,7 +31031,7 @@ window.closeSettings = closeSettings;
 
 
         // ── Song name map for modal title ──
-        const songNames = {
+        const songNames = window.songNames = {
             lastnightonearth: 'Last Night on Earth — Green Day',
             sabrina: 'When Did You Get Hot — Sabrina Carpenter',
             positions: 'Positions — Ariana Grande',
@@ -32991,6 +33216,9 @@ _loginVisitsThemeObserver.observe(document.body, { attributes: true, attributeFi
                 <button id="flRestartBtn" class="fl-playpause-btn" onclick="flRestartSong()" style="opacity:0.6;">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg>
                 </button>
+                <button id="flQueueBtn" class="fl-playpause-btn" onclick="openQueueModal()" title="View Queue">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>
+                </button>
             </div>
         </div>
     </div>
@@ -33197,6 +33425,323 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
 
 
 
+
+
+<style>
+/* ── Queue Modal ── */
+#queueModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+}
+#queueModal.active { display: flex; }
+#queueModalBackdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+}
+#queueModalBox {
+    position: relative;
+    z-index: 1;
+    width: min(92vw, 420px);
+    max-height: 70vh;
+    border-radius: 16px;
+    padding: 22px 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #f5e980 0%, #89b8e0 100%);
+    color: #222;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+}
+body.dark-mode #queueModalBox {
+    background: linear-gradient(135deg, #5a4a10 0%, #001a3a 100%);
+    color: #e0e0e0;
+}
+#queueModalTitle {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: #c8a800;
+}
+body.dark-mode #queueModalTitle { color: #f5e980; }
+#queueModalClose {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    transition: color 0.2s;
+}
+#queueModalClose:hover { color: #333; }
+body.dark-mode #queueModalClose:hover { color: #fff; }
+#queueList {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(30,100,220,0.3) transparent;
+}
+#queueList::-webkit-scrollbar { width: 4px; }
+#queueList::-webkit-scrollbar-thumb { background: rgba(30,100,220,0.3); border-radius: 10px; }
+#queueEmptyMsg {
+    font-size: 12px;
+    opacity: 0.5;
+    text-align: center;
+    padding: 24px 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.queue-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.45);
+    transition: background 0.15s;
+    position: relative;
+}
+body.dark-mode .queue-item {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.12);
+}
+.queue-item:hover { background: rgba(255,255,255,0.45); }
+body.dark-mode .queue-item:hover { background: rgba(255,255,255,0.12); }
+.queue-item-num {
+    font-size: 11px;
+    font-weight: 800;
+    opacity: 0.45;
+    min-width: 18px;
+    letter-spacing: 0.5px;
+}
+.queue-item-info {
+    flex: 1;
+    min-width: 0;
+}
+.queue-item-name {
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.3px;
+    color: #1a78e8;
+}
+body.dark-mode .queue-item-name { color: #4da6ff; }
+.queue-item-time {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 2px;
+    font-weight: 600;
+}
+.queue-item-remove {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    font-size: 11px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+}
+.queue-item-remove:hover { color: #e53e3e; background: rgba(229,62,62,0.1); }
+.queue-item-play {
+    background: rgba(26,120,232,0.15);
+    border: 1px solid rgba(26,120,232,0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    color: #1a78e8;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.15s;
+    padding: 0;
+    margin-right: 14px;
+}
+.queue-item-play:hover { background: rgba(26,120,232,0.3); transform: scale(1.1); }
+body.dark-mode .queue-item-play { color: #4da6ff; border-color: rgba(77,166,255,0.35); background: rgba(77,166,255,0.12); }
+body.dark-mode .queue-item-play:hover { background: rgba(77,166,255,0.25); }
+/* ── End Queue Modal ── */
+</style>
+
+<div id="queueModal">
+    <div id="queueModalBackdrop"></div>
+    <div id="queueModalBox">
+        <div id="queueModalTitle">Queue</div>
+        <button id="queueModalClose" onclick="closeQueueModal()">✕</button>
+        <div id="queueList">
+            <div id="queueEmptyMsg">No songs in queue.</div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+// ── QUEUE SYSTEM ──
+var musicQueue = []; // array of songIds
+
+function formatQueueTime(songId) {
+    var audio = document.getElementById('musicPlayer-' + songId);
+    var dur = audio && audio.duration && isFinite(audio.duration) ? audio.duration : 0;
+    function fmt(s) {
+        s = Math.floor(s);
+        return Math.floor(s/60) + ':' + (s%60 < 10 ? '0' : '') + (s%60);
+    }
+    return '0:00 / ' + fmt(dur);
+}
+
+function getSongDisplayName(songId) {
+    // Use the songNames object already in page
+    if (window.songNames && window.songNames[songId]) return window.songNames[songId];
+    // Fallback: read from info-label
+    var btn = document.querySelector('button[data-song="' + songId + '"]');
+    if (btn) {
+        var item = btn.closest('.song-item');
+        if (item) {
+            var label = item.querySelector('.info-label');
+            if (label) return label.textContent.replace(/\[NEW\]/g,'').trim();
+        }
+    }
+    return songId;
+}
+
+function addToQueue(songId) {
+    if (musicQueue.indexOf(songId) === -1) {
+        musicQueue.push(songId);
+        renderQueueModal();
+        showQueueToast(getSongDisplayName(songId));
+    } else {
+        showQueueToast('Already in queue!', true);
+    }
+}
+
+function flAddToQueue() {
+    if (window._flSongId) addToQueue(window._flSongId);
+}
+
+function removeFromQueue(idx) {
+    musicQueue.splice(idx, 1);
+    renderQueueModal();
+}
+
+function renderQueueModal() {
+    var list = document.getElementById('queueList');
+    var empty = document.getElementById('queueEmptyMsg');
+    if (!list) return;
+    // Remove old items
+    var items = list.querySelectorAll('.queue-item');
+    items.forEach(function(el){ el.remove(); });
+    if (musicQueue.length === 0) {
+        if (empty) empty.style.display = '';
+        return;
+    }
+    if (empty) empty.style.display = 'none';
+    musicQueue.forEach(function(songId, i) {
+        var audio = document.getElementById('musicPlayer-' + songId);
+        var dur = audio && audio.duration && isFinite(audio.duration) ? audio.duration : 0;
+        function fmt(s){ s=Math.floor(s); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); }
+        var timeStr = '0:00 / ' + (dur ? fmt(dur) : '—');
+        var name = getSongDisplayName(songId);
+
+        var div = document.createElement('div');
+        div.className = 'queue-item';
+        div.innerHTML =
+            '<button class="queue-item-remove" onclick="removeFromQueue(' + i + ')" title="Remove">✕</button>' +
+            '<span class="queue-item-num">' + (i+1) + '.</span>' +
+            '<div class="queue-item-info">' +
+                '<div class="queue-item-name">' + name + '</div>' +
+                '<div class="queue-item-time">' + timeStr + '</div>' +
+            '</div>' +
+            '<button class="queue-item-play" onclick="playFromQueue(\'' + songId + '\',' + i + ')" title="Play">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>' +
+            '</button>';
+        list.appendChild(div);
+    });
+}
+
+function playFromQueue(songId, idx) {
+    musicQueue.splice(idx, 1);
+    renderQueueModal();
+    setTimeout(function(){ toggleMusic(songId); }, 100);
+}
+
+
+function openQueueModal() {
+    renderQueueModal();
+    var modal = document.getElementById('queueModal');
+    if (modal) {
+        // Move to end of body so it always sits above all other stacking contexts
+        document.body.appendChild(modal);
+        modal.style.display = 'flex';
+        applyQueueModalTheme();
+    }
+}
+
+function closeQueueModal() {
+    var modal = document.getElementById('queueModal');
+    if (modal) { modal.style.display = 'none'; modal.classList.remove('active'); }
+}
+
+function applyQueueModalTheme() {
+    // theme is handled by CSS dark-mode class, nothing extra needed
+}
+
+// Re-apply theme when dark mode toggles
+var _queueThemeObs = new MutationObserver(function() {
+    var modal = document.getElementById('queueModal');
+    if (modal && modal.classList.contains('active')) applyQueueModalTheme();
+});
+_queueThemeObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+// ── Auto-play next from queue when song ends ──
+// Patch into the audio ended events already set up
+// We use a global hook checked in the ended handler
+window._onSongEnded = function(songId) {
+    if (musicQueue.length > 0) {
+        var nextId = musicQueue.shift();
+        renderQueueModal();
+        // Small delay so previous audio cleanup finishes
+        setTimeout(function(){ toggleMusic(nextId); }, 300);
+    }
+};
+
+// ── Toast notification ──
+function showQueueToast(name, warn) {
+    var toast = document.getElementById('queueToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'queueToast';
+        toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(30,30,30,0.92);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;z-index:999999;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;';
+        document.body.appendChild(toast);
+    }
+    clearTimeout(toast._t);
+    toast.style.opacity = '1';
+    toast.textContent = warn ? name : '+ Added to Queue';
+    toast._t = setTimeout(function(){ toast.style.opacity = '0'; }, 2000);
+}
+</script>
 
 </body>
 </html>
