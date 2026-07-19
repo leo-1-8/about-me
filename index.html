@@ -421,9 +421,6 @@
             /* Let the page body handle scrolling to avoid clipping and flashing */
             overflow-y: visible;
             position: relative;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            transform: translateZ(0);
         }
 
         /* Theme toggle (top-right on main menu) */
@@ -1093,7 +1090,7 @@
         html {
             --site-brightness: 1;
         }
-        body {
+        html {
             filter: brightness(var(--site-brightness));
         }
         .settings-caution-overlay {
@@ -1215,7 +1212,8 @@
             color: #111;
             position: absolute;
             right: 6px;
-            top: 6px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         .theme-toggle-icon {
             width: 18px;
@@ -1235,13 +1233,15 @@
         }
         body.dark-mode .theme-toggle-label {
             color: rgba(255, 255, 255, 0.9);
-            left: 50px;  /* leave space for knob on left */
-            right: 16px;
-            text-align: right;
+            left: 46px;
+            right: 6px;
+            text-align: center;
         }
         body.dark-mode .theme-toggle-knob {
             right: auto;
             left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.7);
             color: rgba(255, 255, 255, 0.9);
             border-color: rgba(255, 255, 255, 0.2);
@@ -12717,7 +12717,6 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label"                    <div class="info-item song-item">
                         <div class="info-label">31. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
@@ -28058,7 +28057,7 @@ window.closeSettings = closeSettings;
         }
 
         // Music Player Functions
-        let currentPlayingSong = null;
+        window.currentPlayingSong = null;
         let bgMusicAudio = null;
         let bgMusicFading = false;
         let bgMusicShouldPlay = false;
@@ -28503,11 +28502,11 @@ window.closeSettings = closeSettings;
                         // Clear currentPlayingSong AFTER queue handler so toggleMusic
                         // can properly detect and stop the previous song
                         if (window._onSongEnded && musicQueue && musicQueue.length > 0) {
-                            currentPlayingSong = null;
+                            window.currentPlayingSong = null;
                             window._onSongEnded(songId);
                         } else {
                             if (currentPlayingSong === songId) {
-                                currentPlayingSong = null;
+                                window.currentPlayingSong = null;
                                 updateMiniMusicUI();
                             }
                             if (window._onSongEnded) window._onSongEnded(songId);
@@ -28579,7 +28578,7 @@ window.closeSettings = closeSettings;
                         // Restore which song was active (as paused — no auto-play)
                         if (state.activeSong) {
                             var sid = state.activeSong;
-                            currentPlayingSong = sid;
+                            window.currentPlayingSong = sid;
                             var btn = document.querySelector('button[data-song="' + sid + '"]');
                             var songItem = btn ? btn.closest('.song-item') : null;
                             if (songItem) { songItem.classList.add('song-playing', 'song-paused'); }
@@ -28760,7 +28759,7 @@ window.closeSettings = closeSettings;
                             playButton.classList.add('paused');
                             if (songItem) { songItem.classList.add('song-playing'); songItem.classList.remove('song-paused'); }
                             if (progressContainer) progressContainer.classList.add('active');
-                            currentPlayingSong = songId;
+                            window.currentPlayingSong = songId;
                             mnpUpdate();
                             updateMiniMusicUI();
                         }).catch(error => {
@@ -28780,7 +28779,7 @@ window.closeSettings = closeSettings;
                         playButton.classList.add('paused');
                         if (songItem) songItem.classList.add('song-playing');
                         if (progressContainer) progressContainer.classList.add('active');
-                        currentPlayingSong = songId;
+                        window.currentPlayingSong = songId;
                         mnpUpdate();
                         updateMiniMusicUI();
                     }
@@ -28835,6 +28834,7 @@ window.closeSettings = closeSettings;
         const songLyrics = {
             // ─── 1. WHEN DID YOU GET HOT — Sabrina Carpenter ───
             lastnightonearth: [
+                {t:0,     text:"♪"},
                 {t:16.43, text:'I text a postcard sent to you'},
                 {t:20.70, text:'Did it go through?'},
                 {t:24.83, text:'Sending all my love to you'},
@@ -29721,6 +29721,7 @@ window.closeSettings = closeSettings;
                 {t:197.39,text:"If this is love, I don't want it"},
             ],
             wedonttalkanymore: [
+                {t:0,     text:"♪"},
                 {t:0.27, text:'We don\'t talk anymore'},
                 {t:2.54, text:'We don\'t talk anymore'},
                 {t:4.66, text:'We don\'t talk anymore'},
@@ -30211,6 +30212,7 @@ window.closeSettings = closeSettings;
 
             // ─── 24. LIFETIME (REIMAGINED) — Ben&Ben ───
             lifetime: [
+                {t:0,     text:"♪"},
                 {t:11.60, text:"Was there a lifetime waiting for us"},
                 {t:15.53, text:"In a world where I was yours?"},
                 {t:19.70, text:""},
@@ -30272,6 +30274,7 @@ window.closeSettings = closeSettings;
 
             // ─── 25. HATE THAT I MADE YOU LOVE ME — Ariana Grande ───
             hatethat: [
+                {t:0,     text:"♪"},
                 {t:10.23, text:"I can't tell you why"},
                 {t:13.64, text:"But something inside"},
                 {t:16.01, text:"Is dancing with fire"},
@@ -30335,6 +30338,7 @@ window.closeSettings = closeSettings;
                 {t:192.97, text:""},
             ],
             alltoowell: [
+                {t:0,     text:"♪"},
                 {t:22.63, text:"I walked through the door with you, the air was cold"},
                 {t:28.22, text:"But something 'bout it felt like home somehow"},
                 {t:32.87, text:"And I left my scarf there at your sister's house"},
@@ -30535,6 +30539,7 @@ window.closeSettings = closeSettings;
 
             // ─── BACK TO DECEMBER — Taylor Swift ───
             backtodecember: [
+                {t:0,     text:"♪"},
                 {t:14.02,  text:"I'm so glad you made time to see me"},
                 {t:17.51,  text:"How's life"},
                 {t:18.79,  text:"Tell me how's your family"},
@@ -30605,6 +30610,7 @@ window.closeSettings = closeSettings;
 
             // ─── AUGUST — Taylor Swift ───
             august: [
+                {t:0,     text:"♪"},
                 {t:5.84,   text:"Salt air"},
                 {t:8.92,   text:"And the rust on your door"},
                 {t:11.64,  text:"I never needed anything more"},
@@ -30681,6 +30687,7 @@ window.closeSettings = closeSettings;
 
             // ─── SUPERNATURAL — Ariana Grande ───
             supernatural: [
+                {t:0,     text:"♪"},
                 {t:11.36,  text:"don't want nobody else around me"},
                 {t:14.53,  text:"just need you right here"},
                 {t:17.72,  text:"you're like the only thing that i see"},
@@ -30736,6 +30743,7 @@ window.closeSettings = closeSettings;
 
             // ─── I WISH I HATED YOU — Ariana Grande ───
             iwishihatedyou: [
+                {t:0,     text:"♪"},
                 {t:8.35,   text:"hung all my clothes in the closet you made"},
                 {t:12.73,  text:"your shoes still in boxes, i send them your way"},
                 {t:16.67,  text:"hoping life brings you no new pain"},
@@ -30767,6 +30775,7 @@ window.closeSettings = closeSettings;
 
             // ─── NVMD — Denise Julia ───
             nvmd: [
+                {t:0,     text:"♪"},
                 {t:1.93,   text:"Oh, back to where we started"},
                 {t:7.24,   text:"Back to where we started, oh"},
                 {t:11.75,  text:"Oh, back to when"},
@@ -30827,6 +30836,7 @@ window.closeSettings = closeSettings;
 
             // ─── RED — Taylor Swift ───
             red: [
+                {t:0,     text:"♪"},
                 {t:6.31,   text:"Loving him is like driving a new Maserati down a dead-end street"},
                 {t:15.33,  text:"Faster than the wind, passionate as sin, ending so suddenly"},
                 {t:21.67,  text:"Loving him is like trying to change your mind once you're already flying through the free fall"},
@@ -30862,6 +30872,7 @@ window.closeSettings = closeSettings;
 
             // ─── BREAK UP WITH YOUR GIRLFRIEND, I'M BORED — Ariana Grande ───
             breakupgf: [
+                {t:0,     text:"♪"},
                 {t:6.46,   text:"You got me some type of way"},
                 {t:9.21,   text:"Ain't used to feeling this way"},
                 {t:12.11,  text:"I do not know what to say"},
@@ -30923,6 +30934,7 @@ window.closeSettings = closeSettings;
 
             // ─── LIBU-LIBONG BUWAN — Kyle Raphael ───
             libulibong: [
+                {t:0,     text:"♪"},
                 {t:3.42,   text:"Kahit saan, kahit kailan"},
                 {t:11.35,   text:"Kahit anong bagyo pa man ang dumaan"},
                 {t:16.94,  text:"Ikaw pa ri'y pupuntahan, mm"},
@@ -30956,6 +30968,7 @@ window.closeSettings = closeSettings;
 
             // ─── PALAYO SA MUNDO — Jolianne, Arthur Nery ───
             palayosamundo: [
+                {t:0,     text:"♪"},
                 {t:22.78,  text:"Kapit nang kapit sa tala"},
                 {t:33.90,  text:"Wala ring mahawakan sa mundo, mm"},
                 {t:44.50,  text:"Sadyang maraming"},
@@ -31015,6 +31028,7 @@ window.closeSettings = closeSettings;
 
             // ─── MINE — Bazzi ───
             bazzimine: [
+                {t:0,     text:"♪"},
                 {t:4.60,   text:"Huh, yeah, naw I just had a lil' bit too much of Hennessy"},
                 {t:10.14,  text:"Just gotta tell you how I feel, look"},
                 {t:14.17,  text:"You so fuckin' precious when you smile"},
@@ -33765,5 +33779,324 @@ function showQueueToast(name, warn) {
 }
 </script>
 
+<!-- ── Floating Now Playing Pill ── -->
+<style>
+#floatingNowPlaying {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999999;
+    pointer-events: auto;
+}
+#floatingNowPlaying.fnp-visible {
+    display: flex;
+}
+#fnpPill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 14, 30, 0.92);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 999px;
+    padding: 7px 10px 7px 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    min-width: 0;
+    max-width: min(90vw, 420px);
+}
+body:not(.dark-mode) #fnpPill {
+    background: rgba(245, 248, 255, 0.96);
+    border-color: rgba(100,126,234,0.25);
+    box-shadow: 0 4px 24px rgba(80,100,200,0.18);
+}
+#fnpNote {
+    font-size: 13px;
+    flex-shrink: 0;
+    line-height: 1;
+    animation: fnpNotePulse 1.8s ease-in-out infinite;
+}
+@keyframes fnpNotePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.85); }
+}
+#fnpNote.fnp-paused {
+    animation: none;
+    opacity: 0.4;
+}
+#fnpTitle {
+    flex: 1;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    color: #5ab4ff;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 40px;
+    max-width: 220px;
+}
+#fnpTitle .fnp-marquee-inner {
+    display: inline-block;
+    will-change: transform;
+    transform: translateX(0);
+}
+body:not(.dark-mode) #fnpTitle { color: #1565c0; }
+#fnpPlayPauseBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f5e642;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: color 0.2s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+body:not(.dark-mode) #fnpPlayPauseBtn { color: #c8a800; }
+#fnpPlayPauseBtn:hover { background: rgba(245,230,66,0.15); color: #ffe94d; }
+body:not(.dark-mode) #fnpPlayPauseBtn:hover { background: rgba(200,168,0,0.12); color: #a07800; }
+#fnpCloseBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(180,200,255,0.55);
+    font-size: 15px;
+    line-height: 1;
+    padding: 3px 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+body:not(.dark-mode) #fnpCloseBtn { color: rgba(30,60,160,0.4); }
+#fnpCloseBtn:hover { color: #fff; background: rgba(255,80,80,0.25); }
+body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,0.1); }
+/* Progress bar along bottom of pill */
+#fnpProgressTrack {
+    position: absolute;
+    bottom: 0;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    pointer-events: none;
+}
+body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
+#fnpProgressFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f5e642, #6fdd58);
+    border-radius: 1px;
+    transition: width 0.3s linear;
+}
+#fnpPillWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+</style>
+
+<div id="floatingNowPlaying">
+    <div id="fnpPillWrap">
+        <div id="fnpPill">
+            <span id="fnpTitle"></span>
+            <button id="fnpPlayPauseBtn" title="Play/Pause" onclick="fnpTogglePlayPause()">
+                <svg id="fnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
+                <svg id="fnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
+            </button>
+            <button id="fnpCloseBtn" title="Hide (music keeps playing)" onclick="fnpClose()">✕</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var _fnpDismissed = false;
+    var _fnpLastSong = null;
+
+    function fnpUpdate() {
+        var el = document.getElementById('floatingNowPlaying');
+        var titleEl = document.getElementById('fnpTitle');
+        var pauseIcon = document.getElementById('fnpPauseIcon');
+        var playIcon = document.getElementById('fnpPlayIcon');
+        if (!el) return;
+
+        var sid = window.currentPlayingSong;
+
+        // If song changed, un-dismiss the pill
+        if (sid && sid !== _fnpLastSong) {
+            _fnpDismissed = false;
+            _fnpLastSong = sid;
+        }
+
+        // If same song starts playing again after user hit X, un-dismiss so pill reappears
+        if (sid && _fnpDismissed) {
+            var _replayAudio = document.getElementById('musicPlayer-' + sid);
+            if (_replayAudio && !_replayAudio.paused) {
+                _fnpDismissed = false;
+            }
+        }
+
+        // Only show on main menu (no modals, no settings, past intro, no welcome overlay)
+        var onMainMenu = (
+            !document.body.classList.contains('intro-pending') &&
+            !document.querySelector('.modal-overlay.active') &&
+            !(document.getElementById('settingsOverlay') && document.getElementById('settingsOverlay').classList.contains('show')) &&
+            !(document.getElementById('newWelcomeOverlay') && document.getElementById('newWelcomeOverlay').classList.contains('show'))
+        );
+
+        if (!sid || _fnpDismissed || !onMainMenu) {
+            el.classList.remove('fnp-visible');
+            return;
+        }
+
+        var audio = document.getElementById('musicPlayer-' + sid);
+        var isPlaying = audio && !audio.paused;
+
+        el.classList.add('fnp-visible');
+
+        // Title — seamless infinite marquee (duplicate text, no snap-back visible)
+        if (titleEl && window.songNames && window.songNames[sid]) {
+            var songText = window.songNames[sid];
+            if (titleEl.dataset.lastSong !== songText) {
+                titleEl.dataset.lastSong = songText;
+                if (window._fnpMarqueeRaf) { cancelAnimationFrame(window._fnpMarqueeRaf); window._fnpMarqueeRaf = null; }
+                if (window._fnpMarqueePause) { clearTimeout(window._fnpMarqueePause); window._fnpMarqueePause = null; }
+
+                // Two spans: A and B — B positioned right after A
+                // When A scrolls fully off left, reset pos by one unit seamlessly
+                var GAP = 60; // px gap between end of copy A and start of copy B
+                var wrapper = document.createElement('span');
+                wrapper.className = 'fnp-marquee-inner';
+                wrapper.style.cssText = 'display:inline-flex;align-items:center;white-space:nowrap;';
+                var spanA = document.createElement('span');
+                spanA.textContent = songText;
+                var spacer = document.createElement('span');
+                spacer.style.display = 'inline-block';
+                spacer.style.width = GAP + 'px';
+                var spanB = document.createElement('span');
+                spanB.textContent = songText;
+                var spacer2 = document.createElement('span');
+                spacer2.style.display = 'inline-block';
+                spacer2.style.width = GAP + 'px';
+                wrapper.appendChild(spanA);
+                wrapper.appendChild(spacer);
+                wrapper.appendChild(spanB);
+                wrapper.appendChild(spacer2);
+                titleEl.innerHTML = '';
+                titleEl.appendChild(wrapper);
+
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        var containerW = titleEl.offsetWidth;
+                        var unitW = spanA.offsetWidth + GAP; // one full cycle width
+                        if (spanA.offsetWidth <= containerW) return; // fits, no scroll needed
+
+                        var SPEED = 55;
+                        var pos = 0;
+                        var lastTime = null;
+                        var pausing = false;
+
+                        function resume() {
+                            pausing = false;
+                            lastTime = null;
+                            window._fnpMarqueeRaf = requestAnimationFrame(tick);
+                        }
+
+                        function tick(ts) {
+                            if (pausing) return;
+                            if (lastTime === null) lastTime = ts;
+                            var dt = Math.min((ts - lastTime) / 1000, 0.05);
+                            lastTime = ts;
+                            pos += SPEED * dt;
+                            // Seamless loop: when we've moved one full unit, pause 3s then continue
+                            if (pos >= unitW) {
+                                pos -= unitW;
+                                pausing = true;
+                                window._fnpMarqueePause = setTimeout(resume, 3000);
+                                return;
+                            }
+                            wrapper.style.transform = 'translateX(-' + pos.toFixed(2) + 'px)';
+                            window._fnpMarqueeRaf = requestAnimationFrame(tick);
+                        }
+
+                        // start scrolling immediately
+                        lastTime = null;
+                        window._fnpMarqueeRaf = requestAnimationFrame(tick);
+                    });
+                });
+            }
+        }
+
+
+        // Icons
+        if (pauseIcon) pauseIcon.style.display = isPlaying ? '' : 'none';
+        if (playIcon)  playIcon.style.display  = isPlaying ? 'none' : '';
+    }
+
+    window.fnpTogglePlayPause = function() {
+        if (!window.currentPlayingSong) return;
+        var audio = document.getElementById('musicPlayer-' + window.currentPlayingSong);
+        if (!audio) return;
+        // If pausing AND pill will be dismissed (only possible via X), just toggle
+        toggleMusic(currentPlayingSong);
+        setTimeout(fnpUpdate, 80);
+    };
+
+    window.fnpClose = function() {
+        // X just dismisses the pill — music keeps its current state (playing or paused)
+        _fnpDismissed = true;
+        var el = document.getElementById('floatingNowPlaying');
+        if (el) el.classList.remove('fnp-visible');
+    };
+
+    // Poll for updates
+    setInterval(function() {
+        fnpUpdate();
+    }, 250);
+
+    // Also hook into mnpUpdate calls
+    var _origMnpUpdate = window.mnpUpdate;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Patch mnpUpdate to also update fnp
+        var orig = window.mnpUpdate;
+        if (orig) {
+            window.mnpUpdate = function() {
+                orig.apply(this, arguments);
+                fnpUpdate();
+            };
+        }
+    });
+})();
+</script>
+
+<script>
+// Move the Now Playing pill to <html> so body/overlay stacking contexts can't trap it
+(function() {
+    function movePillToHtml() {
+        var pill = document.getElementById('floatingNowPlaying');
+        if (pill && pill.parentNode !== document.documentElement) {
+            document.documentElement.appendChild(pill);
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', movePillToHtml);
+    } else {
+        movePillToHtml();
+    }
+})();
+</script>
 </body>
 </html>
