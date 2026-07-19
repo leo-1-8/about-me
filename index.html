@@ -28671,6 +28671,22 @@ window.closeSettings = closeSettings;
 
         function mnpToggle() {
             if (!currentPlayingSong) return;
+            // Optimistically flip icons immediately so the button feels instant
+            var audio = document.getElementById('musicPlayer-' + currentPlayingSong);
+            var willPlay = audio && audio.paused;
+            var pauseIcon = document.getElementById('mnpPauseIcon');
+            var playIcon  = document.getElementById('mnpPlayIcon');
+            if (pauseIcon) pauseIcon.style.display = willPlay ? '' : 'none';
+            if (playIcon)  playIcon.style.display  = willPlay ? 'none' : '';
+            // Also flip the song-item play button icon instantly
+            var playBtn = document.querySelector('[data-song="' + currentPlayingSong + '"]');
+            if (playBtn) {
+                if (willPlay) {
+                    playBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>';
+                } else {
+                    playBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>';
+                }
+            }
             toggleMusic(currentPlayingSong);
         }
 
@@ -31270,17 +31286,41 @@ window.closeSettings = closeSettings;
         function flRestartSong() {
             if (!_flSongId) return;
             const audio = document.getElementById('musicPlayer-' + _flSongId);
-            if (audio) { audio.currentTime = 0; if (audio.paused) audio.play(); }
-            setTimeout(updateFlPlayPauseIcon, 80);
+            if (audio) {
+                audio.currentTime = 0;
+                if (audio.paused) {
+                    audio.play().then(function() { updateFlPlayPauseIcon(); }).catch(function() { updateFlPlayPauseIcon(); });
+                }
+            }
+            // Update icon immediately (will be playing after restart)
+            const playIcon2   = document.getElementById('flPlayIcon');
+            const pauseIcon2  = document.getElementById('flPauseIcon');
+            if (playIcon2)  playIcon2.style.display  = 'none';
+            if (pauseIcon2) pauseIcon2.style.display = '';
         }
         function flTogglePlayPause() {
             if (!_flSongId) return;
             const audio = document.getElementById('musicPlayer-' + _flSongId);
             if (!audio) return;
+            const willPlay = audio.paused;
+            // Update icon immediately — no setTimeout needed
+            const playIcon2   = document.getElementById('flPlayIcon');
+            const pauseIcon2  = document.getElementById('flPauseIcon');
+            if (playIcon2)  playIcon2.style.display  = willPlay ? 'none' : '';
+            if (pauseIcon2) pauseIcon2.style.display = willPlay ? '' : 'none';
+            // Also update pill and mini-player icons right away
+            const fnpPauseIcon = document.getElementById('fnpPauseIcon');
+            const fnpPlayIcon  = document.getElementById('fnpPlayIcon');
+            if (fnpPauseIcon) fnpPauseIcon.style.display = willPlay ? '' : 'none';
+            if (fnpPlayIcon)  fnpPlayIcon.style.display  = willPlay ? 'none' : '';
+            const mnpPauseIcon = document.getElementById('mnpPauseIcon');
+            const mnpPlayIcon  = document.getElementById('mnpPlayIcon');
+            if (mnpPauseIcon) mnpPauseIcon.style.display = willPlay ? '' : 'none';
+            if (mnpPlayIcon)  mnpPlayIcon.style.display  = willPlay ? 'none' : '';
+            // Trigger actual audio via toggleMusic (handles all state correctly)
             const playBtn = document.querySelector('[data-song="' + _flSongId + '"]');
             if (playBtn) { playBtn.click(); }
-            else { if (audio.paused) audio.play(); else audio.pause(); }
-            setTimeout(updateFlPlayPauseIcon, 80);
+            else { if (willPlay) audio.play(); else audio.pause(); }
         }
         window.openFullLyricsModal = openFullLyricsModal;
         window.closeFullLyricsModal = closeFullLyricsModal;
@@ -33787,14 +33827,22 @@ function showQueueToast(name, warn) {
 #floatingNowPlaying {
     display: none;
     position: fixed;
-    top: 50%;
+    bottom: 24px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     z-index: 99999999;
     pointer-events: auto;
 }
 #floatingNowPlaying.fnp-visible {
     display: flex;
+}
+@media (min-width: 769px) {
+    #floatingNowPlaying {
+        top: 50%;
+        bottom: auto;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
 #fnpPill {
     display: flex;
@@ -33942,7 +33990,7 @@ body:not(.dark-mode) #fnpLyrics {
 <div id="floatingNowPlaying">
     <div id="fnpPillWrap">
         <div id="fnpPill">
-            <span id="fnpTitle" onclick="openModal('music')" style="cursor:pointer;"></span>
+            <span id="fnpTitle"></span>
             <button id="fnpPlayPauseBtn" title="Play/Pause" onclick="fnpTogglePlayPause()">
                 <svg id="fnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
                 <svg id="fnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
@@ -34031,38 +34079,47 @@ body:not(.dark-mode) #fnpLyrics {
                 titleEl.innerHTML = '';
                 titleEl.appendChild(wrapper);
 
+                // Force a layout read ONCE outside rAF to avoid thrashing inside the tick loop
                 requestAnimationFrame(function() {
+                    // Two nested rAFs ensure the DOM has been painted and widths are accurate
                     requestAnimationFrame(function() {
                         var containerW = titleEl.offsetWidth;
-                        var unitW = spanA.offsetWidth + GAP; // one full cycle width
-                        if (spanA.offsetWidth <= containerW) return; // fits, no scroll needed
+                        var spanAW = spanA.offsetWidth;
+                        var unitW = spanAW + GAP; // one full cycle width — cached, never re-read
+                        if (spanAW <= containerW) return; // fits, no scroll needed
 
-                        var SPEED = 55;
+                        var SPEED = 55; // px/s
                         var pos = 0;
                         var lastTime = null;
                         var pausing = false;
 
+                        // Pre-promote the wrapper to its own compositing layer for smooth GPU scrolling
+                        wrapper.style.willChange = 'transform';
+
                         function resume() {
                             pausing = false;
-                            lastTime = null;
+                            lastTime = null; // reset so first dt is 0 (no jump after pause)
                             window._fnpMarqueeRaf = requestAnimationFrame(tick);
                         }
 
                         function tick(ts) {
                             if (pausing) return;
-                            if (lastTime === null) lastTime = ts;
-                            var dt = Math.min((ts - lastTime) / 1000, 0.05);
+                            if (lastTime === null) {
+                                lastTime = ts;
+                                window._fnpMarqueeRaf = requestAnimationFrame(tick);
+                                return; // skip first frame — dt would be huge
+                            }
+                            var dt = (ts - lastTime) / 1000;
+                            // Clamp dt: ignore frames > 100ms (tab was hidden / slow device)
+                            if (dt > 0.1) dt = 0.016;
                             lastTime = ts;
                             pos += SPEED * dt;
                             if (pos >= unitW) {
-                                // Reset to 0 — title is fully visible at start again
-                                pos = 0;
-                                wrapper.style.transform = 'translateX(0px)';
-                                pausing = true;
-                                window._fnpMarqueePause = setTimeout(resume, 3000);
-                                return;
+                                // Seamless loop: subtract one unit so copy B becomes the new copy A
+                                pos -= unitW;
                             }
-                            wrapper.style.transform = 'translateX(-' + pos.toFixed(2) + 'px)';
+                            // Use integer pixel positions to avoid sub-pixel jitter on mobile
+                            wrapper.style.transform = 'translateX(-' + Math.round(pos) + 'px)';
                             window._fnpMarqueeRaf = requestAnimationFrame(tick);
                         }
 
@@ -34078,6 +34135,13 @@ body:not(.dark-mode) #fnpLyrics {
         // Icons
         if (pauseIcon) pauseIcon.style.display = isPlaying ? '' : 'none';
         if (playIcon)  playIcon.style.display  = isPlaying ? 'none' : '';
+
+        // Keep the musical note pulse in sync with play/pause state
+        var fnpNote = document.getElementById('fnpNote');
+        if (fnpNote) {
+            if (isPlaying) fnpNote.classList.remove('fnp-paused');
+            else           fnpNote.classList.add('fnp-paused');
+        }
 
     }
 
@@ -34123,8 +34187,24 @@ body:not(.dark-mode) #fnpLyrics {
         if (!window.currentPlayingSong) return;
         var audio = document.getElementById('musicPlayer-' + window.currentPlayingSong);
         if (!audio) return;
+
+        var willPlay = audio.paused; // true = we're about to play
+
+        // Update pill icons immediately (no delay) so the UI feels instant
+        var pauseIcon = document.getElementById('fnpPauseIcon');
+        var playIcon  = document.getElementById('fnpPlayIcon');
+        var fnpNote   = document.getElementById('fnpNote');
+        if (pauseIcon) pauseIcon.style.display = willPlay ? '' : 'none';
+        if (playIcon)  playIcon.style.display  = willPlay ? 'none' : '';
+        if (fnpNote) {
+            if (willPlay) fnpNote.classList.remove('fnp-paused');
+            else          fnpNote.classList.add('fnp-paused');
+        }
+
+        // Delegate actual play/pause to toggleMusic (handles all other UI)
         toggleMusic(currentPlayingSong);
-        setTimeout(fnpUpdate, 80);
+        // Run a follow-up sync in case toggleMusic's promise resolves differently
+        setTimeout(fnpUpdate, 120);
     };
 
     window.fnpClose = function() {
