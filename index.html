@@ -8189,7 +8189,7 @@
         }
         @keyframes mnpTitleScroll {
             0%   { transform: translateX(0); }
-            100% { transform: translateX(var(--mnp-scroll-dist, -9999px)); }
+            100% { transform: translateX(var(--mnp-scroll-dist, 0px)); }
         }
         #mnpTimes {
             display: flex;
@@ -28743,10 +28743,10 @@ window.closeSettings = closeSettings;
                         if (lyricsLine) lyricsLine.textContent = '';
                         // ── Play next from queue ──
                         const hasQueue = typeof musicQueue !== 'undefined' && musicQueue && musicQueue.length > 0;
-                        if (window._onSongEnded && hasQueue) {
+                        if (hasQueue) {
                             // Don't null currentPlayingSong yet — let _onSongEnded/toggleMusic do it
                             // so the now-playing bar doesn't flash away during the 300ms gap
-                            window._onSongEnded(songId);
+                            if (window._onSongEnded) window._onSongEnded(songId);
                         } else {
                             if (currentPlayingSong === songId) {
                                 window.currentPlayingSong = null;
@@ -28873,25 +28873,16 @@ window.closeSettings = closeSettings;
         });
 
         // ── Now Playing Bar ──
-        var _mnpHideTimer = null;
-        function _mnpScheduleHide() {
-            if (_mnpHideTimer) clearTimeout(_mnpHideTimer);
-            _mnpHideTimer = setTimeout(function() {
-                var bar = document.getElementById('musicNowPlayingBar');
-                if (bar && !currentPlayingSong) bar.style.display = 'none';
-                _mnpHideTimer = null;
-            }, 20000);
-        }
         function mnpUpdate() {
             const bar = document.getElementById('musicNowPlayingBar');
             if (!bar) return;
-            if (!currentPlayingSong) {
-                // Don't hide immediately — schedule hide after 20 seconds of no song
-                _mnpScheduleHide();
+            // Hide immediately when nothing is playing and queue is empty
+            const hasQueue = typeof musicQueue !== 'undefined' && musicQueue && musicQueue.length > 0;
+            if (!currentPlayingSong && !hasQueue) {
+                bar.style.display = 'none';
                 return;
             }
-            // A song is playing/paused — cancel any pending hide timer
-            if (_mnpHideTimer) { clearTimeout(_mnpHideTimer); _mnpHideTimer = null; }
+            // A song is playing/paused (or queue has items) — show the bar
             const sid = currentPlayingSong;
             const audio = document.getElementById('musicPlayer-' + sid);
             if (!audio) { bar.style.display = 'none'; return; }
@@ -28921,7 +28912,7 @@ window.closeSettings = closeSettings;
                 scrollSpan.appendChild(gap2);
                 titleEl.appendChild(scrollSpan);
 
-                // Measure after paint and apply animation
+                // Measure after paint; bake exact px into a one-off @keyframes for reliable loop
                 function startMnpMarquee(attempt) {
                     var textW = spanA.offsetWidth;
                     var contW = titleEl.offsetWidth;
@@ -28932,7 +28923,15 @@ window.closeSettings = closeSettings;
                     if (textW > 0 && textW <= contW) return; // fits, no scroll needed
                     var unitW = textW + GAP;
                     var dur = unitW / 50; // 50px/s scroll speed
-                    titleEl.style.setProperty('--mnp-scroll-dist', '-' + unitW + 'px');
+                    // Inject one-off keyframe with pixel value baked in — CSS custom properties
+                    // inside @keyframes are unreliable on mobile and cause the jump/snap bug
+                    var styleId = 'mnpMarqueeStyle';
+                    var oldSt = document.getElementById(styleId);
+                    if (oldSt) oldSt.remove();
+                    var st = document.createElement('style');
+                    st.id = styleId;
+                    st.textContent = '@keyframes mnpTitleScroll{0%{transform:translateX(0)}100%{transform:translateX(-' + unitW + 'px)}}';
+                    document.head.appendChild(st);
                     scrollSpan.style.animation = 'none';
                     void scrollSpan.offsetWidth;
                     scrollSpan.style.animation = 'mnpTitleScroll ' + dur.toFixed(2) + 's 1.5s linear infinite';
@@ -31661,14 +31660,26 @@ window.closeSettings = closeSettings;
         window.getActiveIdx = getActiveIdx;
         window.songLyrics = songLyrics;
 
-        // Split a lyric line into rows of max 15 words each
+        // Split a lyric line into rows that fit within ~42 characters each,
+        // breaking only at word boundaries so no orphan words appear on their own line.
         function wrapLyric15(text) {
             if (!text) return [];
             var words = text.split(' ');
+            // Short enough to fit on one line — return as-is
+            if (text.length <= 42) return [text];
             var rows = [];
-            for (var i = 0; i < words.length; i += 15) {
-                rows.push(words.slice(i, i + 15).join(' '));
+            var current = '';
+            for (var i = 0; i < words.length; i++) {
+                var word = words[i];
+                var candidate = current ? current + ' ' + word : word;
+                if (candidate.length <= 42) {
+                    current = candidate;
+                } else {
+                    if (current) rows.push(current);
+                    current = word;
+                }
             }
+            if (current) rows.push(current);
             return rows;
         }
 
@@ -31701,6 +31712,10 @@ window.closeSettings = closeSettings;
 
         // ── Full Lyrics Modal ──
         var _flSongId = null;
+        // Expose getter/setter so queue/_onSongEnded (separate script block) can read/write it
+        // without Object.defineProperty (which throws if called more than once on the same prop)
+        window._getFlSongId = function() { return _flSongId; };
+        window._setFlSongId = function(v) { _flSongId = v; };
 
         function openFullLyricsModal(songId) {
             _flSongId = songId;
@@ -31824,21 +31839,17 @@ window.closeSettings = closeSettings;
                         }
                     });
 
-                    // When a line becomes active, split long lines into 2 rows of ~15 words
+                    // When a line becomes active, split long lines by character width
                     if (idx >= 0 && leftLines[idx]) {
                         const activeEl = leftLines[idx];
                         const rawText = lines[idx].text;
-                        const words = rawText.split(' ');
-                        if (words.length > 15) {
+                        if (rawText.length > 42) {
                             // Store original so we can restore it when no longer active
                             if (!activeEl.dataset.origText) {
                                 activeEl.dataset.origText = rawText;
                             }
-                            // Split into rows of 15 words each
-                            const rows = [];
-                            for (let wi = 0; wi < words.length; wi += 15) {
-                                rows.push(words.slice(wi, wi + 15).join(' '));
-                            }
+                            // Use wrapLyric15 (character-based) for consistent wrapping
+                            const rows = wrapLyric15(rawText);
                             activeEl.innerHTML = rows.map(function(r) {
                                 return '<span style="display:block">' +
                                     r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') +
@@ -31912,20 +31923,23 @@ window.closeSettings = closeSettings;
 
         // Interval to update modal when open
         setInterval(function() {
-            // If a new song is now playing and the modal is open, reload it for the new song
-            if (_flSongId && currentPlayingSong && _flSongId !== currentPlayingSong) {
+            // If the modal isn't open (_flSongId is null), do nothing
+            if (!_flSongId) return;
+
+            // If a genuinely different song is now playing (not mid-transition where
+            // currentPlayingSong may be null for ~300ms), reload modal for the new song
+            if (currentPlayingSong && _flSongId !== currentPlayingSong) {
                 openFullLyricsModal(currentPlayingSong);
                 return;
             }
-            const sid = _flSongId || currentPlayingSong;
-            if (!sid) return;
+            // While transitioning (currentPlayingSong is null or same as _flSongId),
+            // keep updating the currently-shown song's modal
+            const sid = _flSongId;
             const audio = document.getElementById('musicPlayer-' + sid);
             if (!audio) return;
-            if (_flSongId === sid) {
-                updateFlProgressBar(audio);
-                updateFlPlayPauseIcon();
-                highlightFlLine(sid);
-            }
+            updateFlProgressBar(audio);
+            updateFlPlayPauseIcon();
+            highlightFlLine(sid);
         }, 100);
         // ── End Lyrics Engine ──
 
@@ -34295,6 +34309,8 @@ function addToQueue(songId) {
         musicQueue.push(songId);
         renderQueueModal();
         showQueueToast(getSongDisplayName(songId));
+        // Show the now-playing bar when something is added to queue
+        if (typeof mnpUpdate === 'function') mnpUpdate();
     } else {
         showQueueToast('Already in queue!', true);
     }
@@ -34307,6 +34323,8 @@ function flAddToQueue() {
 function removeFromQueue(idx) {
     musicQueue.splice(idx, 1);
     renderQueueModal();
+    // Hide the bar if queue is now empty and nothing is playing
+    if (typeof mnpUpdate === 'function') mnpUpdate();
 }
 
 function renderQueueModal() {
@@ -34392,12 +34410,26 @@ window._onSongEnded = function(songId) {
             if (window.currentPlayingSong === songId) {
                 window.currentPlayingSong = null;
             }
+            // If full lyrics modal is open, update it for the next song BEFORE playing
+            // so the interval doesn't fight with an open modal on the wrong song
+            var curFl = window._getFlSongId ? window._getFlSongId() : null;
+            if (curFl !== null && curFl !== undefined) {
+                // Pre-set so the interval doesn't trigger a stale re-open mid-transition
+                if (window._setFlSongId) window._setFlSongId(nextId);
+                // Also reload the modal content for the next song immediately
+                if (typeof window.openFullLyricsModal === 'function') window.openFullLyricsModal(nextId);
+            }
             toggleMusic(nextId);
         }, 300);
     } else {
         // No queue — just clear if still pointing at the ended song
         if (window.currentPlayingSong === songId) {
             window.currentPlayingSong = null;
+        }
+        // If full lyrics modal is open for the ended song, close it
+        var curFl2 = window._getFlSongId ? window._getFlSongId() : null;
+        if (curFl2 === songId) {
+            if (typeof window.closeFullLyricsModal === 'function') window.closeFullLyricsModal();
         }
     }
 };
@@ -34668,17 +34700,18 @@ body:not(.dark-mode) #fnpLyrics {
                 // Use a retry in case the pill isn't visible yet (offsetWidth=0 on mobile)
                 function applyMarquee(attempt) {
                     var textW  = spanA.offsetWidth;
-                    var unitW  = textW + GAP;
                     var contW  = titleEl.offsetWidth;
+                    var unitW  = textW + GAP;
 
-                    // If measurements aren't ready yet, retry up to 10 times
-                    if ((textW === 0 || contW === 0) && attempt < 10) {
+                    // If measurements aren't ready yet, retry up to 15 times
+                    if ((textW === 0 || contW === 0) && attempt < 15) {
                         setTimeout(function() { applyMarquee(attempt + 1); }, 80);
                         return;
                     }
+                    if (textW === 0) return; // give up — nothing to measure
 
-                    // Always animate if text is likely to overflow (or if we can't measure)
-                    if (textW > 0 && textW <= contW) return; // fits — no scroll needed
+                    // Only scroll if the text is actually wider than the container
+                    if (textW <= contW) return; // fits — no scroll needed
 
                     // Duration: px/s = 55 → seconds for one unit
                     var dur = unitW > 0 ? unitW / 55 : 6;
