@@ -6083,6 +6083,21 @@
             letter-spacing: 1px;
         }
 
+        /* [NEW] badge — green on day mode, badge only */
+        .new-badge {
+            color: #22c55e;
+            font-weight: 700;
+        }
+
+        /* Night mode: [NEW] badge becomes slightly white-green */
+        body.dark-mode .new-badge {
+            color: #86efac !important;
+        }
+        body.dark-mode #musicModal .modal-content .new-badge,
+        body.dark-mode #musicModal .modal-content * .new-badge {
+            color: #86efac !important;
+        }
+
         .info-value {
             font-size: 18px;
             color: #333;
@@ -8591,7 +8606,7 @@
         body.dark-mode #flLeftPanel { color: #f0f0f0; }
         #flLeftPanel .fl-left-line {
             display: block;
-            padding: 2px 8px;
+            padding: 2px 8px 2px 0;
             font-size: 12px;
             opacity: 0.55;
             transform: scale(1);
@@ -8605,8 +8620,7 @@
             opacity: 1;
             color: #111111;
             font-weight: 700;
-            font-size: 13.5px;
-            transform: none;
+            transform: scale(1.13);
         }
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
 
@@ -8642,7 +8656,7 @@
             font-size: 13px;
             line-height: 1.9;
             color: #222;
-            padding: 0 6px 0 10px;
+            padding: 0 6px 0 0;
             scrollbar-width: thin;
             scrollbar-color: rgba(30,100,220,0.5) transparent;
         }
@@ -8655,7 +8669,7 @@
             display: flex;
             align-items: baseline;
             gap: 10px;
-            padding: 3px 8px;
+            padding: 3px 8px 3px 0;
             border-radius: 6px;
             transition: color 0.2s, background 0.2s, font-size 0.2s;
             color: inherit;
@@ -8755,7 +8769,7 @@
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             isolation: isolate;
-            contain: paint;
+            clip-path: inset(0 round 15px);
         }
 
         #musicModal .song-item.song-playing::before {
@@ -8769,7 +8783,6 @@
             background: conic-gradient(#b8a000 0deg, #b8a000 90deg, transparent 90deg, transparent 180deg, #1a6abf 180deg, #1a6abf 270deg, transparent 270deg, transparent 360deg);
             animation: rotateBorder 3.5s linear infinite;
             z-index: -2;
-            will-change: transform;
         }
 
         #musicModal .song-item.song-playing::after {
@@ -8777,19 +8790,17 @@
             position: absolute;
             inset: 3px;
             border-radius: 13px;
-            /* Match the actual card background so no white bleed on scroll */
-            background: rgba(255, 255, 255, 0.95);
+            background: #ffffff;
             z-index: -1;
             box-shadow: none;
         }
 
         body.dark-mode #musicModal .song-item.song-playing::before {
             background: conic-gradient(#ffee00 0deg, #ffee00 90deg, transparent 90deg, transparent 180deg, #00aaff 180deg, #00aaff 270deg, transparent 270deg, transparent 360deg);
-            filter: blur(1px) brightness(1.4);
         }
 
         body.dark-mode #musicModal .song-item.song-playing::after {
-            background: rgba(18, 28, 48, 0.98);
+            background: rgb(18, 28, 48);
             box-shadow: none;
         }
 
@@ -11858,36 +11869,228 @@
                 <button class="disclaimer-button" onclick="toggleDisclaimer()">Understood</button>
             </div>
             <h1 class="modal-title">Music</h1>
-            <div id="myTop23Label" style="text-align: center; font-style: italic; font-size: 14px; color: #555; margin-bottom: 0px; margin-top: -14px;">My Top 26 Songs</div>
+            <div id="myTop23Label" style="text-align: center; font-style: italic; font-size: 14px; color: #555; margin-bottom: 0px; margin-top: -14px;">My Top 40 Songs</div>
             <div id="songLoadNotice" style="text-align: center; font-size: 10px; font-style: italic; margin-top: 4px; margin-bottom: 0px;">( If the song doesn't play or load, wait a moment or refresh/restart the page. )</div>
             <div class="modal-content">
                 <div class="music-list">
                     <div class="info-item song-item">
-                        <div class="info-label">1. WHEN DID YOU GET HOT - SABRINA CARPENTER</div>
+                        <div class="info-label">1. BOYFRIEND (WITH SOCIAL HOUSE) – ARIANA GRANDE &amp; SOCIAL HOUSE</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="sabrina" onclick="toggleMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="ariboyfriend" onclick="toggleMusic('ariboyfriend')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('ariboyfriend')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-sabrina" preload="metadata" controls style="display: none;">
-                                    <source src="Sabrina Carpenter - When Did You Get Hot_ (Lyrics).mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-ariboyfriend" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande & Social House - boyfriend.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-sabrina">
+                                <div class="music-progress-container" id="musicProgressContainer-ariboyfriend">
                                     <div class="music-time">
-                                        <span id="currentTime-sabrina">0:00</span>
+                                        <span id="currentTime-ariboyfriend">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-sabrina"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-ariboyfriend"></div>
                                         </div>
-                                        <span id="totalTime-sabrina">0:00</span>
+                                        <span id="totalTime-ariboyfriend">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-sabrina"><span class="lyrics-line" id="lyricsLine-sabrina"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('sabrina')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-ariboyfriend"><span class="lyrics-line" id="lyricsLine-ariboyfriend"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariboyfriend')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">2. POSITIONS - ARIANA GRANDE</div>
+                        <div class="info-label">2. BREAK FREE – ARIANA GRANDE</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="breakfree" onclick="toggleMusic('breakfree')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('breakfree')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-breakfree" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - Break Free (Lyrics).mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-breakfree">
+                                    <div class="music-time">
+                                        <span id="currentTime-breakfree">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-breakfree"></div>
+                                        </div>
+                                        <span id="totalTime-breakfree">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-breakfree"><span class="lyrics-line" id="lyricsLine-breakfree"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('breakfree')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">3. BREAK UP WITH YOUR GIRLFRIEND, I'M BORED – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="breakupgf" onclick="toggleMusic('breakupgf')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('breakupgf')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-breakupgf" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - break up with your girlfriend, im bored.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-breakupgf">
+                                    <div class="music-time">
+                                        <span id="currentTime-breakupgf">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-breakupgf"></div>
+                                        </div>
+                                        <span id="totalTime-breakupgf">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-breakupgf"><span class="lyrics-line" id="lyricsLine-breakupgf"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('breakupgf')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">4. ETERNAL SUNSHINE – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="eternalsunshine" onclick="toggleMusic('eternalsunshine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('eternalsunshine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-eternalsunshine" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - Eternal Sunshine.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-eternalsunshine">
+                                    <div class="music-time">
+                                        <span id="currentTime-eternalsunshine">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-eternalsunshine"></div>
+                                        </div>
+                                        <span id="totalTime-eternalsunshine">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-eternalsunshine"><span class="lyrics-line" id="lyricsLine-eternalsunshine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('eternalsunshine')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">5. GOODNIGHT N GO – ARIANA GRANDE</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="goodnightngo" onclick="toggleMusic('goodnightngo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('goodnightngo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-goodnightngo" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - goodnight n go.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-goodnightngo">
+                                    <div class="music-time">
+                                        <span id="currentTime-goodnightngo">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-goodnightngo"></div>
+                                        </div>
+                                        <span id="totalTime-goodnightngo">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-goodnightngo"><span class="lyrics-line" id="lyricsLine-goodnightngo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('goodnightngo')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">6. HATE THAT I MADE YOU LOVE ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="hatethat" onclick="toggleMusic('hatethat')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('hatethat')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-hatethat" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - hate that i made you love me.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-hatethat">
+                                    <div class="music-time">
+                                        <span id="currentTime-hatethat">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-hatethat"></div>
+                                        </div>
+                                        <span id="totalTime-hatethat">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-hatethat"><span class="lyrics-line" id="lyricsLine-hatethat"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('hatethat')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">7. INTRO (EXTENDED) – ARIANA GRANDE</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="ariintro" onclick="toggleMusic('ariintro')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('ariintro')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-ariintro" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - intro (extended).mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-ariintro">
+                                    <div class="music-time">
+                                        <span id="currentTime-ariintro">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-ariintro"></div>
+                                        </div>
+                                        <span id="totalTime-ariintro">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-ariintro"><span class="lyrics-line" id="lyricsLine-ariintro"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariintro')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">8. I WISH I HATED YOU – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="iwishihatedyou" onclick="toggleMusic('iwishihatedyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('iwishihatedyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-iwishihatedyou" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - i wish i hated you.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-iwishihatedyou">
+                                    <div class="music-time">
+                                        <span id="currentTime-iwishihatedyou">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-iwishihatedyou"></div>
+                                        </div>
+                                        <span id="totalTime-iwishihatedyou">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-iwishihatedyou"><span class="lyrics-line" id="lyricsLine-iwishihatedyou"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('iwishihatedyou')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">9. PAST LIFE – ARIANA GRANDE</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="aripastlife" onclick="toggleMusic('aripastlife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('aripastlife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-aripastlife" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - past life.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-aripastlife">
+                                    <div class="music-time">
+                                        <span id="currentTime-aripastlife">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-aripastlife"></div>
+                                        </div>
+                                        <span id="totalTime-aripastlife">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-aripastlife"><span class="lyrics-line" id="lyricsLine-aripastlife"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aripastlife')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">10. POSITIONS – ARIANA GRANDE</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="positions" onclick="toggleMusic('positions')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -11912,127 +12115,151 @@
                     </div>
                     <!-- New Ariana songs above Break Free -->
                     <div class="info-item song-item">
-                        <div class="info-label">3. GOODNIGHT N GO - ARIANA GRANDE</div>
+                        <div class="info-label">11. SUPERNATURAL – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="goodnightngo" onclick="toggleMusic('goodnightngo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('goodnightngo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="supernatural" onclick="toggleMusic('supernatural')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('supernatural')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-goodnightngo" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande - goodnight n go.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-supernatural" preload="metadata" controls style="display: none;">
+                                    <source src="Ariana Grande - supernatural.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-goodnightngo">
+                                <div class="music-progress-container" id="musicProgressContainer-supernatural">
                                     <div class="music-time">
-                                        <span id="currentTime-goodnightngo">0:00</span>
+                                        <span id="currentTime-supernatural">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-goodnightngo"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-supernatural"></div>
                                         </div>
-                                        <span id="totalTime-goodnightngo">0:00</span>
+                                        <span id="totalTime-supernatural">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-goodnightngo"><span class="lyrics-line" id="lyricsLine-goodnightngo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('goodnightngo')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-supernatural"><span class="lyrics-line" id="lyricsLine-supernatural"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('supernatural')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">4. INTRO ( EXTENDED ) - ARIANA GRANDE</div>
+                        <div class="info-label">12. ALL TOO WELL (10 MINUTE VERSION) – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="ariintro" onclick="toggleMusic('ariintro')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('ariintro')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="alltoowell" onclick="toggleMusic('alltoowell')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('alltoowell')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-ariintro" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande - intro (extended).mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-alltoowell" preload="metadata" controls style="display: none;">
+                                    <source src="All Too Well - Taylor Swift.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-ariintro">
+                                <div class="music-progress-container" id="musicProgressContainer-alltoowell">
                                     <div class="music-time">
-                                        <span id="currentTime-ariintro">0:00</span>
+                                        <span id="currentTime-alltoowell">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-ariintro"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-alltoowell"></div>
                                         </div>
-                                        <span id="totalTime-ariintro">0:00</span>
+                                        <span id="totalTime-alltoowell">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-ariintro"><span class="lyrics-line" id="lyricsLine-ariintro"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariintro')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-alltoowell"><span class="lyrics-line" id="lyricsLine-alltoowell"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('alltoowell')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">5. PAST LIFE - ARIANA GRANDE</div>
+                        <div class="info-label">13. ANTI-HERO – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="aripastlife" onclick="toggleMusic('aripastlife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('aripastlife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="antihero" onclick="toggleMusic('antihero')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('antihero')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-aripastlife" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande - past life.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-antihero" preload="metadata" controls style="display: none;">
+                                    <source src="Taylor Swift - Anti-Hero.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-aripastlife">
+                                <div class="music-progress-container" id="musicProgressContainer-antihero">
                                     <div class="music-time">
-                                        <span id="currentTime-aripastlife">0:00</span>
+                                        <span id="currentTime-antihero">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-aripastlife"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-antihero"></div>
                                         </div>
-                                        <span id="totalTime-aripastlife">0:00</span>
+                                        <span id="totalTime-antihero">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-aripastlife"><span class="lyrics-line" id="lyricsLine-aripastlife"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aripastlife')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-antihero"><span class="lyrics-line" id="lyricsLine-antihero"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('antihero')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">6. BOYFRIEND - ARIANA GRANDE &amp; SOCIAL HOUSE</div>
+                        <div class="info-label">14. AUGUST – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="ariboyfriend" onclick="toggleMusic('ariboyfriend')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('ariboyfriend')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="august" onclick="toggleMusic('august')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('august')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-ariboyfriend" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande & Social House - boyfriend.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-august" preload="metadata" controls style="display: none;">
+                                    <source src="Taylor Swift – august.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-ariboyfriend">
+                                <div class="music-progress-container" id="musicProgressContainer-august">
                                     <div class="music-time">
-                                        <span id="currentTime-ariboyfriend">0:00</span>
+                                        <span id="currentTime-august">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-ariboyfriend"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-august"></div>
                                         </div>
-                                        <span id="totalTime-ariboyfriend">0:00</span>
+                                        <span id="totalTime-august">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-ariboyfriend"><span class="lyrics-line" id="lyricsLine-ariboyfriend"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariboyfriend')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-august"><span class="lyrics-line" id="lyricsLine-august"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('august')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">7. BREAK FREE - ARIANA GRANDE</div>
+                        <div class="info-label">15. BACK TO DECEMBER – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="breakfree" onclick="toggleMusic('breakfree')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('breakfree')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="backtodecember" onclick="toggleMusic('backtodecember')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('backtodecember')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-breakfree" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande - Break Free (Lyrics).mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-backtodecember" preload="metadata" controls style="display: none;">
+                                    <source src="Taylor Swift - Back To December.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-breakfree">
+                                <div class="music-progress-container" id="musicProgressContainer-backtodecember">
                                     <div class="music-time">
-                                        <span id="currentTime-breakfree">0:00</span>
+                                        <span id="currentTime-backtodecember">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-breakfree"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-backtodecember"></div>
                                         </div>
-                                        <span id="totalTime-breakfree">0:00</span>
+                                        <span id="totalTime-backtodecember">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-breakfree"><span class="lyrics-line" id="lyricsLine-breakfree"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('breakfree')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-backtodecember"><span class="lyrics-line" id="lyricsLine-backtodecember"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('backtodecember')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">8. OPALITE - TAYLOR SWIFT</div>
+                        <div class="info-label">16. BLANK SPACE – TAYLOR SWIFT</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="blankspace" onclick="toggleMusic('blankspace')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('blankspace')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-blankspace" preload="metadata" controls style="display: none;">
+                                    <source src="Taylor Swift - Blank Space.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-blankspace">
+                                    <div class="music-time">
+                                        <span id="currentTime-blankspace">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-blankspace"></div>
+                                        </div>
+                                        <span id="totalTime-blankspace">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-blankspace"><span class="lyrics-line" id="lyricsLine-blankspace"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('blankspace')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">17. OPALITE – TAYLOR SWIFT</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="opalite" onclick="toggleMusic('opalite')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12057,31 +12284,31 @@
                     </div>
                     <!-- New Taylor songs above The Fate of Ophelia -->
                     <div class="info-item song-item">
-                        <div class="info-label">9. BLANK SPACE - TAYLOR SWIFT</div>
+                        <div class="info-label">18. RED – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="blankspace" onclick="toggleMusic('blankspace')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('blankspace')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="red" onclick="toggleMusic('red')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('red')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-blankspace" preload="metadata" controls style="display: none;">
-                                    <source src="Taylor Swift - Blank Space.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-red" preload="metadata" controls style="display: none;">
+                                    <source src="Taylor Swift - Red.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-blankspace">
+                                <div class="music-progress-container" id="musicProgressContainer-red">
                                     <div class="music-time">
-                                        <span id="currentTime-blankspace">0:00</span>
+                                        <span id="currentTime-red">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-blankspace"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-red"></div>
                                         </div>
-                                        <span id="totalTime-blankspace">0:00</span>
+                                        <span id="totalTime-red">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-blankspace"><span class="lyrics-line" id="lyricsLine-blankspace"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('blankspace')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-red"><span class="lyrics-line" id="lyricsLine-red"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('red')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">10. SLUT! - TAYLOR SWIFT</div>
+                        <div class="info-label">19. SLUT! – TAYLOR SWIFT</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="slut" onclick="toggleMusic('slut')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12105,7 +12332,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">11. THE FATE OF OPHELIA - TAYLOR SWIFT</div>
+                        <div class="info-label">20. THE FATE OF OPHELIA – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="opheila" onclick="toggleMusic('opheila')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12129,31 +12356,79 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">12. IS THERE SOMEONE ELSE - THE WEEKND</div>
+                        <div class="info-label">21. ABOUT YOU – THE 1975</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="weeknd" onclick="toggleMusic('weeknd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('weeknd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="aboutyou" onclick="toggleMusic('aboutyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('aboutyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-weeknd" preload="metadata" controls style="display: none;">
-                                    <source src="The Weeknd - Is There Someone Else_ (Audio).mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-aboutyou" preload="metadata" controls style="display: none;">
+                                    <source src="The 1975 - About You.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-weeknd">
+                                <div class="music-progress-container" id="musicProgressContainer-aboutyou">
                                     <div class="music-time">
-                                        <span id="currentTime-weeknd">0:00</span>
+                                        <span id="currentTime-aboutyou">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-weeknd"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-aboutyou"></div>
                                         </div>
-                                        <span id="totalTime-weeknd">0:00</span>
+                                        <span id="totalTime-aboutyou">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-weeknd"><span class="lyrics-line" id="lyricsLine-weeknd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('weeknd')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-aboutyou"><span class="lyrics-line" id="lyricsLine-aboutyou"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aboutyou')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">13. COOL OFF - YENG CONSTANTINO</div>
+                        <div class="info-label">22. BACKBURNER – NIKI</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="backburner" onclick="toggleMusic('backburner')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('backburner')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-backburner" preload="metadata" controls style="display: none;">
+                                    <source src="NIKI - Backburner.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-backburner">
+                                    <div class="music-time">
+                                        <span id="currentTime-backburner">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-backburner"></div>
+                                        </div>
+                                        <span id="totalTime-backburner">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-backburner"><span class="lyrics-line" id="lyricsLine-backburner"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('backburner')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">23. CONFIDENT – JUSTIN BIEBER</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="confident" onclick="toggleMusic('confident')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('confident')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-confident" preload="metadata" controls style="display: none;">
+                                    <source src="Justin Bieber - Confident (Lyrics) she said its her first time.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-confident">
+                                    <div class="music-time">
+                                        <span id="currentTime-confident">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-confident"></div>
+                                        </div>
+                                        <span id="totalTime-confident">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-confident"><span class="lyrics-line" id="lyricsLine-confident"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('confident')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">24. COOL OFF – YENG CONSTANTINO</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="cooloff" onclick="toggleMusic('cooloff')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12178,7 +12453,7 @@
                     </div>
                     <!-- Inserted new songs before Justin Bieber - Confident -->
                     <div class="info-item song-item">
-                        <div class="info-label">14. HAPPIER THAN EVER - BILLIE EILISH</div>
+                        <div class="info-label">25. HAPPIER THAN EVER – BILLIE EILISH</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="happierthanever" onclick="toggleMusic('happierthanever')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12202,223 +12477,79 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">15. LOVE. - WAVE TO EARTH</div>
+                        <div class="info-label">26. IS THERE SOMEONE ELSE? – THE WEEKND</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="wavetolove" onclick="toggleMusic('wavetolove')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('wavetolove')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="weeknd" onclick="toggleMusic('weeknd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('weeknd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-wavetolove" preload="metadata" controls style="display: none;">
-                                    <source src="wave to earth - love..mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-weeknd" preload="metadata" controls style="display: none;">
+                                    <source src="The Weeknd - Is There Someone Else_ (Audio).mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-wavetolove">
+                                <div class="music-progress-container" id="musicProgressContainer-weeknd">
                                     <div class="music-time">
-                                        <span id="currentTime-wavetolove">0:00</span>
+                                        <span id="currentTime-weeknd">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-wavetolove"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-weeknd"></div>
                                         </div>
-                                        <span id="totalTime-wavetolove">0:00</span>
+                                        <span id="totalTime-weeknd">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-wavetolove"><span class="lyrics-line" id="lyricsLine-wavetolove"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('wavetolove')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-weeknd"><span class="lyrics-line" id="lyricsLine-weeknd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('weeknd')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">16. SUPER FAR - LANY</div>
+                        <div class="info-label">27. LAST NIGHT ON EARTH – GREEN DAY <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="superfar" onclick="toggleMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="lastnightonearth" onclick="toggleMusic('lastnightonearth')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('lastnightonearth')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-superfar" preload="metadata" controls style="display: none;">
-                                    <source src="LANY - Super Far.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-lastnightonearth" preload="metadata" controls style="display: none;">
+                                    <source src="Green Day - Last Night on Earth.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-superfar">
+                                <div class="music-progress-container" id="musicProgressContainer-lastnightonearth">
                                     <div class="music-time">
-                                        <span id="currentTime-superfar">0:00</span>
+                                        <span id="currentTime-lastnightonearth">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-superfar"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-lastnightonearth"></div>
                                         </div>
-                                        <span id="totalTime-superfar">0:00</span>
+                                        <span id="totalTime-lastnightonearth">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-superfar"><span class="lyrics-line" id="lyricsLine-superfar"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('superfar')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-lastnightonearth"><span class="lyrics-line" id="lyricsLine-lastnightonearth"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('lastnightonearth')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">17. BACKBURNER - NIKI</div>
+                        <div class="info-label">28. LIBU-LIBONG BUWAN – CUP OF JOE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="backburner" onclick="toggleMusic('backburner')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('backburner')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="libulibong" onclick="toggleMusic('libulibong')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('libulibong')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-backburner" preload="metadata" controls style="display: none;">
-                                    <source src="NIKI - Backburner.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-libulibong" preload="metadata" controls style="display: none;">
+                                    <source src="Kyle Raphael - Libu-libong buwan (uuwian).mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-backburner">
+                                <div class="music-progress-container" id="musicProgressContainer-libulibong">
                                     <div class="music-time">
-                                        <span id="currentTime-backburner">0:00</span>
+                                        <span id="currentTime-libulibong">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-backburner"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-libulibong"></div>
                                         </div>
-                                        <span id="totalTime-backburner">0:00</span>
+                                        <span id="totalTime-libulibong">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-backburner"><span class="lyrics-line" id="lyricsLine-backburner"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('backburner')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-libulibong"><span class="lyrics-line" id="lyricsLine-libulibong"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('libulibong')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">18. ABOUT YOU - THE 1975</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="aboutyou" onclick="toggleMusic('aboutyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('aboutyou')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-aboutyou" preload="metadata" controls style="display: none;">
-                                    <source src="The 1975 - About You.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-aboutyou">
-                                    <div class="music-time">
-                                        <span id="currentTime-aboutyou">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-aboutyou"></div>
-                                        </div>
-                                        <span id="totalTime-aboutyou">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-aboutyou"><span class="lyrics-line" id="lyricsLine-aboutyou"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aboutyou')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">19. 360 - CHARLI XCX</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="charli360" onclick="toggleMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-charli360" preload="metadata" controls style="display: none;">
-                                    <source src="Charli XCX - 360.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-charli360">
-                                    <div class="music-time">
-                                        <span id="currentTime-charli360">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-charli360"></div>
-                                        </div>
-                                        <span id="totalTime-charli360">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-charli360"><span class="lyrics-line" id="lyricsLine-charli360"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('charli360')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">20. ORAS - CALEIN</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="oras" onclick="toggleMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-oras" preload="metadata" controls style="display: none;">
-                                    <source src="Calein - Oras.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-oras">
-                                    <div class="music-time">
-                                        <span id="currentTime-oras">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-oras"></div>
-                                        </div>
-                                        <span id="totalTime-oras">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-oras"><span class="lyrics-line" id="lyricsLine-oras"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('oras')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">21. NAIILANG - LE JOHN</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="nailang" onclick="toggleMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-nailang" preload="metadata" controls style="display: none;">
-                                    <source src="Le John - Naiilang.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-nailang">
-                                    <div class="music-time">
-                                        <span id="currentTime-nailang">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-nailang"></div>
-                                        </div>
-                                        <span id="totalTime-nailang">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-nailang"><span class="lyrics-line" id="lyricsLine-nailang"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nailang')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">22. MULTO - CUP OF JOE</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="multo" onclick="toggleMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-multo" preload="metadata" controls style="display: none;">
-                                    <source src="Cup of Joe - Multo.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-multo">
-                                    <div class="music-time">
-                                        <span id="currentTime-multo">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-multo"></div>
-                                        </div>
-                                        <span id="totalTime-multo">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-multo"><span class="lyrics-line" id="lyricsLine-multo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('multo')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">23. CONFIDENT - JUSTIN BIEBER</div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="confident" onclick="toggleMusic('confident')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('confident')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-confident" preload="metadata" controls style="display: none;">
-                                    <source src="Justin Bieber - Confident (Lyrics) she said its her first time.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-confident">
-                                    <div class="music-time">
-                                        <span id="currentTime-confident">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-confident"></div>
-                                        </div>
-                                        <span id="totalTime-confident">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lyrics-display" id="lyricsDisplay-confident"><span class="lyrics-line" id="lyricsLine-confident"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('confident')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">24. LIFETIME (REIMAGINED) - BEN&amp;BEN</div>
+                        <div class="info-label">29. LIFETIME (REIMAGINED) – BEN&amp;BEN <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="lifetime" onclick="toggleMusic('lifetime')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12442,53 +12573,270 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">25. HATE THAT I MADE YOU LOVE ME - ARIANA GRANDE</div>
+                        <div class="info-label">30. LOVE. – WAVE TO EARTH</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="hatethat" onclick="toggleMusic('hatethat')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('hatethat')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="wavetolove" onclick="toggleMusic('wavetolove')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('wavetolove')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-hatethat" preload="metadata" controls style="display: none;">
-                                    <source src="Ariana Grande - hate that i made you love me.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-wavetolove" preload="metadata" controls style="display: none;">
+                                    <source src="wave to earth - love..mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-hatethat">
+                                <div class="music-progress-container" id="musicProgressContainer-wavetolove">
                                     <div class="music-time">
-                                        <span id="currentTime-hatethat">0:00</span>
+                                        <span id="currentTime-wavetolove">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-hatethat"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-wavetolove"></div>
                                         </div>
-                                        <span id="totalTime-hatethat">0:00</span>
+                                        <span id="totalTime-wavetolove">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-hatethat"><span class="lyrics-line" id="lyricsLine-hatethat"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('hatethat')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-wavetolove"><span class="lyrics-line" id="lyricsLine-wavetolove"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('wavetolove')">See full lyrics</button></div>
                             
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">26. ALL TOO WELL (10 MINUTE VERSION) - TAYLOR SWIFT</div>
+                        <div class="info-label">31. MULTO – CUP OF JOE</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="alltoowell" onclick="toggleMusic('alltoowell')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('alltoowell')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                    <button class="play-button" data-song="multo" onclick="toggleMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
-                                <audio id="musicPlayer-alltoowell" preload="metadata" controls style="display: none;">
-                                    <source src="All Too Well - Taylor Swift.mp3" type="audio/mpeg">
+                                <audio id="musicPlayer-multo" preload="metadata" controls style="display: none;">
+                                    <source src="Cup of Joe - Multo.mp3" type="audio/mpeg">
                                 </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-alltoowell">
+                                <div class="music-progress-container" id="musicProgressContainer-multo">
                                     <div class="music-time">
-                                        <span id="currentTime-alltoowell">0:00</span>
+                                        <span id="currentTime-multo">0:00</span>
                                         <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-alltoowell"></div>
+                                            <div class="music-progress-bar" id="musicProgressBar-multo"></div>
                                         </div>
-                                        <span id="totalTime-alltoowell">0:00</span>
+                                        <span id="totalTime-multo">0:00</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lyrics-display" id="lyricsDisplay-alltoowell"><span class="lyrics-line" id="lyricsLine-alltoowell"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('alltoowell')">See full lyrics</button></div>
+                            <div class="lyrics-display" id="lyricsDisplay-multo"><span class="lyrics-line" id="lyricsLine-multo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('multo')">See full lyrics</button></div>
                             
                         </div>
                     </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">32. NAIILANG – LE JOHN</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="nailang" onclick="toggleMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-nailang" preload="metadata" controls style="display: none;">
+                                    <source src="Le John - Naiilang.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-nailang">
+                                    <div class="music-time">
+                                        <span id="currentTime-nailang">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-nailang"></div>
+                                        </div>
+                                        <span id="totalTime-nailang">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-nailang"><span class="lyrics-line" id="lyricsLine-nailang"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nailang')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">33. NVMD – DENISE JULIA <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="nvmd" onclick="toggleMusic('nvmd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('nvmd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-nvmd" preload="metadata" controls style="display: none;">
+                                    <source src="NVMD-Denise Julia.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-nvmd">
+                                    <div class="music-time">
+                                        <span id="currentTime-nvmd">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-nvmd"></div>
+                                        </div>
+                                        <span id="totalTime-nvmd">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-nvmd"><span class="lyrics-line" id="lyricsLine-nvmd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nvmd')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">34. ORAS – CALEIN</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="oras" onclick="toggleMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-oras" preload="metadata" controls style="display: none;">
+                                    <source src="Calein - Oras.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-oras">
+                                    <div class="music-time">
+                                        <span id="currentTime-oras">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-oras"></div>
+                                        </div>
+                                        <span id="totalTime-oras">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-oras"><span class="lyrics-line" id="lyricsLine-oras"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('oras')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">35. PALAYO SA MUNDO – ARTHUR NERY <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="palayosamundo" onclick="toggleMusic('palayosamundo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('palayosamundo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-palayosamundo" preload="metadata" controls style="display: none;">
+                                    <source src="Jolianne, Arthur Nery – Palayo Sa Mundo.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-palayosamundo">
+                                    <div class="music-time">
+                                        <span id="currentTime-palayosamundo">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-palayosamundo"></div>
+                                        </div>
+                                        <span id="totalTime-palayosamundo">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-palayosamundo"><span class="lyrics-line" id="lyricsLine-palayosamundo"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('palayosamundo')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">36. SUPER FAR – LANY</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="superfar" onclick="toggleMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-superfar" preload="metadata" controls style="display: none;">
+                                    <source src="LANY - Super Far.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-superfar">
+                                    <div class="music-time">
+                                        <span id="currentTime-superfar">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-superfar"></div>
+                                        </div>
+                                        <span id="totalTime-superfar">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-superfar"><span class="lyrics-line" id="lyricsLine-superfar"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('superfar')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">37. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="wedonttalkanymore" onclick="toggleMusic('wedonttalkanymore')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('wedonttalkanymore')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-wedonttalkanymore" preload="metadata" controls style="display: none;">
+                                    <source src="Charlie Puth - We Don't Talk Anymore.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-wedonttalkanymore">
+                                    <div class="music-time">
+                                        <span id="currentTime-wedonttalkanymore">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-wedonttalkanymore"></div>
+                                        </div>
+                                        <span id="totalTime-wedonttalkanymore">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-wedonttalkanymore"><span class="lyrics-line" id="lyricsLine-wedonttalkanymore"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('wedonttalkanymore')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">38. WHEN DID YOU GET HOT – SABRINA CARPENTER</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="sabrina" onclick="toggleMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-sabrina" preload="metadata" controls style="display: none;">
+                                    <source src="Sabrina Carpenter - When Did You Get Hot_ (Lyrics).mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-sabrina">
+                                    <div class="music-time">
+                                        <span id="currentTime-sabrina">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-sabrina"></div>
+                                        </div>
+                                        <span id="totalTime-sabrina">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-sabrina"><span class="lyrics-line" id="lyricsLine-sabrina"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('sabrina')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">39. 360 – CHARLI XCX</div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="charli360" onclick="toggleMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-charli360" preload="metadata" controls style="display: none;">
+                                    <source src="Charli XCX - 360.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-charli360">
+                                    <div class="music-time">
+                                        <span id="currentTime-charli360">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-charli360"></div>
+                                        </div>
+                                        <span id="totalTime-charli360">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-charli360"><span class="lyrics-line" id="lyricsLine-charli360"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('charli360')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">40. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="bazzimine" onclick="toggleMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-bazzimine" preload="metadata" controls style="display: none;">
+                                    <source src="Bazzi - Mine.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-bazzimine">
+                                    <div class="music-time">
+                                        <span id="currentTime-bazzimine">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-bazzimine"></div>
+                                        </div>
+                                        <span id="totalTime-bazzimine">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lyrics-display" id="lyricsDisplay-bazzimine"><span class="lyrics-line" id="lyricsLine-bazzimine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('bazzimine')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                
                 </div>
             </div>
             <!-- Now Playing Overlay Bar -->
@@ -27582,8 +27930,9 @@ window.closeSettings = closeSettings;
         let bgMusicShouldPlay = false;
         let isMiniPanelOpen = false;
         let canShowMusicMiniButton = false;
-        const songIds = ['sabrina', 'positions', 'goodnightngo', 'ariintro', 'aripastlife', 'ariboyfriend', 'breakfree', 'opalite', 'blankspace', 'slut', 'opheila', 'weeknd', 'cooloff', 'happierthanever', 'wavetolove', 'superfar', 'backburner', 'aboutyou', 'charli360', 'oras', 'nailang', 'multo', 'confident', 'lifetime', 'hatethat', 'alltoowell'];
+        const songIds = ['ariboyfriend', 'breakfree', 'goodnightngo', 'hatethat', 'ariintro', 'aripastlife', 'positions', 'alltoowell', 'blankspace', 'opalite', 'slut', 'opheila', 'antihero', 'aboutyou', 'backburner', 'confident', 'cooloff', 'happierthanever', 'weeknd', 'lifetime', 'wavetolove', 'multo', 'nailang', 'oras', 'wedonttalkanymore', 'superfar', 'lastnightonearth', 'sabrina', 'charli360', 'eternalsunshine', 'backtodecember', 'august', 'supernatural', 'iwishihatedyou', 'nvmd', 'red', 'breakupgf', 'libulibong', 'palayosamundo', 'bazzimine'];
         const songTitles = {
+            lastnightonearth: 'GREEN DAY - LAST NIGHT ON EARTH',
             sabrina: 'SABRINA CARPENTER - WHEN DID YOU GET HOT',
             positions: 'ARIANA GRANDE - POSITIONS',
             goodnightngo: 'ARIANA GRANDE - GOODNIGHT N GO',
@@ -27600,13 +27949,26 @@ window.closeSettings = closeSettings;
             happierthanever: 'BILLIE EILISH - HAPPIER THAN EVER',
             wavetolove: 'LAUV - I LIKE ME BETTER',
             superfar: 'LANY - SUPER FAR',
+            wedonttalkanymore: 'CHARLIE PUTH - WE DON\'T TALK ANYMORE (FEAT. SELENA GOMEZ)',
             backburner: 'NIKI - BACKBURNER',
+            antihero: 'TAYLOR SWIFT - ANTI-HERO',
             aboutyou: 'THE 1975 - ABOUT YOU',
             charli360: 'CHARLI XCX - 360',
             oras: 'CALEIN - ORAS',
             nailang: 'LE JOHN - NAIILANG',
             multo: 'CUP OF JOE - MULTO',
-            confident: 'JUSTIN BIEBER - CONFIDENT'
+            confident: 'JUSTIN BIEBER - CONFIDENT',
+            eternalsunshine: 'ARIANA GRANDE - ETERNAL SUNSHINE',
+            backtodecember: 'TAYLOR SWIFT - BACK TO DECEMBER',
+            august: 'TAYLOR SWIFT - AUGUST',
+            supernatural: 'ARIANA GRANDE - SUPERNATURAL',
+            iwishihatedyou: 'ARIANA GRANDE - I WISH I HATED YOU',
+            nvmd: 'DENISE JULIA - NVMD',
+            red: 'TAYLOR SWIFT - RED',
+            breakupgf: 'ARIANA GRANDE - BREAK UP WITH YOUR GIRLFRIEND, I\'M BORED',
+            libulibong: 'KYLE RAPHAEL - LIBU-LIBONG BUWAN',
+            palayosamundo: 'JOLIANNE, ARTHUR NERY - PALAYO SA MUNDO',
+            bazzimine: 'BAZZI - MINE'
         };
 
         function getNextSongId(currentId) {
@@ -28236,6 +28598,34 @@ window.closeSettings = closeSettings;
         // ── Karaoke Lyrics Engine ──
         const songLyrics = {
             // ─── 1. WHEN DID YOU GET HOT — Sabrina Carpenter ───
+            lastnightonearth: [
+                {t:16.43, text:'I text a postcard sent to you'},
+                {t:20.70, text:'Did it go through?'},
+                {t:24.83, text:'Sending all my love to you'},
+                {t:32.33, text:'You are the moonlight of my life every night'},
+                {t:40.87, text:'Giving all my love to you'},
+                {t:48.38, text:'My beating heart belongs to you'},
+                {t:56.41, text:'I walked for miles till I found you'},
+                {t:64.37, text:'I\'m here to honor you'},
+                {t:67.89, text:'If I lose everything in the fire'},
+                {t:73.27, text:'I\'m sending all my love to you'},
+                {t:92.41, text:'With every breath that I am worth'},
+                {t:96.85, text:'Here on Earth'},
+                {t:100.38, text:'I\'m sending all my love to you'},
+                {t:108.24, text:'So if you dare to second guess'},
+                {t:112.88, text:'You can rest'},
+                {t:116.41, text:'Assured that all my love\'s for you'},
+                {t:124.39, text:'My beating heart belongs to you'},
+                {t:132.37, text:'I walked for miles till I found you'},
+                {t:140.33, text:'I\'m here to honor you'},
+                {t:143.90, text:'If I lose everything in the fire'},
+                {t:149.17, text:'I\'m sending all my love to you'},
+                {t:184.33, text:'My beating heart belongs to you'},
+                {t:192.34, text:'I walked for miles till I found you'},
+                {t:200.35, text:'I\'m here to honor you'},
+                {t:203.88, text:'If I lose everything in the fire'},
+                {t:209.38, text:'Did I ever make it through?'},
+            ],
             sabrina: [
                 {t:0,    text:"♪"},
                 {t:4.35, text:"So long, untouched"},
@@ -29094,6 +29484,92 @@ window.closeSettings = closeSettings;
                 {t:194.97,text:"Broken down, I've had enough"},
                 {t:197.39,text:"If this is love, I don't want it"},
             ],
+            wedonttalkanymore: [
+                {t:0.27, text:'We don\'t talk anymore'},
+                {t:2.54, text:'We don\'t talk anymore'},
+                {t:4.66, text:'We don\'t talk anymore'},
+                {t:6.05, text:'like we used to do'},
+                {t:9.83, text:'We don\'t laugh anymore'},
+                {t:11.85, text:'What was all of it for?'},
+                {t:13.47, text:'Ooh we don\'t talk anymore'},
+                {t:15.70, text:'like we used to do'},
+                {t:19.42, text:'I just heard you found the one'},
+                {t:20.57, text:'you been looking'},
+                {t:22.38, text:'You been looking for'},
+                {t:25.32, text:'I wish I would\'ve known that wasn\'t me'},
+                {t:28.55, text:'Cuz even after all this time'},
+                {t:30.39, text:'I still want you'},
+                {t:32.44, text:'Why I can\'t move on'},
+                {t:34.45, text:'Just the way you did so easily'},
+                {t:38.98, text:'Don\'t want to know'},
+                {t:40.19, text:'What kind of dress'},
+                {t:40.81, text:'you\'re wearing tonight'},
+                {t:42.75, text:'If he\'s holding onto you so tight'},
+                {t:45.22, text:'The way I did before'},
+                {t:48.65, text:'I overdosed'},
+                {t:49.78, text:'Should\'ve known your love was a game'},
+                {t:52.18, text:'Now I can\'t get you out of my brain'},
+                {t:54.72, text:'Ooh it\'s such a shame'},
+                {t:57.55, text:'We don\'t talk anymore'},
+                {t:59.96, text:'We don\'t talk anymore'},
+                {t:62.40, text:'We don\'t talk anymore'},
+                {t:63.91, text:'like we used to do'},
+                {t:67.51, text:'We don\'t love anymore'},
+                {t:69.64, text:'What was all of it for?'},
+                {t:71.04, text:'Ooh we don\'t talk anymore'},
+                {t:73.26, text:'like we used to do'},
+                {t:76.59, text:'I just hope you lying'},
+                {t:77.46, text:'next to somebody'},
+                {t:79.96, text:'That knows how to love you like me'},
+                {t:82.19, text:'Must be a good reason that you\'re gone'},
+                {t:86.62, text:'Every now and then'},
+                {t:87.74, text:'I think you might want me to come'},
+                {t:89.61, text:'show up at your door'},
+                {t:91.84, text:'But I\'m just too afraid that I\'ll be wrong'},
+                {t:96.71, text:'Don\'t want to know'},
+                {t:97.69, text:'If you\'re looking into her eyes'},
+                {t:99.80, text:'If she\'s holding onto you so tight'},
+                {t:102.33, text:'The way I did before'},
+                {t:105.93, text:'I overdosed'},
+                {t:107.07, text:'Should\'ve known your love was a game'},
+                {t:109.27, text:'Now I can\'t get you out of my brain'},
+                {t:111.72, text:'Ooh it\'s such a shame'},
+                {t:115.59, text:'We don\'t talk anymore'},
+                {t:117.72, text:'We don\'t talk anymore'},
+                {t:119.73, text:'We don\'t talk anymore'},
+                {t:121.10, text:'like we used to do'},
+                {t:124.93, text:'We don\'t laugh anymore'},
+                {t:127.28, text:'What was all of it for?'},
+                {t:128.56, text:'Ooh we don\'t talk anymore'},
+                {t:130.83, text:'like we used to do'},
+                {t:143.40, text:'like we used to do'},
+                {t:154.04, text:'Don\'t want to know'},
+                {t:155.26, text:'What kind of dress'},
+                {t:156.26, text:'you\'re wearing tonight'},
+                {t:157.62, text:'If he\'s holding onto you so tight'},
+                {t:160.16, text:'The way I did before'},
+                {t:163.67, text:'I overdosed'},
+                {t:164.81, text:'Should\'ve known your love was a game'},
+                {t:167.02, text:'Now I can\'t get you out of my brain'},
+                {t:169.97, text:'Ooh it\'s such a shame'},
+                {t:172.68, text:'We don\'t talk anymore'},
+                {t:175.19, text:'We don\'t talk anymore'},
+                {t:177.30, text:'We don\'t talk anymore'},
+                {t:178.72, text:'like we used to do'},
+                {t:182.44, text:'We don\'t love anymore'},
+                {t:184.77, text:'What was all of it for?'},
+                {t:186.54, text:'Ooh we don\'t talk anymore'},
+                {t:188.58, text:'like we used to do'},
+                {t:191.84, text:'We don\'t talk anymore'},
+                {t:196.32, text:'Oh'},
+                {t:198.34, text:'Oh'},
+                {t:199.25, text:'The way I did before'},
+                {t:201.78, text:'We don\'t talk anymore'},
+                {t:205.54, text:'Oh'},
+                {t:208.04, text:'Oh'},
+                {t:208.63, text:'Ooh it\'s such a shame'},
+                {t:211.68, text:'We don\'t talk anymore'},
+            ],
 
             // ─── 17. BACKBURNER — NIKI ───
             backburner: [
@@ -29147,6 +29623,58 @@ window.closeSettings = closeSettings;
             ],
 
             // ─── 18. ABOUT YOU — The 1975 ───
+            antihero: [
+                {t:8.20, text:'I have this thing where I get older, but just never wiser'},
+                {t:13.68, text:'Midnights become my afternoons'},
+                {t:17.83, text:'When my depression works the graveyard shift'},
+                {t:21.91, text:'All of the people I\'ve ghosted stand there in the room'},
+                {t:27.38, text:'I should not be left to my own devices'},
+                {t:31.54, text:'They come with prices and vices, I end up in crisis'},
+                {t:35.47, text:'(Tale as old as time)'},
+                {t:38.25, text:'I wake up screaming from dreaming'},
+                {t:41.14, text:'One day I\'ll watch as you\'re leaving'},
+                {t:43.28, text:'\'Cause you got tired of my scheming'},
+                {t:46.18, text:'(For the last time)'},
+                {t:47.91, text:'It\'s me'},
+                {t:49.12, text:'Hi, I\'m the problem, it\'s me'},
+                {t:52.63, text:'At teatime'},
+                {t:55.20, text:'Everybody agrees'},
+                {t:57.58, text:'I\'ll stare directly at the sun, but never in the mirror'},
+                {t:63.23, text:'It must be exhausting always rooting for the anti-hero'},
+                {t:72.42, text:'Sometimes I feel like everybody is a sexy baby'},
+                {t:78.07, text:'And I\'m a monster on the hill'},
+                {t:82.33, text:'Too big to hang out'},
+                {t:84.51, text:'Slowly lurching toward your favorite city'},
+                {t:87.92, text:'Pierced through the heart but never killed'},
+                {t:92.53, text:'Did you hear my covert narcissism'},
+                {t:95.61, text:'I disguise as altruism like some kind of congressman?'},
+                {t:100.42, text:'(Tale as old as time)'},
+                {t:102.56, text:'I wake up screaming from dreaming'},
+                {t:105.31, text:'One day I\'ll watch as you\'re leaving and life will lose all its meaning'},
+                {t:110.29, text:'(For the last time)'},
+                {t:111.89, text:'It\'s me'},
+                {t:113.48, text:'Hi, I\'m the problem, it\'s me (I\'m the problem, it\'s me)'},
+                {t:116.70, text:'At teatime, everybody agrees'},
+                {t:122.17, text:'I\'ll stare directly at the sun, but never in the mirror'},
+                {t:127.40, text:'It must be exhausting always rooting for the anti-hero'},
+                {t:136.85, text:'I have this dream my daughter-in-law kills me for the money'},
+                {t:142.28, text:'She thinks I left them in the will'},
+                {t:146.73, text:'The family gathers \'round and reads it'},
+                {t:150.13, text:'And then someone screams out'},
+                {t:152.19, text:'"She\'s laughing up at us from hell!"'},
+                {t:252.04, text:'It\'s me'},
+                {t:253.71, text:'Hi, I\'m the problem, it\'s me'},
+                {t:257.30, text:'It\'s me'},
+                {t:258.65, text:'Hi, I\'m the problem, it\'s me'},
+                {t:262.94, text:'It\'s me, Hi'},
+                {t:265.53, text:'Everybody agrees, everybody agrees'},
+                {t:271.57, text:'It\'s me'},
+                {t:273.26, text:'Hi (Hi), I\'m the problem, it\'s me (I\'m the problem, it\'s me)'},
+                {t:277.16, text:'At teatime (Time)'},
+                {t:279.42, text:'Everybody agrees (Everybody agrees)'},
+                {t:282.24, text:'I\'ll stare directly at the sun, but never in the mirror'},
+                {t:287.47, text:'It must be exhausting always rooting for the anti-hero'},
+            ],
             aboutyou: [
                 {t:0,     text:"♪"},
                 {t:44.85, text:"I know a place"},
@@ -29680,11 +30208,606 @@ window.closeSettings = closeSettings;
                 {t:597.79, text:"It was rare, you remember it"},
                 {t:606.97, text:""},
             ],
+
+            // ─── ETERNAL SUNSHINE — Ariana Grande ───
+            eternalsunshine: [
+                {t:0,      text:"♪"},
+                {t:10.54,  text:"i don't care what people say"},
+                {t:13.59,  text:"we both know i couldn't change you"},
+                {t:16.48,  text:"i guess you could say the same"},
+                {t:20.21,  text:"can't rearrange truth"},
+                {t:22.53,  text:"i've never seen someone lie like you do"},
+                {t:26.13,  text:"so much, even you start to think it's true"},
+                {t:29.24,  text:"ooh"},
+                {t:31.76,  text:"get me outta this loop, yeah"},
+                {t:36.23,  text:"so now we play our separate scenes"},
+                {t:38.65,  text:"now, now she's in my bed, laying on your chest"},
+                {t:42.01,  text:"now i'm in my head"},
+                {t:43.48,  text:"wondering how it ends"},
+                {t:46.63,  text:"i'll be the first to say, \"i'm sorry\""},
+                {t:49.91,  text:"now you got me feeling sorry"},
+                {t:52.75,  text:"i showed you all my demons, all my lies"},
+                {t:55.85,  text:"yet you played me like atari"},
+                {t:58.58,  text:"now it's like i'm looking in the mirror"},
+                {t:61.46,  text:"hope you feel alright when you're in her"},
+                {t:64.66,  text:"i found a good boy, and he's on my side"},
+                {t:67.85,  text:"you're just my eternal sunshine"},
+                {t:70.03,  text:"sunshine"},
+                {t:72.37,  text:"so i try to wipe my mind"},
+                {t:76.43,  text:"just so i feel less insane"},
+                {t:80.29,  text:"rather feel painless"},
+                {t:82.54,  text:"i'd rather forget than know"},
+                {t:84.71,  text:"know for sure"},
+                {t:86.24,  text:"what we could've fought through behind this door"},
+                {t:91.65,  text:"so i close it and move, yeah"},
+                {t:96.17,  text:"so now we play our separate scenes"},
+                {t:98.54,  text:"now, now he's in your bed, laying on my chest"},
+                {t:101.98, text:"now i'm in my head"},
+                {t:103.39, text:"wondering how it ends, ends, ends"},
+                {t:106.72, text:"i'll be the first to say, \"i'm sorry\""},
+                {t:109.90, text:"now you got me feeling sorry"},
+                {t:112.77, text:"i showed you all my demons, all my lies"},
+                {t:115.85, text:"yet you played me like atari"},
+                {t:118.56, text:"now it's like i'm looking in the mirror"},
+                {t:121.50, text:"hope you feel alright when you're in her"},
+                {t:124.68, text:"i found a good boy, and he's on my side"},
+                {t:127.87, text:"you're just my eternal sunshine"},
+                {t:130.06, text:"sunshine"},
+                {t:132.44, text:"won't break"},
+                {t:133.88, text:"can't shake"},
+                {t:135.38, text:"this fate"},
+                {t:136.83, text:"rewrite"},
+                {t:138.35, text:"deep breaths"},
+                {t:139.88, text:"tight chest"},
+                {t:141.39, text:"life, death"},
+                {t:142.79, text:"rewind"},
+                {t:144.38, text:"won't break"},
+                {t:145.79, text:"can't shake"},
+                {t:147.23, text:"this fate"},
+                {t:148.78, text:"rewrite"},
+                {t:150.25, text:"deep breaths"},
+                {t:151.74, text:"tight chest"},
+                {t:153.22, text:"life, death"},
+                {t:154.68, text:"i'll be the first to say, \"i'm sorry\""},
+                {t:157.89, text:"now you got me feeling sorry"},
+                {t:160.74, text:"i showed you all my demons, all my lies"},
+                {t:163.84, text:"yet you played me like atari"},
+                {t:166.52, text:"now it's like i'm looking in the mirror"},
+                {t:169.50, text:"hope you feel alright when you're in her"},
+                {t:172.60, text:"i found a good boy, and he's on my side"},
+                {t:175.85, text:"you're just my eternal sunshine"},
+                {t:178.12, text:"sunshine"},
+                {t:178.83, text:"rewind"},
+                {t:180.33, text:"won't break"},
+                {t:181.71, text:"can't shake"},
+                {t:183.23, text:"this fate"},
+                {t:184.79, text:"rewrite"},
+                {t:186.39, text:"deep breaths"},
+                {t:187.87, text:"tight chest"},
+                {t:189.29, text:"life, death"},
+                {t:190.82, text:"rewind"},
+                {t:192.36, text:"won't break"},
+                {t:193.86, text:"can't shake"},
+                {t:195.32, text:"this fate"},
+                {t:196.85, text:"rewrite"},
+                {t:198.38, text:"deep breaths"},
+                {t:199.87, text:"tight chest"},
+                {t:201.33, text:"life, death"},
+                {t:203.14, text:""},
+            ],
+
+            // ─── BACK TO DECEMBER — Taylor Swift ───
+            backtodecember: [
+                {t:14.02,  text:"I'm so glad you made time to see me"},
+                {t:17.51,  text:"How's life"},
+                {t:18.79,  text:"Tell me how's your family"},
+                {t:20.92,  text:"I haven't seen them in a while"},
+                {t:27.37,  text:"You've been good busier than ever"},
+                {t:31.02,  text:"Small talk work and the weather"},
+                {t:34.45,  text:"Your guard is up and I know why"},
+                {t:41.06,  text:"Because the last time you saw me is"},
+                {t:43.86,  text:"Still burned in the back of your mind"},
+                {t:46.91,  text:"You gave me roses and"},
+                {t:49.11,  text:"I left them there to die"},
+                {t:54.12,  text:"So this is me swallowing my pride"},
+                {t:56.86,  text:"Standing in front of you saying"},
+                {t:58.90,  text:"I'm sorry for that night"},
+                {t:63.60,  text:"I go back to December all the time"},
+                {t:67.83,  text:"It turns out freedom ain't nothing"},
+                {t:69.95,  text:"But missing you"},
+                {t:71.24,  text:"Wishing I'd realized what I had"},
+                {t:74.16,  text:"When you were mine"},
+                {t:76.97,  text:"I go back to December turn around"},
+                {t:80.24,  text:"And make it all right"},
+                {t:83.74,  text:"I go back to December all the time"},
+                {t:102.05, text:"These days I haven't been sleeping"},
+                {t:105.05, text:"Staying up playing back myself leaving"},
+                {t:108.66, text:"When your birthday passed"},
+                {t:110.49, text:"And I didn't call"},
+                {t:114.75, text:"Then I think about summer all the beautiful times"},
+                {t:118.30, text:"I watched you laughing from the passenger side"},
+                {t:121.75, text:"And realized I loved you in the fall"},
+                {t:128.85, text:"And then the cold came the dark days"},
+                {t:131.78, text:"When fear crept into my mind"},
+                {t:134.86, text:"You gave me all your loving all"},
+                {t:137.00, text:"I gave you was goodbye"},
+                {t:141.99, text:"So this is me swallowing my pride"},
+                {t:144.78, text:"Standing in front of you saying"},
+                {t:146.81, text:"I'm sorry for that night"},
+                {t:151.29, text:"And I go back to December all the time"},
+                {t:155.67, text:"It turns out freedom ain't nothing but missing you"},
+                {t:159.09, text:"Wishing I'd realized what I had when you were mine"},
+                {t:164.77, text:"I go back to December turn around"},
+                {t:168.28, text:"And change my own mind"},
+                {t:171.67, text:"I go back to December all the time"},
+                {t:188.31, text:"I miss your tan skin your sweet smile"},
+                {t:192.47, text:"So good to me so right"},
+                {t:195.23, text:"And how you held me in your arms"},
+                {t:198.25, text:"That September night"},
+                {t:199.96, text:"The first time you ever saw me cry"},
+                {t:203.94, text:"Maybe this is wishful thinking"},
+                {t:207.30, text:"Probably mindless dreaming"},
+                {t:210.29, text:"If we loved again I swear I'd love you right"},
+                {t:216.18, text:"I'd go back in time and change it but I can't"},
+                {t:222.78, text:"So if the chain is on your door I understand"},
+                {t:229.88, text:"But this is me swallowing my pride"},
+                {t:232.76, text:"Standing in front of you saying"},
+                {t:234.78, text:"I'm sorry for that night"},
+                {t:239.20, text:"I go back to December"},
+                {t:243.51, text:"It turns out freedom ain't nothing"},
+                {t:245.72, text:"But missing you"},
+                {t:247.04, text:"Wishing that realized what I had"},
+                {t:250.03, text:"When you were mine"},
+                {t:252.76, text:"I go back to December turn around"},
+                {t:256.10, text:"And make it all right"},
+                {t:259.47, text:"I go back to December turn around"},
+                {t:262.87, text:"And change my own mind"},
+                {t:266.40, text:"I go back to December all the time"},
+                {t:276.59, text:"All the time"},
+            ],
+
+            // ─── AUGUST — Taylor Swift ───
+            august: [
+                {t:5.84,   text:"Salt air"},
+                {t:8.92,   text:"And the rust on your door"},
+                {t:11.64,  text:"I never needed anything more"},
+                {t:16.67,  text:"Whispers"},
+                {t:19.59,  text:"Of \"Are you sure?\""},
+                {t:22.55,  text:"\"Never have I ever before\""},
+                {t:26.47,  text:"But I can see us"},
+                {t:27.84,  text:"Lost in the memory"},
+                {t:29.24,  text:"August slipped away into a moment in time"},
+                {t:33.52,  text:"'Cause it was never mine"},
+                {t:37.16,  text:"And I can see us twisted in bedsheets"},
+                {t:39.97,  text:"August sipped away"},
+                {t:41.51,  text:"Like a bottle of wine"},
+                {t:44.24,  text:"'Cause you were never mine"},
+                {t:48.65,  text:"Your back"},
+                {t:51.63,  text:"Beneath the sun"},
+                {t:54.58,  text:"Wishing I could write my name on it"},
+                {t:59.12,  text:"Will you call when you're back at school?"},
+                {t:65.04,  text:"I remember thinking I had you"},
+                {t:69.17,  text:"But I can see us"},
+                {t:70.51,  text:"Lost in the memory"},
+                {t:72.00,  text:"August slipped away into a moment in time"},
+                {t:76.32,  text:"'Cause it was never mine"},
+                {t:79.71,  text:"And I can see us twisted in bedsheets"},
+                {t:82.59,  text:"August sipped away"},
+                {t:84.20,  text:"Like a bottle of wine"},
+                {t:86.94,  text:"'Cause you were never mine"},
+                {t:101.64, text:"Back when we were still changing for the better"},
+                {t:105.31, text:"Wanting was enough"},
+                {t:107.79, text:"For me, it was enough"},
+                {t:110.96, text:"To live for the hope of it all"},
+                {t:113.52, text:"Cancel plans just in case you'd call"},
+                {t:115.49, text:"And say \"Meet me behind the mall\""},
+                {t:117.81, text:"So much for summer love, and saying \"Us\""},
+                {t:121.02, text:"'Cause you weren't mine to lose"},
+                {t:126.70, text:"You weren't mine to lose"},
+                {t:130.35, text:"No"},
+                {t:133.25, text:"But I can see us"},
+                {t:134.48, text:"Lost in the memory"},
+                {t:135.93, text:"August slipped away into a moment in time"},
+                {t:140.20, text:"'Cause it was never mine"},
+                {t:143.83, text:"And I can see us twisted in bedsheets"},
+                {t:146.65, text:"August sipped away"},
+                {t:148.24, text:"Like a bottle of wine"},
+                {t:150.94, text:"'Cause you were never mine, mine"},
+                {t:156.28, text:"'Cause you were never mine"},
+                {t:159.29, text:"Never mine"},
+                {t:162.98, text:"Do you remember?"},
+                {t:164.72, text:"Remember when I pulled up"},
+                {t:166.34, text:"And said \"Get in the car\""},
+                {t:167.53, text:"And then canceled my plans"},
+                {t:168.99, text:"Just in case you'd call"},
+                {t:170.22, text:"Back when I was living for the hope of it all"},
+                {t:172.85, text:"For the hope of it all"},
+                {t:174.36, text:"\"Meet me behind the mall\""},
+                {t:175.95, text:"Remember when I pulled up"},
+                {t:176.97, text:"And said \"Get in the car\""},
+                {t:177.92, text:"And then canceled my plans"},
+                {t:179.63, text:"Just in case you'd call"},
+                {t:180.92, text:"Back when I was living for the hope of it all"},
+                {t:183.50, text:"For the hope of it all"},
+                {t:184.87, text:"\"Meet me behind the mall\""},
+                {t:186.33, text:"Remember when I pulled up"},
+                {t:187.61, text:"And said \"Get in the car\""},
+                {t:188.73, text:"And then canceled my plans"},
+                {t:190.28, text:"Just in case you'd call"},
+                {t:191.56, text:"Back when I was living for the hope of it all"},
+                {t:193.88, text:"For the hope of it all"},
+                {t:195.55, text:"For the hope of it all"},
+                {t:199.52, text:"For the hope of it all"},
+                {t:202.34, text:"For the hope of it all"},
+                {t:204.97, text:"For the hope of it all"},
+            ],
+
+            // ─── SUPERNATURAL — Ariana Grande ───
+            supernatural: [
+                {t:11.36,  text:"don't want nobody else around me"},
+                {t:14.53,  text:"just need you right here"},
+                {t:17.72,  text:"you're like the only thing that i see"},
+                {t:20.83,  text:"it's crystal clear, and i"},
+                {t:23.96,  text:"i want you to come claim it, i do"},
+                {t:27.73,  text:"what are you waiting for?"},
+                {t:30.20,  text:"yeah, want you to name it, i do"},
+                {t:33.97,  text:"want you to make it yours"},
+                {t:36.49,  text:"it's like supernatural"},
+                {t:38.26,  text:"this love's possessing me"},
+                {t:40.54,  text:"but i don't mind at all"},
+                {t:42.81,  text:"it's like supernatural"},
+                {t:44.64,  text:"it's taking over me"},
+                {t:46.91,  text:"don't wanna fight the fall"},
+                {t:49.10,  text:"it's like supernatural"},
+                {t:50.90,  text:"this love's possessing me"},
+                {t:53.13,  text:"but i don't mind at all"},
+                {t:55.34,  text:"it's like supernatural"},
+                {t:57.03,  text:"this love's possessing me"},
+                {t:59.46,  text:"but i don't mind at all"},
+                {t:61.60,  text:"need your hands all up on my body"},
+                {t:64.69,  text:"like the moon needs the stars"},
+                {t:67.79,  text:"nothing else felt this way inside me"},
+                {t:71.02,  text:"boy, let's go too far"},
+                {t:74.19,  text:"i want you to come claim it, i do"},
+                {t:77.94,  text:"what are you waiting for?"},
+                {t:80.49,  text:"yeah, want you to name it, i do"},
+                {t:84.12,  text:"want you to make it yours"},
+                {t:86.72,  text:"it's like supernatural"},
+                {t:88.48,  text:"this love's possessing me"},
+                {t:90.80,  text:"but i don't mind at all"},
+                {t:93.01,  text:"it's like supernatural"},
+                {t:94.74,  text:"it's taking over me"},
+                {t:97.09,  text:"don't wanna fight the fall"},
+                {t:99.27,  text:"it's like supernatural"},
+                {t:101.09, text:"no, i don't even mind at all"},
+                {t:105.51, text:"it's like supernatural"},
+                {t:107.38, text:"no, i don't even mind at all"},
+                {t:118.08, text:"i want you to come claim it, i do"},
+                {t:124.98, text:"you to come name it, i do"},
+                {t:132.41, text:"this love's possessing me"},
+                {t:134.71, text:"but i don't mind at all"},
+                {t:136.96, text:"it's like supernatural"},
+                {t:138.68, text:"it's taking over me"},
+                {t:141.05, text:"don't wanna fight the fall"},
+                {t:143.22, text:"it's like supernatural"},
+                {t:144.91, text:"no, i don't even mind at all"},
+                {t:149.44, text:"it's like supernatural"},
+                {t:151.21, text:"no, i don't even mind at all"},
+                {t:155.72, text:"it's like supernatural"},
+                {t:157.95, text:""},
+            ],
+
+            // ─── I WISH I HATED YOU — Ariana Grande ───
+            iwishihatedyou: [
+                {t:8.35,   text:"hung all my clothes in the closet you made"},
+                {t:12.73,  text:"your shoes still in boxes, i send them your way"},
+                {t:16.67,  text:"hoping life brings you no new pain"},
+                {t:21.26,  text:"i rearrange my memories, i try to rewrite our life"},
+                {t:28.53,  text:"but no matter how i try to"},
+                {t:35.90,  text:"and no matter how i want to"},
+                {t:43.26,  text:"and no matter how easy things could be if i did"},
+                {t:50.61,  text:"and no matter how guilty i still feel saying it"},
+                {t:57.34,  text:"i wish i hated you"},
+                {t:61.05,  text:"i wish that weren't true"},
+                {t:64.78,  text:"wish there was worse to you"},
+                {t:67.49,  text:"i wish you were worse to me"},
+                {t:71.91,  text:"yeah, i wish i hated you"},
+                {t:74.37,  text:"our shadows dance in a parallel plane"},
+                {t:78.67,  text:"just two different endings, you learn to repair"},
+                {t:82.48,  text:"and i learn to keep me in one place"},
+                {t:87.14,  text:"so close and yet so far if only we had known from the start"},
+                {t:94.58,  text:"but no matter how i try to"},
+                {t:101.81, text:"and no matter how i want to"},
+                {t:109.20, text:"and no matter how easy things could be if i did"},
+                {t:116.58, text:"and no matter how guilty i still feel saying it"},
+                {t:123.41, text:"i wish i hated you"},
+                {t:127.11, text:"i wish that weren't true"},
+                {t:130.69, text:"wish there was worse to you"},
+                {t:133.48, text:"i wish you were worse to me"},
+                {t:137.93, text:"yeah, i wish i hated you"},
+                {t:140.22, text:""},
+            ],
+
+            // ─── NVMD — Denise Julia ───
+            nvmd: [
+                {t:1.93,   text:"Oh, back to where we started"},
+                {t:7.24,   text:"Back to where we started, oh"},
+                {t:11.75,  text:"Oh, back to when"},
+                {t:17.62,  text:"Hey, baby"},
+                {t:20.24,  text:"It's been forty-five minutes, you been blowin' my phone"},
+                {t:22.64,  text:"I mean, shit, situation is outta control"},
+                {t:25.35,  text:"My bad, I been so fired up in here"},
+                {t:27.66,  text:"So when the coast is clear"},
+                {t:29.03,  text:"Movin' far out of reach"},
+                {t:31.15,  text:"What I got on my mind"},
+                {t:33.70,  text:"Is that I'm mad and you like it"},
+                {t:36.07,  text:"This ain't chess, I ain't no side piece"},
+                {t:38.83,  text:"But I bet you're too upset to even notice"},
+                {t:42.41,  text:"I been tryin' hard to keep us floatin'"},
+                {t:44.62,  text:"You wouldn't mind if I rewind it, yeah"},
+                {t:47.65,  text:"Shit got me pretty honest"},
+                {t:49.56,  text:"And I'm tired of bein' open"},
+                {t:52.02,  text:"'Cause we keep on goin' back to where we started"},
+                {t:56.05,  text:"Oh"},
+                {t:57.44,  text:"Never mind, I said I wish you'd mind"},
+                {t:59.93,  text:"Never mind, I said I wish you'd mind"},
+                {t:62.40,  text:"Puttin' you past so we can't rewind"},
+                {t:64.85,  text:"If I end up with you one more time"},
+                {t:67.26,  text:"Then I guess you're my favorite crime"},
+                {t:69.34,  text:"That's right, I'm out"},
+                {t:71.71,  text:"But that's fine, 'cause I'm back to"},
+                {t:74.61,  text:"Lyin' when I said I wish you'd mind"},
+                {t:77.09,  text:"Puttin' you past so we can't rewind"},
+                {t:78.92,  text:"Never mind, I'll miss you"},
+                {t:80.26,  text:"Before I kiss you"},
+                {t:81.95,  text:"This song on repeat, then reminisce you"},
+                {t:83.79,  text:"I don't get the issue of bein' untrue, baby"},
+                {t:87.76,  text:"When it all comes down, I'm still up, waitin', wastin' my breath"},
+                {t:91.48,  text:"Don't ever get past out of my impatience"},
+                {t:94.15,  text:"Used to you, I don't know if I can repent"},
+                {t:97.54,  text:"But I bet you're too upset to even notice"},
+                {t:101.18, text:"I been tryin' hard to keep us floatin'"},
+                {t:103.39, text:"You wouldn't mind if I rewind it"},
+                {t:106.43, text:"Shit got me pretty honest"},
+                {t:108.34, text:"And I'm tired of bein' open"},
+                {t:110.99, text:"'Cause we keep on goin' back to where we started"},
+                {t:116.23, text:"Never mind, I said I wish you'd mind"},
+                {t:118.63, text:"Never mind, I said I wish you'd mind"},
+                {t:121.16, text:"Puttin' you past so we can't rewind"},
+                {t:123.61, text:"If I end up with you one more time"},
+                {t:126.06, text:"Then I guess you're my favorite crime"},
+                {t:128.20, text:"That's right, I'm out"},
+                {t:130.42, text:"But that's fine, 'cause I'm back to"},
+                {t:133.39, text:"Lyin' when I said I wish you'd mind"},
+                {t:135.81, text:"Puttin' you past so we can't rewind"},
+                {t:139.10, text:"Oh, back to where we started"},
+                {t:144.39, text:"Back to where we started, oh"},
+                {t:148.92, text:"Oh, back to when"},
+                {t:152.92, text:"Never mind, I said I wish you'd mind"},
+                {t:155.44, text:"Puttin' you past so we can't rewind"},
+                {t:158.05, text:""},
+            ],
+
+            // ─── RED — Taylor Swift ───
+            red: [
+                {t:6.31,   text:"Loving him is like driving a new Maserati down a dead-end street"},
+                {t:15.33,  text:"Faster than the wind, passionate as sin, ending so suddenly"},
+                {t:21.67,  text:"Loving him is like trying to change your mind once you're already flying through the free fall"},
+                {t:30.34,  text:"Like the colors in autumn, so bright, just before they lose it all"},
+                {t:37.46,  text:"Losing him was blue like I'd never known"},
+                {t:41.38,  text:"Missing him was dark gray, all alone"},
+                {t:44.93,  text:"Forgetting him was like trying to know somebody you never met"},
+                {t:52.65,  text:"But loving him was red"},
+                {t:60.34,  text:"But loving him was red"},
+                {t:67.68,  text:"Touching him was like realizing all you ever wanted was right there in front of you"},
+                {t:74.96,  text:"Memorizing him was as easy as knowing all the words to your old favorite song"},
+                {t:82.79,  text:"Fighting with him was like trying to solve a crossword and realizing there's no right answer"},
+                {t:90.57,  text:"Regretting him was like wishing you never found out that love could be that strong"},
+                {t:98.95,  text:"Losing him was blue like I'd never known"},
+                {t:102.81, text:"Missing him was dark gray, all alone"},
+                {t:106.39, text:"Forgetting him was like trying to know somebody you never met"},
+                {t:114.08, text:"But loving him was red, oh, red"},
+                {t:121.91, text:"Burning red"},
+                {t:128.44, text:"Remembering him comes in flashbacks and echoes"},
+                {t:133.56, text:"Tell myself it's time now, gotta let go"},
+                {t:137.19, text:"But moving on from him is impossible when I still see it all in my head in burning red"},
+                {t:152.67, text:"Burning, it was red"},
+                {t:159.69, text:"Oh, losing him was blue like I'd never known"},
+                {t:164.24, text:"Missing him was dark gray, all alone"},
+                {t:167.81, text:"Forgetting him was like trying to know somebody you never met"},
+                {t:175.53, text:"'Cause loving him was red, yeah, yeah, red"},
+                {t:183.21, text:"Oh, burning red"},
+                {t:191.35, text:"And that's why he's spinning around in my head"},
+                {t:195.93, text:"Comes back to me, burning red, yeah, yeah"},
+                {t:206.24, text:"His love was like driving a new Maserati down a dead-end street"},
+                {t:214.19, text:""},
+            ],
+
+            // ─── BREAK UP WITH YOUR GIRLFRIEND, I'M BORED — Ariana Grande ───
+            breakupgf: [
+                {t:6.46,   text:"You got me some type of way"},
+                {t:9.21,   text:"Ain't used to feeling this way"},
+                {t:12.11,  text:"I do not know what to say"},
+                {t:15.30,  text:"But I know I shouldn't think about it"},
+                {t:17.53,  text:"Took one fucking look at your face"},
+                {t:20.35,  text:"Now I wanna know how you taste"},
+                {t:23.43,  text:"Usually don't give it away"},
+                {t:26.50,  text:"But you know I'm out here thinking 'bout it"},
+                {t:29.70,  text:"Then I realize she's right there"},
+                {t:35.07,  text:"And I'm at home like, \"Damn, this ain't fair!\""},
+                {t:40.73,  text:"Break up with your girlfriend"},
+                {t:43.53,  text:"Yeah, yeah, 'cause I'm bored"},
+                {t:46.37,  text:"You could hit it in the morning"},
+                {t:49.15,  text:"Yeah, yeah, like it's yours"},
+                {t:51.36,  text:"I know it ain't right, but I don't care"},
+                {t:57.68,  text:"Break up with your girlfriend"},
+                {t:60.45,  text:"Yeah, yeah, 'cause I'm bored"},
+                {t:62.73,  text:"This shit always happen to me"},
+                {t:65.67,  text:"Why can't we just play for keeps?"},
+                {t:68.52,  text:"Practically on my knees"},
+                {t:71.78,  text:"But I know I shouldn't think about it"},
+                {t:73.98,  text:"You know what you're doing to me"},
+                {t:76.84,  text:"You're singing my songs in the streets, yeah, yeah"},
+                {t:79.80,  text:"Acting all innocent, please"},
+                {t:83.04,  text:"When I know you're out here thinking 'bout it"},
+                {t:86.17,  text:"Then you realize she's right there"},
+                {t:91.52,  text:"And you're at home like, \"Damn, she can't compare!\""},
+                {t:97.18,  text:"Break up with your girlfriend"},
+                {t:99.99,  text:"Yeah, yeah, 'cause I'm bored"},
+                {t:102.83, text:"You could hit it in the morning"},
+                {t:105.60, text:"Yeah, yeah, like it's yours"},
+                {t:107.77, text:"I know it ain't right, but I don't care"},
+                {t:114.16, text:"Break up with your girlfriend"},
+                {t:116.89, text:"Yeah, yeah, 'cause I'm bored"},
+                {t:118.98, text:"With your girlfriend"},
+                {t:123.30, text:"With your girlfriend"},
+                {t:124.76, text:"With your girlfriend"},
+                {t:129.29, text:"You could say I'm hating if you want to"},
+                {t:132.52, text:"But I only hate on her 'cause I want you"},
+                {t:135.23, text:"Say I'm tripping if you feel like"},
+                {t:138.17, text:"But you without me ain't right"},
+                {t:140.58, text:"You could call me crazy 'cause I want you"},
+                {t:143.89, text:"And I never even never fucking met you"},
+                {t:146.58, text:"Say I'm tripping and it ain't right"},
+                {t:149.45, text:"But you without me ain't nice, yeah"},
+                {t:153.68, text:"Break up with your girlfriend"},
+                {t:156.47, text:"Yeah, yeah, 'cause I'm bored"},
+                {t:159.30, text:"You could hit it in the morning"},
+                {t:162.10, text:"Yeah, yeah, like it's yours"},
+                {t:164.21, text:"I know it ain't right, but I don't care"},
+                {t:170.58, text:"Break up with your girlfriend"},
+                {t:173.41, text:"Yeah, yeah, 'cause I'm bored"},
+                {t:175.47, text:"With your girlfriend"},
+                {t:179.80, text:"With your girlfriend"},
+                {t:181.16, text:"With your girlfriend"},
+                {t:185.52, text:"With your girlfriend"},
+                {t:187.08, text:""},
+            ],
+
+            // ─── LIBU-LIBONG BUWAN — Kyle Raphael ───
+            libulibong: [
+                {t:3.42,   text:"Kahit saan, kahit kailan"},
+                {t:11.35,   text:"Kahit anong bagyo pa man ang dumaan"},
+                {t:16.94,  text:"Ikaw pa ri'y pupuntahan, mm"},
+                {t:27.17,  text:"At kung ano man ang nararamdaman"},
+                {t:35.17,  text:"Asahan mong ako'y andito lang"},
+                {t:39.70,  text:"'Di ako lalayo kailan pa man"},
+                {t:47.41,  text:"Kailan pa man"},
+                {t:51.21,  text:"At kahit madalas na tayong"},
+                {t:55.92,  text:"'Di magkasunduan"},
+                {t:60.19,  text:"Ikaw pa rin ang uuwian"},
+                {t:68.01,  text:"Mahal, ikaw ang uuwian"},
+                {t:75.11,  text:"Baguhin man ng libu-libong buwan"},
+                {t:83.17,  text:"Ang kulay ng kalangitan"},
+                {t:86.93,  text:"Pangako ko, hindi kita iiwan"},
+                {t:95.18,  text:"Pangako 'yan"},
+                {t:99.10,  text:"At kahit madalas na tayong"},
+                {t:103.94, text:"'Di magkasunduan"},
+                {t:108.19, text:"Ikaw pa rin ang uuwian"},
+                {t:116.08, text:"Mahal, ikaw ang uuwian"},
+                {t:122.93, text:"At kung umabot man sa dulo"},
+                {t:127.85, text:"At tatanda na tayo"},
+                {t:132.18, text:"Ikaw pa rin ang uuwian"},
+                {t:138.92, text:"At kahit na maghirap tayo"},
+                {t:143.97, text:"'Di na magbabago"},
+                {t:150.06, text:"Ikaw pa rin ang uuwian"},
+                {t:158.17, text:"Ikaw pa rin"},
+                {t:161.51, text:"Oh, ikaw pa rin"},
+                {t:166.13, text:"Ikaw lang ang uuwian"},
+                {t:171.20, text:""},
+            ],
+
+            // ─── PALAYO SA MUNDO — Jolianne, Arthur Nery ───
+            palayosamundo: [
+                {t:22.78,  text:"Kapit nang kapit sa tala"},
+                {t:33.90,  text:"Wala ring mahawakan sa mundo, mm"},
+                {t:44.50,  text:"Sadyang maraming"},
+                {t:47.68,  text:"Nakaharang sa ating paligid"},
+                {t:56.01,  text:"Hindi mawari kung sino"},
+                {t:60.27,  text:"Ang tunay na umiibig, mm"},
+                {t:68.15,  text:"Kung sumilip ka lang sa'king nararamdaman"},
+                {t:73.84,  text:"Alamin ang lihim na hindi mo pa alam"},
+                {t:79.56,  text:"Aaminin ko naman, sa halik idadaan"},
+                {t:85.21,  text:"Kanlungan ko ay ang 'yong kamay"},
+                {t:91.01,  text:"Palapit sa'yong yakap"},
+                {t:93.83,  text:"Palayo sa mundo"},
+                {t:96.53,  text:"Tumatahimik ang isip"},
+                {t:99.54,  text:"Tumatahan sa'yo"},
+                {t:101.67, text:"At kung 'di pa tama"},
+                {t:104.49, text:"Sa mata ng tadhana ay"},
+                {t:110.98, text:"Panalangin ang tangi kong alay"},
+                {t:118.46, text:"Mm, ooh, mm"},
+                {t:124.50, text:"Bumabagal ang tao at paligid 'pag nadaan"},
+                {t:127.70, text:"Ka sa'king isip, pa'no pa kung sa harapan?"},
+                {t:130.68, text:"Dati hindi ko maamin na kailangan"},
+                {t:133.34, text:"Nang ating pag-ibig ng konting paghahabol, habulan"},
+                {t:137.43, text:"Luhaan 'pag umiibig at nakipagtaguan"},
+                {t:141.84, text:"Ngunit kaya 'pag ikaw lang kasama"},
+                {t:148.95, text:"Salita mong paikot-ikot, ngayo'y ipo-ipo na"},
+                {t:153.24, text:"Hindi na"},
+                {t:154.65, text:"Lumilihis na naman 'pag nagkita, kita na"},
+                {t:158.91, text:"Hindi nga"},
+                {t:160.41, text:"Hindi nga tamang pabulong kong sabihin"},
+                {t:165.31, text:"Bigkas nang nararamdaman"},
+                {t:168.49, text:"Nararamdaman"},
+                {t:170.39, text:"Oh, kung sumilip ka lang sa'king nararamdaman"},
+                {t:174.47, text:"Sumisilip matagal na"},
+                {t:176.63, text:"Alamin ang lihim na hindi mapaalam"},
+                {t:180.14, text:"Malalaman ko sa mata"},
+                {t:182.41, text:"Aaminin ko naman, sa halik idadaan"},
+                {t:188.11, text:"Kanlungan ko ay ang 'yong kamay"},
+                {t:193.86, text:"Palapit sa'yong yakap"},
+                {t:196.73, text:"Palayo sa mundo"},
+                {t:199.40, text:"Tumatahimik ang isip"},
+                {t:202.41, text:"Tumatahan sa'yo"},
+                {t:204.60, text:"At kung 'di pa tama"},
+                {t:207.32, text:"Sa mata ng tadhana ay"},
+                {t:213.83, text:"Panalangin ang tangi kong alay"},
+                {t:216.52, text:"Palapit sa'yong yakap"},
+                {t:219.58, text:"Palayo sa mundo"},
+                {t:222.23, text:"Tumatahimik ang isip"},
+                {t:225.19, text:"Tumatahan sa'yo"},
+                {t:227.33, text:"At kung 'di pa tama"},
+                {t:230.26, text:"Sa mata ng tadhana ay"},
+                {t:236.67, text:"Panalangin ang tangi kong alay"},
+                {t:244.17, text:"Alay, yeah"},
+                {t:249.43, text:"Ah, yeah, mm"},
+                {t:259.53, text:"Panalangin ang tangi kong alay"},
+                {t:264.37, text:""},
+            ],
+
+            // ─── MINE — Bazzi ───
+            bazzimine: [
+                {t:4.60,   text:"Huh, yeah, naw I just had a lil' bit too much of Hennessy"},
+                {t:10.14,  text:"Just gotta tell you how I feel, look"},
+                {t:14.17,  text:"You so fuckin' precious when you smile"},
+                {t:20.88,  text:"Hit it from the back and drive you wild"},
+                {t:27.59,  text:"Girl, I lose myself up in those eye-eye-eye-eye-eyes"},
+                {t:34.33,  text:"I just had to let you know you're mine"},
+                {t:41.00,  text:"Hands-on your body, I don't wanna waste no time"},
+                {t:47.76,  text:"Feels like forever, even if forever's tonight"},
+                {t:51.91,  text:"Just lay with me, waste this night away with me"},
+                {t:57.40,  text:"You're mine, I can't look away, I just gotta say"},
+                {t:64.57,  text:"I'm so fucking happy you're alive"},
+                {t:71.16,  text:"Swear to God, I'm down if you're down, all you gotta say is \"Right\""},
+                {t:77.98,  text:"Girl, anything I can do just to make you feel alright"},
+                {t:83.21,  text:"Oh, oh, oh, oh, I just had to let you know you're fine"},
+                {t:89.30,  text:"Running circles 'round my mind"},
+                {t:91.36,  text:"Even when it's rainy, all you ever do is shine"},
+                {t:94.34,  text:"You on fire, you a star, just like Mariah"},
+                {t:98.09,  text:"Man, this feels incredible, I'll turn you into a bride, you're mine"},
+                {t:104.81, text:"Hands-on your body, I don't wanna waste no time"},
+                {t:111.54, text:"Feels like forever, even if forever's tonight"},
+                {t:115.71, text:"Just lay with me, waste this night away with me"},
+                {t:121.22, text:"You're mine, I can't look away, I just gotta say"},
+                {t:128.61, text:""},
+            ],
         };
 
 
         // ── Song name map for modal title ──
         const songNames = {
+            lastnightonearth: 'Last Night on Earth — Green Day',
             sabrina: 'When Did You Get Hot — Sabrina Carpenter',
             positions: 'Positions — Ariana Grande',
             goodnightngo: 'Goodnight n Go — Ariana Grande',
@@ -29701,7 +30824,9 @@ window.closeSettings = closeSettings;
             happierthanever: 'Happier Than Ever — Billie Eilish',
             wavetolove: 'Love. — wave to earth',
             superfar: 'Super Far — LANY',
+            wedonttalkanymore: 'We Don\'t Talk Anymore — Charlie Puth ft. Selena Gomez',
             backburner: 'Backburner — NIKI',
+            antihero: 'Anti-Hero — Taylor Swift',
             aboutyou: 'About You — The 1975',
             charli360: '360 — Charli XCX',
             oras: 'Oras — Calein',
@@ -29711,6 +30836,17 @@ window.closeSettings = closeSettings;
             lifetime: 'Lifetime (Reimagined) — Ben&Ben',
             hatethat: 'Hate That I Made You Love Me — Ariana Grande',
             alltoowell: 'All Too Well (10 Minute Version) — Taylor Swift',
+            eternalsunshine: 'Eternal Sunshine — Ariana Grande',
+            backtodecember: 'Back To December — Taylor Swift',
+            august: 'August — Taylor Swift',
+            supernatural: 'Supernatural — Ariana Grande',
+            iwishihatedyou: 'I Wish I Hated You — Ariana Grande',
+            nvmd: 'NVMD — Denise Julia',
+            red: 'Red — Taylor Swift',
+            breakupgf: 'Break Up With Your Girlfriend, I\'m Bored — Ariana Grande',
+            libulibong: 'Libu-Libong Buwan — Kyle Raphael',
+            palayosamundo: 'Palayo Sa Mundo — Jolianne, Arthur Nery',
+            bazzimine: 'Mine — Bazzi',
         };
 
         function getActiveIdx(lines, currentTime) {
@@ -29730,7 +30866,7 @@ window.closeSettings = closeSettings;
 
             const activeIdx = getActiveIdx(lines, currentTime);
             const curr = activeIdx >= 0 ? lines[activeIdx] : null;
-            span.textContent = (curr && curr.text !== '♪') ? curr.text.replace(/^\[[^\]]*\]\s*/, '') : '';
+            span.textContent = (curr && curr.text !== '♪') ? curr.text : '';
 
             // Move "See full lyrics" button below lyrics when text wraps to multiple lines
             const display = document.getElementById('lyricsDisplay-' + songId);
@@ -29766,7 +30902,7 @@ window.closeSettings = closeSettings;
             if (leftPanel) {
                 if (lines) {
                     leftPanel.innerHTML = lines.map((l, i) =>
-                        `<span class="fl-left-line" data-idx="${i}">${l.text.replace(/^\[[^\]]*\]\s*/, '')}</span>`
+                        `<span class="fl-left-line" data-idx="${i}">${l.text}</span>`
                     ).join('\n');
                 } else {
                     leftPanel.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
@@ -29779,7 +30915,7 @@ window.closeSettings = closeSettings;
                         const mins = Math.floor(l.t / 60);
                         const secs = (l.t % 60).toFixed(2).padStart(5, '0');
                         const ts = `${mins}:${secs}`;
-                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${l.text.replace(/^\[[^\]]*\]\s*/, '')}</span></span>`;
+                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${l.text}</span></span>`;
                     }).join('\n');
                 } else {
                     scroll.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
