@@ -33827,21 +33827,14 @@ function showQueueToast(name, warn) {
 #floatingNowPlaying {
     display: none;
     position: fixed;
-    top: 18px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 99999999;
     pointer-events: auto;
 }
 #floatingNowPlaying.fnp-visible {
     display: flex;
-}
-@media (min-width: 769px) {
-    #floatingNowPlaying {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
 }
 #fnpPill {
     display: flex;
@@ -34047,84 +34040,56 @@ body:not(.dark-mode) #fnpLyrics {
 
         el.classList.add('fnp-visible');
 
-        // Title — seamless infinite marquee (duplicate text, no snap-back visible)
+        // Title — pure CSS marquee (runs on compositor thread, zero JS jank)
         if (titleEl && window.songNames && window.songNames[sid]) {
             var songText = window.songNames[sid];
             if (titleEl.dataset.lastSong !== songText) {
                 titleEl.dataset.lastSong = songText;
+                // Cancel any old RAF/timer from previous approach
                 if (window._fnpMarqueeRaf) { cancelAnimationFrame(window._fnpMarqueeRaf); window._fnpMarqueeRaf = null; }
                 if (window._fnpMarqueePause) { clearTimeout(window._fnpMarqueePause); window._fnpMarqueePause = null; }
 
-                // Two spans: A and B — B positioned right after A
-                // When A scrolls fully off left, reset pos by one unit seamlessly
-                var GAP = 60; // px gap between end of copy A and start of copy B
+                // Build: [textA][gap][textB][gap] — CSS animates the whole wrapper left by exactly one unit
+                var GAP = 48; // px between copies
                 var wrapper = document.createElement('span');
-                wrapper.className = 'fnp-marquee-inner';
-                wrapper.style.cssText = 'display:inline-flex;align-items:center;white-space:nowrap;';
+                wrapper.style.cssText = 'display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;';
                 var spanA = document.createElement('span');
                 spanA.textContent = songText;
-                var spacer = document.createElement('span');
-                spacer.style.display = 'inline-block';
-                spacer.style.width = GAP + 'px';
+                var sp1 = document.createElement('span');
+                sp1.style.cssText = 'display:inline-block;min-width:' + GAP + 'px;';
                 var spanB = document.createElement('span');
                 spanB.textContent = songText;
-                var spacer2 = document.createElement('span');
-                spacer2.style.display = 'inline-block';
-                spacer2.style.width = GAP + 'px';
+                var sp2 = document.createElement('span');
+                sp2.style.cssText = 'display:inline-block;min-width:' + GAP + 'px;';
                 wrapper.appendChild(spanA);
-                wrapper.appendChild(spacer);
+                wrapper.appendChild(sp1);
                 wrapper.appendChild(spanB);
-                wrapper.appendChild(spacer2);
+                wrapper.appendChild(sp2);
                 titleEl.innerHTML = '';
                 titleEl.appendChild(wrapper);
 
-                // Force a layout read ONCE outside rAF to avoid thrashing inside the tick loop
+                // Measure once after paint, then apply CSS keyframe
                 requestAnimationFrame(function() {
-                    // Two nested rAFs ensure the DOM has been painted and widths are accurate
                     requestAnimationFrame(function() {
-                        var containerW = titleEl.offsetWidth;
-                        var spanAW = spanA.offsetWidth;
-                        var unitW = spanAW + GAP; // one full cycle width — cached, never re-read
-                        if (spanAW <= containerW) return; // fits, no scroll needed
+                        var textW  = spanA.offsetWidth;
+                        var unitW  = textW + GAP;
+                        var contW  = titleEl.offsetWidth;
+                        if (textW <= contW) return; // fits — no scroll needed
 
-                        var SPEED = 55; // px/s
-                        var pos = 0;
-                        var lastTime = null;
-                        var pausing = false;
+                        // Duration: px/s = 55 → seconds for one unit
+                        var dur = unitW / 55;
 
-                        // Pre-promote the wrapper to its own compositing layer for smooth GPU scrolling
-                        wrapper.style.willChange = 'transform';
+                        // Inject a one-off keyframe rule for this exact distance
+                        var styleId = 'fnpMarqueeStyle';
+                        var old = document.getElementById(styleId);
+                        if (old) old.remove();
+                        var s = document.createElement('style');
+                        s.id = styleId;
+                        s.textContent = '@keyframes fnpScroll{0%{transform:translateX(0)}100%{transform:translateX(-' + unitW + 'px)}}';
+                        document.head.appendChild(s);
 
-                        function resume() {
-                            pausing = false;
-                            lastTime = null; // reset so first dt is 0 (no jump after pause)
-                            window._fnpMarqueeRaf = requestAnimationFrame(tick);
-                        }
-
-                        function tick(ts) {
-                            if (pausing) return;
-                            if (lastTime === null) {
-                                lastTime = ts;
-                                window._fnpMarqueeRaf = requestAnimationFrame(tick);
-                                return; // skip first frame — dt would be huge
-                            }
-                            var dt = (ts - lastTime) / 1000;
-                            // Clamp dt: ignore frames > 100ms (tab was hidden / slow device)
-                            if (dt > 0.1) dt = 0.016;
-                            lastTime = ts;
-                            pos += SPEED * dt;
-                            if (pos >= unitW) {
-                                // Seamless loop: subtract one unit so copy B becomes the new copy A
-                                pos -= unitW;
-                            }
-                            // Use integer pixel positions to avoid sub-pixel jitter on mobile
-                            wrapper.style.transform = 'translateX(-' + Math.round(pos) + 'px)';
-                            window._fnpMarqueeRaf = requestAnimationFrame(tick);
-                        }
-
-                        // 3s pause before first scroll
-                        pausing = true;
-                        window._fnpMarqueePause = setTimeout(resume, 3000);
+                        // Apply: 3s initial delay, then seamless loop forever
+                        wrapper.style.animation = 'fnpScroll ' + dur.toFixed(3) + 's ' + '3s linear infinite';
                     });
                 });
             }
