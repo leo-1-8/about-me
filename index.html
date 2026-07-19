@@ -1650,7 +1650,7 @@
 
         /* Dark mode: force What's New (updates) modal text readable */
         body.dark-mode #updatesModal .modal-content,
-        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title):not(.see-more-link) {
+        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title):not(.update20-rainbow-title):not(.see-more-link) {
             color: rgba(255, 255, 255, 0.92) !important;
         }
         #updatesModal .see-more-link {
@@ -5458,6 +5458,7 @@
         }
 
         /* Summary paragraphs sit tight under the title */
+        #update20-summary,
         #update19-summary,
         #update18-summary,
         #update17-summary,
@@ -5480,6 +5481,62 @@
             color: #ffffff;
         }
 
+        /* UPDATE 1.9 title — same gray as 1.8 */
+        .update19-title {
+            color: #888888;
+        }
+        body.dark-mode .update19-title {
+            color: #ffffff;
+        }
+
+        /* UPDATE 2.0 rainbow title */
+        .update20-rainbow-title {
+            display: inline-block;
+            font-weight: 800;
+            font-size: 0.85em;
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+            background-image: linear-gradient(
+                90deg,
+                #ff0000 0%,
+                #ff7f00 14%,
+                #ffdd00 28%,
+                #00e676 42%,
+                #00b0ff 56%,
+                #304ffe 70%,
+                #d500f9 84%,
+                #ff0000 100%
+            ) !important;
+            background-size: 400% 100% !important;
+            background-repeat: repeat-x !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            animation: rainbow-shift 4.5s linear infinite !important;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: background-position;
+        }
+        body.dark-mode #updatesModal .modal-content strong.update20-rainbow-title,
+        body.dark-mode #updatesModal .updates-scroll-body .update20-rainbow-title {
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+            background-image: linear-gradient(
+                90deg,
+                #ff0000 0%,
+                #ff7f00 14%,
+                #ffdd00 28%,
+                #00e676 42%,
+                #00b0ff 56%,
+                #304ffe 70%,
+                #d500f9 84%,
+                #ff0000 100%
+            ) !important;
+            background-size: 400% 100% !important;
+            animation: rainbow-shift 4.5s linear infinite !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+        }
+
         /* UPDATE 1.7 and below titles — same gray */
         .update-old-title {
             color: #888888;
@@ -5495,7 +5552,7 @@
         }
         body.dark-mode .update-old-date,
         body.dark-mode #updatesModal .modal-content .update-old-date,
-        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title):not(.see-more-link).update-old-date {
+        body.dark-mode #updatesModal .modal-content *:not(.update16-rainbow-title):not(.update20-rainbow-title):not(.see-more-link).update-old-date {
             color: #FF6B6B !important;
         }
 
@@ -12617,7 +12674,31 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">27. LAST NIGHT ON EARTH – GREEN DAY <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">27. KALAPASTANGAN – FITTERKARMA <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="kalapastangan" onclick="toggleMusic('kalapastangan')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('kalapastangan')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-kalapastangan" preload="metadata" controls style="display: none;">
+                                    <source src="Kalapastangan - fitterkarma.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-kalapastangan">
+                                    <div class="music-time">
+                                        <span id="currentTime-kalapastangan">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-kalapastangan"></div>
+                                        </div>
+                                        <span id="totalTime-kalapastangan">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('kalapastangan')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-kalapastangan"><span class="lyrics-line" id="lyricsLine-kalapastangan"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('kalapastangan')">See full lyrics</button></div>
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">28. LAST NIGHT ON EARTH – GREEN DAY <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="lastnightonearth" onclick="toggleMusic('lastnightonearth')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12642,7 +12723,31 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">28. LIBU-LIBONG BUWAN – CUP OF JOE <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">29. LINE WITHOUT A HOOK – RICKY MONTGOMERY <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="linewithouahook" onclick="toggleMusic('linewithouahook')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('linewithouahook')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-linewithouahook" preload="metadata" controls style="display: none;">
+                                    <source src="Ricky Montgomery - Line Without a Hook.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-linewithouahook">
+                                    <div class="music-time">
+                                        <span id="currentTime-linewithouahook">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-linewithouahook"></div>
+                                        </div>
+                                        <span id="totalTime-linewithouahook">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('linewithouahook')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-linewithouahook"><span class="lyrics-line" id="lyricsLine-linewithouahook"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('linewithouahook')">See full lyrics</button></div>
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">30. LIBU-LIBONG BUWAN – CUP OF JOE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="libulibong" onclick="toggleMusic('libulibong')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12667,7 +12772,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">29. LIFETIME (REIMAGINED) – BEN&amp;BEN <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">31. LIFETIME (REIMAGINED) – BEN&amp;BEN <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="lifetime" onclick="toggleMusic('lifetime')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12692,7 +12797,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">30. LOVE. – WAVE TO EARTH</div>
+                        <div class="info-label">32. LOVE. – WAVE TO EARTH</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="wavetolove" onclick="toggleMusic('wavetolove')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12717,7 +12822,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">31. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">33. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="bazzimine" onclick="toggleMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12742,7 +12847,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">32. MULTO – CUP OF JOE</div>
+                        <div class="info-label">34. MULTO – CUP OF JOE</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="multo" onclick="toggleMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12767,7 +12872,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">33. NAIILANG – LE JOHN</div>
+                        <div class="info-label">35. NAIILANG – LE JOHN</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="nailang" onclick="toggleMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12792,7 +12897,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">34. NVMD – DENISE JULIA <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">36. NVMD – DENISE JULIA <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="nvmd" onclick="toggleMusic('nvmd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12817,7 +12922,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">35. ORAS – CALEIN</div>
+                        <div class="info-label">37. ORAS – CALEIN</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="oras" onclick="toggleMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12842,7 +12947,31 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">36. PALAYO SA MUNDO – JOLIANNE, ARTHUR NERY <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">38. PADABA TAKA – DWTA <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="padabataka" onclick="toggleMusic('padabataka')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('padabataka')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-padabataka" preload="metadata" controls style="display: none;">
+                                    <source src="dwta - Padaba Taka.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-padabataka">
+                                    <div class="music-time">
+                                        <span id="currentTime-padabataka">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-padabataka"></div>
+                                        </div>
+                                        <span id="totalTime-padabataka">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('padabataka')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-padabataka"><span class="lyrics-line" id="lyricsLine-padabataka"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('padabataka')">See full lyrics</button></div>
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">39. PALAYO SA MUNDO – JOLIANNE, ARTHUR NERY <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="palayosamundo" onclick="toggleMusic('palayosamundo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12867,7 +12996,31 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">37. SUPER FAR – LANY</div>
+                        <div class="info-label">40. RUIN MY LIFE – ZARA LARSSON <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="ruinmylife" onclick="toggleMusic('ruinmylife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('ruinmylife')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-ruinmylife" preload="metadata" controls style="display: none;">
+                                    <source src="Zara Larsson - Ruin My Life.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-ruinmylife">
+                                    <div class="music-time">
+                                        <span id="currentTime-ruinmylife">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-ruinmylife"></div>
+                                        </div>
+                                        <span id="totalTime-ruinmylife">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('ruinmylife')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-ruinmylife"><span class="lyrics-line" id="lyricsLine-ruinmylife"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ruinmylife')">See full lyrics</button></div>
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">41. SUPER FAR – LANY</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="superfar" onclick="toggleMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12892,7 +13045,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">38. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">42. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="wedonttalkanymore" onclick="toggleMusic('wedonttalkanymore')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12917,7 +13070,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">39. WHEN DID YOU GET HOT – SABRINA CARPENTER</div>
+                        <div class="info-label">43. WHEN DID YOU GET HOT – SABRINA CARPENTER</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="sabrina" onclick="toggleMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12942,7 +13095,31 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">40. 360 – CHARLI XCX</div>
+                        <div class="info-label">44. 24/7, 365 – ELIJAH WOODS <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="twentyfourseven" onclick="toggleMusic('twentyfourseven')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('twentyfourseven')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-twentyfourseven" preload="metadata" controls style="display: none;">
+                                    <source src="elijah woods - 24_7, 365.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-twentyfourseven">
+                                    <div class="music-time">
+                                        <span id="currentTime-twentyfourseven">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-twentyfourseven"></div>
+                                        </div>
+                                        <span id="totalTime-twentyfourseven">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('twentyfourseven')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-twentyfourseven"><span class="lyrics-line" id="lyricsLine-twentyfourseven"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('twentyfourseven')">See full lyrics</button></div>
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">45. 360 – CHARLI XCX</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="charli360" onclick="toggleMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -13871,8 +14048,51 @@
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
                 <div class="updates-scroll-body">
                     <p class="update14-heading update16-heading-first">
-                        <strong class="update16-rainbow-title">UPDATE 1.9 [OPTIMIZED]</strong>
-                        <span style="font-size: 0.75em; color: #00cc44 !important;">7/16/26, 8:00AM</span>
+                        <strong class="update20-rainbow-title">UPDATE 2.0 [NEW]</strong>
+                        <span style="font-size: 0.75em; color: #00cc44 !important;">8/1/2026, 12:00PM</span>
+                    </p>
+                    <p id="update20-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
+                        In this update, I completely reworked the music system. I hope you'll enjoy this small update!
+                        <span id="update20-toggle-top" class="see-more-link" onclick="toggleUpdate20Details()">See more...</span>
+                    </p>
+                    <div id="update20-details" style="display:none; margin-bottom: 15px;">
+                        <p style="margin-top: 12px;"><strong>🏡 Main Menu</strong></p>
+                        <p>Added a Music Pill.</p>
+                        <p>Added lyrics below the Music Pill. (Lyrics are hidden when no music is playing).</p>
+                        <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
+                        <p>Reworked the music system.</p>
+                        <p>Added 22 new songs.</p>
+                        <p>Added a queue.</p>
+                        <p>Added See Full Lyrics.</p>
+                        <p>Added synchronized lyrics.</p>
+                        <p>Added rotating yellow and blue lines around each music box.</p>
+                        <p>Changed the background modal.</p>
+                        <p>Changed the Play/Pause button.</p>
+                        <p>Changed the Retry button.</p>
+                        <p>Changed My Top 23 Songs to My Top 45 Songs.</p>
+                        <p>Changed the scroll button.</p>
+                        <p>Removed the Exit button.</p>
+                        <p>Removed the -5 and +5 buttons.</p>
+                        <p>Rearranged the songs from A–Z.</p>
+                        <p>Fixed music playback.</p>
+                        <p>Fixed the progress bar.</p>
+                        <p>Fixed the exclamation mark.</p>
+                        <p style="margin-top: 20px;"><strong>⚙️ Settings</strong></p>
+                        <p>Adjusted the Night Mode logo.</p>
+                        <p>Fixed review submissions in Write a Review.</p>
+                        <p style="margin-top: 20px;"><strong>🐞 Bugs &amp; Improvements</strong></p>
+                        <p>Fixed 10 bugs.</p>
+                        <p>Added 3 improvements.</p>
+                        <p>Thank you to everyone who submitted reviews and bug reports! I hope to receive even more feedback.</p>
+                        <p>If you encounter any bugs, don't hesitate to report them through Write a Review.</p>
+                        <p>That's all for this month's update. See you in September for my biggest update yet!
+                            <span id="update20-toggle-bottom" class="see-more-link" onclick="toggleUpdate20Details()">See less...</span>
+                        </p>
+                    </div>
+
+                    <p class="update14-heading update16-heading-first">
+                        <strong class="update19-title">UPDATE 1.9 [OPTIMIZED]</strong>
+                        <span style="font-size: 0.75em; color: #c8a800 !important;">7/16/26, 8:00AM</span>
                     </p>
                     <p id="update19-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I optimized parts of my website and made a few small improvements.
@@ -13910,7 +14130,7 @@
 
                     <p class="update14-heading update16-heading-first">
                         <strong class="update18-title">UPDATE 1.8</strong>
-                        <span style="font-size: 0.75em; color: #c8a800 !important;">7/2/26, 12:00PM</span>
+                        <span class="update-old-date" style="font-size: 0.75em;">7/2/26, 12:00PM</span>
                     </p>
                     <p id="update18-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I fixed several bugs and made improvements to my website.
@@ -14547,7 +14767,7 @@
 
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version">v. 1.9</div>
+                    <div class="settings-version">v. 2</div>
                     <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
         </div>
@@ -15551,7 +15771,7 @@ window.closeSettings = closeSettings;
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v1.8';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v2.0';
             
             function hasSeenUpdatedSplashOnce() {
                 try {
@@ -16357,6 +16577,17 @@ window.closeSettings = closeSettings;
             const details = document.getElementById('update15-details');
             const topToggle = document.getElementById('update15-toggle-top');
             const bottomToggle = document.getElementById('update15-toggle-bottom');
+            if (!details || !topToggle || !bottomToggle) return;
+            const isHidden = details.style.display === 'none' || details.style.display === '';
+            details.style.display = isHidden ? 'block' : 'none';
+            topToggle.style.display = isHidden ? 'none' : 'inline';
+            bottomToggle.style.display = isHidden ? 'inline' : 'none';
+        }
+
+        function toggleUpdate20Details() {
+            const details = document.getElementById('update20-details');
+            const topToggle = document.getElementById('update20-toggle-top');
+            const bottomToggle = document.getElementById('update20-toggle-bottom');
             if (!details || !topToggle || !bottomToggle) return;
             const isHidden = details.style.display === 'none' || details.style.display === '';
             details.style.display = isHidden ? 'block' : 'none';
@@ -28063,7 +28294,7 @@ window.closeSettings = closeSettings;
         let bgMusicShouldPlay = false;
         let isMiniPanelOpen = false;
         let canShowMusicMiniButton = false;
-        const songIds = ['ariboyfriend', 'breakfree', 'goodnightngo', 'hatethat', 'ariintro', 'aripastlife', 'positions', 'alltoowell', 'blankspace', 'opalite', 'slut', 'opheila', 'antihero', 'aboutyou', 'backburner', 'confident', 'cooloff', 'happierthanever', 'weeknd', 'lifetime', 'wavetolove', 'multo', 'nailang', 'oras', 'wedonttalkanymore', 'superfar', 'lastnightonearth', 'sabrina', 'charli360', 'eternalsunshine', 'backtodecember', 'august', 'supernatural', 'iwishihatedyou', 'nvmd', 'red', 'breakupgf', 'libulibong', 'palayosamundo', 'bazzimine'];
+        const songIds = ['ariboyfriend', 'breakfree', 'goodnightngo', 'hatethat', 'ariintro', 'aripastlife', 'positions', 'alltoowell', 'blankspace', 'opalite', 'slut', 'opheila', 'antihero', 'aboutyou', 'backburner', 'confident', 'cooloff', 'happierthanever', 'weeknd', 'lifetime', 'wavetolove', 'multo', 'nailang', 'oras', 'wedonttalkanymore', 'superfar', 'lastnightonearth', 'sabrina', 'charli360', 'eternalsunshine', 'backtodecember', 'august', 'supernatural', 'iwishihatedyou', 'nvmd', 'red', 'breakupgf', 'libulibong', 'palayosamundo', 'bazzimine', 'kalapastangan', 'linewithouahook', 'padabataka', 'ruinmylife', 'twentyfourseven'];
         const songTitles = {
             lastnightonearth: 'GREEN DAY - LAST NIGHT ON EARTH',
             sabrina: 'SABRINA CARPENTER - WHEN DID YOU GET HOT',
@@ -31069,6 +31300,208 @@ window.closeSettings = closeSettings;
                 {t:121.22, text:"You're mine, I can't look away, I just gotta say"},
                 {t:128.61, text:""},
             ],
+            // ─── KALAPASTANGAN — fitterkarma ───
+            kalapastangan: [
+                {t:0,      text:"♪"},
+                {t:5.22,   text:"Oras nang sambahin ang ngalan mo"},
+                {t:17.02,  text:"Para mabuhay habambuhay sa puso't isipan mo"},
+                {t:28.86,  text:"Sino ba ako para mapansin mo"},
+                {t:40.70,  text:"Mga dalangin ko sa'yo sana'y pakinggan mo"},
+                {t:64.49,  text:"Pa'no ba ako magiging 'sang santo"},
+                {t:76.28,  text:"Para makasama kita diyan sa tabi ng trono mo"},
+                {t:88.21,  text:"Ilan pa'ng pagsubok ang daraanan ko"},
+                {t:99.97,  text:"Bago ako makaratas ng mga milagro mo"},
+                {t:129.53, text:"O ang langit ay nandito lamang pala sa lupa"},
+                {t:138.49, text:"At ang impyerno ay nasa isipan ko at pinalimot ng iyong ganda"},
+                {t:147.74, text:"Umaawit ang mga anghel"},
+                {t:152.10, text:"Umaawit ang mga anghel"},
+                {t:156.50, text:"Nagdiriwang sila nang makasama kita"},
+                {t:160.94, text:"Huwag ka sanang mawawala"},
+                {t:183.37, text:"Mamamatay akong nakangiti"},
+                {t:187.62, text:"Kapag ikaw ang nasa aking tabi"},
+                {t:191.90, text:"Mabubuhay akong nagsisisi"},
+                {t:196.54, text:"Kapag isang araw hindi kita mapangiti"},
+                {t:201.02, text:"Kalapastangan ang 'di ka ibigin"},
+                {t:205.58, text:"Kalokohan ang 'di ka isipin"},
+                {t:209.82, text:"Kung ang mundo ay biglang gugunawin"},
+                {t:213.57, text:"Ikaw ang una kong hahanapin"},
+            ],
+            // ─── LINE WITHOUT A HOOK — Ricky Montgomery ───
+            linewithouahook: [
+                {t:0,      text:"♪"},
+                {t:0.35,   text:"I don't really give a damn about the way you touch me"},
+                {t:3.26,   text:"When we're alone"},
+                {t:5.59,   text:"You can hold my hand"},
+                {t:7.87,   text:"If no one's home"},
+                {t:9.59,   text:"Do you like it when I'm away?"},
+                {t:13.00,  text:"If I went and hurt my body, baby"},
+                {t:14.36,  text:"Would you love me the same?"},
+                {t:16.04,  text:"I can feel all my bones coming back"},
+                {t:18.98,  text:"And I'm craving motion"},
+                {t:21.46,  text:"Mama never really learns how to live by herself"},
+                {t:24.32,  text:"It's a curse"},
+                {t:26.20,  text:"And it's growing"},
+                {t:28.33,  text:"You're a pond and I'm an ocean"},
+                {t:31.90,  text:"Oh, all my emotions"},
+                {t:36.55,  text:"Feel like explosions when you are around"},
+                {t:41.44,  text:"And I've found a way to kill the sounds, oh"},
+                {t:48.05,  text:"Oh, baby, I am a wreck when I'm without you"},
+                {t:53.23,  text:"I need you here to stay"},
+                {t:56.24,  text:"I broke all my bones that day I found you"},
+                {t:60.68,  text:"Crying at the lake"},
+                {t:63.43,  text:"Was it something I said to make you feel like you're a burden?"},
+                {t:69.84,  text:"Oh, and if I could take it all back"},
+                {t:73.05,  text:"I swear that I would pull you from the tide"},
+                {t:79.32,  text:"♪"},
+                {t:85.25,  text:"I said no, I said no"},
+                {t:89.09,  text:"Listen close, it's a no"},
+                {t:92.88,  text:"The wind is a-pounding on my back"},
+                {t:96.69,  text:"And I found hope in a heart attack"},
+                {t:100.49, text:"Oh at last, it is past"},
+                {t:104.12, text:"Now I've got it, and you can't have it"},
+                {t:108.66, text:"Baby, I am a wreck when I'm without you"},
+                {t:113.69, text:"I need you here to stay"},
+                {t:116.67, text:"I broke all my bones that day I found you"},
+                {t:121.32, text:"Crying at the lake"},
+                {t:124.00, text:"Was it something I said to make you feel like you're a burden, oh"},
+                {t:131.03, text:"And if I could take it all back"},
+                {t:133.66, text:"I swear that I would pull you from the tide"},
+                {t:146.53, text:"Darling, when I'm fast asleep"},
+                {t:149.93, text:"I've seen this person watching me"},
+                {t:153.50, text:"Saying, \"Is it worth it? Is it worth it? Tell me, is it worth it?\" Oh"},
+                {t:175.80, text:"Guess there is something, and there is nothing"},
+                {t:179.72, text:"There is nothing in between"},
+                {t:183.10, text:"And in my eyes, there is a tiny dancer"},
+                {t:188.36, text:"Watching over me, he's singing"},
+                {t:192.61, text:"\"She's a, she's a lady, and I am just a boy\""},
+                {t:198.24, text:"He's singing, \"She's a, she's a lady, and I am just a line without a hook\""},
+                {t:207.15, text:"Baby, I am a wreck when I'm without you"},
+                {t:212.33, text:"I need you here to stay"},
+                {t:215.68, text:"I broke all my bones that day I found you"},
+                {t:219.95, text:"Crying at the lake"},
+                {t:222.28, text:"Was it something I said to make you feel like you're a burden, oh"},
+                {t:229.59, text:"And if I could take it all back"},
+                {t:232.27, text:"I swear that I would pull you from the tide"},
+            ],
+            // ─── PADABA TAKA — dwta ───
+            padabataka: [
+                {t:0,      text:"♪"},
+                {t:0.06,   text:"Kumusta ang biyahe?"},
+                {t:2.83,   text:"Napagal ka daw?"},
+                {t:5.61,   text:"Mari na, pinagluto ta ka na"},
+                {t:9.08,   text:"Bicol express, pancit bato"},
+                {t:14.22,  text:"Igwang laing na may siling labyu"},
+                {t:21.98,  text:"Ay, labuyo"},
+                {t:28.38,  text:"Kumusta ang aldaw mo?"},
+                {t:30.79,  text:"Ibahan mo ako"},
+                {t:33.31,  text:"Lilibuton niyatong duwa an kaBikolan"},
+                {t:42.21,  text:"Garo ka si Mayon na magayon"},
+                {t:48.87,  text:"Digdi ka lang"},
+                {t:53.86,  text:"Padaba ta ka"},
+                {t:57.55,  text:"Daing ibang mumuyahon kundi ika"},
+                {t:63.53,  text:"Papadabaon ta ka"},
+                {t:67.78,  text:"Sagkod pa man kita maggurang"},
+                {t:74.11,  text:"Daing ibang papadabaon pa, kundi ika"},
+                {t:89.72,  text:"Kumusta? Pahingalo na, marabason kita"},
+                {t:94.74,  text:"Binakalan ta kang pili nut, asin"},
+                {t:97.97,  text:"Mga pangpasalubong"},
+                {t:103.76, text:"Sana napaugma ta kang maray"},
+                {t:109.88, text:"Sako ka lang"},
+                {t:116.27, text:"Padaba ta ka"},
+                {t:120.24, text:"Daing ibang mumuyahon kundi ika"},
+                {t:126.12, text:"Papadabaon ta ka"},
+                {t:130.47, text:"Sagkod pa man kita maggurang"},
+                {t:136.77, text:"Daing ibang papadabaon pa, kundi ika"},
+                {t:167.21, text:"Ini pa lan sa ngunyan an kaya kong gibuhon"},
+                {t:172.58, text:"Pa'no pa kaya kun sabihon ko na?"},
+                {t:185.54, text:"Padaba ta ka"},
+                {t:189.17, text:"Daing ibang mumuyahon, kundi ika"},
+                {t:194.45, text:"♪"},
+                {t:198.25, text:"Mahal kita"},
+                {t:202.07, text:"Walang ibang gugustuhin, kundi ikaw"},
+                {t:207.92, text:"Mamahalin kita"},
+                {t:212.48, text:"Hanggang sa ating pagtanda"},
+                {t:218.49, text:"Walang ibang mamahalin, kundi ikaw"},
+                {t:238.57, text:"Walang ibang mamahalin, kundi ikaw"},
+                {t:261.59, text:"Walang ibang mamahalin, kundi ikaw"},
+            ],
+            // ─── RUIN MY LIFE — Zara Larsson ───
+            ruinmylife: [
+                {t:7.33,   text:"♪"},
+                {t:8.19,   text:"I miss you pushing me close to the edge"},
+                {t:11.96,  text:"I miss you"},
+                {t:14.93,  text:"I wish I knew what I had when I left"},
+                {t:19.14,  text:"I miss you"},
+                {t:21.64,  text:"You set fire to my world, couldn't handle the heat"},
+                {t:25.55,  text:"Now I'm sleeping alone and I'm starting to freeze"},
+                {t:29.48,  text:"Baby, come bring me hell"},
+                {t:31.57,  text:"Let it rain over me"},
+                {t:33.56,  text:"Baby, come back to me"},
+                {t:37.34,  text:"I want you to ruin my life"},
+                {t:39.96,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:42.06,  text:"I want you to mess up my nights, yeah"},
+                {t:45.89,  text:"I want you to bring it all on"},
+                {t:47.60,  text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:49.46,  text:"I want you to ruin my life"},
+                {t:52.90,  text:"I want you to ruin my life"},
+                {t:55.07,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:57.39,  text:"I want you to mess up my nights, yeah"},
+                {t:60.97,  text:"I want you to bring it all on"},
+                {t:62.70,  text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:64.84,  text:"I want you to ruin my life"},
+                {t:69.03,  text:"I miss you more than I thought that I could"},
+                {t:72.81,  text:"I miss you"},
+                {t:76.67,  text:"I know you missin' me too like you should"},
+                {t:80.35,  text:"I miss you"},
+                {t:83.64,  text:"You set fire to my world, couldn't handle the heat"},
+                {t:87.05,  text:"Now I'm sleeping alone and I'm starting to freeze"},
+                {t:90.85,  text:"Baby, come bring me hell"},
+                {t:93.14,  text:"Let it rain over me"},
+                {t:94.85,  text:"Baby, come back to me"},
+                {t:98.71,  text:"I want you to ruin my life"},
+                {t:111.03, text:"I want you to ruin my life"},
+                {t:131.93, text:"I miss you, I miss you"},
+                {t:134.93, text:"I wish you, I wish you"},
+                {t:139.32, text:"Would come back to me"},
+                {t:142.44, text:"Come back to me, come back to me"},
+                {t:152.27, text:"I want you to ruin my life"},
+                {t:181.70, text:"I want you to ruin my life"},
+            ],
+            // ─── 24/7, 365 — Elijah Woods ───
+            twentyfourseven: [
+                {t:0,      text:"♪"},
+                {t:0.07,   text:"It's been three years and six whole months since I saw your face that night"},
+                {t:6.45,   text:"It took five seconds to fall in love and two more to make you mine"},
+                {t:13.87,  text:"Now it's four in the morning, sun's set and seven minutes with you and it's heaven"},
+                {t:20.27,  text:"Ain't an hour that rolls by, I love you 24/7, 365"},
+                {t:25.63,  text:"Give you my name, if you wanted to"},
+                {t:28.80,  text:"Key to my heart if you want it too"},
+                {t:32.18,  text:"And I hope and pray that you'll stay right here"},
+                {t:35.28,  text:"'Til we're old and gray in our last few years"},
+                {t:38.52,  text:"I'm on a knee I just need a yes"},
+                {t:41.65,  text:"A couple kids and a picket fence"},
+                {t:44.81,  text:"Share the memories like an open book"},
+                {t:48.17,  text:"Every page I read, it still got me hooked"},
+                {t:51.30,  text:"And I'm fine spending my whole life on everything you like"},
+                {t:59.33,  text:"Is it obvious that all of this is right?"},
+                {t:63.45,  text:"'Cause it's been three years and six whole months since I saw your face that night"},
+                {t:70.44,  text:"It took five seconds to fall in love and two more to make you mine"},
+                {t:77.87,  text:"Now it's four in the morning, sun's set and seven minutes with you and it's heaven"},
+                {t:84.12,  text:"Ain't an hour that rolls by, I love you 24/7, 365"},
+                {t:89.55,  text:"I'll share the last bite of every meal"},
+                {t:92.83,  text:"I'll wipe your tears when you're in your feels"},
+                {t:96.19,  text:"And I'll hold you close through a thunderstorm"},
+                {t:99.32,  text:"When it's cold at night, know I'll keep you warm"},
+                {t:102.41, text:"'Cause I'm fine spending my whole life on everything you like"},
+                {t:110.44, text:"Is it obvious that all of this is right?"},
+                {t:114.59, text:"'Cause it's been three years and six whole months since I saw your face that night"},
+                {t:121.64, text:"It took five seconds to fall in love and two more to make you mine"},
+                {t:128.98, text:"Now it's four in the morning, sun's set and seven minutes with you and it's heaven"},
+                {t:135.35, text:"Ain't an hour that rolls by, I love you 24/7, 365"},
+                {t:150.53, text:"I love you 24/7, 365"},
+                {t:154.66, text:"Now it's four in the morning, sun's set and seven minutes with you and it's heaven"},
+                {t:160.96, text:"Ain't an hour that rolls by, I love you 24/7, 365"},
+            ],
         };
 
 
@@ -31114,6 +31547,11 @@ window.closeSettings = closeSettings;
             libulibong: 'Libu-Libong Buwan — Kyle Raphael',
             palayosamundo: 'Palayo Sa Mundo — Jolianne, Arthur Nery',
             bazzimine: 'Mine — Bazzi',
+            kalapastangan: 'Kalapastangan — fitterkarma',
+            linewithouahook: 'Line Without a Hook — Ricky Montgomery',
+            padabataka: 'Padaba Taka — dwta',
+            ruinmylife: 'Ruin My Life — Zara Larsson',
+            twentyfourseven: '24/7, 365 — Elijah Woods',
         };
 
         function getActiveIdx(lines, currentTime) {
