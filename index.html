@@ -28725,23 +28725,37 @@ window.closeSettings = closeSettings;
                         if (progressContainer) progressContainer.classList.remove('active');
                         // Reset progress bar and time to 0
                         audio.currentTime = 0;
+                        lastKnownTime[songId] = 0; // clear saved position so it doesn't restore at end
                         const bar = document.getElementById('musicProgressBar-' + songId);
                         if (bar) bar.style.width = '0%';
                         const currentTimeSpan = document.getElementById('currentTime-' + songId);
                         if (currentTimeSpan) currentTimeSpan.textContent = '0:00';
+                        const lyricsLine = document.getElementById('lyricsLine-' + songId);
+                        if (lyricsLine) lyricsLine.textContent = '';
                         // ── Play next from queue ──
-                        // Clear currentPlayingSong AFTER queue handler so toggleMusic
-                        // can properly detect and stop the previous song
-                        if (window._onSongEnded && musicQueue && musicQueue.length > 0) {
-                            window.currentPlayingSong = null;
+                        const hasQueue = typeof musicQueue !== 'undefined' && musicQueue && musicQueue.length > 0;
+                        if (window._onSongEnded && hasQueue) {
+                            // Don't null currentPlayingSong yet — let _onSongEnded/toggleMusic do it
+                            // so the now-playing bar doesn't flash away during the 300ms gap
                             window._onSongEnded(songId);
                         } else {
                             if (currentPlayingSong === songId) {
                                 window.currentPlayingSong = null;
                                 updateMiniMusicUI();
+                                mnpUpdate();
                             }
                             if (window._onSongEnded) window._onSongEnded(songId);
                         }
+                        // Immediately wipe the finished song from localStorage so it doesn't restore as active
+                        try {
+                            var _saved = localStorage.getItem('musicState');
+                            if (_saved) {
+                                var _st = JSON.parse(_saved);
+                                if (_st.activeSong === songId) { _st.activeSong = null; }
+                                if (_st.times) { delete _st.times[songId]; }
+                                localStorage.setItem('musicState', JSON.stringify(_st));
+                            }
+                        } catch(e) {}
                     });
 
                     audio.addEventListener('error', function(e) {
@@ -28844,6 +28858,10 @@ window.closeSettings = closeSettings;
         }
         window.addEventListener('beforeunload', saveMusicState);
         window.addEventListener('pagehide', saveMusicState);
+        // On mobile, tab switches/closes fire visibilitychange instead of beforeunload
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') saveMusicState();
+        });
 
         // ── Now Playing Bar ──
         var _mnpHideTimer = null;
@@ -28871,12 +28889,20 @@ window.closeSettings = closeSettings;
 
             bar.style.display = 'block';
 
-            // Title — only re-render when song changes to avoid restarting the CSS animation
+            // Title — re-render when song changes; force animation restart
             const titleEl = document.getElementById('mnpTitle');
             if (titleEl && songNames && songNames[sid] && titleEl.dataset.sid !== sid) {
                 titleEl.dataset.sid = sid;
                 const t = songNames[sid];
-                titleEl.innerHTML = '<span class="mnp-scroll">' + t + '      ' + t + '</span>';
+                titleEl.innerHTML = '';
+                const scrollSpan = document.createElement('span');
+                scrollSpan.className = 'mnp-scroll';
+                scrollSpan.textContent = t + '      ' + t;
+                titleEl.appendChild(scrollSpan);
+                // Force CSS animation to restart from the beginning
+                void scrollSpan.offsetWidth;
+                scrollSpan.style.animation = 'none';
+                requestAnimationFrame(function() { scrollSpan.style.animation = ''; });
             }
 
             // Times
@@ -31427,45 +31453,77 @@ window.closeSettings = closeSettings;
             ],
             // ─── RUIN MY LIFE — Zara Larsson ───
             ruinmylife: [
-                {t:7.33,   text:"♪"},
-                {t:8.19,   text:"I miss you pushing me close to the edge"},
-                {t:11.96,  text:"I miss you"},
-                {t:14.93,  text:"I wish I knew what I had when I left"},
-                {t:19.14,  text:"I miss you"},
-                {t:21.64,  text:"You set fire to my world, couldn't handle the heat"},
-                {t:25.55,  text:"Now I'm sleeping alone and I'm starting to freeze"},
-                {t:29.48,  text:"Baby, come bring me hell"},
-                {t:31.57,  text:"Let it rain over me"},
-                {t:33.56,  text:"Baby, come back to me"},
-                {t:37.34,  text:"I want you to ruin my life"},
-                {t:39.96,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
-                {t:42.06,  text:"I want you to mess up my nights, yeah"},
-                {t:45.89,  text:"I want you to bring it all on"},
-                {t:47.60,  text:"If you make it all wrong, then I'll make it all right, yeah"},
-                {t:49.46,  text:"I want you to ruin my life"},
-                {t:52.90,  text:"I want you to ruin my life"},
-                {t:55.07,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
-                {t:57.39,  text:"I want you to mess up my nights, yeah"},
-                {t:60.97,  text:"I want you to bring it all on"},
-                {t:62.70,  text:"If you make it all wrong, then I'll make it all right, yeah"},
-                {t:64.84,  text:"I want you to ruin my life"},
-                {t:69.03,  text:"I miss you more than I thought that I could"},
-                {t:72.81,  text:"I miss you"},
-                {t:76.67,  text:"I know you missin' me too like you should"},
-                {t:80.35,  text:"I miss you"},
-                {t:83.64,  text:"You set fire to my world, couldn't handle the heat"},
-                {t:87.05,  text:"Now I'm sleeping alone and I'm starting to freeze"},
-                {t:90.85,  text:"Baby, come bring me hell"},
-                {t:93.14,  text:"Let it rain over me"},
-                {t:94.85,  text:"Baby, come back to me"},
-                {t:98.71,  text:"I want you to ruin my life"},
-                {t:111.03, text:"I want you to ruin my life"},
-                {t:131.93, text:"I miss you, I miss you"},
-                {t:134.93, text:"I wish you, I wish you"},
-                {t:139.32, text:"Would come back to me"},
-                {t:142.44, text:"Come back to me, come back to me"},
-                {t:152.27, text:"I want you to ruin my life"},
-                {t:181.70, text:"I want you to ruin my life"},
+                {t:0.69,   text:"♪"},
+                {t:8.69,   text:"I miss you pushing me close to the edge"},
+                {t:12.55,  text:"I miss you"},
+                {t:16.70,  text:"I wish I knew what I had when I left"},
+                {t:20.29,  text:"I miss you"},
+                {t:22.83,  text:"You set fire to my world, couldn't handle the heat"},
+                {t:26.41,  text:"Now I'm sleeping alone and I'm starting to freeze"},
+                {t:30.41,  text:"Baby, come bring me hell"},
+                {t:32.39,  text:"Let it rain over me"},
+                {t:34.14,  text:"Baby, come back to me"},
+                {t:38.91,  text:"I want you to ruin my life"},
+                {t:40.53,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:43.01,  text:"I want you to fuck up my nights, yeah"},
+                {t:44.40,  text:"Fuck up my nights, yeah, all of my nights, yeah"},
+                {t:46.90,  text:"I want you to bring it all on"},
+                {t:48.15,  text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:50.65,  text:"I want you to ruin my life"},
+                {t:51.90,  text:"Yeah, to ruin my life, yeah, to ruin my life"},
+                {t:54.40,  text:"I want you to ruin my life"},
+                {t:55.90,  text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:58.41,  text:"I want you to fuck up my nights, yeah"},
+                {t:59.66,  text:"Fuck up my nights, yeah, all of my nights, yeah"},
+                {t:62.17,  text:"I want you to bring it all on"},
+                {t:63.65,  text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:65.90,  text:"I want you to ruin my life"},
+                {t:67.43,  text:"Yeah, to ruin my life, yeah, to ruin my life"},
+                {t:70.40,  text:"I miss you more than I thought that I could"},
+                {t:73.90,  text:"I miss you"},
+                {t:77.90,  text:"I know you missin' me too like you should"},
+                {t:81.90,  text:"I miss you"},
+                {t:84.53,  text:"You set fire to my world, couldn't handle the heat"},
+                {t:88.00,  text:"Now I'm sleeping alone and I'm starting to freeze"},
+                {t:91.74,  text:"Baby, come bring me hell"},
+                {t:93.74,  text:"Let it rain over me"},
+                {t:95.49,  text:"Baby, come back to me (Baby, come back to me)"},
+                {t:100.51, text:"I want you to ruin my life"},
+                {t:101.86, text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:104.35, text:"I want you to fuck up my nights, yeah"},
+                {t:105.84, text:"Fuck up my nights, yeah, all of my nights, yeah"},
+                {t:108.09, text:"I want you to bring it all on"},
+                {t:109.59, text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:111.93, text:"I want you to ruin my life"},
+                {t:113.43, text:"Yeah, to ruin my life, yeah, to ruin my life"},
+                {t:115.94, text:"I want you to ruin my life"},
+                {t:117.42, text:"You to ruin my life, yeah, to ruin my life, yeah"},
+                {t:119.53, text:"I want you to fuck up my nights, yeah"},
+                {t:121.40, text:"Fuck up my nights, yeah, all of my nights, yeah"},
+                {t:123.40, text:"I want you to bring it all on"},
+                {t:124.89, text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:127.15, text:"I want you to ruin my life"},
+                {t:128.66, text:"Yeah, to ruin my life, yeah, to ruin my life"},
+                {t:132.34, text:"I miss you, I miss you (You-ooh-ooh)"},
+                {t:136.67, text:"I wish you, I wish you (You-ooh-ooh)"},
+                {t:140.18, text:"Would come back to, come back to me"},
+                {t:143.18, text:"Come back to me, come back to me"},
+                {t:154.19, text:"I want you to ruin my life"},
+                {t:155.56, text:"You to ruin my life, yeah, to ruin my life, yeah (Ruin my life, yeah)"},
+                {t:158.33, text:"I want you to fuck up my nights, yeah"},
+                {t:159.83, text:"Fuck up my nights, yeah, all of my nights, yeah (All nights, all nights)"},
+                {t:161.93, text:"I want you to bring it all on"},
+                {t:163.43, text:"If you make it all wrong, then I'll make it all right, yeah (Make it all right)"},
+                {t:165.68, text:"I want you to ruin my life"},
+                {t:167.19, text:"Yeah, to ruin my life, yeah, to ruin my life"},
+                {t:169.68, text:"I want you to ruin my life"},
+                {t:171.18, text:"You to ruin my life, yeah, to ruin my life, yeah (Ruin my life)"},
+                {t:173.51, text:"I want you to fuck up my nights, yeah"},
+                {t:175.02, text:"Fuck up my nights, yeah, all of my nights, yeah (Oh)"},
+                {t:177.26, text:"I want you to bring it all on"},
+                {t:178.52, text:"If you make it all wrong, then I'll make it all right, yeah"},
+                {t:181.04, text:"I want you to ruin my life"},
+                {t:182.51, text:"Yeah, to ruin my life, yeah, to ruin my life"},
             ],
             // ─── 24/7, 365 — Elijah Woods ───
             twentyfourseven: [
@@ -34239,8 +34297,20 @@ window._onSongEnded = function(songId) {
     if (musicQueue.length > 0) {
         var nextId = musicQueue.shift();
         renderQueueModal();
-        // Small delay so previous audio cleanup finishes
-        setTimeout(function(){ toggleMusic(nextId); }, 300);
+        // Small delay so previous audio cleanup finishes, then clear and play next
+        setTimeout(function(){
+            // Clear currentPlayingSong now (audio already stopped/ended) so toggleMusic
+            // won't try to pause the previous song again
+            if (window.currentPlayingSong === songId) {
+                window.currentPlayingSong = null;
+            }
+            toggleMusic(nextId);
+        }, 300);
+    } else {
+        // No queue — just clear if still pointing at the ended song
+        if (window.currentPlayingSong === songId) {
+            window.currentPlayingSong = null;
+        }
     }
 };
 
@@ -34401,19 +34471,23 @@ body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,
     color: #f5e642;
     text-align: center;
     max-width: min(90vw, 420px);
-    width: max-content;
     padding: 4px 10px;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
     overflow: hidden;
-    text-overflow: ellipsis;
     pointer-events: none;
     letter-spacing: 0.2px;
+    line-height: 1.45;
 }
 body:not(.dark-mode) #fnpLyrics {
     color: #b8960a;
 }
 #fnpLyrics.fnp-lyrics-visible {
     display: block;
+    /* Clamp to 2 lines so long lyrics show 2 rows instead of truncating */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 </style>
 
@@ -34507,28 +34581,38 @@ body:not(.dark-mode) #fnpLyrics {
                 titleEl.appendChild(wrapper);
 
                 // Measure once after paint, then apply CSS keyframe
+                // Use a retry in case the pill isn't visible yet (offsetWidth=0 on mobile)
+                function applyMarquee(attempt) {
+                    var textW  = spanA.offsetWidth;
+                    var unitW  = textW + GAP;
+                    var contW  = titleEl.offsetWidth;
+
+                    // If measurements aren't ready yet, retry up to 10 times
+                    if ((textW === 0 || contW === 0) && attempt < 10) {
+                        setTimeout(function() { applyMarquee(attempt + 1); }, 80);
+                        return;
+                    }
+
+                    // Always animate if text is likely to overflow (or if we can't measure)
+                    if (textW > 0 && textW <= contW) return; // fits — no scroll needed
+
+                    // Duration: px/s = 55 → seconds for one unit
+                    var dur = unitW > 0 ? unitW / 55 : 6;
+
+                    // Inject a one-off keyframe rule for this exact distance
+                    var styleId = 'fnpMarqueeStyle';
+                    var oldStyle = document.getElementById(styleId);
+                    if (oldStyle) oldStyle.remove();
+                    var s = document.createElement('style');
+                    s.id = styleId;
+                    s.textContent = '@keyframes fnpScroll{0%{transform:translateX(0)}100%{transform:translateX(-' + unitW + 'px)}}';
+                    document.head.appendChild(s);
+
+                    // Apply: 2s initial delay, then seamless loop forever
+                    wrapper.style.animation = 'fnpScroll ' + dur.toFixed(3) + 's 2s linear infinite';
+                }
                 requestAnimationFrame(function() {
-                    requestAnimationFrame(function() {
-                        var textW  = spanA.offsetWidth;
-                        var unitW  = textW + GAP;
-                        var contW  = titleEl.offsetWidth;
-                        if (textW <= contW) return; // fits — no scroll needed
-
-                        // Duration: px/s = 55 → seconds for one unit
-                        var dur = unitW / 55;
-
-                        // Inject a one-off keyframe rule for this exact distance
-                        var styleId = 'fnpMarqueeStyle';
-                        var old = document.getElementById(styleId);
-                        if (old) old.remove();
-                        var s = document.createElement('style');
-                        s.id = styleId;
-                        s.textContent = '@keyframes fnpScroll{0%{transform:translateX(0)}100%{transform:translateX(-' + unitW + 'px)}}';
-                        document.head.appendChild(s);
-
-                        // Apply: 3s initial delay, then seamless loop forever
-                        wrapper.style.animation = 'fnpScroll ' + dur.toFixed(3) + 's ' + '3s linear infinite';
-                    });
+                    requestAnimationFrame(function() { applyMarquee(0); });
                 });
             }
         }
