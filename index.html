@@ -29559,7 +29559,7 @@ window.closeSettings = closeSettings;
             cooloff: [
                 {t:0,     text:"♪"},
                 {t:26.27, text:"Huwag ka munang magalit"},
-                {t:31.21, text:"Ako sana'y pakinggan, kindi ko balak ang ika'y saktan"},
+                {t:31.21, text:"Ako sana'y pakinggan, hindi ko balak ang ika'y saktan"},
                 {t:38.35, text:"Hindi ikaw ang problema"},
                 {t:42.88, text:"Wala akong iba, 'di tulad ng iyong hinala"},
                 {t:49.53, text:"Sarili ay 'di maintindihan"},
@@ -31108,6 +31108,9 @@ window.closeSettings = closeSettings;
             }
             return idx;
         }
+        // Expose globally for the floating pill lyrics
+        window.getActiveIdx = getActiveIdx;
+        window.songLyrics = songLyrics;
 
         function updateLyrics(songId, currentTime) {
             const lines = songLyrics[songId];
@@ -33801,6 +33804,7 @@ function showQueueToast(name, warn) {
     border: 1px solid rgba(255,255,255,0.13);
     border-radius: 999px;
     padding: 7px 10px 7px 14px;
+    position: relative;
     box-shadow: 0 4px 24px rgba(0,0,0,0.45);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -33881,30 +33885,57 @@ body:not(.dark-mode) #fnpPlayPauseBtn:hover { background: rgba(200,168,0,0.12); 
 body:not(.dark-mode) #fnpCloseBtn { color: rgba(30,60,160,0.4); }
 #fnpCloseBtn:hover { color: #fff; background: rgba(255,80,80,0.25); }
 body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,0.1); }
-/* Progress bar along bottom of pill */
-#fnpProgressTrack {
+/* Conic-gradient border progress around pill */
+#fnpPill::before {
+    content: '';
     position: absolute;
-    bottom: 0;
-    left: 14px;
-    right: 14px;
-    height: 2px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 1px;
-    overflow: hidden;
+    inset: -2px;
+    border-radius: 999px;
+    padding: 2px;
+    background: conic-gradient(
+        from -90deg,
+        #f5e642 0deg,
+        #6fdd58 calc(max(0deg, var(--fnp-prog, 0) * 360deg - 5deg)),
+        rgba(100,200,100,0) calc(var(--fnp-prog, 0) * 360deg),
+        rgba(255,255,255,0.08) calc(var(--fnp-prog, 0) * 360deg),
+        rgba(255,255,255,0.08) 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
     pointer-events: none;
-}
-body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
-#fnpProgressFill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #f5e642, #6fdd58);
-    border-radius: 1px;
-    transition: width 0.3s linear;
+    z-index: 0;
 }
 #fnpPillWrap {
     position: relative;
     display: flex;
     align-items: center;
+}
+#fnpLyrics {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #f5e642;
+    text-align: center;
+    max-width: min(90vw, 420px);
+    width: max-content;
+    padding: 4px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+}
+body:not(.dark-mode) #fnpLyrics {
+    color: #b8960a;
+}
+#fnpLyrics.fnp-lyrics-visible {
+    display: block;
 }
 </style>
 
@@ -33917,7 +33948,9 @@ body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
                 <svg id="fnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
             </button>
             <button id="fnpCloseBtn" title="Hide (music keeps playing)" onclick="fnpClose()">✕</button>
+
         </div>
+        <div id="fnpLyrics"></div>
     </div>
 </div>
 
@@ -34021,9 +34054,10 @@ body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
                             var dt = Math.min((ts - lastTime) / 1000, 0.05);
                             lastTime = ts;
                             pos += SPEED * dt;
-                            // Seamless loop: when we've moved one full unit, pause 3s then continue
                             if (pos >= unitW) {
-                                pos -= unitW;
+                                // Reset to 0 — title is fully visible at start again
+                                pos = 0;
+                                wrapper.style.transform = 'translateX(0px)';
                                 pausing = true;
                                 window._fnpMarqueePause = setTimeout(resume, 3000);
                                 return;
@@ -34032,9 +34066,9 @@ body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
                             window._fnpMarqueeRaf = requestAnimationFrame(tick);
                         }
 
-                        // start scrolling immediately
-                        lastTime = null;
-                        window._fnpMarqueeRaf = requestAnimationFrame(tick);
+                        // 3s pause before first scroll
+                        pausing = true;
+                        window._fnpMarqueePause = setTimeout(resume, 3000);
                     });
                 });
             }
@@ -34044,25 +34078,62 @@ body:not(.dark-mode) #fnpProgressTrack { background: rgba(100,126,234,0.15); }
         // Icons
         if (pauseIcon) pauseIcon.style.display = isPlaying ? '' : 'none';
         if (playIcon)  playIcon.style.display  = isPlaying ? 'none' : '';
+
     }
+
+    // Dedicated RAF loop for pixel-accurate progress bar + live lyrics
+    var _fnpLastLyricText = null;
+    (function progressLoop() {
+        var pill = document.getElementById('fnpPill');
+        var lyricsEl = document.getElementById('fnpLyrics');
+        var sid = window.currentPlayingSong;
+        if (pill && sid) {
+            var aud = document.getElementById('musicPlayer-' + sid);
+            var dur = aud ? aud.duration : NaN;
+            var validDur = aud && dur && isFinite(dur) && !isNaN(dur) && dur > 0;
+            if (validDur) {
+                // Clamp pct strictly between 0 and 1
+                var pct = Math.min(1, Math.max(0, aud.currentTime / dur));
+                pill.style.setProperty('--fnp-prog', pct.toFixed(5));
+            } else {
+                // Duration not ready yet — keep bar at 0
+                pill.style.setProperty('--fnp-prog', '0');
+            }
+
+            // Live lyrics (independent of duration validity)
+            if (aud && lyricsEl && window.songLyrics && window.songLyrics[sid] && window.getActiveIdx) {
+                var lines = window.songLyrics[sid];
+                var idx = window.getActiveIdx(lines, aud.currentTime);
+                var lyricText = (idx >= 0 && lines[idx].text !== '♪') ? lines[idx].text : '';
+                if (lyricText !== _fnpLastLyricText) {
+                    _fnpLastLyricText = lyricText;
+                    lyricsEl.textContent = lyricText;
+                }
+                if (lyricText) {
+                    lyricsEl.classList.add('fnp-lyrics-visible');
+                } else {
+                    lyricsEl.classList.remove('fnp-lyrics-visible');
+                }
+            }
+        }
+        requestAnimationFrame(progressLoop);
+    })();
 
     window.fnpTogglePlayPause = function() {
         if (!window.currentPlayingSong) return;
         var audio = document.getElementById('musicPlayer-' + window.currentPlayingSong);
         if (!audio) return;
-        // If pausing AND pill will be dismissed (only possible via X), just toggle
         toggleMusic(currentPlayingSong);
         setTimeout(fnpUpdate, 80);
     };
 
     window.fnpClose = function() {
-        // X just dismisses the pill — music keeps its current state (playing or paused)
         _fnpDismissed = true;
         var el = document.getElementById('floatingNowPlaying');
         if (el) el.classList.remove('fnp-visible');
     };
 
-    // Poll for updates
+    // Poll for visibility/title/icon updates (non-progress)
     setInterval(function() {
         fnpUpdate();
     }, 250);
