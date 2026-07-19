@@ -8659,6 +8659,9 @@
             transform: scale(1.13);
         }
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
+        #flLeftPanel .fl-left-line.fl-left-past {
+            opacity: 0.28;
+        }
 
         body.dark-mode #fullLyricsModalBox {
             background: linear-gradient(135deg, #5a4a10 0%, #001a3a 100%);
@@ -12714,7 +12717,33 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">31. MULTO – CUP OF JOE</div>
+                        <div class="info-label"                    <div class="info-item song-item">
+                        <div class="info-label">31. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
+                        <div class="info-value">
+                            <div class="music-player-container">                                <div class="song-controls">
+                                    <button class="play-button" data-song="bazzimine" onclick="toggleMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
+                                    <button class="music-control-button" onclick="restartMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
+                                </div>
+                                <audio id="musicPlayer-bazzimine" preload="metadata" controls style="display: none;">
+                                    <source src="Bazzi - Mine.mp3" type="audio/mpeg">
+                                </audio>
+                                <div class="music-progress-container" id="musicProgressContainer-bazzimine">
+                                    <div class="music-time">
+                                        <span id="currentTime-bazzimine">0:00</span>
+                                        <div class="music-progress-bar-wrapper">
+                                            <div class="music-progress-bar" id="musicProgressBar-bazzimine"></div>
+                                        </div>
+                                        <span id="totalTime-bazzimine">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="song-queue-btn" onclick="addToQueue('bazzimine')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
+                            <div class="lyrics-display" id="lyricsDisplay-bazzimine"><span class="lyrics-line" id="lyricsLine-bazzimine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('bazzimine')">See full lyrics</button></div>
+                            
+                        </div>
+                    </div>
+                    <div class="info-item song-item">
+                        <div class="info-label">32. MULTO – CUP OF JOE</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="multo" onclick="toggleMusic('multo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12739,7 +12768,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">32. NAIILANG – LE JOHN</div>
+                        <div class="info-label">33. NAIILANG – LE JOHN</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="nailang" onclick="toggleMusic('nailang')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12764,7 +12793,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">33. NVMD – DENISE JULIA <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">34. NVMD – DENISE JULIA <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="nvmd" onclick="toggleMusic('nvmd')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12789,7 +12818,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">34. ORAS – CALEIN</div>
+                        <div class="info-label">35. ORAS – CALEIN</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="oras" onclick="toggleMusic('oras')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12814,7 +12843,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">35. PALAYO SA MUNDO – ARTHUR NERY <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">36. PALAYO SA MUNDO – JOLIANNE, ARTHUR NERY <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="palayosamundo" onclick="toggleMusic('palayosamundo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12839,7 +12868,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">36. SUPER FAR – LANY</div>
+                        <div class="info-label">37. SUPER FAR – LANY</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="superfar" onclick="toggleMusic('superfar')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12864,7 +12893,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">37. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">38. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="wedonttalkanymore" onclick="toggleMusic('wedonttalkanymore')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12889,7 +12918,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">38. WHEN DID YOU GET HOT – SABRINA CARPENTER</div>
+                        <div class="info-label">39. WHEN DID YOU GET HOT – SABRINA CARPENTER</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="sabrina" onclick="toggleMusic('sabrina')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12914,7 +12943,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">39. 360 – CHARLI XCX</div>
+                        <div class="info-label">40. 360 – CHARLI XCX</div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="charli360" onclick="toggleMusic('charli360')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -12935,31 +12964,6 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('charli360')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-charli360"><span class="lyrics-line" id="lyricsLine-charli360"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('charli360')">See full lyrics</button></div>
-                            
-                        </div>
-                    </div>
-                    <div class="info-item song-item">
-                        <div class="info-label">40. MINE – BAZZI <span class="new-badge">[NEW]</span></div>
-                        <div class="info-value">
-                            <div class="music-player-container">                                <div class="song-controls">
-                                    <button class="play-button" data-song="bazzimine" onclick="toggleMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
-                                    <button class="music-control-button" onclick="restartMusic('bazzimine')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
-                                </div>
-                                <audio id="musicPlayer-bazzimine" preload="metadata" controls style="display: none;">
-                                    <source src="Bazzi - Mine.mp3" type="audio/mpeg">
-                                </audio>
-                                <div class="music-progress-container" id="musicProgressContainer-bazzimine">
-                                    <div class="music-time">
-                                        <span id="currentTime-bazzimine">0:00</span>
-                                        <div class="music-progress-bar-wrapper">
-                                            <div class="music-progress-bar" id="musicProgressBar-bazzimine"></div>
-                                        </div>
-                                        <span id="totalTime-bazzimine">0:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="song-queue-btn" onclick="addToQueue('bazzimine')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
-                            <div class="lyrics-display" id="lyricsDisplay-bazzimine"><span class="lyrics-line" id="lyricsLine-bazzimine"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('bazzimine')">See full lyrics</button></div>
                             
                         </div>
                     </div>
@@ -28495,12 +28499,19 @@ window.closeSettings = closeSettings;
                         if (bar) bar.style.width = '0%';
                         const currentTimeSpan = document.getElementById('currentTime-' + songId);
                         if (currentTimeSpan) currentTimeSpan.textContent = '0:00';
-                        if (currentPlayingSong === songId) {
-                            currentPlayingSong = null;
-                            updateMiniMusicUI();
-                        }
                         // ── Play next from queue ──
-                        if (window._onSongEnded) window._onSongEnded(songId);
+                        // Clear currentPlayingSong AFTER queue handler so toggleMusic
+                        // can properly detect and stop the previous song
+                        if (window._onSongEnded && musicQueue && musicQueue.length > 0) {
+                            currentPlayingSong = null;
+                            window._onSongEnded(songId);
+                        } else {
+                            if (currentPlayingSong === songId) {
+                                currentPlayingSong = null;
+                                updateMiniMusicUI();
+                            }
+                            if (window._onSongEnded) window._onSongEnded(songId);
+                        }
                     });
 
                     audio.addEventListener('error', function(e) {
@@ -31218,6 +31229,7 @@ window.closeSettings = closeSettings;
                     leftPanel._lastIdx = idx;
                     leftLines.forEach((el, i) => {
                         el.classList.toggle('fl-left-active', i === idx);
+                        el.classList.toggle('fl-left-past', i < idx);
                     });
                     // Scroll to keep newly active line centered
                     if (!leftPanel._userScrolling && idx >= 0 && leftLines[idx]) {
@@ -31259,6 +31271,11 @@ window.closeSettings = closeSettings;
 
         // Interval to update modal when open
         setInterval(function() {
+            // If a new song is now playing and the modal is open, reload it for the new song
+            if (_flSongId && currentPlayingSong && _flSongId !== currentPlayingSong) {
+                openFullLyricsModal(currentPlayingSong);
+                return;
+            }
             const sid = _flSongId || currentPlayingSong;
             if (!sid) return;
             const audio = document.getElementById('musicPlayer-' + sid);
@@ -33446,6 +33463,10 @@ _visitsThemeObserver.observe(document.body, { attributes: true, attributeFilter:
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 #queueModalBox {
     position: relative;
@@ -33588,7 +33609,7 @@ body.dark-mode .queue-item-play:hover { background: rgba(77,166,255,0.25); }
 </style>
 
 <div id="queueModal">
-    <div id="queueModalBackdrop"></div>
+    <div id="queueModalBackdrop" onclick="closeQueueModal()"></div>
     <div id="queueModalBox">
         <div id="queueModalTitle">Queue</div>
         <button id="queueModalClose" onclick="closeQueueModal()">✕</button>
