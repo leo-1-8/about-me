@@ -6173,12 +6173,12 @@
         /* Song search bar */
         #songSearchWrapper {
             position: absolute;
-            top: 112px;
-            left: 26px;
+            top: 110.5px;
+            left: 28px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: calc(100% - 40px);
+            width: 60%;
             box-sizing: border-box;
             z-index: 10;
         }
@@ -6190,8 +6190,12 @@
             width: 100%;
         }
         #songSearchIconBtn {
+            flex-shrink: 0;
             width: 24px;
             height: 24px;
+            border: none;
+            background: rgba(150,150,150,0.25);
+            border-radius: 50%;
             border: none;
             background: rgba(150,150,150,0.25);
             border-radius: 50%;
@@ -6219,21 +6223,23 @@
         body.dark-mode #songSearchIconBtn svg {
             color: #eee;
         }
-        #songSearchRow #songSearchInput {
+        #songSearchRow #songSearchInputWrap {
             flex: 1;
             width: 100%;
+            position: relative;
+            margin-top: -0.3px;
         }
         #songSearchInput {
             width: 100%;
             box-sizing: border-box;
-            padding: 4px 12px;
+            padding: 3px 24px 3px 10px;
             border-radius: 20px;
             border: 1.5px solid #ccc;
-            font-size: 12px;
+            font-size: 11px;
             outline: none;
             background: #f5f5f5;
             color: #333;
-            height: 28px;
+            height: 22px;
             transition: border-color 0.2s;
         }
         #songSearchInput:focus {
@@ -6249,6 +6255,28 @@
             border-color: #aaa;
             background: #333;
         }
+        #songSearchClearBtn {
+            position: absolute;
+            right: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: #888;
+            line-height: 1;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        #songSearchClearBtn:hover { color: #555; }
+        body.dark-mode #songSearchClearBtn { color: #777; }
+        body.dark-mode #songSearchClearBtn:hover { color: #bbb; }
         #songSearchNoResult {
             text-align: center;
             font-size: 13px;
@@ -8742,7 +8770,7 @@
             font-size: 12.5px;
             font-weight: 600;
             color: #1a5fc8;
-            line-height: 1.8;
+            line-height: 1.3;
             letter-spacing: 0.3px;
             width: 100%;
         }
@@ -12169,7 +12197,10 @@
                     <button id="songSearchIconBtn" onclick="toggleSongSearch()" title="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="15.5" y1="15.5" x2="22" y2="22"/></svg>
                     </button>
-                    <input type="text" id="songSearchInput" placeholder="Search a song..." oninput="filterSongs(this.value)" autocomplete="off" style="display:none;" />
+                    <div id="songSearchInputWrap" style="display:none;position:relative;flex:1;">
+                        <input type="text" id="songSearchInput" placeholder="Search a song..." oninput="filterSongs(this.value);toggleSearchClear(this.value)" autocomplete="off" />
+                        <button id="songSearchClearBtn" onclick="clearSongSearch()" title="Clear" style="display:none;">✕</button>
+                    </div>
                 </div>
                 <div id="songSearchNoResult" style="display:none;">No song found.</div>
             </div>
@@ -32221,7 +32252,7 @@ window.closeSettings = closeSettings;
                 span.textContent = rawText;
             } else {
                 span.innerHTML = rows.map(function(r) {
-                    return '<span style="display:block">' + r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+                    return '<span style="display:block;line-height:1.3">' + r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
                 }).join('');
             }
 
@@ -35302,7 +35333,7 @@ body:not(.dark-mode) #fnpLyrics {
                             lyricsEl.textContent = lyricText;
                         } else {
                             lyricsEl.innerHTML = rows.map(function(r) {
-                                return '<span style="display:block;line-height:1.4">' + r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+                                return '<span style="display:block;line-height:1.3">' + r.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
                             }).join('');
                         }
                     } else {
@@ -35385,17 +35416,36 @@ body:not(.dark-mode) #fnpLyrics {
 <script>
 // Song search toggle
 function toggleSongSearch() {
+    var wrap = document.getElementById('songSearchInputWrap');
     var input = document.getElementById('songSearchInput');
     var noResult = document.getElementById('songSearchNoResult');
-    var isHidden = input.style.display === 'none';
-    input.style.display = isHidden ? '' : 'none';
+    var clearBtn = document.getElementById('songSearchClearBtn');
+    var isHidden = wrap.style.display === 'none';
+    wrap.style.display = isHidden ? '' : 'none';
     if (isHidden) {
         input.focus();
     } else {
         input.value = '';
+        if (clearBtn) clearBtn.style.display = 'none';
         filterSongs('');
         if (noResult) noResult.style.display = 'none';
     }
+}
+
+function toggleSearchClear(val) {
+    var btn = document.getElementById('songSearchClearBtn');
+    if (btn) btn.style.display = val.length > 0 ? 'inline-flex' : 'none';
+}
+
+function clearSongSearch() {
+    var input = document.getElementById('songSearchInput');
+    var btn = document.getElementById('songSearchClearBtn');
+    var noResult = document.getElementById('songSearchNoResult');
+    input.value = '';
+    if (btn) btn.style.display = 'none';
+    filterSongs('');
+    if (noResult) noResult.style.display = 'none';
+    input.focus();
 }
 
 // Add Song button
