@@ -29395,37 +29395,36 @@ window.closeSettings = closeSettings;
                 }
 
                 function doPlay() {
+                    // Wait until audio is ready to avoid AbortError
+                    if (audio.readyState < 2) {
+                        audio.addEventListener("canplay", function handler() {
+                            audio.removeEventListener("canplay", handler);
+                            doPlay();
+                        });
+                        audio.load();
+                        return;
+                    }
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.then(() => {
                             playButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>`;
-                            playButton.classList.remove('playing');
-                            playButton.classList.add('paused');
-                            if (songItem) { songItem.classList.add('song-playing'); songItem.classList.remove('song-paused'); }
-                            if (progressContainer) progressContainer.classList.add('active');
+                            playButton.classList.remove("playing");
+                            playButton.classList.add("paused");
+                            if (songItem) { songItem.classList.add("song-playing"); songItem.classList.remove("song-paused"); }
+                            if (progressContainer) progressContainer.classList.add("active");
                             window.currentPlayingSong = songId;
                             mnpUpdate();
                             updateMiniMusicUI();
                         }).catch(error => {
-                            console.warn('Playback error:', error.name, error.message);
-                            if (error.name === 'AbortError') {
-                                // Previous pause interrupted — retry once
-                                setTimeout(doPlay, 100);
+                            if (error.name === "AbortError") {
+                                setTimeout(doPlay, 300);
                             } else {
+                                console.warn("Playback error:", error.name, error.message);
                                 playButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>`;
-                                playButton.classList.remove('paused', 'playing');
-                                if (songItem) songItem.classList.remove('song-playing');
+                                playButton.classList.remove("paused", "playing");
+                                if (songItem) songItem.classList.remove("song-playing");
                             }
                         });
-                    } else {
-                        playButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>`;
-                        playButton.classList.remove('playing');
-                        playButton.classList.add('paused');
-                        if (songItem) songItem.classList.add('song-playing');
-                        if (progressContainer) progressContainer.classList.add('active');
-                        window.currentPlayingSong = songId;
-                        mnpUpdate();
-                        updateMiniMusicUI();
                     }
                 }
                 doPlay();
@@ -31981,53 +31980,53 @@ window.closeSettings = closeSettings;
             ],
             // ─── Love Me Like You — Little Mix ───
             lovemelikeyou: [
-                {t:0.66,   text:"Sha-la-la-la"},
-                {t:2.87,   text:"Sha-la-la-la"},
-                {t:5.17,   text:"Sha-la-la-la"},
-                {t:9.77,   text:"He might got the biggest ca-a-ar"},
-                {t:13.17,  text:"Don't mean he can drive me wild or he can go for miles"},
-                {t:18.75,  text:"Said he got a lotta ca-a-ash"},
-                {t:22.26,  text:"Darlin', he can't buy my love, it's you I'm dreamin' of"},
-                {t:28.29,  text:"They try to romance me, but you got that nasty"},
-                {t:32.72,  text:"And that's what I want"},
-                {t:36.06,  text:"So, baby, baby, come and save me"},
-                {t:40.70,  text:"Don't need those other numbers when I got my number one"},
-                {t:46.07,  text:"Last night, I laid in bed so blue"},
-                {t:50.54,  text:"'Cause I realized the truth, they can't love me like you"},
-                {t:55.08,  text:"I tried to find somebody new"},
-                {t:59.63,  text:"Baby, they ain't got a clue, can't love me like you"},
-                {t:68.62,  text:"Used to get it when I wa-a-ant"},
-                {t:72.08,  text:"You were pourin' out your love, I could never get enough"},
-                {t:77.63,  text:"Now I'm dealin' with these bo-o-oys"},
-                {t:81.12,  text:"When I really need a man who can do it like I can"},
-                {t:87.02,  text:"They try to romance me, but you got that nasty"},
-                {t:91.55,  text:"And that's what I want"},
-                {t:94.87,  text:"So, baby, baby, come and save me"},
-                {t:99.52,  text:"Don't need those other lovers when I got my number one"},
-                {t:104.88, text:"Last night, I laid in bed so blue"},
-                {t:109.32, text:"'Cause I realized the truth, they can't love me like you"},
-                {t:114.00, text:"I tried to find somebody new"},
-                {t:118.42, text:"Baby, they ain't got a clue, can't love me like you"},
-                {t:122.88, text:"Sha-la-la-la"},
-                {t:125.12, text:"Sha-la-la-la"},
-                {t:127.35, text:"Sha-la-la-la"},
-                {t:130.07, text:"Can't love me like you"},
-                {t:131.97, text:"Sha-la-la-la"},
-                {t:134.20, text:"Sha-la-la-la"},
-                {t:136.46, text:"Sha-la-la-la"},
-                {t:139.11, text:"Can't love me like you"},
-                {t:140.60, text:"L-O-V-E, love the way you give it to me"},
-                {t:145.01, text:"When you're with me, boy, I want it every day"},
-                {t:149.56, text:"L-O-V-E, love the way you give it to me"},
-                {t:154.00, text:"When you're with me, boy, I want it every day"},
-                {t:159.20, text:"Last night, I lay in bed so blue"},
-                {t:163.71, text:"'Cause I realized the truth, they can't love me like you"},
-                {t:168.26, text:"I tried to find somebody new"},
-                {t:172.70, text:"Baby, they ain't got a clue, can't love me like you"},
-                {t:177.28, text:"Last night, I lay in bed so blue"},
-                {t:181.61, text:"'Cause I realized the truth, they can't love me like you"},
-                {t:186.26, text:"I tried to find somebody new"},
-                {t:190.79, text:"Baby, they ain't got a clue, can't love me like you"},
+                {t:0.36,   text:"Sha-la-la-la"},
+                {t:2.57,   text:"Sha-la-la-la"},
+                {t:4.87,   text:"Sha-la-la-la"},
+                {t:9.47,   text:"He might got the biggest ca-a-ar"},
+                {t:12.87,  text:"Don't mean he can drive me wild or he can go for miles"},
+                {t:18.45,  text:"Said he got a lotta ca-a-ash"},
+                {t:21.96,  text:"Darlin', he can't buy my love, it's you I'm dreamin' of"},
+                {t:27.99,  text:"They try to romance me, but you got that nasty"},
+                {t:32.42,  text:"And that's what I want"},
+                {t:35.76,  text:"So, baby, baby, come and save me"},
+                {t:40.4,  text:"Don't need those other numbers when I got my number one"},
+                {t:45.77,  text:"Last night, I laid in bed so blue"},
+                {t:50.24,  text:"'Cause I realized the truth, they can't love me like you"},
+                {t:54.78,  text:"I tried to find somebody new"},
+                {t:59.33,  text:"Baby, they ain't got a clue, can't love me like you"},
+                {t:68.32,  text:"Used to get it when I wa-a-ant"},
+                {t:71.78,  text:"You were pourin' out your love, I could never get enough"},
+                {t:77.33,  text:"Now I'm dealin' with these bo-o-oys"},
+                {t:80.82,  text:"When I really need a man who can do it like I can"},
+                {t:86.72,  text:"They try to romance me, but you got that nasty"},
+                {t:91.25,  text:"And that's what I want"},
+                {t:94.57,  text:"So, baby, baby, come and save me"},
+                {t:99.22,  text:"Don't need those other lovers when I got my number one"},
+                {t:104.58, text:"Last night, I laid in bed so blue"},
+                {t:109.02, text:"'Cause I realized the truth, they can't love me like you"},
+                {t:113.7, text:"I tried to find somebody new"},
+                {t:118.12, text:"Baby, they ain't got a clue, can't love me like you"},
+                {t:122.58, text:"Sha-la-la-la"},
+                {t:124.82, text:"Sha-la-la-la"},
+                {t:127.05, text:"Sha-la-la-la"},
+                {t:129.77, text:"Can't love me like you"},
+                {t:131.67, text:"Sha-la-la-la"},
+                {t:133.9, text:"Sha-la-la-la"},
+                {t:136.16, text:"Sha-la-la-la"},
+                {t:138.81, text:"Can't love me like you"},
+                {t:140.3, text:"L-O-V-E, love the way you give it to me"},
+                {t:144.71, text:"When you're with me, boy, I want it every day"},
+                {t:149.26, text:"L-O-V-E, love the way you give it to me"},
+                {t:153.7, text:"When you're with me, boy, I want it every day"},
+                {t:158.9, text:"Last night, I lay in bed so blue"},
+                {t:163.41, text:"'Cause I realized the truth, they can't love me like you"},
+                {t:167.96, text:"I tried to find somebody new"},
+                {t:172.4, text:"Baby, they ain't got a clue, can't love me like you"},
+                {t:176.98, text:"Last night, I lay in bed so blue"},
+                {t:181.31, text:"'Cause I realized the truth, they can't love me like you"},
+                {t:185.96, text:"I tried to find somebody new"},
+                {t:190.49, text:"Baby, they ain't got a clue, can't love me like you"},
             ],
             // ─── Tahanan — El Manu ───
             tahanan: [
