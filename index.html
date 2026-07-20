@@ -8774,6 +8774,14 @@
             letter-spacing: 0.3px;
             width: 100%;
         }
+        /* Hard cap: inner spans (each line) must never wrap to a 3rd line */
+        .lyrics-line span {
+            display: block !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
         body.dark-mode .lyrics-display {
             background: rgba(102,126,234,0.12);
         }
@@ -32212,27 +32220,32 @@ window.closeSettings = closeSettings;
         window.getActiveIdx = getActiveIdx;
         window.songLyrics = songLyrics;
 
-        // Split a lyric line into rows that fit within ~55 characters each,
-        // breaking only at word boundaries so no orphan words appear on their own line.
+        // Always returns at most 2 lines — never 3, even if line 2 is short.
+        // Short lyrics stay on 1 line. Longer ones split at the nearest word
+        // boundary to the midpoint so both lines are as balanced as possible.
         function wrapLyric15(text) {
             if (!text) return [];
             var words = text.split(' ');
-            // Short enough to fit on one line — return as-is
-            if (text.length <= 55) return [text];
-            var rows = [];
-            var current = '';
-            for (var i = 0; i < words.length; i++) {
-                var word = words[i];
-                var candidate = current ? current + ' ' + word : word;
-                if (candidate.length <= 55) {
-                    current = candidate;
-                } else {
-                    if (current) rows.push(current);
-                    current = word;
+            if (words.length <= 1) return [text];
+            // Short enough — single line
+            if (text.length <= 36) return [text];
+            // Find the word-boundary closest to the character midpoint
+            var mid = Math.ceil(text.length / 2);
+            var bestBreak = 0;
+            var bestDist = Infinity;
+            var pos = 0;
+            for (var i = 0; i < words.length - 1; i++) {
+                pos += words[i].length + 1;
+                var dist = Math.abs(pos - mid);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestBreak = i;
                 }
             }
-            if (current) rows.push(current);
-            return rows;
+            // Always exactly 2 lines — everything goes onto line 1 or line 2, nothing overflows
+            var line1 = words.slice(0, bestBreak + 1).join(' ');
+            var line2 = words.slice(bestBreak + 1).join(' ');
+            return [line1, line2];
         }
 
         function updateLyrics(songId, currentTime) {
