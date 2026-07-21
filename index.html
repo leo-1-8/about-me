@@ -6196,7 +6196,7 @@
         /* Song search bar */
         #songSearchWrapper {
             position: absolute;
-            top: 108.5px;
+            top: 110.5px;
             left: 28px;
             display: flex;
             flex-direction: column;
@@ -14675,7 +14675,7 @@
                         <p>Added lyrics below the Music Pill. (Lyrics are hidden when no music is playing).</p>
                         <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
                         <p>Reworked the music system.</p>
-                        <p>Added 27 new songs.</p>
+                        <p>Added 38 new songs.</p>
                         <p>- Added search bar</p>
                         <p>Added a queue.</p>
                         <p>Added See Full Lyrics.</p>
@@ -16119,7 +16119,7 @@ window.closeSettings = closeSettings;
                 }
             });
 
-            function updateSectionLabelColors(isDark) {
+            window.updateSectionLabelColors = function updateSectionLabelColors(isDark) {
                 var blue = isDark ? '#7eb8f7' : '#2563eb';
                 var green = isDark ? '#6ee7a0' : '#16a34a';
                 ['sectionLabelAri','sectionLabelTaylor','sectionLabelRandom'].forEach(function(id) {
@@ -21873,6 +21873,12 @@ window.closeSettings = closeSettings;
                             }
                         });
                     }
+                    // Re-apply section label colors after modal renders
+                    setTimeout(function() {
+                        if (typeof updateSectionLabelColors === 'function') {
+                            updateSectionLabelColors(document.body.classList.contains('dark-mode'));
+                        }
+                    }, 0);
                 }
 
                 if (type === 'messageConfirmation' || type === 'nameFinalConfirm' || type === 'senderPassword') {
