@@ -1591,8 +1591,6 @@
         /* Dark mode: make modal text white (About Me uses targeted rules below — no * wildcard) */
         body.dark-mode #gamingModal .modal-content,
         body.dark-mode #gamingModal .modal-content *,
-        body.dark-mode #musicModal .modal-content,
-        body.dark-mode #musicModal .modal-content *:not(#sectionLabelAri):not(#sectionLabelAriNew):not(#sectionLabelTaylor):not(#sectionLabelRandom):not(.new-badge):not(.lyrics-line):not(.lyrics-line span),
         body.dark-mode #singerModal .modal-content,
         body.dark-mode #singerModal .modal-content *,
         body.dark-mode #myAppsModal .modal-content,
@@ -1600,11 +1598,39 @@
             color: rgba(255, 255, 255, 0.92) !important;
         }
 
-
-        body.dark-mode #musicModal .modal-content .explicit-note,
-        body.dark-mode #musicModal .modal-content .explicit-note em {
+        /* Music modal dark mode — individual targeted rules, no nuclear override */
+        body.dark-mode #musicModal .modal-content .info-label {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        body.dark-mode #musicModal .modal-content .info-value,
+        body.dark-mode #musicModal .modal-content .music-time,
+        body.dark-mode #musicModal .modal-content .song-queue-btn,
+        body.dark-mode #musicModal .modal-content .see-full-lyrics-btn,
+        body.dark-mode #musicModal .modal-content .music-title,
+        body.dark-mode #musicModal .modal-content p,
+        body.dark-mode #musicModal .modal-content span:not(.new-badge):not(.explicit-note):not(.explicit-badge) {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+        /* Section labels - blue in dark mode */
+        body.dark-mode #sectionLabelAri,
+        body.dark-mode #sectionLabelTaylor,
+        body.dark-mode #sectionLabelRandom {
+            color: #7eb8f7 !important;
+        }
+        /* New Ariana section label - green in dark mode */
+        body.dark-mode #sectionLabelAriNew {
+            color: #6ee7a0 !important;
+        }
+        /* [NEW] badge - green in dark mode */
+        body.dark-mode .new-badge {
+            color: #86efac !important;
+        }
+        /* Explicit note - red in dark mode */
+        body.dark-mode #musicModal .explicit-note,
+        body.dark-mode #musicModal .explicit-note em {
             color: #ffaaaa !important;
         }
+        /* Lyrics - blue in dark mode */
         body.dark-mode #musicModal .lyrics-line,
         body.dark-mode #musicModal .lyrics-line span {
             color: #c2e4ff !important;
@@ -6339,8 +6365,11 @@
         .explicit-note {
             font-size: 10px;
             color: #b22222 !important;
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-word;
             line-height: 1.3;
+            display: inline-block;
+            max-width: 100%;
         }
         .explicit-note em {
             color: #b22222 !important;
@@ -12251,7 +12280,7 @@
             </div>
             <div class="modal-content">
                 <div class="music-list">
-                    <div id="sectionLabelAri" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px; color: #2563eb;">SONGS OF ARIANA GRANDE</div>
+                    <div id="sectionLabelAri" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">SONGS OF ARIANA GRANDE</div>
 <div class="info-item song-item">
                         <div class="info-label">1. BOYFRIEND (WITH SOCIAL HOUSE) – ARIANA GRANDE &amp; SOCIAL HOUSE</div>
                         <div class="info-value">
@@ -12506,7 +12535,7 @@
                         </div>
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
-                    <div id="sectionLabelAriNew" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px; color: #16a34a;">NEW SONGS OF ARIANA GRANDE</div>
+                    <div id="sectionLabelAriNew" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">NEW SONGS OF ARIANA GRANDE</div>
                     <div class="info-item song-item">
                         <div class="info-label">11. KISS ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
@@ -12748,7 +12777,7 @@
                         </div>
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
-                    <div id="sectionLabelTaylor" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px; color: #2563eb;">SONGS OF TAYLOR SWIFT</div>
+                    <div id="sectionLabelTaylor" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">SONGS OF TAYLOR SWIFT</div>
                     <div class="info-item song-item">
                         <div class="info-label">21. ALL TOO WELL (10 MINUTE VERSION) – TAYLOR SWIFT <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
@@ -13001,7 +13030,7 @@
                         </div>
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
-                    <div id="sectionLabelRandom" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px; color: #2563eb;">RANDOM SONGS</div>
+                    <div id="sectionLabelRandom" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">RANDOM SONGS</div>
                     <div class="info-item song-item">
                         <div class="info-label">31. ABOUT YOU – THE 1975</div>
                         <div class="info-value">
@@ -13758,33 +13787,6 @@
                         </div>
                     </div>
                 
-                </div>
-            </div>
-            <!-- Now Playing Overlay Bar -->
-            <div id="musicNowPlayingBar" style="display:none;">
-                <div id="mnpSeparator"></div>
-                <div id="mnpProgress">
-                    <div id="mnpProgressFill"></div>
-                </div>
-                <div id="mnpMain">
-                    <div id="mnpTitle"></div>
-                    <div id="mnpTimes">
-                        <span id="mnpCurrent">0:00</span>
-                        <span id="mnpTotal">0:00</span>
-                    </div>
-                    <div id="mnpControls">
-                        <button id="mnpQueueBtn" title="View Queue" onclick="openQueueModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>
-                        </button>
-                        <button id="mnpPlayPauseBtn" title="Play/Pause" onclick="mnpToggle()">
-                            <svg id="mnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
-                            <svg id="mnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
-                        </button>
-                        <button id="mnpRestartBtn" title="Restart" onclick="mnpRestart()">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg>
-                        </button>
-                        <button id="mnpLyricsBtn" title="See full lyrics" onclick="mnpOpenLyrics()">See full lyrics</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -14675,7 +14677,7 @@
                         <p>Added lyrics below the Music Pill. (Lyrics are hidden when no music is playing).</p>
                         <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
                         <p>Reworked the music system.</p>
-                        <p>Added 38 new songs.</p>
+                        <p>Added 37 new songs.</p>
                         <p>- Added search bar</p>
                         <p>Added a queue.</p>
                         <p>Added See Full Lyrics.</p>
@@ -35911,5 +35913,35 @@ function toggleExplicitNote(badge) {
     }
 })();
 </script>
+
+<!-- Now Playing Bar (moved outside modals) -->
+<!-- Now Playing Overlay Bar -->
+            <div id="musicNowPlayingBar" style="display:none;">
+                <div id="mnpSeparator"></div>
+                <div id="mnpProgress">
+                    <div id="mnpProgressFill"></div>
+                </div>
+                <div id="mnpMain">
+                    <div id="mnpTitle"></div>
+                    <div id="mnpTimes">
+                        <span id="mnpCurrent">0:00</span>
+                        <span id="mnpTotal">0:00</span>
+                    </div>
+                    <div id="mnpControls">
+                        <button id="mnpQueueBtn" title="View Queue" onclick="openQueueModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>
+                        </button>
+                        <button id="mnpPlayPauseBtn" title="Play/Pause" onclick="mnpToggle()">
+                            <svg id="mnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
+                            <svg id="mnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
+                        </button>
+                        <button id="mnpRestartBtn" title="Restart" onclick="mnpRestart()">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg>
+                        </button>
+                        <button id="mnpLyricsBtn" title="See full lyrics" onclick="mnpOpenLyrics()">See full lyrics</button>
+                    </div>
+                </div>
+            </div>
+
 </body>
 </html>
