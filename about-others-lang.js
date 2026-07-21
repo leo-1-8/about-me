@@ -31,7 +31,7 @@
             about_toggle_access: 'Toggle access',
             about_toggle_hobbies: 'Click to view hobbies',
             about_toggle_favorites: 'Click to view favorites',
-            others_heading: 'Others',
+            others_heading: 'OTHERS',
             others_gaming: 'Gaming',
             others_gaming_desc: 'When I get bored, I play these games.',
             others_music: 'Music',
@@ -51,42 +51,42 @@
             others_not_available_now: 'NOT YET AVAILABLE',
             about_fav_cats_title: 'Cats',
             about_fav_cats_short:
-                'If I had to choose one animal that always makes me smile, it would be cats. There\'s something special about the way they quietly become part of your day. They don\'t always ask for attention, but when they decide to curl up beside you or gently purr, it feels like their own little way of saying, "I trust you."',
+                'If I had to choose one animal that always makes me smile, it would be cats.',
             about_fav_cats_full:
                 'If I had to choose one animal that always makes me smile, it would be cats. There\'s something special about the way they quietly become part of your day. They don\'t always ask for attention, but when they decide to curl up beside you or gently purr, it feels like their own little way of saying, "I trust you." I love watching them chase toys, stretch lazily under the sunlight or suddenly zoom around the house for no reason at all. Their soft fur, funny personalities and calm presence can brighten even my worst days.',
             about_fav_music_title: 'Music',
             about_fav_music_short:
-                'Music has always been more than just sound to me — it\'s something I can always turn to, no matter how I feel. On happy days, upbeat songs make me want to dance and enjoy the moment. On quiet days, slow melodies help me think, breathe and understand my emotions.',
+                'Music has always been more than just sound to me, it\'s something I can always turn to, no matter how I feel.',
             about_fav_music_full:
                 'Music has always been more than just sound to me — it\'s something I can always turn to, no matter how I feel. On happy days, upbeat songs make me want to dance and enjoy the moment. On quiet days, slow melodies help me think, breathe and understand my emotions. Sometimes, a single song can say the words I can\'t explain myself. That\'s why music feels like a friend who always knows exactly what I need to hear.',
             about_fav_sunsets_title: 'Sunsets',
             about_fav_sunsets_short:
-                'No matter how busy life gets, sunsets always remind me to slow down. Watching the sky slowly change from blue to shades of orange, pink and purple feels like nature\'s way of painting a masterpiece before the day ends.',
+                'No matter how busy life gets, sunsets always remind me to slow down.',
             about_fav_sunsets_full:
                 'No matter how busy life gets, sunsets always remind me to slow down. Watching the sky slowly change from blue to shades of orange, pink and purple feels like nature\'s way of painting a masterpiece before the day ends. In those few peaceful moments, my worries seem smaller and I remember to be thankful for another day. A sunset may only last for a short while, but the feeling it leaves behind stays much longer.',
             about_fav_foods_title: 'Food',
             about_fav_foods_short:
-                'Some of my happiest memories are connected to food. Chocolate is my favorite sweet because it melts so smoothly and somehow makes every day feel a little brighter. I also love spaghetti, especially when it\'s cooked with a sweet-style sauce that reminds me of family gatherings and celebrations.',
+                'Some of my happiest memories are connected to food.',
             about_fav_foods_full:
                 'Some of my happiest memories are connected to food. Chocolate is my favorite sweet because it melts so smoothly and somehow makes every day feel a little brighter. I also love spaghetti, especially when it\'s cooked with a sweet-style sauce that reminds me of family gatherings and celebrations. Marshmallows are another favorite — they\'re soft, fluffy and even better when roasted or paired with chocolate. These simple foods aren\'t just delicious, they remind me of laughter, shared meals and moments spent with the people I love.',
             about_fav_friends_title: 'My Friends',
             about_fav_friends_short:
-                'Life wouldn\'t be the same without my friends. They\'re the people who make ordinary days unforgettable with their jokes, stories and endless laughter. They celebrate my successes, encourage me when I feel discouraged and remind me that I never have to face challenges alone.',
+                'Life wouldn\'t be the same without my friends.',
             about_fav_friends_full:
                 'Life wouldn\'t be the same without my friends. They\'re the people who make ordinary days unforgettable with their jokes, stories and endless laughter. They celebrate my successes, encourage me when I feel discouraged and remind me that I never have to face challenges alone. Having friends who accept me for who I am is one of the greatest blessings I could ever ask for.',
             about_fav_movies_title: 'Movies',
             about_fav_movies_short:
-                'Movies are one of my favorite ways to relax and escape into different worlds. I enjoy stories that make me laugh, inspire me or even bring tears to my eyes. I especially love Minions and Doraemon because they\'re funny, heartwarming and filled with lessons about friendship, kindness and believing in yourself.',
+                'Movies are one of my favorite ways to relax and escape into different worlds.',
             about_fav_movies_full:
                 'Movies are one of my favorite ways to relax and escape into different worlds. I enjoy stories that make me laugh, inspire me or even bring tears to my eyes. I especially love Minions and Doraemon because they\'re funny, heartwarming and filled with lessons about friendship, kindness and believing in yourself. I also enjoy watching BL (Boys Love) series because they portray different kinds of love while encouraging acceptance, equality and respect for the LGBTQIA+ community. These stories remind me that everyone deserves kindness, understanding and the freedom to be themselves.',
             about_fav_social_title: 'Social Media',
             about_fav_social_short:
-                'For me, social media is more than just scrolling through posts — it\'s a place where I can connect, learn and express myself. It helps me stay in touch with friends and family, discover creative ideas and keep up with what\'s happening around the world.',
+                'For me, social media is more than just scrolling through posts it\'s a place where I can connect, learn and express myself.',
             about_fav_social_full:
                 'For me, social media is more than just scrolling through posts — it\'s a place where I can connect, learn and express myself. It helps me stay in touch with friends and family, discover creative ideas and keep up with what\'s happening around the world. I enjoy exploring art, music, technology and different cultures through the people I follow. While it\'s important to use it responsibly, social media has become a meaningful part of my daily life because it brings people, ideas and opportunities together in one place.',
             about_fav_coding_title: 'Coding',
             about_fav_coding_short:
-                'Coding is one of the things that challenges me in the best way. At first, it can be confusing, but there\'s a special kind of happiness that comes from finally solving a problem after spending time figuring it out. Every line of code feels like a small piece of a puzzle and watching everything work together is incredibly satisfying.',
+                'Coding is one of the things that challenges me in the best way.',
             about_fav_coding_full:
                 'Coding is one of the things that challenges me in the best way. At first, it can be confusing, but there\'s a special kind of happiness that comes from finally solving a problem after spending time figuring it out. Every line of code feels like a small piece of a puzzle and watching everything work together is incredibly satisfying. I enjoy learning new programming skills because they allow me to turn ideas into something real, whether it\'s a simple program, a website or a project I\'m proud of. Coding reminds me that mistakes aren\'t failures — they\'re just part of learning and improving. Every bug I fix teaches me something new and motivates me to keep going.',
             others_stay_tuned: 'stay tuned',
