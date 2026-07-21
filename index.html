@@ -35483,10 +35483,10 @@ function showQueueToast(name, warn) {
 #floatingNowPlaying {
     display: none;
     position: fixed;
-    top: 50%;
+    bottom: 80px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 99999999;
+    transform: translateX(-50%);
+    z-index: 2147483647;
     pointer-events: auto;
 }
 #floatingNowPlaying.fnp-visible {
@@ -35703,8 +35703,8 @@ body:not(.dark-mode) #fnpLyrics {
 
         // Make sure pill is always on top of music modal
         var pillEl = document.getElementById('floatingNowPlaying');
-        if (pillEl && pillEl.parentNode !== document.documentElement) {
-            document.documentElement.appendChild(pillEl);
+        if (pillEl && pillEl.parentNode !== document.body) {
+            document.body.appendChild(pillEl);
         }
 
         if (!sid || _fnpDismissed || !onMainMenu) {
@@ -35967,18 +35967,18 @@ function toggleExplicitNote(badge) {
     }
 }
 
-// Move the Now Playing pill to <html> so body/overlay stacking contexts can't trap it
+// Keep the Now Playing pill in body so position:fixed always works
 (function() {
-    function movePillToHtml() {
+    function movePillToBody() {
         var pill = document.getElementById('floatingNowPlaying');
-        if (pill && pill.parentNode !== document.documentElement) {
-            document.documentElement.appendChild(pill);
+        if (pill && pill.parentNode !== document.body) {
+            document.body.appendChild(pill);
         }
     }
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', movePillToHtml);
+        document.addEventListener('DOMContentLoaded', movePillToBody);
     } else {
-        movePillToHtml();
+        movePillToBody();
     }
 })();
 </script>
