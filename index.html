@@ -9107,6 +9107,7 @@
             position: relative;
         }
 
+        /* In-card unlock countdown timer */
         /* NOT YET AVAILABLE song cards */
         .song-item.song-unavailable {
             position: relative;
@@ -9129,21 +9130,6 @@
             z-index: 2;
             pointer-events: none;
         }
-        .song-item.song-unavailable::after {
-            content: 'NOT YET AVAILABLE';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff2222;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-align: center;
-            z-index: 3;
-            pointer-events: none;
-            white-space: nowrap;
-        }
         .song-item.song-unavailable .info-label,
         .song-item.song-unavailable .info-value,
         .song-item.song-unavailable button,
@@ -9152,6 +9138,87 @@
             pointer-events: none;
             filter: blur(4px);
             -webkit-filter: blur(4px);
+        }
+        /* Timer sits inside the card, above the blur overlay */
+        .song-unlock-timer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            pointer-events: none;
+            filter: none !important;
+            -webkit-filter: none !important;
+            opacity: 1 !important;
+            width: max-content;
+        }
+        .song-unlock-timer .ut-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            color: #ff2222;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+        .song-unlock-timer .ut-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 0;
+        }
+        .song-unlock-timer .ut-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 30px;
+        }
+        .song-unlock-timer .ut-num {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff2222;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .song-unlock-timer .ut-ms {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff4444;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            padding-bottom: 2px;
+        }
+        .song-unlock-timer .ut-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 8px;
+            font-weight: 700;
+            color: #ff6666;
+            letter-spacing: 1.5px;
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+        .song-unlock-timer .ut-sep {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff2222;
+            padding: 0 2px 16px;
+            line-height: 1;
+        }
+        .song-unlock-timer .ut-dot {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ff2222;
+            padding: 0 1px 4px;
+            line-height: 1;
         }
 
 
@@ -12666,6 +12733,20 @@
                             <button class="song-queue-btn" onclick="addToQueue('arikissme')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-arikissme"><span class="lyrics-line" id="lyricsLine-arikissme"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arikissme')">See full lyrics</button></div>
                         </div>
+                        <div class="song-unlock-timer" id="unlockTimer-arikissme">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-arikissme">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-arikissme">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-arikissme">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-arikissme">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-arikissme">---</span><span class="ut-label">MS</span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="info-item song-item">
                         <div class="info-label">12. HATE THAT I MADE YOU LOVE ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
@@ -12714,6 +12795,20 @@
                             <button class="song-queue-btn" onclick="addToQueue('aripetal')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-aripetal"><span class="lyrics-line" id="lyricsLine-aripetal"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aripetal')">See full lyrics</button></div>
                         </div>
+                        <div class="song-unlock-timer" id="unlockTimer-aripetal">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-aripetal">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-aripetal">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-aripetal">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-aripetal">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-aripetal">---</span><span class="ut-label">MS</span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
                         <div class="info-label">14. STAY – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
@@ -12737,6 +12832,20 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('aristay')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-aristay"><span class="lyrics-line" id="lyricsLine-aristay"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aristay')">See full lyrics</button></div>
+                        </div>
+                        <div class="song-unlock-timer" id="unlockTimer-aristay">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-aristay">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-aristay">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-aristay">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-aristay">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-aristay">---</span><span class="ut-label">MS</span></div>
+                            </div>
                         </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
@@ -12762,6 +12871,20 @@
                             <button class="song-queue-btn" onclick="addToQueue('ariohwell')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-ariohwell"><span class="lyrics-line" id="lyricsLine-ariohwell"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariohwell')">See full lyrics</button></div>
                         </div>
+                        <div class="song-unlock-timer" id="unlockTimer-ariohwell">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-ariohwell">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-ariohwell">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-ariohwell">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-ariohwell">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-ariohwell">---</span><span class="ut-label">MS</span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
                         <div class="info-label">16. BIG FEELINGS – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
@@ -12785,6 +12908,20 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('aribigfeelings')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-aribigfeelings"><span class="lyrics-line" id="lyricsLine-aribigfeelings"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aribigfeelings')">See full lyrics</button></div>
+                        </div>
+                        <div class="song-unlock-timer" id="unlockTimer-aribigfeelings">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-aribigfeelings">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-aribigfeelings">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-aribigfeelings">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-aribigfeelings">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-aribigfeelings">---</span><span class="ut-label">MS</span></div>
+                            </div>
                         </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
@@ -12810,6 +12947,20 @@
                             <button class="song-queue-btn" onclick="addToQueue('arifreak')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-arifreak"><span class="lyrics-line" id="lyricsLine-arifreak"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arifreak')">See full lyrics</button></div>
                         </div>
+                        <div class="song-unlock-timer" id="unlockTimer-arifreak">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-arifreak">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-arifreak">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-arifreak">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-arifreak">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-arifreak">---</span><span class="ut-label">MS</span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
                         <div class="info-label">18. WARNING SIGNS – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
@@ -12833,6 +12984,20 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('ariwarningsigns')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-ariwarningsigns"><span class="lyrics-line" id="lyricsLine-ariwarningsigns"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariwarningsigns')">See full lyrics</button></div>
+                        </div>
+                        <div class="song-unlock-timer" id="unlockTimer-ariwarningsigns">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-ariwarningsigns">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-ariwarningsigns">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-ariwarningsigns">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-ariwarningsigns">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-ariwarningsigns">---</span><span class="ut-label">MS</span></div>
+                            </div>
                         </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
@@ -12858,6 +13023,20 @@
                             <button class="song-queue-btn" onclick="addToQueue('arilikeidо')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-arilikeidо"><span class="lyrics-line" id="lyricsLine-arilikeidо"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arilikeidо')">See full lyrics</button></div>
                         </div>
+                        <div class="song-unlock-timer" id="unlockTimer-arilikeidо">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-arilikeidо">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-arilikeidо">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-arilikeidо">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-arilikeidо">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-arilikeidо">---</span><span class="ut-label">MS</span></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="info-item song-item song-unavailable">
                         <div class="info-label">20. NEVER GET OVER ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
@@ -12881,6 +13060,20 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('arinevergetoverme')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-arinevergetoverme"><span class="lyrics-line" id="lyricsLine-arinevergetoverme"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arinevergetoverme')">See full lyrics</button></div>
+                        </div>
+                        <div class="song-unlock-timer" id="unlockTimer-arinevergetoverme">
+                            <div class="ut-title">NOT YET AVAILABLE</div>
+                            <div class="ut-row">
+                                <div class="ut-block"><span class="ut-num" id="ut-d-arinevergetoverme">--</span><span class="ut-label">D</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-h-arinevergetoverme">--</span><span class="ut-label">H</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-m-arinevergetoverme">--</span><span class="ut-label">M</span></div>
+                                <span class="ut-sep">:</span>
+                                <div class="ut-block"><span class="ut-num" id="ut-s-arinevergetoverme">--</span><span class="ut-label">S</span></div>
+                                <span class="ut-dot">.</span>
+                                <div class="ut-block"><span class="ut-ms" id="ut-ms-arinevergetoverme">---</span><span class="ut-label">MS</span></div>
+                            </div>
                         </div>
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
@@ -17580,6 +17773,92 @@ window.closeSettings = closeSettings;
 
             fetchAnchor();
         }
+
+        // ── Song unlock countdown — all 9 cards (tamperproof, RAF, milliseconds) ──
+        (function() {
+            const UNLOCK_MS = new Date(2026, 7, 1, 18, 0, 0, 0).getTime();
+            const SONG_IDS = ['arikissme','aripetal','aristay','ariohwell','aribigfeelings','arifreak','ariwarningsigns','arilike\u0438d\u043e','arinevergetoverme'];
+            const SYNC_MS = 60000;
+            let serverAnchor = null;
+            let perfAnchor = null;
+            let lastSyncPerf = null;
+            let rafId = null;
+            let unlocked = false;
+
+            function fmt(ms) {
+                const total = Math.max(0, ms);
+                const d = Math.floor(total / 86400000);
+                const h = Math.floor((total % 86400000) / 3600000);
+                const m = Math.floor((total % 3600000) / 60000);
+                const s = Math.floor((total % 60000) / 1000);
+                const msec = Math.floor(total % 1000);
+                return String(d).padStart(2,'0') + 'd ' +
+                       String(h).padStart(2,'0') + 'h ' +
+                       String(m).padStart(2,'0') + 'm ' +
+                       String(s).padStart(2,'0') + 's ' +
+                       String(msec).padStart(3,'0') + 'ms';
+            }
+
+            function updateAll(diff) {
+                const total = Math.max(0, diff);
+                const d    = Math.floor(total / 86400000);
+                const h    = Math.floor((total % 86400000) / 3600000);
+                const m    = Math.floor((total % 3600000) / 60000);
+                const s    = Math.floor((total % 60000) / 1000);
+                const msec = Math.floor(total % 1000);
+                const dd   = String(d).padStart(2,'0');
+                const hh   = String(h).padStart(2,'0');
+                const mm   = String(m).padStart(2,'0');
+                const ss   = String(s).padStart(2,'0');
+                const ms   = String(msec).padStart(3,'0');
+                SONG_IDS.forEach(function(id) {
+                    var elD  = document.getElementById('ut-d-'  + id);
+                    var elH  = document.getElementById('ut-h-'  + id);
+                    var elM  = document.getElementById('ut-m-'  + id);
+                    var elS  = document.getElementById('ut-s-'  + id);
+                    var elMS = document.getElementById('ut-ms-' + id);
+                    if (elD)  elD.textContent  = dd;
+                    if (elH)  elH.textContent  = hh;
+                    if (elM)  elM.textContent  = mm;
+                    if (elS)  elS.textContent  = ss;
+                    if (elMS) elMS.textContent = ms;
+                });
+            }
+
+            function tick() {
+                if (serverAnchor === null || perfAnchor === null) { rafId = requestAnimationFrame(tick); return; }
+                const now = serverAnchor.getTime() + (performance.now() - perfAnchor);
+                const diff = UNLOCK_MS - now;
+                if (diff <= 0 && !unlocked) {
+                    unlocked = true;
+                    updateAll(0);
+                    document.querySelectorAll('.song-item.song-unavailable').forEach(function(s) { s.classList.remove('song-unavailable'); });
+                    return;
+                }
+                updateAll(diff);
+                // Re-sync every minute
+                if (lastSyncPerf !== null && performance.now() - lastSyncPerf > SYNC_MS) {
+                    lastSyncPerf = performance.now();
+                    getServerTimeNow().then(function(sNow) {
+                        if (sNow) { serverAnchor = sNow; perfAnchor = performance.now(); lastSyncPerf = perfAnchor; }
+                    });
+                }
+                rafId = requestAnimationFrame(tick);
+            }
+
+            function start() {
+                getServerTimeNow().then(function(sNow) {
+                    serverAnchor = sNow || new Date();
+                    perfAnchor = performance.now();
+                    lastSyncPerf = perfAnchor;
+                    if (rafId) cancelAnimationFrame(rafId);
+                    rafId = requestAnimationFrame(tick);
+                });
+            }
+
+            if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', start); }
+            else { start(); }
+        })();
 
         // Others > Coming Soon preview countdown (server-synced, ignores device clock changes)
         let comingSoonCountdownInterval = null;
