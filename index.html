@@ -8663,6 +8663,8 @@
             width: 100%;
             box-sizing: border-box;
             min-width: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .music-controls {
@@ -9125,12 +9127,15 @@
         #musicModal .song-item.song-playing {
             position: relative;
             border-radius: 15px;
-            overflow: hidden;
+            overflow: visible;
             z-index: 0;
             box-shadow: none !important;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             isolation: isolate;
+            padding: 3px;
+            background: linear-gradient(135deg, #b8a000, #1a6abf);
+            border-radius: 15px;
         }
 
         #musicModal .song-item.song-playing::before {
@@ -9156,6 +9161,20 @@
             box-shadow: none;
         }
 
+        /* Fallback for browsers without conic-gradient support */
+        .fnp-no-conic #musicModal .song-item.song-playing {
+            padding: 0;
+            background: transparent;
+            border-radius: 15px;
+            border: 2px solid rgba(184, 160, 0, 0.7);
+        }
+        .fnp-no-conic #musicModal .song-item.song-playing::before {
+            display: none !important;
+        }
+        .fnp-no-conic #musicModal .song-item.song-playing::after {
+            display: none !important;
+        }
+
         body.dark-mode #musicModal .song-item.song-playing::before {
             background: conic-gradient(#ffee00 0deg, #ffee00 90deg, transparent 90deg, transparent 180deg, #00aaff 180deg, #00aaff 270deg, transparent 270deg, transparent 360deg);
         }
@@ -9163,6 +9182,10 @@
         body.dark-mode #musicModal .song-item.song-playing::after {
             background: rgb(18, 28, 48);
             box-shadow: none;
+        }
+
+        body.dark-mode.fnp-no-conic #musicModal .song-item.song-playing {
+            border-color: rgba(255, 238, 0, 0.7);
         }
 
         .song-controls {
@@ -35510,6 +35533,19 @@ function showQueueToast(name, warn) {
     min-width: 0;
     max-width: min(90vw, 420px);
     isolation: isolate;
+    z-index: 1;
+    pointer-events: auto;
+}
+/* Ensure pill is always visible — if backdrop-filter fails, fall back to solid color */
+@supports not (backdrop-filter: blur(1px)) {
+    #fnpPill {
+        background: rgba(10, 14, 30, 0.95) !important;
+    }
+}
+@supports not (-webkit-backdrop-filter: blur(1px)) {
+    #fnpPill {
+        background: rgba(10, 14, 30, 0.95) !important;
+    }
 }
 body:not(.dark-mode) #fnpPill {
     background: rgba(245, 248, 255, 0.96);
@@ -35570,10 +35606,10 @@ body:not(.dark-mode) #fnpPlayPauseBtn:hover { background: rgba(200,168,0,0.12); 
     background: none;
     border: none;
     cursor: pointer;
-    color: rgba(180,200,255,0.55);
-    font-size: 15px;
+    color: rgba(255,100,100,0.8);
+    font-size: 18px;
     line-height: 1;
-    padding: 3px 4px;
+    padding: 3px 6px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
@@ -35583,10 +35619,13 @@ body:not(.dark-mode) #fnpPlayPauseBtn:hover { background: rgba(200,168,0,0.12); 
     -webkit-tap-highlight-color: transparent;
     position: relative;
     z-index: 2;
+    font-weight: bold;
+    min-width: 20px;
+    min-height: 20px;
 }
-body:not(.dark-mode) #fnpCloseBtn { color: rgba(30,60,160,0.4); }
-#fnpCloseBtn:hover { color: #fff; background: rgba(255,80,80,0.25); }
-body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,0.1); }
+body:not(.dark-mode) #fnpCloseBtn { color: rgba(200,50,50,0.9); }
+#fnpCloseBtn:hover { color: #fff; background: rgba(255,80,80,0.35); }
+body:not(.dark-mode) #fnpCloseBtn:hover { color: #fff; background: rgba(255,0,0,0.2); }
 /* Conic-gradient border progress around pill */
 #fnpPill::before {
     content: '';
@@ -35632,7 +35671,10 @@ body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,
 #fnpPillWrap {
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    z-index: 1;
+    width: 100%;
 }
 #fnpLyrics {
     display: none;
@@ -35670,6 +35712,7 @@ body:not(.dark-mode) #fnpLyrics {
 <div id="floatingNowPlaying">
     <div id="fnpPillWrap">
         <div id="fnpPill">
+            <span id="fnpNote">🎵</span>
             <span id="fnpTitle"></span>
             <button id="fnpPlayPauseBtn" title="Play/Pause" onclick="fnpTogglePlayPause()">
                 <svg id="fnpPauseIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><rect x="8.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/><rect x="13.25" y="7.5" width="2.5" height="9" rx="1.25" fill="currentColor"/></svg>
