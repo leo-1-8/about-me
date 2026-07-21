@@ -35704,15 +35704,7 @@ body:not(.dark-mode) #fnpLyrics {
             !(document.getElementById('newWelcomeOverlay') && document.getElementById('newWelcomeOverlay').classList.contains('show'))
         );
 
-        // Make sure pill is always on top of music modal
-        var pillEl = document.getElementById('floatingNowPlaying');
-        if (pillEl) {
-            if (pillEl.parentNode !== document.body) {
-                document.body.appendChild(pillEl);
-            } else if (document.body.lastElementChild !== pillEl) {
-                document.body.appendChild(pillEl);
-            }
-        }
+        
 
         if (!sid || _fnpDismissed || !onMainMenu) {
             el.classList.remove('fnp-visible');
