@@ -21927,13 +21927,7 @@ window.closeSettings = closeSettings;
                             updateSectionLabelColors(document.body.classList.contains('dark-mode'));
                         }
                     }, 0);
-                    // Scroll modal content down slightly to collapse mobile browser URL bar
-                    setTimeout(function() {
-                        var modalContent = document.querySelector('#musicModal .modal-content');
-                        if (modalContent) {
-                            modalContent.scrollTop = 1;
-                        }
-                    }, 100);
+
                 }
 
                 if (type === 'messageConfirmation' || type === 'nameFinalConfirm' || type === 'senderPassword') {
