@@ -5225,6 +5225,9 @@
             animation: fadeIn 0.3s ease;
             pointer-events: auto;
         }
+        #musicModal.modal-overlay {
+            z-index: 10000;
+        }
 
         body.dark-mode .modal-overlay {
             background: rgba(7, 11, 20, 0.95);
@@ -35703,8 +35706,12 @@ body:not(.dark-mode) #fnpLyrics {
 
         // Make sure pill is always on top of music modal
         var pillEl = document.getElementById('floatingNowPlaying');
-        if (pillEl && pillEl.parentNode !== document.body) {
-            document.body.appendChild(pillEl);
+        if (pillEl) {
+            if (pillEl.parentNode !== document.body) {
+                document.body.appendChild(pillEl);
+            } else if (document.body.lastElementChild !== pillEl) {
+                document.body.appendChild(pillEl);
+            }
         }
 
         if (!sid || _fnpDismissed || !onMainMenu) {
