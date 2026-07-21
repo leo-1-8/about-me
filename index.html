@@ -9107,6 +9107,53 @@
             position: relative;
         }
 
+        /* NOT YET AVAILABLE song cards */
+        .song-item.song-unavailable {
+            position: relative;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .song-item.song-unavailable::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(180,180,180,0.18) 0px,
+                rgba(180,180,180,0.18) 8px,
+                rgba(120,120,120,0.10) 8px,
+                rgba(120,120,120,0.10) 16px
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+        .song-item.song-unavailable::after {
+            content: 'NOT YET AVAILABLE';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff2222;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-align: center;
+            z-index: 3;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .song-item.song-unavailable .info-label,
+        .song-item.song-unavailable .info-value,
+        .song-item.song-unavailable button,
+        .song-item.song-unavailable audio {
+            opacity: 0.35;
+            pointer-events: none;
+            filter: blur(4px);
+            -webkit-filter: blur(4px);
+        }
+
 
         #musicModal .music-list .song-item:last-child {
             margin-bottom: 0;
@@ -11904,7 +11951,7 @@
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('music')">
                         <div class="favorite-icon">🎵</div>
-                        <div class="favorite-title" data-i18n="others_music"><span class="rainbow-music-title">Music</span></div>
+                        <div class="favorite-title" data-i18n="others_music">Music</div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('singer')">
@@ -35969,6 +36016,10 @@ function filterSongs(query) {
     sectionLabels.forEach(function(lbl) { lbl.style.display = q ? 'none' : ''; });
     document.querySelectorAll('.song-divider').forEach(function(d) { d.style.display = q ? 'none' : ''; });
     items.forEach(function(item) {
+        if (item.classList.contains('song-unavailable')) {
+            item.style.display = q ? 'none' : '';
+            return;
+        }
         const label = item.querySelector('.info-label');
         const text = label ? label.textContent.toLowerCase() : '';
         const match = !q || text.includes(q);
