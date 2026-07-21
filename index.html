@@ -8815,25 +8815,7 @@
         }
 
         .music-progress-bar::after {
-            content: '';
-            position: absolute;
-            right: -4px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            border: 1.5px solid rgba(0, 0, 0, 0.3);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            /* Hide the dot when song hasn't started (width ~0) */
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        /* Only show the dot once the song has actually started playing */
-        .song-playing .music-progress-bar::after {
-            opacity: 1;
+            display: none;
         }
 
         .music-time {
