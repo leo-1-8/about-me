@@ -9101,6 +9101,48 @@
             margin-bottom: 20px;
             position: relative;
         }
+
+        /* Not yet available overlay */
+        .song-unavailable {
+            position: relative;
+            pointer-events: none;
+            user-select: none;
+        }
+        .song-unavailable::after {
+            content: 'NOT YET AVAILABLE';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #cc0000;
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(200, 0, 0, 0.07) 0px,
+                rgba(200, 0, 0, 0.07) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            border-radius: 13px;
+            z-index: 10;
+            text-align: center;
+            padding: 8px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.18);
+        }
+        body.dark-mode .song-unavailable::after {
+            color: #ff4444;
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(255, 60, 60, 0.10) 0px,
+                rgba(255, 60, 60, 0.10) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            text-shadow: 0 1px 6px rgba(255,0,0,0.3);
+        }
         #musicModal .music-list .song-item:last-child {
             margin-bottom: 0;
             padding-bottom: 26px;
@@ -9131,6 +9173,16 @@
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             isolation: isolate;
+        }
+
+        /* Ensure all content inside a playing song card stays above the ::after background */
+        #musicModal .song-item.song-playing .info-label,
+        #musicModal .song-item.song-playing .info-value,
+        #musicModal .song-item.song-playing .music-player-container,
+        #musicModal .song-item.song-playing .song-controls,
+        #musicModal .song-item.song-playing .lyrics-display {
+            position: relative;
+            z-index: 1;
         }
 
         #musicModal .song-item.song-playing::before {
@@ -12567,7 +12619,7 @@
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
                     <div id="sectionLabelAriNew" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">NEW SONGS OF ARIANA GRANDE</div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">11. KISS ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12615,7 +12667,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-hatethat"><span class="lyrics-line" id="lyricsLine-hatethat"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('hatethat')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">13. PETAL – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12639,7 +12691,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-aripetal"><span class="lyrics-line" id="lyricsLine-aripetal"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aripetal')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">14. STAY – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12663,7 +12715,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-aristay"><span class="lyrics-line" id="lyricsLine-aristay"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aristay')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">15. OH WELL – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12687,7 +12739,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-ariohwell"><span class="lyrics-line" id="lyricsLine-ariohwell"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariohwell')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">16. BIG FEELINGS – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12711,7 +12763,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-aribigfeelings"><span class="lyrics-line" id="lyricsLine-aribigfeelings"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('aribigfeelings')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">17. FREAK – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12735,7 +12787,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-arifreak"><span class="lyrics-line" id="lyricsLine-arifreak"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arifreak')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">18. WARNING SIGNS – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12759,7 +12811,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-ariwarningsigns"><span class="lyrics-line" id="lyricsLine-ariwarningsigns"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('ariwarningsigns')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">19. LIKE I DO – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
@@ -12783,7 +12835,7 @@
                             <div class="lyrics-display" id="lyricsDisplay-arilikeidо"><span class="lyrics-line" id="lyricsLine-arilikeidо"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('arilikeidо')">See full lyrics</button></div>
                         </div>
                     </div>
-                    <div class="info-item song-item">
+                    <div class="info-item song-item song-unavailable">
                         <div class="info-label">20. NEVER GET OVER ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container"><div class="song-controls">
