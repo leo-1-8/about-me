@@ -8313,18 +8313,14 @@
 
 
         /* Rainbow animation for Music title */
-        @keyframes rainbowMusicShift {
-            0%   { background-position: 0% 0; }
-            100% { background-position: 300% 0; }
+        @keyframes rainbowHue {
+            0%   { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
         .rainbow-music-title {
-            background: linear-gradient(90deg, #ff0000, #ff8800, #ffee00, #00cc44, #0088ff, #8800ff, #ff00cc, #ff0000);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            animation: rainbowMusicShift 2.5s linear infinite;
+            color: #ff0000;
+            animation: rainbowHue 2.5s linear infinite;
+            -webkit-animation: rainbowHue 2.5s linear infinite;
             font-weight: inherit;
             display: inline;
         }
@@ -10216,6 +10212,21 @@
             margin-bottom: 10px;
             word-wrap: break-word;
             overflow-wrap: break-word;
+        }
+        @keyframes rainbowMusicShiftLocal {
+            0%   { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        .favorite-title .rainbow-music-title,
+        body.dark-mode .rainbow-music-title,
+        body.dark-mode #favoritesModal .rainbow-music-title {
+            color: #ff0000 !important;
+            -webkit-text-fill-color: #ff0000 !important;
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            background-clip: unset !important;
+            animation: rainbowHue 2.5s linear infinite !important;
+            -webkit-animation: rainbowHue 2.5s linear infinite !important;
         }
 
         .favorite-description {
@@ -35676,14 +35687,25 @@ body:not(.dark-mode) #fnpLyrics {
 
         // Only show on main menu (no modals, no settings, past intro, no welcome overlay)
         // Exception: allow pill inside the music modal
-        var activeModal = document.querySelector('.modal-overlay.active');
-        var isMusicModalOpen = activeModal && activeModal.id === 'musicModal';
+        var activeModals = document.querySelectorAll('.modal-overlay.active');
+        var isMusicModalOpen = false;
+        var hasOtherModal = false;
+        activeModals.forEach(function(m) {
+            if (m.id === 'musicModal') isMusicModalOpen = true;
+            else hasOtherModal = true;
+        });
         var onMainMenu = (
             !document.body.classList.contains('intro-pending') &&
-            (!activeModal || isMusicModalOpen) &&
+            (!hasOtherModal) &&
             !(document.getElementById('settingsOverlay') && document.getElementById('settingsOverlay').classList.contains('show')) &&
             !(document.getElementById('newWelcomeOverlay') && document.getElementById('newWelcomeOverlay').classList.contains('show'))
         );
+
+        // Make sure pill is always on top of music modal
+        var pillEl = document.getElementById('floatingNowPlaying');
+        if (pillEl && pillEl.parentNode !== document.documentElement) {
+            document.documentElement.appendChild(pillEl);
+        }
 
         if (!sid || _fnpDismissed || !onMainMenu) {
             el.classList.remove('fnp-visible');
