@@ -11852,14 +11852,14 @@
         <div class="modal-box modal-favorites">
             <button class="close-button" onclick="closeModal('favorites')" data-i18n-title="aria_close" title="Close">×</button>
             <div class="modal-content">
-                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; margin-top: -15px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">OTHERS</h2>
+                <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; margin-top: 10px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">OTHERS</h2>
                 <div class="favorites-grid">
                     <div class="favorite-card clickable" onclick="openModal('gaming')">
                         <div class="favorite-icon">🎮</div>
                         <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
                         <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="window.scrollTo({top: 1, behavior:'smooth'}); setTimeout(function(){ openModal('music'); }, 120)">
+                    <div class="favorite-card clickable" onclick="openModal('music')">
                         <div class="favorite-icon">🎵</div>
                         <div class="favorite-title" data-i18n="others_music"><span class="rainbow-music-title">Music</span></div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
@@ -21913,20 +21913,13 @@ window.closeSettings = closeSettings;
                             updateSectionLabelColors(document.body.classList.contains('dark-mode'));
                         }
                     }, 0);
-                    // Scroll modal content to top on open (fixes mobile browsers that remember scroll position)
+                    // Scroll modal content down slightly to collapse mobile browser URL bar
                     setTimeout(function() {
                         var modalContent = document.querySelector('#musicModal .modal-content');
                         if (modalContent) {
-                            modalContent.scrollTop = 0;
-                            if (modalContent.scrollTo) {
-                                modalContent.scrollTo({ top: 0, behavior: 'instant' });
-                            }
+                            modalContent.scrollTop = 1;
                         }
-                        var modalBox = document.querySelector('#musicModal .modal-box');
-                        if (modalBox) {
-                            modalBox.scrollTop = 0;
-                        }
-                    }, 50);
+                    }, 100);
                 }
 
                 if (type === 'messageConfirmation' || type === 'nameFinalConfirm' || type === 'senderPassword') {
