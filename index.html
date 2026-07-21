@@ -8826,6 +8826,14 @@
             border-radius: 50%;
             border: 1.5px solid rgba(0, 0, 0, 0.3);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            /* Hide the dot when song hasn't started (width ~0) */
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Only show the dot once the song has actually started playing */
+        .song-playing .music-progress-bar::after {
+            opacity: 1;
         }
 
         .music-time {
@@ -9139,6 +9147,11 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
+        /* Pause the spinning border while scrolling to prevent mobile flash */
+        #musicModal .song-item.song-playing.scroll-paused::before {
+            animation-play-state: paused;
+        }
+
         #musicModal .song-item.song-playing {
             position: relative;
             border-radius: 15px;
@@ -9148,6 +9161,9 @@
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             isolation: isolate;
+            /* Force GPU compositing so the spinning border doesn't flash on scroll */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         /* Ensure all content inside a playing song card stays above the ::after background */
@@ -9171,6 +9187,10 @@
             background: conic-gradient(#b8a000 0deg, #b8a000 90deg, transparent 90deg, transparent 180deg, #1a6abf 180deg, #1a6abf 270deg, transparent 270deg, transparent 360deg);
             animation: rotateBorder 3.5s linear infinite;
             z-index: -2;
+            /* Isolate the spinning animation to its own GPU layer — prevents flash/repaint on scroll */
+            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         #musicModal .song-item.song-playing::after {
@@ -35986,6 +36006,47 @@ function toggleExplicitNote(badge) {
         note.style.display = isHidden ? 'inline' : 'none';
     }
 }
+
+// Pause the spinning border animation while scrolling to prevent mobile flash
+(function() {
+    var scrollTimer = null;
+    var musicList = null;
+
+    function pauseSpinners() {
+        var spinners = document.querySelectorAll('#musicModal .song-item.song-playing::before');
+        // Target the song-playing cards directly and pause via class
+        document.querySelectorAll('#musicModal .song-item.song-playing').forEach(function(el) {
+            el.classList.add('scroll-paused');
+        });
+    }
+
+    function resumeSpinners() {
+        document.querySelectorAll('#musicModal .song-item.song-playing').forEach(function(el) {
+            el.classList.remove('scroll-paused');
+        });
+    }
+
+    function onScroll() {
+        pauseSpinners();
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(resumeSpinners, 150);
+    }
+
+    // Hook into the music list scroll container
+    function attachScrollListener() {
+        var list = document.querySelector('#musicModal .music-list');
+        if (list && list !== musicList) {
+            if (musicList) musicList.removeEventListener('scroll', onScroll);
+            musicList = list;
+            musicList.addEventListener('scroll', onScroll, { passive: true });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', attachScrollListener);
+    // Also try attaching after a short delay in case modal renders late
+    setTimeout(attachScrollListener, 1000);
+    setTimeout(attachScrollListener, 3000);
+})();
 
 // Keep the Now Playing pill in body so position:fixed always works
 (function() {
