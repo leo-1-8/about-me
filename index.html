@@ -1608,7 +1608,7 @@
         body.dark-mode #musicModal .modal-content .see-full-lyrics-btn,
         body.dark-mode #musicModal .modal-content .music-title,
         body.dark-mode #musicModal .modal-content p,
-        body.dark-mode #musicModal .modal-content span:not(.new-badge):not(.explicit-note):not(.explicit-badge) {
+        body.dark-mode #musicModal .modal-content span:not(.new-badge):not(.explicit-note):not(.explicit-badge):not(.lyrics-line):not(.lyrics-line *) {
             color: rgba(255, 255, 255, 0.92) !important;
         }
         /* Section labels - blue in dark mode */
@@ -8345,13 +8345,16 @@
 
         /* ── Now Playing Overlay Bar ── */
         #musicNowPlayingBar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             width: 100%;
             z-index: 10010;
             background: rgba(15, 20, 40, 0.97);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
-            flex-shrink: 0;
         }
         body:not(.dark-mode) #musicNowPlayingBar {
             background: rgba(240, 244, 255, 0.97);
@@ -32647,10 +32650,12 @@ window.closeSettings = closeSettings;
             const activeIdx = getActiveIdx(lines, currentTime);
             const curr = activeIdx >= 0 ? lines[activeIdx] : null;
             const rawText = curr ? curr.text : '';
+            // Strip section tags like [Intro], [Outro], [Chorus], [Verse], [Bridge], [Hook], [Pre-Chorus] etc.
+            const filteredText = rawText.replace(/^\s*\[[^\]]*\]\s*$/i, '').trim();
 
             // Show full text — CSS clamps to max 2 lines naturally based on actual pixel width
-            const rows = [rawText];
-            span.textContent = rawText;
+            const rows = [filteredText];
+            span.textContent = filteredText;
 
             // Show "See full lyrics" button below when multiple lines
             const display = document.getElementById('lyricsDisplay-' + songId);
@@ -32685,9 +32690,10 @@ window.closeSettings = closeSettings;
             // Populate left panel (static, all lyrics, no highlight)
             if (leftPanel) {
                 if (lines) {
-                    leftPanel.innerHTML = lines.map((l, i) =>
-                        `<span class="fl-left-line" data-idx="${i}">${l.text}</span>`
-                    ).join('\n');
+                    leftPanel.innerHTML = lines.map((l, i) => {
+                        const ft = l.text.replace(/^\s*\[[^\]]*\]\s*$/i, '').trim();
+                        return ft ? `<span class="fl-left-line" data-idx="${i}">${ft}</span>` : '';
+                    }).join('\n');
                 } else {
                     leftPanel.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
                 }
@@ -32696,10 +32702,12 @@ window.closeSettings = closeSettings;
             if (scroll) {
                 if (lines) {
                     scroll.innerHTML = lines.map((l, i) => {
+                        const ft = l.text.replace(/^\s*\[[^\]]*\]\s*$/i, '').trim();
+                        if (!ft) return '';
                         const mins = Math.floor(l.t / 60);
                         const secs = (l.t % 60).toFixed(2).padStart(5, '0');
                         const ts = `${mins}:${secs}`;
-                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${l.text}</span></span>`;
+                        return `<span class="fl-line" data-idx="${i}"><span class="fl-ts">${ts}</span><span class="fl-text">${ft}</span></span>`;
                     }).join('\n');
                 } else {
                     scroll.innerHTML = '<span style="opacity:0.5">No lyrics available.</span>';
@@ -35748,7 +35756,7 @@ body:not(.dark-mode) #fnpLyrics {
             if (aud && lyricsEl && window.songLyrics && window.songLyrics[sid] && window.getActiveIdx) {
                 var lines = window.songLyrics[sid];
                 var idx = window.getActiveIdx(lines, aud.currentTime);
-                var lyricText = idx >= 0 ? lines[idx].text : '';
+                var lyricText = idx >= 0 ? lines[idx].text.replace(/^\s*\[[^\]]*\]\s*$/i, '').trim() : '';
                 if (lyricText !== _fnpLastLyricText) {
                     _fnpLastLyricText = lyricText;
                     // Show lyric as single line in the pill
