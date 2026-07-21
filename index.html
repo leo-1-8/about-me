@@ -9108,6 +9108,11 @@
             pointer-events: none;
             user-select: none;
         }
+        .song-unavailable .info-value,
+        .song-unavailable .info-label {
+            filter: blur(6px);
+            -webkit-filter: blur(6px);
+        }
         .song-unavailable::after {
             content: 'NOT YET AVAILABLE';
             position: absolute;
@@ -9143,6 +9148,8 @@
             );
             text-shadow: 0 1px 6px rgba(255,0,0,0.3);
         }
+
+
         #musicModal .music-list .song-item:last-child {
             margin-bottom: 0;
             padding-bottom: 26px;
@@ -35992,6 +35999,10 @@ function filterSongs(query) {
     sectionLabels.forEach(function(lbl) { lbl.style.display = q ? 'none' : ''; });
     document.querySelectorAll('.song-divider').forEach(function(d) { d.style.display = q ? 'none' : ''; });
     items.forEach(function(item) {
+        if (item.classList.contains('song-unavailable')) {
+            item.style.display = q ? 'none' : '';
+            return;
+        }
         const label = item.querySelector('.info-label');
         const text = label ? label.textContent.toLowerCase() : '';
         const match = !q || text.includes(q);
