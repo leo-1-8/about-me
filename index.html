@@ -35608,6 +35608,27 @@ body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,
     pointer-events: none;
     z-index: 0;
 }
+
+/* Fallback linear progress bar for browsers without conic-gradient / mask support */
+#fnpProgressBar {
+    display: none;
+    height: 3px;
+    border-radius: 0 0 999px 999px;
+    background: rgba(255,255,255,0.12);
+    overflow: hidden;
+    margin-top: 3px;
+    width: 100%;
+}
+#fnpProgressBar span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #f5e642, #6fdd58);
+    border-radius: 999px;
+    transition: width 0.25s linear;
+    width: 0%;
+}
+.fnp-no-conic #fnpProgressBar { display: block; }
+.fnp-no-conic #fnpPill::before { display: none; }
 #fnpPillWrap {
     position: relative;
     display: flex;
@@ -35658,6 +35679,7 @@ body:not(.dark-mode) #fnpLyrics {
 
         </div>
         <div id="fnpLyrics"></div>
+        <div id="fnpProgressBar"><span id="fnpProgressFill"></span></div>
     </div>
 </div>
 
@@ -35793,6 +35815,25 @@ body:not(.dark-mode) #fnpLyrics {
 
     }
 
+    // Detect conic-gradient + mask-composite support once and apply fallback class
+    (function detectConicSupport() {
+        var supported = false;
+        try {
+            var el = document.createElement('div');
+            el.style.background = 'conic-gradient(red 0deg, blue 360deg)';
+            supported = !!el.style.background && el.style.background.indexOf('conic') !== -1;
+            // Also check mask-composite support
+            if (supported) {
+                var supMask = typeof CSS !== 'undefined' && CSS.supports &&
+                    (CSS.supports('mask-composite', 'exclude') || CSS.supports('-webkit-mask-composite', 'xor'));
+                if (!supMask) supported = false;
+            }
+        } catch(e) { supported = false; }
+        if (!supported) {
+            document.documentElement.classList.add('fnp-no-conic');
+        }
+    })();
+
     // Dedicated RAF loop for pixel-accurate progress bar + live lyrics
     var _fnpLastLyricText = null;
     (function progressLoop() {
@@ -35803,14 +35844,18 @@ body:not(.dark-mode) #fnpLyrics {
             var aud = document.getElementById('musicPlayer-' + sid);
             var dur = aud ? aud.duration : NaN;
             var validDur = aud && dur && isFinite(dur) && !isNaN(dur) && dur > 0;
+            var pct = 0;
             if (validDur) {
                 // Clamp pct strictly between 0 and 1
-                var pct = Math.min(1, Math.max(0, aud.currentTime / dur));
+                pct = Math.min(1, Math.max(0, aud.currentTime / dur));
                 pill.style.setProperty('--fnp-prog', pct.toFixed(5));
             } else {
                 // Duration not ready yet — keep bar at 0
                 pill.style.setProperty('--fnp-prog', '0');
             }
+            // Update fallback linear bar if conic-gradient is unsupported
+            var fillEl = document.getElementById('fnpProgressFill');
+            if (fillEl) fillEl.style.width = (pct * 100).toFixed(2) + '%';
 
             // Live lyrics (independent of duration validity)
             if (aud && lyricsEl && window.songLyrics && window.songLyrics[sid] && window.getActiveIdx) {
