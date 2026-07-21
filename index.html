@@ -1738,9 +1738,14 @@
             border-color: rgba(255, 255, 255, 0.14) !important;
         }
         #musicUpdatedLabelCard,
+        body #musicUpdatedLabelCard,
+        body.dark-mode #musicUpdatedLabelCard,
+        body.dark-mode #favoritesModal #musicUpdatedLabelCard,
         body.dark-mode #favoritesModal .modal-content #musicUpdatedLabelCard,
-        body.dark-mode #favoritesModal .modal-content * #musicUpdatedLabelCard {
+        body.dark-mode #favoritesModal .modal-content * #musicUpdatedLabelCard,
+        body.dark-mode #favoritesModal .favorite-card #musicUpdatedLabelCard {
             color: #4caf50 !important;
+            -webkit-text-fill-color: #4caf50 !important;
         }
         
         /* (Removed) Christmas decorations that floated around the page */
@@ -12666,6 +12671,7 @@
                                     <source src="Ariana Grande - petal.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-aripetal">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-aripetal">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -12738,6 +12744,7 @@
                                     <source src="Ariana Grande - big feelings.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-aribigfeelings">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-aribigfeelings">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -12762,6 +12769,7 @@
                                     <source src="Ariana Grande - freak.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-arifreak">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-arifreak">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -12810,6 +12818,7 @@
                                     <source src="Ariana Grande - like I do.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-arilikeidо">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-arilikeidо">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -12834,6 +12843,7 @@
                                     <source src="Ariana Grande - never get over me.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-arinevergetoverme">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-arinevergetoverme">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -12858,6 +12868,7 @@
                                     <source src="Ariana Grande - bad thing.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-aribadthing">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-aribadthing">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -13359,7 +13370,7 @@
                                     <button class="music-control-button" onclick="restartMusic('ivebeen')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
                                 <audio id="musicPlayer-ivebeen" preload="metadata" controls style="display: none;">
-                                    <source src="Last Triplets - I've Been Waiting For You.mp3" type="audio/mpeg">
+                                    <source src="Las Triplets - I've been waiting for you.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-ivebeen">
                                     <div class="music-time">
@@ -13583,7 +13594,7 @@
                                     <button class="music-control-button" onclick="restartMusic('meanit')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M12 4a8 8 0 0 1 6.472 3.314l-1.624 1.138A6 6 0 1 0 18 12h-2l3-4 3 4h-2a8 8 0 1 1-8-8z"/></svg></button>
                                 </div>
                                 <audio id="musicPlayer-meanit" preload="metadata" controls style="display: none;">
-                                    <source src="Lauv & LANY - Mean It.mp3" type="audio/mpeg">
+                                    <source src="Lauv & Lany - Mean It.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-meanit">
                                     <div class="music-time">
@@ -17874,7 +17885,7 @@ window.closeSettings = closeSettings;
                     fbRef = ref(fbDb, FB_PATH);
                     onValue(fbRef, function(snap) { renderProgress(snap.val() || {}); });
                     return { runTransaction };
-                } catch(e) { console.warn('Star rating Firebase error:', e); return null; }
+                } catch(e) { return null; }
             }
 
             // ── Render helpers ──
@@ -24831,7 +24842,7 @@ window.closeSettings = closeSettings;
                             if (attemptsLeft > 0) {
                                 setTimeout(function() { clearPersonCloseStatus(attemptsLeft - 1); }, 300);
                             } else {
-                                console.warn('[closeMessageMe] Firebase not ready — per-person clear dropped after retries');
+                                void 0;
                             }
                             return;
                         }
@@ -24846,10 +24857,10 @@ window.closeSettings = closeSettings;
                             }).then(function() {
 
                             }).catch(function(e) {
-                                console.warn('[closeMessageMe] Per-person Firebase clear failed:', e);
+                                void e;
                             });
                         }).catch(function(e) {
-                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                            void e;
                         });
                     })(20);
 
@@ -24877,16 +24888,16 @@ window.closeSettings = closeSettings;
                         if (attemptsLeft > 0) {
                             setTimeout(function() { clearCloseMessageMeStatus(attemptsLeft - 1); }, 300);
                         } else {
-                            console.warn('[closeMessageMe] Firebase not ready — clear dropped after retries');
+                            void 0;
                         }
                         return;
                     }
                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                         fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' }).catch(function(e) {
-                            console.warn('[closeMessageMe] Firebase clear failed:', e);
+                            void e;
                         });
                     }).catch(function(e) {
-                        console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                        void e;
                     });
                 })(20);
 
@@ -24968,7 +24979,7 @@ window.closeSettings = closeSettings;
                             if (attemptsLeft > 0) {
                                 setTimeout(function() { writePersonCloseStatus(attemptsLeft - 1); }, 300);
                             } else {
-                                console.warn('[closeMessageMe] Firebase not ready — per-person write dropped after retries');
+                                void 0;
                             }
                             return;
                         }
@@ -24981,10 +24992,10 @@ window.closeSettings = closeSettings;
                                 messageMeClosedActive: true,
                                 messageMeClosedSetAt: serverNowMs
                             }).catch(function(e) {
-                                console.warn('[closeMessageMe] Per-person Firebase write failed:', e);
+                                void e;
                             });
                         }).catch(function(e) {
-                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                            void e;
                         });
                     })(20); // up to ~6s of retrying
 
@@ -25020,7 +25031,7 @@ window.closeSettings = closeSettings;
                     if (attemptsLeft > 0) {
                         setTimeout(function() { writeCloseMessageMeStatus(attemptsLeft - 1); }, 300);
                     } else {
-                        console.warn('[closeMessageMe] Firebase not ready — write dropped after retries');
+                        void 0;
                     }
                     return;
                 }
@@ -25032,10 +25043,10 @@ window.closeSettings = closeSettings;
                         timerColor: window._cmmSiteTimerColor || 'default',
                         active: true
                     }).catch(function(e) {
-                        console.warn('[closeMessageMe] Firebase write failed:', e);
+                        void e;
                     });
                 }).catch(function(e) {
-                    console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
+                    void e;
                 });
                 })(20); // up to ~6s of retrying
 
@@ -25168,11 +25179,11 @@ window.closeSettings = closeSettings;
                             if (val && val.active && val.endUtcMs && val.endUtcMs <= serverNowMs) {
                                 fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), {
                                     active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default'
-                                }).catch(function(e) { console.warn('[closeMessageMe] stale clear failed:', e); });
+                                }).catch(function(e) { void e; });
                             }
                         }
                     }, function(err) {
-                        console.warn('[closeMessageMe] Firebase listen error:', err);
+                        void err;
                     });
                 });
             }
@@ -25376,7 +25387,7 @@ window.closeSettings = closeSettings;
                     messageMeClosedTimerColor: 'default'
                 }).then(function() { })
                   .catch(function(e) { console.warn('[closeMessageMe] ' + logLabel + ' auto-clear PERSON failed:', e); });
-            }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
+            }).catch(function(e) { void e; });
         }
 
         function _cmmMaybeAutoClearExpired() {
@@ -25390,8 +25401,8 @@ window.closeSettings = closeSettings;
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                     fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' })
                         .then(function() { })
-                        .catch(function(e) { console.warn('[closeMessageMe] Auto-clear SITE failed:', e); });
-                }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
+                        .catch(function(e) { void e; });
+                }).catch(function(e) { void e; });
             }
 
             // PERSON-specific (the affected sender's OWN device).
@@ -34498,7 +34509,7 @@ window.closeSettings = closeSettings;
                     try { console.warn('[visits] transaction:', err); } catch (e2) {}
                 }
             } catch (err) {
-                try { console.warn('[firebase]', err); } catch (e2) {}
+                try { void err; } catch (e2) {}
             }
         })();
     </script>
