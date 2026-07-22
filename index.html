@@ -25600,6 +25600,23 @@ window.closeSettings = closeSettings;
 
             var targetId = _userSettingsTargetSenderId;
 
+            // ── Immediate fetch: pull freshest meta right now so password and
+            // all fields appear instantly without waiting for the 2s poller ──
+            if (window.PrivateMessaging && window.PrivateMessaging._db && window.PrivateMessaging._pmSafeKey) {
+                import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
+                    var metaPath = 'privateMessages/' + window.PrivateMessaging._pmSafeKey(targetId) + '/meta';
+                    fb.get(fb.ref(window.PrivateMessaging._db, metaPath)).then(function(snap) {
+                        var freshMeta = snap.val() || {};
+                        var currentModal = document.getElementById('userSettingsModal');
+                        if (currentModal && currentModal.classList.contains('active') && _userSettingsTargetSenderId === targetId) {
+                            if (freshMeta && Object.keys(freshMeta).length > 0) delete _userSettingsWipedIds[targetId];
+                            if (activeConversationSenderId === targetId) activeConversationMeta = freshMeta;
+                            _populateUserSettingsModal(freshMeta);
+                        }
+                    }).catch(function() {});
+                }).catch(function() {});
+            }
+
             function applyFreshMeta(freshMeta) {
                 var currentModal = document.getElementById('userSettingsModal');
                 if (!currentModal || !currentModal.classList.contains('active')) return;
@@ -25665,7 +25682,7 @@ window.closeSettings = closeSettings;
             // Password
             var pwSection = document.getElementById('userSettingsPwSection');
             var pwValue = document.getElementById('userSettingsPwValue');
-            var pw = meta.senderPassword || cachedConv.senderPassword || '';
+            var pw = meta.senderPassword || '';
             if (pwSection && pwValue) {
                 if (isWiped) { pwSection.style.display = 'none'; }
                 else if (pw) { pwValue.textContent = pw; pwSection.style.display = 'block'; }
@@ -25939,6 +25956,17 @@ window.closeSettings = closeSettings;
             }
         }
 
+        // ── Instantly dim/restore the USER SETTINGS box when a confirm modal
+        // opens on top — prevents the "buttons still visible" delay ────────
+        function _hideUserSettingsContent() {
+            var box = document.querySelector('.user-settings-box');
+            if (box) { box.style.opacity = '0'; box.style.pointerEvents = 'none'; }
+        }
+        function _showUserSettingsContent() {
+            var box = document.querySelector('.user-settings-box');
+            if (box) { box.style.opacity = ''; box.style.pointerEvents = ''; }
+        }
+
         function banFromSettings() {
             // Keep the USER SETTINGS modal open underneath the ban confirmation
             if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
@@ -26122,15 +26150,30 @@ window.closeSettings = closeSettings;
             const modal = document.getElementById('banConfirmModal');
             if (!modal) return;
 
-            // Fully hide the settings modal so the confirm modal appears cleanly on top
-            const settingsModal = document.getElementById('userSettingsModal');
-            if (settingsModal && settingsModal.classList.contains('active')) {
-                settingsModal.style.display = 'none';
-            }
+            // Move to body to escape any stacking context created by parent modals
+            if (modal.parentNode !== document.body) document.body.appendChild(modal);
+
+            // Instantly hide the settings box so buttons don't bleed through
+            _hideUserSettingsContent();
 
             const countdownEl = document.getElementById('banCountdownDisplay');
             const yesBtn = document.getElementById('banConfirmBtn');
             const cancelBtn = document.getElementById('banCancelBtn');
+
+            // Disable pointer-events on underlying modals so they don't intercept clicks
+            var _banSettingsModal = document.getElementById('userSettingsModal');
+            var _banConvModal = document.getElementById('messageConversationModal');
+            var _banInboxModal = document.getElementById('messageInboxModal');
+            if (_banSettingsModal) _banSettingsModal.style.pointerEvents = 'none';
+            if (_banConvModal) _banConvModal.style.pointerEvents = 'none';
+            if (_banInboxModal) _banInboxModal.style.pointerEvents = 'none';
+
+            function _restoreBanPointerEvents() {
+                if (_banSettingsModal) _banSettingsModal.style.pointerEvents = '';
+                if (_banConvModal) _banConvModal.style.pointerEvents = '';
+                if (_banInboxModal) _banInboxModal.style.pointerEvents = '';
+                _showUserSettingsContent();
+            }
 
             let secondsLeft = 5;
             yesBtn.disabled = true;
@@ -26159,22 +26202,17 @@ window.closeSettings = closeSettings;
                 secondsLeft--;
             }
 
-            tick();
             clearInterval(window._banCountdownId);
+            tick();
             window._banCountdownId = setInterval(tick, 1000);
 
             modal.style.display = 'flex';
-
-            function _restoreBanSettingsModal() {
-                const sm = document.getElementById('userSettingsModal');
-                if (sm && sm.classList.contains('active')) sm.style.display = 'flex';
-            }
 
             cancelBtn.onclick = function() {
                 clearInterval(window._banCountdownId);
                 window._banCountdownId = null;
                 modal.style.display = 'none';
-                _restoreBanSettingsModal();
+                _restoreBanPointerEvents();
             };
 
             yesBtn.onclick = async function() {
@@ -26182,7 +26220,7 @@ window.closeSettings = closeSettings;
                 clearInterval(window._banCountdownId);
                 window._banCountdownId = null;
                 modal.style.display = 'none';
-                _restoreBanSettingsModal();
+                _restoreBanPointerEvents();
                 if (!activeConversationSenderId || !window.PrivateMessaging) return;
                 try {
                     await window.PrivateMessaging.banConversation(activeConversationSenderId);
@@ -26197,15 +26235,30 @@ window.closeSettings = closeSettings;
             const modal = document.getElementById('unbanConfirmModal');
             if (!modal) return;
 
-            // Fully hide the settings modal so the confirm modal appears cleanly on top
-            const settingsModal = document.getElementById('userSettingsModal');
-            if (settingsModal && settingsModal.classList.contains('active')) {
-                settingsModal.style.display = 'none';
-            }
+            // Move to body to escape any stacking context created by parent modals
+            if (modal.parentNode !== document.body) document.body.appendChild(modal);
+
+            // Instantly hide the settings box so buttons don't bleed through
+            _hideUserSettingsContent();
 
             const countdownEl = document.getElementById('unbanCountdownDisplay');
             const yesBtn = document.getElementById('unbanConfirmBtn');
             const cancelBtn = document.getElementById('unbanCancelBtn');
+
+            // Disable pointer-events on underlying modals so they don't intercept clicks
+            var _unbanSettingsModal = document.getElementById('userSettingsModal');
+            var _unbanConvModal = document.getElementById('messageConversationModal');
+            var _unbanInboxModal = document.getElementById('messageInboxModal');
+            if (_unbanSettingsModal) _unbanSettingsModal.style.pointerEvents = 'none';
+            if (_unbanConvModal) _unbanConvModal.style.pointerEvents = 'none';
+            if (_unbanInboxModal) _unbanInboxModal.style.pointerEvents = 'none';
+
+            function _restoreUnbanPointerEvents() {
+                if (_unbanSettingsModal) _unbanSettingsModal.style.pointerEvents = '';
+                if (_unbanConvModal) _unbanConvModal.style.pointerEvents = '';
+                if (_unbanInboxModal) _unbanInboxModal.style.pointerEvents = '';
+                _showUserSettingsContent();
+            }
 
             // Reset state
             let secondsLeft = 5;
@@ -26235,22 +26288,17 @@ window.closeSettings = closeSettings;
                 secondsLeft--;
             }
 
-            tick();
             clearInterval(window._unbanCountdownId);
+            tick();
             window._unbanCountdownId = setInterval(tick, 1000);
 
             modal.style.display = 'flex';
-
-            function _restoreUnbanSettingsModal() {
-                const sm = document.getElementById('userSettingsModal');
-                if (sm && sm.classList.contains('active')) sm.style.display = 'flex';
-            }
 
             cancelBtn.onclick = function() {
                 clearInterval(window._unbanCountdownId);
                 window._unbanCountdownId = null;
                 modal.style.display = 'none';
-                _restoreUnbanSettingsModal();
+                _restoreUnbanPointerEvents();
             };
 
             yesBtn.onclick = async function() {
@@ -26258,7 +26306,7 @@ window.closeSettings = closeSettings;
                 clearInterval(window._unbanCountdownId);
                 window._unbanCountdownId = null;
                 modal.style.display = 'none';
-                _restoreUnbanSettingsModal();
+                _restoreUnbanPointerEvents();
                 await unbanActiveConversation();
             };
         }
@@ -26370,10 +26418,6 @@ window.closeSettings = closeSettings;
         let resetDataCountdownTimer = null;
 
         function showResetDataConfirm() {
-            // Prevent double-invocation (glitch/lag on rapid clicks)
-            if (window._resetDataModalOpen) return;
-            window._resetDataModalOpen = true;
-
             // If triggered from the USER SETTINGS modal (inbox), make sure the
             // active conversation matches the target sender before resetting.
             if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
@@ -26383,20 +26427,35 @@ window.closeSettings = closeSettings;
             const confirmBtn = document.getElementById("resetDataConfirmBtn");
             const cancelBtn = document.getElementById("resetDataCancelBtn");
             const display = document.getElementById("resetDataCountdownDisplay");
-            if (!modal || !confirmBtn || !cancelBtn || !display) { window._resetDataModalOpen = false; return; }
-            // Hide the settings modal so the confirm modal appears on top (not behind it)
+            if (!modal || !confirmBtn || !cancelBtn || !display) return;
+
+            // Move to body to escape any stacking context created by parent modals
+            if (modal.parentNode !== document.body) document.body.appendChild(modal);
+
+            // Instantly hide the settings box so buttons don't bleed through
+            _hideUserSettingsContent();
+            if (resetDataCountdownTimer) {
+                clearInterval(resetDataCountdownTimer);
+                resetDataCountdownTimer = null;
+            }
+
+            // Disable pointer events on underlying modals so they don't intercept clicks
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal && settingsModal.classList.contains('active')) settingsModal.style.display = "none";
+            if (settingsModal) settingsModal.style.pointerEvents = "none";
             if (conversationModal) conversationModal.style.pointerEvents = "none";
             if (inboxModal) inboxModal.style.pointerEvents = "none";
-            modal.style.display = "flex";
-            modal.style.pointerEvents = "auto";
-            Array.from(modal.querySelectorAll('*')).forEach(function(el) { el.style.pointerEvents = "auto"; });
+
+            // Reset button state before showing
             confirmBtn.disabled = true;
             confirmBtn.style.opacity = "0.4";
             confirmBtn.style.cursor = "not-allowed";
+
+            modal.style.display = "flex";
+            modal.style.pointerEvents = "auto";
+            Array.from(modal.querySelectorAll('*')).forEach(function(el) { el.style.pointerEvents = "auto"; });
+
             let seconds = 10;
             function getCountdownColor(s) {
                 if (s >= 7) return "#ef4444";
@@ -26405,7 +26464,7 @@ window.closeSettings = closeSettings;
             }
             display.textContent = seconds;
             display.style.color = getCountdownColor(seconds);
-            if (resetDataCountdownTimer) clearInterval(resetDataCountdownTimer);
+
             resetDataCountdownTimer = setInterval(function() {
                 seconds--;
                 if (seconds <= 0) {
@@ -26426,40 +26485,57 @@ window.closeSettings = closeSettings;
         }
 
         function closeResetDataConfirm() {
-            window._resetDataModalOpen = false;
             const modal = document.getElementById("resetDataConfirmModal");
             if (modal) modal.style.display = "none";
             if (resetDataCountdownTimer) { clearInterval(resetDataCountdownTimer); resetDataCountdownTimer = null; }
-            // Restore visibility/pointer events on underlying modals
+            // Restore pointer events and settings box visibility
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal) { if (settingsModal.classList.contains('active')) settingsModal.style.display = "flex"; settingsModal.style.pointerEvents = ""; }
+            if (settingsModal) settingsModal.style.pointerEvents = "";
             if (conversationModal) conversationModal.style.pointerEvents = "";
             if (inboxModal) inboxModal.style.pointerEvents = "";
+            _showUserSettingsContent();
         }
 
         async function resetActiveConversation() {
             if (!activeConversationSenderId || !window._pmDb || !window.pmSafeKey) return;
             try {
-                const { remove, ref, set, query, orderByChild, equalTo, get } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js");
+                const { remove, ref, set } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js");
                 const safeKey = window.pmSafeKey(activeConversationSenderId);
 
-                // Remove any leftover password registry node so the Firebase tree
-                // no longer carries the old usedPasswords data.
+                // Optional cleanup — silently ignore permission errors on this node
+                // (it may not be in your Firebase rules). Never block the main reset.
+                try { await remove(ref(window._pmDb, "usedPasswords")); } catch (_) {}
+
+                // ── Core reset: delete conversation + write reset signal ──────────
+                // Each is wrapped independently so a permission error on one doesn't
+                // swallow the other. If privateMessages delete fails it is re-thrown
+                // so the user sees a real error. resetSignals failure is non-fatal.
+                let convDeleteErr = null;
                 try {
-                    await remove(ref(window._pmDb, "usedPasswords"));
-                } catch (pwErr) {
-                    try { console.warn('[reset] could not clear usedPasswords node:', pwErr); } catch (e2) {}
+                    await remove(ref(window._pmDb, "privateMessages/" + safeKey));
+                } catch (e) {
+                    convDeleteErr = e;
                 }
 
-                // Delete the entire conversation node so the inbox entry disappears
-                // and keep the reset marker in a dedicated top-level path so the
-                // Firebase tree stays tidy and organized.
-                await remove(ref(window._pmDb, "privateMessages/" + safeKey));
-                await set(ref(window._pmDb, "resetSignals/" + safeKey), {
-                    resetAt: Date.now()
-                });
+                // Always attempt to write the reset signal regardless of conv delete
+                try {
+                    await set(ref(window._pmDb, "resetSignals/" + safeKey), {
+                        resetAt: Date.now()
+                    });
+                } catch (_) {}
+
+                if (convDeleteErr) {
+                    // Provide a friendlier message with a hint about Firebase rules
+                    var msg = convDeleteErr.message || String(convDeleteErr);
+                    if (msg.indexOf('PERMISSION_DENIED') !== -1 || msg.indexOf('Permission denied') !== -1) {
+                        alert('Reset failed: Firebase permission denied.\n\nMake sure your Firebase Realtime Database rules allow the owner to write (delete) under:\n  privateMessages/{senderId}');
+                    } else {
+                        alert('Could not reset this conversation: ' + msg);
+                    }
+                    return;
+                }
 
                 // Mark this sender as wiped so USER SETTINGS shows UNKNOWN / EMPTY
                 // instead of their old name & password if it's open (or reopened
@@ -26699,17 +26775,25 @@ window.closeSettings = closeSettings;
                 return;
             }
 
-            let actualSenderName = (meta && meta.senderName)
-                ? meta.senderName
-                : ((_cachedInboxConversations && senderId && _cachedInboxConversations[senderId] && _cachedInboxConversations[senderId].senderName)
-                    ? _cachedInboxConversations[senderId].senderName
-                    : 'Visitor');
-            for (let i = 0; i < messages.length; i++) {
-                if (messages[i].senderName && messages[i].senderId !== ownerUid) {
-                    actualSenderName = messages[i].senderName;
-                    break;
+            // Resolve sender name: meta > cached inbox > message-level senderName > 'Visitor'
+            let actualSenderName = (meta && meta.senderName) ? meta.senderName : '';
+            if (!actualSenderName && _cachedInboxConversations && _cachedInboxConversations[senderId]) {
+                actualSenderName = _cachedInboxConversations[senderId].senderName || '';
+            }
+            if (!actualSenderName) {
+                // Scan messages — pick first non-owner message that has a senderName.
+                // ownerUid may be null if still loading, so also skip senderId===senderId
+                // (the conversation key itself) as a fallback owner-identity check.
+                for (let i = 0; i < messages.length; i++) {
+                    var msgSid = messages[i].senderId;
+                    var isOwnerMsg = ownerUid ? (msgSid === ownerUid) : false;
+                    if (!isOwnerMsg && messages[i].senderName) {
+                        actualSenderName = messages[i].senderName;
+                        break;
+                    }
                 }
             }
+            if (!actualSenderName) actualSenderName = 'Visitor';
 
             let lastSenderMessageIndex = -1;
             for (let i = messages.length - 1; i >= 0; i--) {
@@ -34340,7 +34424,6 @@ window.closeSettings = closeSettings;
                                             isLoggedOut: meta.isLoggedOut || false,
                                             loggedOutAt: meta.loggedOutAt || null,
                                             loggedInAt: meta.loggedInAt || null,
-                                            senderPassword: meta.senderPassword || '',
                                             messageMeClosedActive: meta.messageMeClosedActive || false,
                                             messageMeClosedEndUtcMs: meta.messageMeClosedEndUtcMs || null,
                                             messageMeClosedTitle: meta.messageMeClosedTitle || '',
@@ -34403,7 +34486,6 @@ window.closeSettings = closeSettings;
                                         id: id,
                                         senderId: data.senderId,
                                         receiverId: data.receiverId,
-                                        senderName: data.senderName || null,
                                         message: data.message,
                                         timestamp: ts || data.timestamp,
                                         createdAt: createdAt,
