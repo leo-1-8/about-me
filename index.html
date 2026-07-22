@@ -25956,15 +25956,17 @@ window.closeSettings = closeSettings;
             }
         }
 
-        // ── Instantly dim/restore the USER SETTINGS box when a confirm modal
-        // opens on top — prevents the "buttons still visible" delay ────────
+        // ── Instantly hide/restore the USER SETTINGS box when a confirm modal
+        // opens on top — prevents the "buttons still visible" delay.
+        // Uses visibility:hidden so the box disappears without affecting the
+        // modal backdrop darkness (opacity:0 was dimming the whole screen). ──
         function _hideUserSettingsContent() {
             var box = document.querySelector('.user-settings-box');
-            if (box) { box.style.opacity = '0'; box.style.pointerEvents = 'none'; }
+            if (box) { box.style.visibility = 'hidden'; box.style.pointerEvents = 'none'; }
         }
         function _showUserSettingsContent() {
             var box = document.querySelector('.user-settings-box');
-            if (box) { box.style.opacity = ''; box.style.pointerEvents = ''; }
+            if (box) { box.style.visibility = ''; box.style.pointerEvents = ''; }
         }
 
         function banFromSettings() {
