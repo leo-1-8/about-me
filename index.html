@@ -35911,6 +35911,13 @@ function getSongDisplayName(songId) {
 function addToQueue(songId) {
     if (musicQueue.indexOf(songId) === -1) {
         musicQueue.push(songId);
+        // Preload the audio data now so it's buffered and ready to play instantly
+        // when the previous song ends (avoids mobile autoplay failure due to unbuffered data)
+        var qAudio = document.getElementById('musicPlayer-' + songId);
+        if (qAudio && qAudio.preload !== 'auto') {
+            qAudio.preload = 'auto';
+            qAudio.load();
+        }
         renderQueueModal();
         showQueueToast(getSongDisplayName(songId));
         // Show the now-playing bar when something is added to queue
@@ -36008,6 +36015,16 @@ window._onSongEnded = function(songId) {
     if (window.musicQueue && window.musicQueue.length > 0) {
         var nextId = window.musicQueue.shift();
         renderQueueModal();
+
+        // Preload the song after next so it's buffered and ready when this one ends
+        if (window.musicQueue.length > 0) {
+            var afterNextId = window.musicQueue[0];
+            var afterNextAudio = document.getElementById('musicPlayer-' + afterNextId);
+            if (afterNextAudio && afterNextAudio.preload !== 'auto') {
+                afterNextAudio.preload = 'auto';
+                afterNextAudio.load();
+            }
+        }
 
         // Update full lyrics modal if open
         var curFl = window._getFlSongId ? window._getFlSongId() : null;
