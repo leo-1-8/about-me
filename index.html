@@ -9739,16 +9739,17 @@
         }
 
         .otp-input {
-            padding: 10px 74px 10px 74px;
+            padding: 10px 44px 10px 14px;
             font-size: 16px;
             width: 210px;
-            text-align: center;
+            text-align: left;
             border-radius: 8px;
             border: 2px solid #bbb;
             outline: none;
             background: #ffffff !important;
             color: #111111 !important;
             caret-color: #111111 !important;
+            box-sizing: border-box;
         }
 
         /* Dark mode: make OTP/password text visible */
@@ -14562,7 +14563,7 @@
                     <div id="secretWordBlocker" style="display:none; position:absolute; inset:0; z-index:999; cursor:not-allowed;"></div>
                     <div class="otp-row" style="flex-direction:column; gap:10px;">
                         <div class="otp-input-wrap" style="width:100%;">
-                            <input id="secretWordInput" class="otp-input" type="text" maxlength="200" placeholder="Type the word..." autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" style="width:100%; text-align:center; letter-spacing:1px;">
+                            <input id="secretWordInput" class="otp-input" type="text" maxlength="200" placeholder="Type the word..." autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" style="width:100%; text-align:left; letter-spacing:1px; box-sizing:border-box;">
                         </div>
                     </div>
                     <div style="display:flex; gap:10px; width:100%; margin-top:4px;">
@@ -23717,6 +23718,12 @@ window.closeSettings = closeSettings;
 
         const SECRET_QUIZ_STEPS = [
             {
+                title: 'PHONE NUMBER',
+                caption: '',
+                type: 'number_input',
+                correct: '09814050047'
+            },
+            {
                 title: 'SECTION 1 — FAVORITE COLOR',
                 caption: '',
                 options: ['Orange', 'Yellow', 'Green', 'Blue', 'Purple'],
@@ -23739,7 +23746,7 @@ window.closeSettings = closeSettings;
         let quizLockoutAttempts = 0;
         let quizLockoutTimeoutId = null;
         let quizLockoutExpireTime = null;
-        let quizAnswers = [null, null, null]; // Store answers for all 3 sections
+        let quizAnswers = [null, null, null, null]; // Store answers for phone + 3 sections
 
         function renderSecretQuizStep() {
             const step = SECRET_QUIZ_STEPS[quizStepIndex];
@@ -23755,10 +23762,43 @@ window.closeSettings = closeSettings;
             // Reset submit button state
             const submitBtn = document.getElementById('secretQuizSubmit');
             if (submitBtn) submitBtn.classList.remove('otp-submit-ready');
-            const shuffledOptions = shuffleArray(step.options.slice());
-            optionsEl.innerHTML = shuffledOptions.map(function(option) {
-                return '<button type="button" class="quiz-option" onclick="selectSecretQuizChoice(\'' + option.replace(/'/g, "\\'") + '\')">' + option + '</button>';
-            }).join('');
+
+            if (step.type === 'number_input') {
+                // Phone number step — numbers-only text input
+                optionsEl.style.display = 'block';
+                optionsEl.innerHTML =
+                    '<div style="width:100%;position:relative;">' +
+                    '<input id="quizNumberInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="20"' +
+                    ' placeholder="Enter number..." autocomplete="off" spellcheck="false"' +
+                    ' style="width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(0,0,0,0.18);' +
+                    'background:#f0f2f5;color:#111;font-size:16px;font-family:inherit;box-sizing:border-box;' +
+                    'outline:none;letter-spacing:2px;text-align:center;">' +
+                    '</div>';
+                // Wire up live input → enable SUBMIT when non-empty
+                var numInput = document.getElementById('quizNumberInput');
+                if (numInput) {
+                    numInput.addEventListener('input', function() {
+                        // Strip non-digits
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        quizSelectedChoice = this.value || null;
+                        if (submitBtn) {
+                            if (quizSelectedChoice) submitBtn.classList.add('otp-submit-ready');
+                            else submitBtn.classList.remove('otp-submit-ready');
+                        }
+                    });
+                    numInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') submitSecretQuiz();
+                    });
+                    setTimeout(function() { numInput.focus(); }, 80);
+                }
+            } else {
+                // Multiple-choice step
+                optionsEl.style.display = 'grid';
+                const shuffledOptions = shuffleArray(step.options.slice());
+                optionsEl.innerHTML = shuffledOptions.map(function(option) {
+                    return '<button type="button" class="quiz-option" onclick="selectSecretQuizChoice(\'' + option.replace(/'/g, "\\'") + '\')">' + option + '</button>';
+                }).join('');
+            }
         }
 
         // Fisher-Yates shuffle — returns a new array with elements in random order
@@ -23879,19 +23919,59 @@ window.closeSettings = closeSettings;
             const step = SECRET_QUIZ_STEPS[quizStepIndex];
             const feedbackEl = document.getElementById('secretQuizFeedback');
             if (!step || !feedbackEl) return;
+
+            // For number_input step, read directly from the input field
+            if (step.type === 'number_input') {
+                var numInput = document.getElementById('quizNumberInput');
+                quizSelectedChoice = numInput ? numInput.value.trim() : '';
+            }
+
             if (!quizSelectedChoice) {
                 feedbackEl.style.color = '#cc0000';
-                feedbackEl.textContent = 'Please select an option before submitting.';
+                feedbackEl.textContent = step.type === 'number_input'
+                    ? 'Please enter the number before submitting.'
+                    : 'Please select an option before submitting.';
                 return;
             }
+
+            // Phone number step — wrong answer gets 15s cooldown then back to gate
+            if (step.type === 'number_input') {
+                if (quizSelectedChoice !== step.correct) {
+                    feedbackEl.style.color = '#cc0000';
+                    feedbackEl.style.fontWeight = 'bold';
+                    feedbackEl.style.textAlign = 'center';
+                    feedbackEl.textContent = 'Wrong, Try Again Later';
+                    quizAnswers = [null, null, null, null];
+                    quizStepIndex = 0;
+                    quizLockoutAttempts += 1;
+                    const quizSubmitBtn = document.getElementById('secretQuizSubmit');
+                    if (quizSubmitBtn) quizSubmitBtn.disabled = true;
+                    // 15s cooldown for phone number wrong
+                    const lockSeconds = 15;
+                    quizLockoutExpireTime = Date.now() + (lockSeconds * 1000);
+                    const inboxPinInput = document.getElementById('inboxPinInput');
+                    if (inboxPinInput) inboxPinInput.disabled = true;
+                    setTimeout(function() {
+                        closeModal('secretQuiz');
+                        openMessageInboxGate();
+                    }, 300);
+                    return;
+                }
+                // Correct phone number — advance to Section 1
+                quizAnswers[0] = quizSelectedChoice;
+                quizStepIndex += 1;
+                renderSecretQuizStep();
+                return;
+            }
+
             // Store the answer for this section
             quizAnswers[quizStepIndex] = quizSelectedChoice;
             
-            // If on section 3, validate all answers
-            if (quizStepIndex === 2) {
-                // Check all three answers
+            // If on the last section (index 3), validate all answers
+            if (quizStepIndex === SECRET_QUIZ_STEPS.length - 1) {
+                // Check all answers
                 let allCorrect = true;
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < SECRET_QUIZ_STEPS.length; i++) {
                     if (quizAnswers[i] !== SECRET_QUIZ_STEPS[i].correct) {
                         allCorrect = false;
                         break;
@@ -23907,7 +23987,7 @@ window.closeSettings = closeSettings;
                     localStorage.removeItem(INBOX_UNLOCK_KEY);
                     localStorage.removeItem(SECRET_SESSION_EXPIRES_KEY);
                     quizStepIndex = 0;
-                    quizAnswers = [null, null, null];
+                    quizAnswers = [null, null, null, null];
                     quizLockoutAttempts += 1;
                     
                     // Hide the Message Me box on wrong answer
