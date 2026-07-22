@@ -25665,7 +25665,7 @@ window.closeSettings = closeSettings;
             // Password
             var pwSection = document.getElementById('userSettingsPwSection');
             var pwValue = document.getElementById('userSettingsPwValue');
-            var pw = meta.senderPassword || '';
+            var pw = meta.senderPassword || cachedConv.senderPassword || '';
             if (pwSection && pwValue) {
                 if (isWiped) { pwSection.style.display = 'none'; }
                 else if (pw) { pwValue.textContent = pw; pwSection.style.display = 'block'; }
@@ -26122,10 +26122,10 @@ window.closeSettings = closeSettings;
             const modal = document.getElementById('banConfirmModal');
             if (!modal) return;
 
-            // Temporarily hide the settings modal so the confirm modal appears on top
+            // Fully hide the settings modal so the confirm modal appears cleanly on top
             const settingsModal = document.getElementById('userSettingsModal');
             if (settingsModal && settingsModal.classList.contains('active')) {
-                settingsModal.style.visibility = 'hidden';
+                settingsModal.style.display = 'none';
             }
 
             const countdownEl = document.getElementById('banCountdownDisplay');
@@ -26167,7 +26167,7 @@ window.closeSettings = closeSettings;
 
             function _restoreBanSettingsModal() {
                 const sm = document.getElementById('userSettingsModal');
-                if (sm) sm.style.visibility = '';
+                if (sm && sm.classList.contains('active')) sm.style.display = 'flex';
             }
 
             cancelBtn.onclick = function() {
@@ -26197,10 +26197,10 @@ window.closeSettings = closeSettings;
             const modal = document.getElementById('unbanConfirmModal');
             if (!modal) return;
 
-            // Temporarily hide the settings modal so the confirm modal appears on top
+            // Fully hide the settings modal so the confirm modal appears cleanly on top
             const settingsModal = document.getElementById('userSettingsModal');
             if (settingsModal && settingsModal.classList.contains('active')) {
-                settingsModal.style.visibility = 'hidden';
+                settingsModal.style.display = 'none';
             }
 
             const countdownEl = document.getElementById('unbanCountdownDisplay');
@@ -26243,7 +26243,7 @@ window.closeSettings = closeSettings;
 
             function _restoreUnbanSettingsModal() {
                 const sm = document.getElementById('userSettingsModal');
-                if (sm) sm.style.visibility = '';
+                if (sm && sm.classList.contains('active')) sm.style.display = 'flex';
             }
 
             cancelBtn.onclick = function() {
@@ -26388,7 +26388,7 @@ window.closeSettings = closeSettings;
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal && settingsModal.classList.contains('active')) settingsModal.style.visibility = "hidden";
+            if (settingsModal && settingsModal.classList.contains('active')) settingsModal.style.display = "none";
             if (conversationModal) conversationModal.style.pointerEvents = "none";
             if (inboxModal) inboxModal.style.pointerEvents = "none";
             modal.style.display = "flex";
@@ -26434,7 +26434,7 @@ window.closeSettings = closeSettings;
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal) { settingsModal.style.visibility = ""; settingsModal.style.pointerEvents = ""; }
+            if (settingsModal) { if (settingsModal.classList.contains('active')) settingsModal.style.display = "flex"; settingsModal.style.pointerEvents = ""; }
             if (conversationModal) conversationModal.style.pointerEvents = "";
             if (inboxModal) inboxModal.style.pointerEvents = "";
         }
@@ -34340,6 +34340,7 @@ window.closeSettings = closeSettings;
                                             isLoggedOut: meta.isLoggedOut || false,
                                             loggedOutAt: meta.loggedOutAt || null,
                                             loggedInAt: meta.loggedInAt || null,
+                                            senderPassword: meta.senderPassword || '',
                                             messageMeClosedActive: meta.messageMeClosedActive || false,
                                             messageMeClosedEndUtcMs: meta.messageMeClosedEndUtcMs || null,
                                             messageMeClosedTitle: meta.messageMeClosedTitle || '',
