@@ -13888,7 +13888,7 @@
                         </div>
                     </div>
                     <div class="info-item song-item">
-                        <div class="info-label">62. WE DON'T TALK ANYMORE – CHARLIE PUTH &amp; SELENA GOMEZ <span class="new-badge">[NEW]</span></div>
+                        <div class="info-label">62. WE DON'T TALK ANYMORE – CHARLIE PUTH ( ft. SELENA GOMEZ ) <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
                             <div class="music-player-container">                                <div class="song-controls">
                                     <button class="play-button" data-song="wedonttalkanymore" onclick="toggleMusic('wedonttalkanymore')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg></button>
@@ -24842,7 +24842,7 @@ window.closeSettings = closeSettings;
                             if (attemptsLeft > 0) {
                                 setTimeout(function() { clearPersonCloseStatus(attemptsLeft - 1); }, 300);
                             } else {
-                                void 0;
+                                console.warn('[closeMessageMe] Firebase not ready — per-person clear dropped after retries');
                             }
                             return;
                         }
@@ -24857,10 +24857,10 @@ window.closeSettings = closeSettings;
                             }).then(function() {
 
                             }).catch(function(e) {
-                                void e;
+                                console.warn('[closeMessageMe] Per-person Firebase clear failed:', e);
                             });
                         }).catch(function(e) {
-                            void e;
+                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
                         });
                     })(20);
 
@@ -24888,16 +24888,16 @@ window.closeSettings = closeSettings;
                         if (attemptsLeft > 0) {
                             setTimeout(function() { clearCloseMessageMeStatus(attemptsLeft - 1); }, 300);
                         } else {
-                            void 0;
+                            console.warn('[closeMessageMe] Firebase not ready — clear dropped after retries');
                         }
                         return;
                     }
                     import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                         fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' }).catch(function(e) {
-                            void e;
+                            console.warn('[closeMessageMe] Firebase clear failed:', e);
                         });
                     }).catch(function(e) {
-                        void e;
+                        console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
                     });
                 })(20);
 
@@ -24979,7 +24979,7 @@ window.closeSettings = closeSettings;
                             if (attemptsLeft > 0) {
                                 setTimeout(function() { writePersonCloseStatus(attemptsLeft - 1); }, 300);
                             } else {
-                                void 0;
+                                console.warn('[closeMessageMe] Firebase not ready — per-person write dropped after retries');
                             }
                             return;
                         }
@@ -24992,10 +24992,10 @@ window.closeSettings = closeSettings;
                                 messageMeClosedActive: true,
                                 messageMeClosedSetAt: serverNowMs
                             }).catch(function(e) {
-                                void e;
+                                console.warn('[closeMessageMe] Per-person Firebase write failed:', e);
                             });
                         }).catch(function(e) {
-                            void e;
+                            console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
                         });
                     })(20); // up to ~6s of retrying
 
@@ -25031,7 +25031,7 @@ window.closeSettings = closeSettings;
                     if (attemptsLeft > 0) {
                         setTimeout(function() { writeCloseMessageMeStatus(attemptsLeft - 1); }, 300);
                     } else {
-                        void 0;
+                        console.warn('[closeMessageMe] Firebase not ready — write dropped after retries');
                     }
                     return;
                 }
@@ -25043,10 +25043,10 @@ window.closeSettings = closeSettings;
                         timerColor: window._cmmSiteTimerColor || 'default',
                         active: true
                     }).catch(function(e) {
-                        void e;
+                        console.warn('[closeMessageMe] Firebase write failed:', e);
                     });
                 }).catch(function(e) {
-                    void e;
+                    console.warn('[closeMessageMe] Could not load firebase-database.js module:', e);
                 });
                 })(20); // up to ~6s of retrying
 
@@ -25179,11 +25179,11 @@ window.closeSettings = closeSettings;
                             if (val && val.active && val.endUtcMs && val.endUtcMs <= serverNowMs) {
                                 fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), {
                                     active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default'
-                                }).catch(function(e) { void e; });
+                                }).catch(function(e) { console.warn('[closeMessageMe] stale clear failed:', e); });
                             }
                         }
                     }, function(err) {
-                        void err;
+                        console.warn('[closeMessageMe] Firebase listen error:', err);
                     });
                 });
             }
@@ -25387,7 +25387,7 @@ window.closeSettings = closeSettings;
                     messageMeClosedTimerColor: 'default'
                 }).then(function() { })
                   .catch(function(e) { console.warn('[closeMessageMe] ' + logLabel + ' auto-clear PERSON failed:', e); });
-            }).catch(function(e) { void e; });
+            }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
         }
 
         function _cmmMaybeAutoClearExpired() {
@@ -25401,8 +25401,8 @@ window.closeSettings = closeSettings;
                 import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js').then(function(fb) {
                     fb.set(fb.ref(window._pmDb, 'siteConfig/messageMeStatus'), { active: false, endUtcMs: 0, title: '', titleColor: 'default', timerColor: 'default' })
                         .then(function() { })
-                        .catch(function(e) { void e; });
-                }).catch(function(e) { void e; });
+                        .catch(function(e) { console.warn('[closeMessageMe] Auto-clear SITE failed:', e); });
+                }).catch(function(e) { console.warn('[closeMessageMe] Could not load firebase-database.js module:', e); });
             }
 
             // PERSON-specific (the affected sender's OWN device).
@@ -26122,6 +26122,12 @@ window.closeSettings = closeSettings;
             const modal = document.getElementById('banConfirmModal');
             if (!modal) return;
 
+            // Temporarily hide the settings modal so the confirm modal appears on top
+            const settingsModal = document.getElementById('userSettingsModal');
+            if (settingsModal && settingsModal.classList.contains('active')) {
+                settingsModal.style.visibility = 'hidden';
+            }
+
             const countdownEl = document.getElementById('banCountdownDisplay');
             const yesBtn = document.getElementById('banConfirmBtn');
             const cancelBtn = document.getElementById('banCancelBtn');
@@ -26159,10 +26165,16 @@ window.closeSettings = closeSettings;
 
             modal.style.display = 'flex';
 
+            function _restoreBanSettingsModal() {
+                const sm = document.getElementById('userSettingsModal');
+                if (sm) sm.style.visibility = '';
+            }
+
             cancelBtn.onclick = function() {
                 clearInterval(window._banCountdownId);
                 window._banCountdownId = null;
                 modal.style.display = 'none';
+                _restoreBanSettingsModal();
             };
 
             yesBtn.onclick = async function() {
@@ -26170,6 +26182,7 @@ window.closeSettings = closeSettings;
                 clearInterval(window._banCountdownId);
                 window._banCountdownId = null;
                 modal.style.display = 'none';
+                _restoreBanSettingsModal();
                 if (!activeConversationSenderId || !window.PrivateMessaging) return;
                 try {
                     await window.PrivateMessaging.banConversation(activeConversationSenderId);
@@ -26183,6 +26196,12 @@ window.closeSettings = closeSettings;
         function showUnbanConfirm() {
             const modal = document.getElementById('unbanConfirmModal');
             if (!modal) return;
+
+            // Temporarily hide the settings modal so the confirm modal appears on top
+            const settingsModal = document.getElementById('userSettingsModal');
+            if (settingsModal && settingsModal.classList.contains('active')) {
+                settingsModal.style.visibility = 'hidden';
+            }
 
             const countdownEl = document.getElementById('unbanCountdownDisplay');
             const yesBtn = document.getElementById('unbanConfirmBtn');
@@ -26222,10 +26241,16 @@ window.closeSettings = closeSettings;
 
             modal.style.display = 'flex';
 
+            function _restoreUnbanSettingsModal() {
+                const sm = document.getElementById('userSettingsModal');
+                if (sm) sm.style.visibility = '';
+            }
+
             cancelBtn.onclick = function() {
                 clearInterval(window._unbanCountdownId);
                 window._unbanCountdownId = null;
                 modal.style.display = 'none';
+                _restoreUnbanSettingsModal();
             };
 
             yesBtn.onclick = async function() {
@@ -26233,6 +26258,7 @@ window.closeSettings = closeSettings;
                 clearInterval(window._unbanCountdownId);
                 window._unbanCountdownId = null;
                 modal.style.display = 'none';
+                _restoreUnbanSettingsModal();
                 await unbanActiveConversation();
             };
         }
@@ -26344,6 +26370,10 @@ window.closeSettings = closeSettings;
         let resetDataCountdownTimer = null;
 
         function showResetDataConfirm() {
+            // Prevent double-invocation (glitch/lag on rapid clicks)
+            if (window._resetDataModalOpen) return;
+            window._resetDataModalOpen = true;
+
             // If triggered from the USER SETTINGS modal (inbox), make sure the
             // active conversation matches the target sender before resetting.
             if (_userSettingsTargetSenderId && _userSettingsTargetSenderId !== activeConversationSenderId) {
@@ -26353,12 +26383,12 @@ window.closeSettings = closeSettings;
             const confirmBtn = document.getElementById("resetDataConfirmBtn");
             const cancelBtn = document.getElementById("resetDataCancelBtn");
             const display = document.getElementById("resetDataCountdownDisplay");
-            if (!modal || !confirmBtn || !cancelBtn || !display) return;
-            // Disable pointer events on underlying modals so they don't intercept clicks
+            if (!modal || !confirmBtn || !cancelBtn || !display) { window._resetDataModalOpen = false; return; }
+            // Hide the settings modal so the confirm modal appears on top (not behind it)
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal) settingsModal.style.pointerEvents = "none";
+            if (settingsModal && settingsModal.classList.contains('active')) settingsModal.style.visibility = "hidden";
             if (conversationModal) conversationModal.style.pointerEvents = "none";
             if (inboxModal) inboxModal.style.pointerEvents = "none";
             modal.style.display = "flex";
@@ -26396,14 +26426,15 @@ window.closeSettings = closeSettings;
         }
 
         function closeResetDataConfirm() {
+            window._resetDataModalOpen = false;
             const modal = document.getElementById("resetDataConfirmModal");
             if (modal) modal.style.display = "none";
             if (resetDataCountdownTimer) { clearInterval(resetDataCountdownTimer); resetDataCountdownTimer = null; }
-            // Restore pointer events on underlying modals
+            // Restore visibility/pointer events on underlying modals
             const settingsModal = document.getElementById("userSettingsModal");
             const conversationModal = document.getElementById("messageConversationModal");
             const inboxModal = document.getElementById("messageInboxModal");
-            if (settingsModal) settingsModal.style.pointerEvents = "";
+            if (settingsModal) { settingsModal.style.visibility = ""; settingsModal.style.pointerEvents = ""; }
             if (conversationModal) conversationModal.style.pointerEvents = "";
             if (inboxModal) inboxModal.style.pointerEvents = "";
         }
@@ -26668,7 +26699,11 @@ window.closeSettings = closeSettings;
                 return;
             }
 
-            let actualSenderName = (meta && meta.senderName) ? meta.senderName : 'Visitor';
+            let actualSenderName = (meta && meta.senderName)
+                ? meta.senderName
+                : ((_cachedInboxConversations && senderId && _cachedInboxConversations[senderId] && _cachedInboxConversations[senderId].senderName)
+                    ? _cachedInboxConversations[senderId].senderName
+                    : 'Visitor');
             for (let i = 0; i < messages.length; i++) {
                 if (messages[i].senderName && messages[i].senderId !== ownerUid) {
                     actualSenderName = messages[i].senderName;
@@ -29167,7 +29202,7 @@ window.closeSettings = closeSettings;
             happierthanever: 'BILLIE EILISH - HAPPIER THAN EVER',
             wavetolove: 'LAUV - I LIKE ME BETTER',
             superfar: 'LANY - SUPER FAR',
-            wedonttalkanymore: 'CHARLIE PUTH - WE DON\'T TALK ANYMORE (FEAT. SELENA GOMEZ)',
+            wedonttalkanymore: 'CHARLIE PUTH - WE DON\'T TALK ANYMORE ( ft. SELENA GOMEZ )',
             backburner: 'NIKI - BACKBURNER',
             antihero: 'TAYLOR SWIFT - ANTI-HERO',
             aboutyou: 'THE 1975 - ABOUT YOU',
@@ -31256,12 +31291,12 @@ window.closeSettings = closeSettings;
 
             // ─── NEW. BAD THING — Ariana Grande ───
             aribadthing: [
-                {t:0, text:"♪"},
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
             ],
 
             // ─── NEW. NOWHERE NOBODY — Ariana Grande ───
             arinowherenobo: [
-                {t:0, text:"♪"},
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
             ],
 
             // ─── NEW. I LIKE ME BETTER — Lauv ───
@@ -32940,6 +32975,46 @@ window.closeSettings = closeSettings;
                 {t:262.58, text:"She's already taken me"},
                 {t:276.98, text:"The day you said goodnight"},
             ],
+
+            // ─── NEW. KISS ME — Ariana Grande ───
+            arikissme: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. PETAL — Ariana Grande ───
+            aripetal: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. STAY — Ariana Grande ───
+            aristay: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. OH WELL — Ariana Grande ───
+            ariohwell: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. BIG FEELINGS — Ariana Grande ───
+            aribigfeelings: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. FREAK — Ariana Grande ───
+            arifreak: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. WARNING SIGNS — Ariana Grande ───
+            ariwarningsigns: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
+
+            // ─── NEW. NEVER GET OVER ME — Ariana Grande ───
+            arinevergetoverme: [
+                {t:0, text:"NO LYRICS YET, BE POSTED SOON!", noHighlight:true},
+            ],
         };
 
 
@@ -32963,7 +33038,7 @@ window.closeSettings = closeSettings;
             happierthanever: 'Happier Than Ever — Billie Eilish',
             wavetolove: 'Love. — wave to earth',
             superfar: 'Super Far — LANY',
-            wedonttalkanymore: 'We Don\'t Talk Anymore — Charlie Puth ft. Selena Gomez',
+            wedonttalkanymore: 'We Don\'t Talk Anymore — Charlie Puth ( ft. Selena Gomez )',
             backburner: 'Backburner — NIKI',
             antihero: 'Anti-Hero — Taylor Swift',
             aboutyou: 'About You — The 1975',
@@ -33057,6 +33132,12 @@ window.closeSettings = closeSettings;
             if (!lines) return;
             const span = document.getElementById('lyricsLine-' + songId);
             if (!span) return;
+
+            // Static placeholder — show text but never highlight
+            if (lines.length === 1 && lines[0].noHighlight) {
+                span.textContent = lines[0].text;
+                return;
+            }
 
             const activeIdx = getActiveIdx(lines, currentTime);
             const curr = activeIdx >= 0 ? lines[activeIdx] : null;
@@ -34321,6 +34402,7 @@ window.closeSettings = closeSettings;
                                         id: id,
                                         senderId: data.senderId,
                                         receiverId: data.receiverId,
+                                        senderName: data.senderName || null,
                                         message: data.message,
                                         timestamp: ts || data.timestamp,
                                         createdAt: createdAt,
