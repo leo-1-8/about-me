@@ -29797,30 +29797,15 @@ window.closeSettings = closeSettings;
                         if (songItem) songItem.classList.remove('song-playing');
                         const progressContainer = document.getElementById('musicProgressContainer-' + songId);
                         if (progressContainer) progressContainer.classList.remove('active');
-                        // Reset progress bar and time to 0
-                        audio.currentTime = 0;
-                        lastKnownTime[songId] = 0; // clear saved position so it doesn't restore at end
+                        // Reset progress bar and time display to 0
                         const bar = document.getElementById('musicProgressBar-' + songId);
                         if (bar) bar.style.width = '0%';
                         const currentTimeSpan = document.getElementById('currentTime-' + songId);
                         if (currentTimeSpan) currentTimeSpan.textContent = '0:00';
                         const lyricsLine = document.getElementById('lyricsLine-' + songId);
                         if (lyricsLine) lyricsLine.textContent = '';
-                        // ── Play next from queue ──
-                        const hasQueue = typeof musicQueue !== 'undefined' && musicQueue && musicQueue.length > 0;
-                        if (hasQueue) {
-                            // Don't null currentPlayingSong yet — let _onSongEnded/toggleMusic do it
-                            // so the now-playing bar doesn't flash away during the 300ms gap
-                            if (window._onSongEnded) window._onSongEnded(songId);
-                        } else {
-                            if (currentPlayingSong === songId) {
-                                window.currentPlayingSong = null;
-                                updateMiniMusicUI();
-                                mnpUpdate();
-                            }
-                            if (window._onSongEnded) window._onSongEnded(songId);
-                        }
-                        // Immediately wipe the finished song from localStorage so it doesn't restore as active
+                        lastKnownTime[songId] = 0;
+                        // Immediately wipe the finished song from localStorage
                         try {
                             var _saved = localStorage.getItem('musicState');
                             if (_saved) {
@@ -29830,6 +29815,19 @@ window.closeSettings = closeSettings;
                                 localStorage.setItem('musicState', JSON.stringify(_st));
                             }
                         } catch(e) {}
+                        // ── Play next from queue ──
+                        // Always use window.musicQueue to avoid cross-script-block scoping issues.
+                        // Reset audio.currentTime AFTER triggering queue play so the next song's
+                        // .play() call isn't interfered with by a state change on this element.
+                        var _hasQueue = window.musicQueue && window.musicQueue.length > 0;
+                        if (!_hasQueue && currentPlayingSong === songId) {
+                            window.currentPlayingSong = null;
+                            updateMiniMusicUI();
+                            mnpUpdate();
+                        }
+                        if (window._onSongEnded) window._onSongEnded(songId);
+                        // Reset playback position after handing off to the queue handler
+                        audio.currentTime = 0;
                     });
 
                     audio.addEventListener('error', function(e) {
@@ -36007,14 +36005,9 @@ _queueThemeObs.observe(document.body, { attributes: true, attributeFilter: ['cla
 // is satisfied — the 'ended' event gives us a valid media activation context
 // even when the music modal is closed.
 window._onSongEnded = function(songId) {
-    if (musicQueue.length > 0) {
-        var nextId = musicQueue.shift();
+    if (window.musicQueue && window.musicQueue.length > 0) {
+        var nextId = window.musicQueue.shift();
         renderQueueModal();
-
-        // Clear the finished song from currentPlayingSong before starting the next
-        if (window.currentPlayingSong === songId) {
-            window.currentPlayingSong = null;
-        }
 
         // Update full lyrics modal if open
         var curFl = window._getFlSongId ? window._getFlSongId() : null;
@@ -36030,7 +36023,7 @@ window._onSongEnded = function(songId) {
             var playPromise = nextAudio.play();
             if (playPromise !== undefined) {
                 playPromise.then(function() {
-                    // Audio started — now sync all the UI via toggleMusic logic
+                    // Audio started — sync all UI
                     window.currentPlayingSong = nextId;
                     // Update play button icon to pause
                     var btn = document.querySelector('button[data-song="' + nextId + '"]');
@@ -36046,16 +36039,17 @@ window._onSongEnded = function(songId) {
                     if (typeof mnpUpdate === 'function') mnpUpdate();
                     if (typeof updateMiniMusicUI === 'function') updateMiniMusicUI();
                 }).catch(function(err) {
-                    // Fallback: let toggleMusic try (it may succeed on some browsers)
+                    // Fallback: let toggleMusic try
                     console.warn('Queue autoplay failed, falling back to toggleMusic:', err.message);
                     setTimeout(function() { toggleMusic(nextId); }, 100);
                 });
             } else {
-                // Old browser — fall back
+                // Old browser fallback
+                window.currentPlayingSong = nextId;
                 setTimeout(function() { toggleMusic(nextId); }, 100);
             }
         } else {
-            // Audio element not found — fall back
+            // Audio element not in DOM yet — fall back to toggleMusic which will handle it
             setTimeout(function() { toggleMusic(nextId); }, 300);
         }
     } else {
