@@ -8952,7 +8952,7 @@
             flex: 1;
             min-height: 0;
             overflow: hidden;
-            padding-left: 0;
+            padding-left: 18px;
         }
         /* Left panel — static full lyrics */
         #flLeftPanel {
@@ -9014,7 +9014,11 @@
             text-transform: uppercase;
             margin-bottom: 14px;
             color: #1a78e8;
-            padding: 24px 40px 0 0;
+            padding: 24px 40px 0 18px;
+        }
+        @media (max-width: 768px) {
+            #fullLyricsModalTitle { padding-left: 18px !important; }
+            #flLyricsBody { padding-left: 18px !important; }
         }
         body.dark-mode #fullLyricsModalTitle { color: #4da6ff; }
         #fullLyricsModalClose {
@@ -9073,7 +9077,7 @@
 
         .fl-progress-bar-area {
             margin-top: 0;
-            padding: 8px 16px 20px 0;
+            padding: 8px 18px 20px 18px;
             border-top: 1px solid rgba(0,0,0,0.1);
         }
         body.dark-mode .fl-progress-bar-area { border-top-color: rgba(255,255,255,0.1); }
