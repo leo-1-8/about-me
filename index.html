@@ -1737,8 +1737,16 @@
             background: rgba(255, 255, 255, 0.06) !important;
             border-color: rgba(255, 255, 255, 0.14) !important;
         }
+        body.dark-mode #favoritesModal #musicFavoriteCard,
+        body.dark-mode #musicFavoriteCard {
+            background: linear-gradient(135deg, #1a6b5a 0%, #0d3a6e 100%) !important;
+            border-color: transparent !important;
+        }
         #musicUpdatedLabelCard,
-        body #musicUpdatedLabelCard,
+        body #musicUpdatedLabelCard {
+            color: #0a3d2b !important;
+            -webkit-text-fill-color: #0a3d2b !important;
+        }
         body.dark-mode #musicUpdatedLabelCard,
         body.dark-mode #favoritesModal #musicUpdatedLabelCard,
         body.dark-mode #favoritesModal .modal-content #musicUpdatedLabelCard,
@@ -6704,6 +6712,28 @@
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+        }
+
+        /* Music card — blue-green gradient */
+        #musicFavoriteCard {
+            background: linear-gradient(135deg, #43c6ac 0%, #3a8fd1 100%) !important;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(67, 198, 172, 0.3);
+        }
+        #musicFavoriteCard .favorite-title,
+        #musicFavoriteCard .favorite-description,
+        #musicFavoriteCard .favorite-icon {
+            color: #fff !important;
+        }
+        #musicFavoriteCard:hover {
+            box-shadow: 0 8px 30px rgba(67, 198, 172, 0.45);
+        }
+        body.dark-mode #musicFavoriteCard {
+            background: linear-gradient(135deg, #1a6b5a 0%, #0d3a6e 100%) !important;
+            box-shadow: 0 4px 20px rgba(26, 107, 90, 0.4);
+        }
+        body.dark-mode #musicFavoriteCard:hover {
+            box-shadow: 0 8px 30px rgba(26, 107, 90, 0.6);
         }
 
         .modal-gaming {
@@ -11934,11 +11964,11 @@
                         <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
                         <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
-                    <div class="favorite-card clickable" onclick="openModal('music')">
+                    <div class="favorite-card clickable" id="musicFavoriteCard" onclick="openModal('music')">
                         <div class="favorite-icon">🎵</div>
                         <div class="favorite-title" data-i18n="others_music">Music</div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
-                        <div id="musicUpdatedLabelCard" style="font-size:10px; font-style:italic; color:#4caf50 !important; margin-top:4px; margin-bottom:-10px; letter-spacing:0.3px;">UPDATED <span id="musicUpdatedDaysCard">...</span> DAYS AGO</div>
+                        <div id="musicUpdatedLabelCard" style="font-size:10px; font-style:italic; color:#0a3d2b !important; margin-top:4px; margin-bottom:-10px; letter-spacing:0.3px;">UPDATED <span id="musicUpdatedDaysCard">...</span> DAYS AGO</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('singer')">
                         <div class="favorite-icon">🎤</div>
