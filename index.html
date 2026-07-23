@@ -36056,9 +36056,8 @@ window._onSongEnded = function(songId) {
                     if (typeof mnpUpdate === 'function') mnpUpdate();
                     if (typeof updateMiniMusicUI === 'function') updateMiniMusicUI();
                 }).catch(function(err) {
-                    // Mobile autoplay blocked — show a tap-to-continue nudge
                     console.warn('Queue autoplay blocked:', err.message);
-                    _showQueueAutoplayNudge(nextId);
+                    setTimeout(function() { toggleMusic(nextId); }, 100);
                 });
             } else {
                 // Old browser fallback
@@ -36083,49 +36082,6 @@ window._onSongEnded = function(songId) {
         if (typeof updateMiniMusicUI === 'function') updateMiniMusicUI();
     }
 };
-
-// ── Mobile autoplay nudge — shown when browser blocks auto-queue ──
-function _showQueueAutoplayNudge(nextId) {
-    // Remove any existing nudge first
-    var old = document.getElementById('_queueAutoplayNudge');
-    if (old) old.remove();
-
-    var name = getSongDisplayName(nextId);
-    var nudge = document.createElement('div');
-    nudge.id = '_queueAutoplayNudge';
-    nudge.style.cssText = [
-        'position:fixed',
-        'bottom:100px',
-        'left:50%',
-        'transform:translateX(-50%)',
-        'background:rgba(10,14,30,0.97)',
-        'color:#fff',
-        'padding:14px 22px',
-        'border-radius:16px',
-        'font-size:13px',
-        'font-weight:700',
-        'z-index:999999999',
-        'text-align:center',
-        'box-shadow:0 4px 24px rgba(0,0,0,0.5)',
-        'border:1px solid rgba(255,255,255,0.15)',
-        'cursor:pointer',
-        'max-width:85vw',
-        'line-height:1.5'
-    ].join(';');
-    nudge.innerHTML = '▶ Tap to play next<br><span style="font-weight:400;font-size:11px;opacity:0.7;">' + name + '</span>';
-
-    nudge.addEventListener('click', function() {
-        nudge.remove();
-        toggleMusic(nextId);
-    });
-
-    document.body.appendChild(nudge);
-
-    // Auto-dismiss after 10 seconds if not tapped
-    setTimeout(function() {
-        if (nudge.parentNode) nudge.remove();
-    }, 10000);
-}
 
 // ── Toast notification ──
 function showQueueToast(name, warn) {
