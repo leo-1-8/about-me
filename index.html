@@ -8952,7 +8952,7 @@
             flex: 1;
             min-height: 0;
             overflow: hidden;
-            padding-left: 12px;
+            padding-left: 0;
         }
         /* Left panel — static full lyrics */
         #flLeftPanel {
@@ -9014,7 +9014,7 @@
             text-transform: uppercase;
             margin-bottom: 14px;
             color: #1a78e8;
-            padding: 24px 40px 0 12px;
+            padding: 24px 40px 0 0;
         }
         body.dark-mode #fullLyricsModalTitle { color: #4da6ff; }
         #fullLyricsModalClose {
@@ -9073,7 +9073,7 @@
 
         .fl-progress-bar-area {
             margin-top: 0;
-            padding: 8px 12px 20px 12px;
+            padding: 8px 16px 20px 0;
             border-top: 1px solid rgba(0,0,0,0.1);
         }
         body.dark-mode .fl-progress-bar-area { border-top-color: rgba(255,255,255,0.1); }
@@ -9670,9 +9670,10 @@
             pointer-events: none !important;
         }
 
-        /* Hide the form link whenever any modal is open so it doesn't float on top */
+        /* Hide the form link whenever any modal is open or loading screen is visible */
         body:has(.modal-overlay.active) .form-link-below,
-        body:has(#fullLyricsModal.active) .form-link-below {
+        body:has(#fullLyricsModal.active) .form-link-below,
+        body:has(#loadingScreen:not(.hidden)) .form-link-below {
             display: none !important;
             pointer-events: none !important;
         }
