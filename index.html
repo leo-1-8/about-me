@@ -8975,6 +8975,8 @@
             background: linear-gradient(135deg, #f5e980 0%, #89b8e0 100%);
             color: #222;
             box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         #flLyricsBody {
             display: flex;
@@ -9031,6 +9033,14 @@
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
         #flLeftPanel .fl-left-line.fl-left-past {
             opacity: 0.28;
+        }
+
+        @media (max-width: 768px) {
+            #flLeftPanel { font-size: 11px !important; line-height: 1.75 !important; }
+            #flLeftPanel .fl-left-line { font-size: 11px !important; }
+            #flLeftPanel .fl-left-line.fl-left-active { font-size: 12px !important; }
+            #fullLyricsModalTitle { font-size: 11px !important; }
+            #fullLyricsModalScroll { font-size: 11px !important; }
         }
 
         body.dark-mode #fullLyricsModalBox {
