@@ -1756,36 +1756,6 @@
             -webkit-text-fill-color: #4caf50 !important;
         }
         
-        /* (Removed) Christmas decorations that floated around the page */
-        .main-content::before,
-        .main-content::after {
-            content: none;
-        }
-        
-        /* Additional floating Christmas elements */
-        @keyframes floatAround {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% {
-                transform: translate(20px, -20px) rotate(5deg);
-            }
-            50% {
-                transform: translate(-10px, -30px) rotate(-5deg);
-            }
-            75% {
-                transform: translate(-20px, -10px) rotate(3deg);
-            }
-        }
-        
-        /* Disable floating Christmas decoration on body */
-        body::before {
-            content: none;
-        }
-        
-        body::after {
-            content: none;
-        }
 
         @keyframes fadeIn {
             to {
@@ -2130,12 +2100,6 @@
             transition: none;
         }
 
-        /* Rotating conic border — removed */
-        .btn-about::after,
-        .btn-favorites::after {
-            content: none;
-        }
-
         /* Lift all children above pseudo-elements */
         .btn-about > *,
         .btn-favorites > * {
@@ -2169,18 +2133,6 @@
             justify-content: center;
             width: 100%;
             pointer-events: none;
-        }
-        
-        /* Christmas decorations around update button container (disabled) */
-        .update-button-container::before,
-        .update-button-container::after {
-            content: none;
-        }
-        
-        /* Christmas decorations for update button (disabled) */
-        .btn-updates::before,
-        .btn-updates::after {
-            content: none;
         }
         
         .btn-updates {
@@ -5318,9 +5270,6 @@
         .modal-overlay.active {
             pointer-events: auto;
         }
-
-        /* Removed blanket sibling pointer-events:none — it broke all modals opened
-           outside of openModal(). Each modal now manages its own pointer-events. */
 
         /* GLOBAL FIX: Ensure every overlay/modal always receives clicks */
         .modal-overlay,
@@ -8918,6 +8867,7 @@
         body.dark-mode .lyrics-line {
             color: #c2e4ff;
         }
+
         .see-full-lyrics-btn {
             font-size: 11px;
             font-weight: 700;
@@ -9033,14 +8983,6 @@
         body.dark-mode #flLeftPanel .fl-left-line.fl-left-active { color: #faed7a; }
         #flLeftPanel .fl-left-line.fl-left-past {
             opacity: 0.28;
-        }
-
-        @media (max-width: 768px) {
-            #flLeftPanel { font-size: 11px !important; line-height: 1.75 !important; }
-            #flLeftPanel .fl-left-line { font-size: 11px !important; }
-            #flLeftPanel .fl-left-line.fl-left-active { font-size: 12px !important; }
-            #fullLyricsModalTitle { font-size: 11px !important; }
-            #fullLyricsModalScroll { font-size: 11px !important; }
         }
 
         body.dark-mode #fullLyricsModalBox {
@@ -9165,10 +9107,6 @@
         }
 
         /* In-card unlock countdown timer */
-        /* NOT YET AVAILABLE song cards — removed, all songs now available */
-
-
-
 
         #musicModal .music-list .song-item:last-child {
             margin-bottom: 0;
@@ -36640,10 +36578,6 @@ function clearSongSearch() {
     input.focus();
 }
 
-// Add Song button
-function toggleAddSongPanel() {
-    // placeholder for future panel
-}
 
 // Song search filter
 function filterSongs(query) {
