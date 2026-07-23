@@ -9130,9 +9130,6 @@
         }
 
         /* Pause the spinning border while scrolling to prevent mobile flash */
-        #musicModal .song-item.song-playing.scroll-paused::before {
-            animation-play-state: paused;
-        }
 
         #musicModal .song-item.song-playing {
             position: relative;
@@ -11668,7 +11665,7 @@
                 </div>
                 <span data-i18n="warning_unfinished">THIS ISN'T OFFICIALLY FINISHED YET; I STILL HAVE MANY WORKS TO DO</span>
                 <div id="warningTimerLine" style="margin-top:4px;font-weight:700;">
-                    <span data-i18n="warning_updates_in">UPDATES IN</span> <span id="warningTimer">---:--:--:--:---</span>
+                    <span data-i18n="warning_updates_in">MAJOR UPDATE IN</span> <span id="warningTimer">---:--:--:--:---</span>
                 </div>
             </div>
         </div>
@@ -17114,7 +17111,7 @@ window.closeSettings = closeSettings;
                 const mm = String(mins).padStart(2, '0');
                 const ss = String(secs).padStart(2, '0');
                 const mmm = String(ms).padStart(3, '0');
-                return dd + ':' + hh + ':' + mm + ':' + ss + ':' + mmm;
+                return dd + ':' + hh + ':' + mm + ':' + ss + '.' + mmm;
             }
 
 
@@ -36610,46 +36607,6 @@ function toggleExplicitNote(badge) {
     }
 }
 
-// Pause the spinning border animation while scrolling to prevent mobile flash
-(function() {
-    var scrollTimer = null;
-    var musicList = null;
-
-    function pauseSpinners() {
-        var spinners = document.querySelectorAll('#musicModal .song-item.song-playing::before');
-        // Target the song-playing cards directly and pause via class
-        document.querySelectorAll('#musicModal .song-item.song-playing').forEach(function(el) {
-            el.classList.add('scroll-paused');
-        });
-    }
-
-    function resumeSpinners() {
-        document.querySelectorAll('#musicModal .song-item.song-playing').forEach(function(el) {
-            el.classList.remove('scroll-paused');
-        });
-    }
-
-    function onScroll() {
-        pauseSpinners();
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(resumeSpinners, 150);
-    }
-
-    // Hook into the music list scroll container
-    function attachScrollListener() {
-        var list = document.querySelector('#musicModal .music-list');
-        if (list && list !== musicList) {
-            if (musicList) musicList.removeEventListener('scroll', onScroll);
-            musicList = list;
-            musicList.addEventListener('scroll', onScroll, { passive: true });
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', attachScrollListener);
-    // Also try attaching after a short delay in case modal renders late
-    setTimeout(attachScrollListener, 1000);
-    setTimeout(attachScrollListener, 3000);
-})();
 
 // Keep the Now Playing pill in body so position:fixed always works
 (function() {
