@@ -9103,9 +9103,9 @@
             transition: width 0.2s linear;
         }
         body.dark-mode .fl-progress-bar { background: #faed7a; }
-        .fl-playback-row { display:flex; justify-content:center; align-items:center; margin-top:12px; gap:16px; }
-        .fl-playback-row #flRestartBtn { position:static; }
-        .fl-playback-row #flQueueBtn { position:static; transform:none; }
+        .fl-playback-row { display:flex; justify-content:center; align-items:center; margin-top:12px; position:relative; width:100%; gap:0; }
+        .fl-playback-row #flRestartBtn { position:absolute; left:calc(50% + 38px); }
+        .fl-playback-row #flQueueBtn { position:absolute; right:calc(50% + 38px); }
         .fl-playpause-btn { background:none; border:none; cursor:pointer; color:#111111; padding:6px; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s, transform 0.15s; opacity:0.9; -webkit-tap-highlight-color:transparent; outline:none; border-radius:50%; }
         .fl-playpause-btn:hover { opacity:1; transform:scale(1.1); }
         body.dark-mode .fl-playpause-btn { color:#faed7a; }
@@ -9666,6 +9666,13 @@
 
         body.intro-visible .form-link-below,
         body.intro-pending .form-link-below {
+            display: none !important;
+            pointer-events: none !important;
+        }
+
+        /* Hide the form link whenever any modal is open so it doesn't float on top */
+        body:has(.modal-overlay.active) .form-link-below,
+        body:has(#fullLyricsModal.active) .form-link-below {
             display: none !important;
             pointer-events: none !important;
         }
