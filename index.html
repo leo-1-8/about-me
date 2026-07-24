@@ -8359,13 +8359,17 @@
 
         /* ── Now Playing Overlay Bar ── */
         #musicNowPlayingBar {
-            width: 100%;
             z-index: 10010;
             background: rgba(15, 20, 40, 0.97);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
             flex-shrink: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
         }
         body:not(.dark-mode) #musicNowPlayingBar {
             background: rgba(240, 244, 255, 0.97);
@@ -8552,11 +8556,12 @@
             height: 100dvh !important;
             border-radius: 0 !important;
             margin: 0 !important;
-            padding-bottom: 0 !important;
+            padding: 0 !important;
             box-shadow: none !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden !important;
+            position: relative !important;
         }
 
         #musicModal .modal-content {
@@ -30038,6 +30043,8 @@ window.closeSettings = closeSettings;
             const hasQueue = typeof musicQueue !== 'undefined' && musicQueue && musicQueue.length > 0;
             if (!currentPlayingSong && !hasQueue) {
                 bar.style.display = 'none';
+                const ml = document.querySelector('#musicModal .music-list');
+                if (ml) ml.style.paddingBottom = '';
                 return;
             }
             // A song is playing/paused (or queue has items) — show the bar
@@ -30046,6 +30053,8 @@ window.closeSettings = closeSettings;
             if (!audio) { bar.style.display = 'none'; return; }
 
             bar.style.display = 'block';
+            const ml = document.querySelector('#musicModal .music-list');
+            if (ml) ml.style.paddingBottom = (bar.offsetHeight + 16) + 'px';
 
             // Title — re-render when song changes; JS pixel marquee (reliable on all devices)
             const titleEl = document.getElementById('mnpTitle');
@@ -36190,6 +36199,7 @@ window._onSongEnded = function(songId) {
         }
         if (typeof mnpUpdate === 'function') mnpUpdate();
         if (typeof updateMiniMusicUI === 'function') updateMiniMusicUI();
+        if (typeof fnpUpdate === 'function') fnpUpdate();
     }
 };
 
@@ -36395,6 +36405,7 @@ body:not(.dark-mode) #fnpLyrics {
     var _fnpLastSong = null;
 
     function fnpUpdate() {
+        window.fnpUpdate = fnpUpdate; // expose globally
         var el = document.getElementById('floatingNowPlaying');
         var titleEl = document.getElementById('fnpTitle');
         var pauseIcon = document.getElementById('fnpPauseIcon');
