@@ -2780,6 +2780,9 @@
         body.dark-mode #loginPwEyeBtn {
             color: #aaaaaa !important;
         }
+        body.dark-mode #loginModalEyeBtn {
+            color: #cccccc !important;
+        }
 
         .name-submit-btn {
             width: 100%;
@@ -11905,18 +11908,39 @@
                 <h2 style="text-align: center; font-size: 32px; margin-bottom: 30px; margin-top: 10px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);" data-i18n="others_heading">OTHERS</h2>
                 <div class="favorites-grid">
                     <div class="favorite-card clickable" onclick="openModal('gaming')">
-                        <div class="favorite-icon">🎮</div>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/caxgkjgi.json"
+                            trigger="loop"
+                            delay="1000"
+                            stroke="bold"
+                            colors="primary:#4b5563,secondary:#30c9e8"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <div class="favorite-title" data-i18n="others_gaming">Gaming</div>
                         <div class="favorite-description" data-i18n="others_gaming_desc">When i got so bored, i play this games.</div>
                     </div>
                     <div class="favorite-card clickable" id="musicFavoriteCard" onclick="openModal('music')">
-                        <div class="favorite-icon">🎵</div>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/gcupmfyg.json"
+                            trigger="loop"
+                            stroke="bold"
+                            colors="primary:#121331,secondary:#30c9e8"
+                            delay="1000"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <div class="favorite-title" data-i18n="others_music">Music</div>
                         <div class="favorite-description" data-i18n="others_music_desc">When I'm sleeping, eating, walking, etc., I play this music.</div>
                         <div id="musicUpdatedLabelCard" style="font-size:10px; font-style:italic; color:#0a3d2b !important; margin-top:4px; margin-bottom:-10px; letter-spacing:0.3px;">UPDATED <span id="musicUpdatedDaysCard">...</span> DAYS AGO</div>
                     </div>
                     <div class="favorite-card clickable" onclick="openModal('singer')">
-                        <div class="favorite-icon">🎤</div>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/vycwlttg.json"
+                            trigger="loop"
+                            delay="200"
+                            stroke="bold"
+                            colors="primary:#4b5563,secondary:#30c9e8"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <div class="favorite-title" data-i18n="others_singer">SINGER</div>
                         <div class="favorite-description" data-i18n="others_singer_desc">i can't live without my fav singers😭.</div>
                     </div>
@@ -12001,15 +12025,35 @@
                         <span class="myapps-app-label">Calculator</span>
                     </div>
                     <div class="myapps-app-box" onclick="openModal('calendarComingSoon')" title="Calendar">
-                        <span class="myapps-app-emoji">🗓️</span>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/uphbloed.json"
+                            trigger="loop"
+                            delay="1000"
+                            stroke="bold"
+                            colors="primary:#4b5563,secondary:#30c9e8"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <span class="myapps-app-label">Calendar</span>
                     </div>
                     <div class="myapps-app-box" onclick="openModal('clock')" title="Open Clock">
-                        <span class="myapps-app-emoji">🕒</span>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/warimioc.json"
+                            trigger="loop"
+                            delay="1000"
+                            colors="primary:#4b5563,secondary:#30c9e8"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <span class="myapps-app-label">Clock</span>
                     </div>
                     <div class="myapps-app-box" onclick="openModal('mapsComingSoon')" title="Maps">
-                        <span class="myapps-app-emoji">🗾</span>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/onmwuuox.json"
+                            trigger="loop"
+                            delay="1000"
+                            stroke="bold"
+                            colors="primary:#4b5563,secondary:#30c9e8"
+                            style="width:48px;height:48px;pointer-events:none;">
+                        </lord-icon>
                         <span class="myapps-app-label">Maps</span>
                     </div>
                     <div class="myapps-app-box" onclick="openModal('novaAI')" title="Open NovaAI">
@@ -14005,6 +14049,17 @@
             <button class="close-button" onclick="closeMessageConfirmationModalX()" title="Close">×</button>
             <div class="confirmation-header">
                 <h3 class="confirmation-title">CONFIRMATION</h3>
+                <div style="display:flex; justify-content:center; margin-top:4px;">
+                    <lord-icon
+                        id="confirmLordIcon1"
+                        src="https://cdn.lordicon.com/exymduqj.json"
+                        trigger="loop"
+                        delay="200"
+                        stroke="bold"
+                        colors="primary:#121331,secondary:#30c9e8"
+                        style="width:70px;height:70px;pointer-events:none;">
+                    </lord-icon>
+                </div>
             </div>
             <div class="confirmation-body">
                 <div class="name-input-wrapper">
@@ -14056,6 +14111,17 @@
         <div class="message-confirmation-box" onclick="event.stopPropagation();">
             <div class="confirmation-header">
                 <h3 class="confirmation-title">LAST CONFIRMATION</h3>
+                <div style="display:flex; justify-content:center; margin-top:4px;">
+                    <lord-icon
+                        id="confirmLordIcon2"
+                        src="https://cdn.lordicon.com/exymduqj.json"
+                        trigger="loop"
+                        delay="200"
+                        stroke="bold"
+                        colors="primary:#121331,secondary:#30c9e8"
+                        style="width:70px;height:70px;pointer-events:none;">
+                    </lord-icon>
+                </div>
             </div>
             <div class="confirmation-body" style="margin-bottom: 0;">
                 <p id="confirmNameQuestion" style="margin: 0; font-size: 14px; text-align: center; line-height: 1.6; font-weight: 500;"></p>
@@ -14171,11 +14237,22 @@
             </div>
 
             <button class="close-button" id="senderLoginOuterClose" onclick="closeModal('senderLogin')" title="Close" style="width:26px; height:26px; top:14px; right:14px; font-size:16px;">×</button>
-            <button type="button" id="loginModalEyeBtn" onclick="event.stopPropagation(); openLoginVisitsModal();" aria-label="Visitors" style="position:absolute; top:16px; left:14px; width:26px; height:26px; border-radius:8px; border:1px solid rgba(139,191,255,0.28); background:rgba(255,255,255,0.08); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; color:#ffffff; z-index:2;">
+            <button type="button" id="loginModalEyeBtn" onclick="event.stopPropagation(); openLoginVisitsModal();" aria-label="Visitors" style="position:absolute; top:16px; left:14px; width:26px; height:26px; border-radius:8px; border:1px solid rgba(150,150,150,0.4); background:rgba(128,128,128,0.15); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; color:#000000; z-index:2;">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
-            <div class="confirmation-header" style="display:flex; align-items:center; justify-content:center; margin-bottom:20px; margin-top:-12px;">
+            <div class="confirmation-header" style="display:flex; align-items:center; justify-content:center; margin-bottom:8px; margin-top:-12px;">
                 <h3 class="confirmation-title" style="flex:1; text-align:center; margin:0; font-size:20px;">LOG IN</h3>
+            </div>
+            <div style="display:flex; justify-content:center; margin-bottom:8px;">
+                <lord-icon
+                    id="loginLordIcon"
+                    src="https://cdn.lordicon.com/jdgfsfzr.json"
+                    trigger="loop"
+                    delay="200"
+                    stroke="bold"
+                    colors="primary:#121331,secondary:#30c9e8"
+                    style="width:80px;height:80px;pointer-events:none;">
+                </lord-icon>
             </div>
             <div class="confirmation-body" style="margin-bottom:0; padding:16px 14px 16px 14px;">
                 <!-- Name input row -->
@@ -36608,6 +36685,28 @@ function toggleExplicitNote(badge) {
 }
 
 
+// Login lordicon — update primary color based on dark mode
+function updateLoginLordIconColor() {
+    var isDark = document.body.classList.contains('dark-mode');
+    var color = isDark ? 'primary:#ffffff,secondary:#30c9e8' : 'primary:#121331,secondary:#30c9e8';
+    ['loginLordIcon', 'confirmLordIcon1', 'confirmLordIcon2'].forEach(function(id) {
+        var icon = document.getElementById(id);
+        if (icon) icon.setAttribute('colors', color);
+    });
+}
+
+// Observe body class changes to detect dark-mode toggle
+(function() {
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            if (m.attributeName === 'class') updateLoginLordIconColor();
+        });
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('DOMContentLoaded', updateLoginLordIconColor);
+    setTimeout(updateLoginLordIconColor, 500);
+})();
+
 // Keep the Now Playing pill in body so position:fixed always works
 (function() {
     function movePillToBody() {
@@ -36672,5 +36771,6 @@ function toggleExplicitNote(badge) {
 </script>
 
 
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
 </body>
 </html>
