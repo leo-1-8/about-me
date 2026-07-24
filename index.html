@@ -6,7 +6,7 @@
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=fallback" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='16' font-weight='bold' fill='%23667eea'>.</text></svg>">
     <style>
         * {
@@ -7036,11 +7036,17 @@
             font-feature-settings: "zero" 0;
             color: #f1f5f9;
             text-shadow: 0 0 24px rgba(129, 140, 248, 0.5);
+            will-change: contents;
+            -webkit-font-smoothing: antialiased;
         }
 
         .clock-digital .clock-sep {
             opacity: 0.45;
             animation: clockColonPulse 1s step-end infinite;
+            display: inline-block;
+            min-width: 0.5em;
+            text-align: center;
+            padding: 0 0.15em;
         }
 
         @keyframes clockColonPulse {
@@ -18615,9 +18621,9 @@ window.closeSettings = closeSettings;
             const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
             return (
                 padClock2(getHours12(d)) +
-                ' <span class="clock-sep">:</span> ' +
+                '<span class="clock-sep">:</span>' +
                 padClock2(d.getMinutes()) +
-                ' <span class="clock-sep">:</span> ' +
+                '<span class="clock-sep">:</span>' +
                 padClock2(d.getSeconds()) +
                 ' <span style="font-size:0.65em; margin-left:8px; vertical-align:middle; opacity:0.85; display:inline-block;">' + ampm + '</span>'
             );
