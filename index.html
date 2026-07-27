@@ -6,7 +6,7 @@
     <title>.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=fallback" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Poppins:wght@400;600;700&family=Share+Tech+Mono&family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@600;700&family=Bebas+Neue&display=fallback" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='16' font-weight='bold' fill='%23667eea'>.</text></svg>">
     <style>
         * {
@@ -1967,8 +1967,9 @@
 
         .main-button {
             padding: 18px 50px;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 700;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -8820,9 +8821,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 13px;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+            font-size: 11px;
             color: #555;
-            font-weight: 500;
+            font-weight: 700;
             width: 100%;
         }
 
@@ -10233,9 +10235,10 @@
             border: 2px solid #ff9999;
             border-radius: 10px;
             text-align: center;
+            font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
             font-size: 14px;
             color: #cc0000;
-            font-weight: 500;
+            font-weight: 700;
             max-width: 340px;
             width: 75%;
             box-shadow: 0 2px 10px rgba(255, 0, 0, 0.1);
@@ -36234,8 +36237,9 @@ function showQueueToast(name, warn) {
 }
 #fnpPill {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: rgba(10, 14, 30, 0.92);
     border: 1px solid rgba(255,255,255,0.13);
     border-radius: 999px;
@@ -36245,7 +36249,7 @@ function showQueueToast(name, warn) {
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     min-width: 0;
-    max-width: min(90vw, 420px);
+    max-width: min(90vw, 440px);
     isolation: isolate;
 }
 body:not(.dark-mode) #fnpPill {
@@ -36330,24 +36334,46 @@ body:not(.dark-mode) #fnpCloseBtn:hover { color: #c00; background: rgba(255,0,0,
     position: absolute;
     inset: -2px;
     border-radius: 999px;
-    padding: 2px;
     background: conic-gradient(
         from -90deg,
-        #f5e642 0deg,
-        #6fdd58 calc(max(0deg, var(--fnp-prog, 0) * 360deg - 5deg)),
-        rgba(100,200,100,0) calc(var(--fnp-prog, 0) * 360deg),
-        rgba(255,255,255,0.08) calc(var(--fnp-prog, 0) * 360deg),
-        rgba(255,255,255,0.08) 360deg
+        #ffe94d 0deg,
+        #5af5c8 calc(var(--fnp-prog, 0) * 360deg),
+        rgba(255,255,255,0.25) calc(var(--fnp-prog, 0) * 360deg),
+        rgba(255,255,255,0.25) 360deg
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
+    padding: 2px;
     pointer-events: none;
     z-index: 0;
+}
+/* Time display below the pill */
+#fnpTimeRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 4px 4px 0 4px;
+    pointer-events: none;
+}
+#fnpCurrentTime, #fnpDuration {
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+body:not(.dark-mode) #fnpCurrentTime,
+body:not(.dark-mode) #fnpDuration {
+    color: #111111;
 }
 #fnpPillWrap {
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
 }
 #fnpLyrics {
@@ -36392,7 +36418,10 @@ body:not(.dark-mode) #fnpLyrics {
                 <svg id="fnpPlayIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" style="display:none;"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.4"/><polygon points="10,8 18,12 10,16" fill="currentColor"/></svg>
             </button>
             <button id="fnpCloseBtn" title="Hide (music keeps playing)" onclick="fnpClose()">✕</button>
-
+        </div>
+        <div id="fnpTimeRow">
+            <span id="fnpCurrentTime">0:00</span>
+            <span id="fnpDuration">0:00</span>
         </div>
         <div id="fnpLyrics"></div>
     </div>
@@ -36533,21 +36562,32 @@ body:not(.dark-mode) #fnpLyrics {
 
     // Dedicated RAF loop for pixel-accurate progress bar + live lyrics
     var _fnpLastLyricText = null;
+    function fnpFmtTime(s) {
+        if (!isFinite(s) || isNaN(s) || s < 0) return '0:00';
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
     (function progressLoop() {
         var pill = document.getElementById('fnpPill');
         var lyricsEl = document.getElementById('fnpLyrics');
+        var ctEl = document.getElementById('fnpCurrentTime');
+        var durEl = document.getElementById('fnpDuration');
         var sid = window.currentPlayingSong;
         if (pill && sid) {
             var aud = document.getElementById('musicPlayer-' + sid);
             var dur = aud ? aud.duration : NaN;
             var validDur = aud && dur && isFinite(dur) && !isNaN(dur) && dur > 0;
             if (validDur) {
-                // Clamp pct strictly between 0 and 1
                 var pct = Math.min(1, Math.max(0, aud.currentTime / dur));
                 pill.style.setProperty('--fnp-prog', pct.toFixed(5));
+                if (ctEl) ctEl.textContent = fnpFmtTime(aud.currentTime);
+                if (durEl) durEl.textContent = fnpFmtTime(dur);
             } else {
-                // Duration not ready yet — keep bar at 0
                 pill.style.setProperty('--fnp-prog', '0');
+                if (ctEl) ctEl.textContent = '0:00';
+                if (durEl) durEl.textContent = '0:00';
             }
 
             // Live lyrics (independent of duration validity)
