@@ -37054,7 +37054,9 @@ function updateLoginLordIconColor() {
     };
 
     function _moonGlowFilter(phaseName) {
-        var t = _moonGlowByPhase[phaseName] || 0;
+        // Named full moons (e.g. "Buck Full Moon") map to the Full Moon glow
+        var key = (phaseName && phaseName.indexOf('Full Moon') !== -1) ? 'Full Moon' : phaseName;
+        var t = _moonGlowByPhase[key] || 0;
         if (t === 0) return 'none';
         var px1 = (8 * t).toFixed(1);
         var px2 = (16 * t).toFixed(1);
@@ -37067,6 +37069,26 @@ function updateLoginLordIconColor() {
              + 'drop-shadow(0 0 ' + px3 + 'px rgba(255,190,30,' + a3 + '))';
     }
 
+    // Traditional full moon names by month (0=Jan to 11=Dec)
+    var FULL_MOON_NAMES = [
+        'Wolf Full Moon',       // January
+        'Snow Full Moon',       // February
+        'Worm Full Moon',       // March
+        'Pink Full Moon',       // April
+        'Flower Full Moon',     // May
+        'Strawberry Full Moon', // June
+        'Buck Full Moon',       // July
+        'Sturgeon Full Moon',   // August
+        'Harvest Full Moon',    // September
+        "Hunter's Full Moon",   // October
+        'Beaver Full Moon',     // November
+        'Cold Full Moon',       // December
+    ];
+
+    function getFullMoonName(ms) {
+        return FULL_MOON_NAMES[new Date(ms).getMonth()];
+    }
+
     function getMoonData() {
         var nowMs = getNowMs();
         var elong = getElongationAtMs(nowMs);
@@ -37077,7 +37099,7 @@ function updateLoginLordIconColor() {
         else if (illum < 50 && waxing)   { icon = MOON_SVGS.waxCres; name = 'Waxing Crescent'; }
         else if (illum < 51 && waxing)   { icon = MOON_SVGS.firstQ;  name = 'First Quarter'; }
         else if (illum < 100 && waxing)  { icon = MOON_SVGS.waxGibb; name = 'Waxing Gibbous'; }
-        else if (illum >= 99.5)          { icon = MOON_SVGS.full;    name = 'Full Moon'; }
+        else if (illum >= 99.5)          { icon = MOON_SVGS.full;    name = getFullMoonName(nowMs); }
         else if (illum > 50 && !waxing)  { icon = MOON_SVGS.wanGibb; name = 'Waning Gibbous'; }
         else if (illum < 51 && !waxing)  { icon = MOON_SVGS.lastQ;   name = 'Third Quarter'; }
         else                             { icon = MOON_SVGS.wanCres;  name = 'Waning Crescent'; }
@@ -37233,17 +37255,19 @@ function updateLoginLordIconColor() {
             updateWidget();
             return;
         }
+        // Use traditional name if next phase is a Full Moon
+        var displayName = (info.name === 'Full Moon') ? getFullMoonName(info.eventMs) : info.name;
         var totalSec = Math.floor(diffMs / 1000);
         var hrs  = Math.floor(totalSec / 3600);
         var mins = Math.floor((totalSec % 3600) / 60);
         var secs = totalSec % 60;
-        // Show days if more than 24 hours remain, otherwise show HH:MM:SS
+        // Show days+hours+mins if more than 24 hours remain, otherwise HH:MM:SS
         if (hrs >= 24) {
             var days = Math.floor(hrs / 24);
             var remHrs = hrs % 24;
-            nextLabel.textContent = info.name + ' in ' + days + 'd ' + _padTwo(remHrs) + 'h ' + _padTwo(mins) + 'm';
+            nextLabel.textContent = displayName + ' in ' + days + 'd ' + _padTwo(remHrs) + 'h ' + _padTwo(mins) + 'm';
         } else {
-            nextLabel.textContent = info.name + ' in ' + _padTwo(hrs) + ':' + _padTwo(mins) + ':' + _padTwo(secs);
+            nextLabel.textContent = displayName + ' in ' + _padTwo(hrs) + ':' + _padTwo(mins) + ':' + _padTwo(secs);
         }
     }
 
@@ -37269,7 +37293,7 @@ function updateLoginLordIconColor() {
 
         if (iconEl) {
             iconEl.innerHTML = data.icon;
-            var phase = data.name === 'New Moon' ? 'new' : data.name === 'Full Moon' ? 'full' : 'lit';
+            var phase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             iconEl.setAttribute('data-phase', phase);
             iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
         }
@@ -37278,7 +37302,7 @@ function updateLoginLordIconColor() {
         if (pctEl)  pctEl.textContent  = data.illum.toFixed(2) + '%';
         if (mainIcon) {
             mainIcon.innerHTML = data.icon.replace('width="32" height="32"', 'width="20" height="20"');
-            var mphase = data.name === 'New Moon' ? 'new' : data.name === 'Full Moon' ? 'full' : 'lit';
+            var mphase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             mainIcon.setAttribute('data-phase', mphase);
             mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
         }
