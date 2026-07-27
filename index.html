@@ -37246,6 +37246,15 @@ function updateLoginLordIconColor() {
                 };
             }
         });
+
+        // Patch openSettings to push history state
+        if (typeof window.openSettings === 'function') {
+            var origOpen = window.openSettings;
+            window.openSettings = function() {
+                history.pushState({ modal: 'settingsOverlay' }, '', '');
+                return origOpen.apply(this, arguments);
+            };
+        }
     }
 
     if (document.readyState === 'loading') {
@@ -37256,6 +37265,12 @@ function updateLoginLordIconColor() {
 
     // Handle back button
     window.addEventListener('popstate', function() {
+        // 0. Settings overlay (class-based show/hide)
+        var settingsOverlay = document.getElementById('settingsOverlay');
+        if (settingsOverlay && settingsOverlay.classList.contains('show')) {
+            if (typeof window.closeSettings === 'function') window.closeSettings();
+            return;
+        }
         // 1. active-class modals (openModal/closeModal system)
         var activeModals = document.querySelectorAll('.modal-overlay.active');
         if (activeModals.length > 0) {
