@@ -36993,6 +36993,12 @@ function updateLoginLordIconColor() {
     }
     setInterval(updateWidget, 60000);
     setTimeout(updateWidget, 2000);
+
+    // Re-run immediately whenever the tab becomes visible again
+    // (browsers throttle/freeze setInterval on hidden tabs)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) updateWidget();
+    });
 })();
 </script>
 
