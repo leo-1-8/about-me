@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
@@ -14997,7 +14997,7 @@
             <button class="close-button-left" onclick="closeModal('updates')" title="Close">×</button>
             <div class="modal-content">
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
-                <div class="updates-scroll-body">
+                <div class="updates-scroll-body notranslate">
                     <p class="update14-heading update16-heading-first">
                         <strong class="update20-rainbow-title">UPDATE 2.0 [NEW]</strong>
                         <span style="font-size: 0.75em; color: #00cc44 !important;">8/1/2026, 12:00PM</span>
@@ -37186,15 +37186,9 @@ function updateLoginLordIconColor() {
         return null;
     }
 
-    function getNextPhaseLabel(data) {
-        var nowMs = getNowMs();
-        var elong = data.elong;
-        var name  = data.name;
-
-        // Phase order by elongation thresholds (degrees):
-        // New Moon ~0, Waxing Crescent 0-90, First Quarter ~90,
-        // Waxing Gibbous 90-180, Full Moon ~180, Waning Gibbous 180-270,
-        // Third Quarter ~270, Waning Crescent 270-360
+    // ── Next phase finder: returns { name, eventMs } ──────────────────────────
+    function getNextPhaseInfo(nowMs) {
+        var elong = getElongationAtMs(nowMs);
         var phaseMap = [
             { name: 'New Moon',        thresh: 0   },
             { name: 'Waxing Crescent', thresh: 45  },
@@ -37205,45 +37199,58 @@ function updateLoginLordIconColor() {
             { name: 'Third Quarter',   thresh: 270 },
             { name: 'Waning Crescent', thresh: 315 },
         ];
-
-        // Show "Now:" for exact phases
-        if (name === 'Full Moon') return 'Now: Full Moon';
-        if (name === 'New Moon')  return 'Now: New Moon';
-
-        // Find which phase we're currently in and what the next threshold is
-        var nextPhase = null;
-        var nextThresh = null;
-
-        // Determine next threshold based on current elongation
-        if (elong < 45)        { nextPhase = phaseMap[1]; nextThresh = 45;  } // → Waxing Crescent
-        else if (elong < 90)   { nextPhase = phaseMap[2]; nextThresh = 90;  } // → First Quarter
-        else if (elong < 135)  { nextPhase = phaseMap[3]; nextThresh = 135; } // → Waxing Gibbous
-        else if (elong < 180)  { nextPhase = phaseMap[4]; nextThresh = 180; } // → Full Moon
-        else if (elong < 225)  { nextPhase = phaseMap[5]; nextThresh = 225; } // → Waning Gibbous
-        else if (elong < 270)  { nextPhase = phaseMap[6]; nextThresh = 270; } // → Third Quarter
-        else if (elong < 315)  { nextPhase = phaseMap[7]; nextThresh = 315; } // → Waning Crescent
-        else                   { nextPhase = phaseMap[0]; nextThresh = 0;   } // → New Moon
-
-        if (!nextPhase) return 'Next: —';
-
-        // Find when elongation crosses that threshold
+        var nextPhase = null, nextThresh = null;
+        if      (elong < 45)  { nextPhase = phaseMap[1]; nextThresh = 45;  }
+        else if (elong < 90)  { nextPhase = phaseMap[2]; nextThresh = 90;  }
+        else if (elong < 135) { nextPhase = phaseMap[3]; nextThresh = 135; }
+        else if (elong < 180) { nextPhase = phaseMap[4]; nextThresh = 180; }
+        else if (elong < 225) { nextPhase = phaseMap[5]; nextThresh = 225; }
+        else if (elong < 270) { nextPhase = phaseMap[6]; nextThresh = 270; }
+        else if (elong < 315) { nextPhase = phaseMap[7]; nextThresh = 315; }
+        else                  { nextPhase = phaseMap[0]; nextThresh = 0;   }
+        if (!nextPhase) return null;
         var eventMs;
-        if (nextThresh === 180) {
-            eventMs = findNextMoonEvent(180, nowMs); // use the precise full moon finder
-        } else if (nextThresh === 0) {
-            eventMs = findNextMoonEvent(0, nowMs);   // use the precise new moon finder
-        } else {
-            eventMs = findNextElongationCross(nextThresh, nowMs);
+        if      (nextThresh === 180) eventMs = findNextMoonEvent(180, nowMs);
+        else if (nextThresh === 0)   eventMs = findNextMoonEvent(0,   nowMs);
+        else                         eventMs = findNextElongationCross(nextThresh, nowMs);
+        return eventMs ? { name: nextPhase.name, eventMs: eventMs } : null;
+    }
+
+    // ── Countdown ticker for "Next: <Phase> in HH:MM:SS" ──────────────────────
+    var _nextPhaseCountdownInterval = null;
+
+    function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function _tickNextPhaseCountdown() {
+        var nextLabel = document.getElementById('moonNextPhaseLabelInner');
+        if (!nextLabel) return;
+        var nowMs = getNowMs();
+        var info = getNextPhaseInfo(nowMs);
+        if (!info) { nextLabel.textContent = '—'; return; }
+        var diffMs = info.eventMs - nowMs;
+        if (diffMs <= 0) {
+            // Phase just arrived — refresh everything and restart countdown
+            updateWidget();
+            return;
         }
+        var totalSec = Math.floor(diffMs / 1000);
+        var hrs  = Math.floor(totalSec / 3600);
+        var mins = Math.floor((totalSec % 3600) / 60);
+        var secs = totalSec % 60;
+        // Show days if more than 24 hours remain, otherwise show HH:MM:SS
+        if (hrs >= 24) {
+            var days = Math.floor(hrs / 24);
+            var remHrs = hrs % 24;
+            nextLabel.textContent = info.name + ' in ' + days + 'd ' + _padTwo(remHrs) + 'h ' + _padTwo(mins) + 'm';
+        } else {
+            nextLabel.textContent = info.name + ' in ' + _padTwo(hrs) + ':' + _padTwo(mins) + ':' + _padTwo(secs);
+        }
+    }
 
-        if (!eventMs) return 'Next: ' + nextPhase.name;
-
-        var daysLeft  = (eventMs - nowMs) / 86400000;
-        var daysRound = Math.ceil(daysLeft);
-        var label = 'Next: ' + nextPhase.name;
-        if (daysRound <= 0) return label + ' today';
-        if (daysRound === 1) return label + ' tomorrow';
-        return label + ' in ' + daysRound + ' day' + (daysRound !== 1 ? 's' : '');
+    function _startNextPhaseCountdown() {
+        if (_nextPhaseCountdownInterval) clearInterval(_nextPhaseCountdownInterval);
+        _tickNextPhaseCountdown(); // run immediately
+        _nextPhaseCountdownInterval = setInterval(_tickNextPhaseCountdown, 1000);
     }
 
     function updateWidget() {
@@ -37256,7 +37263,6 @@ function updateLoginLordIconColor() {
         var mainIcon = document.getElementById('moonMainIcon');
         var mainPct  = document.getElementById('moonMainPercent');
         var mainName = document.getElementById('moonMainName');
-        var nextLabel = document.getElementById('moonNextPhaseLabelInner');
         var nextFullEl = document.getElementById('moonNextFullDate');
         var nextNewEl  = document.getElementById('moonNextNewDate');
         var moonIconPct = document.getElementById('moonIconPercent');
@@ -37278,13 +37284,15 @@ function updateLoginLordIconColor() {
         }
         if (mainPct)  mainPct.textContent  = data.illum.toFixed(2) + '%';
         if (mainName) mainName.textContent = data.name;
-        if (nextLabel) nextLabel.textContent = getNextPhaseLabel(data).replace(/^Next:\s*/, '');
 
-        // Next full moon and new moon
+        // Next full moon and new moon dates
         var nextFullMs = findNextMoonEvent(180, nowMs);
         var nextNewMs  = findNextMoonEvent(0, nowMs);
         if (nextFullEl && nextFullMs) nextFullEl.textContent = formatMoonEventDate(nextFullMs);
         if (nextNewEl  && nextNewMs)  nextNewEl.textContent  = formatMoonEventDate(nextNewMs);
+
+        // (Re)start the live countdown — it handles its own label
+        _startNextPhaseCountdown();
     }
 
     if (document.readyState === 'loading') {
@@ -37294,6 +37302,12 @@ function updateLoginLordIconColor() {
     }
     setInterval(updateWidget, 60000);
     setTimeout(updateWidget, 2000);
+
+    // Re-run immediately when tab becomes visible again
+    // (browsers throttle/freeze setInterval on hidden tabs)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) updateWidget();
+    });
 })();
 </script>
 
