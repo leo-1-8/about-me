@@ -15638,6 +15638,15 @@
                         <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55);">
                             Next New Moon: <span id="moonNextNewDate" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
+                        <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:5px; padding-top:5px;">
+                            <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55);">
+                                🌄 Moon Rise: <span id="moonRiseTime" style="color:rgba(255,220,80,0.9);">—</span>
+                            </div>
+                            <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
+                                🌇 Moon Set: <span id="moonSetTime" style="color:rgba(255,220,80,0.9);">—</span>
+                            </div>
+                            <div style="font-family:'Poppins',sans-serif; font-size:8px; color:rgba(255,255,255,0.3); margin-top:3px;" id="moonRiseSetTz">based on your local time</div>
+                        </div>
                     </div>
                 </div>
                 <div class="settings-row-label" data-i18n="settings_whats_new">What's New</div>
@@ -37317,6 +37326,160 @@ function updateLoginLordIconColor() {
 
         // (Re)start the live countdown — it handles its own label
         _startNextPhaseCountdown();
+
+        // Update moon rise/set
+        _updateMoonRiseSet();
+    }
+
+    // ── Moon Rise / Set calculator ─────────────────────────────────────────────
+    // Uses the visitor's browser timezone + geolocation for accuracy.
+    // Algorithm: iterates through the day sampling moon altitude; finds sign changes.
+    function _getMoonAltitude(jd, lat, lon) {
+        // Greenwich Sidereal Time
+        var T = (jd - 2451545.0) / 36525;
+        var theta0 = 280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * T * T;
+        theta0 = ((theta0 % 360) + 360) % 360;
+
+        // Moon ecliptic coords (simplified)
+        var d = jd - 2451545.0;
+        var L = ((218.3165 + 13.17639648 * d) % 360 + 360) % 360;
+        var M = ((134.9634 + 13.06499295 * d) % 360 + 360) % 360;
+        var F = ((93.2721 + 13.22935020 * d) % 360 + 360) % 360;
+        var Msun = ((357.5291 + 0.98560028 * d) % 360 + 360) % 360;
+        var r2d = 180 / Math.PI, d2r = Math.PI / 180;
+        var lon_moon = L
+            + 6.2886 * Math.sin(M * d2r)
+            + 1.2740 * Math.sin((2 * L - M) * d2r)
+            + 0.6583 * Math.sin(2 * L * d2r)
+            + 0.2136 * Math.sin(2 * M * d2r)
+            - 0.1851 * Math.sin(Msun * d2r)
+            - 0.1143 * Math.sin(2 * F * d2r);
+        var lat_moon = 5.1282 * Math.sin(F * d2r)
+            + 0.2806 * Math.sin((M + F) * d2r)
+            + 0.2777 * Math.sin((M - F) * d2r);
+
+        // Ecliptic → equatorial
+        var eps = 23.4393 * d2r;
+        var lonR = lon_moon * d2r, latR = lat_moon * d2r;
+        var ra = Math.atan2(Math.sin(lonR) * Math.cos(eps) - Math.tan(latR) * Math.sin(eps), Math.cos(lonR)) * r2d;
+        ra = ((ra % 360) + 360) % 360;
+        var dec = Math.asin(Math.sin(latR) * Math.cos(eps) + Math.cos(latR) * Math.sin(eps) * Math.sin(lonR)) * r2d;
+
+        // Hour angle
+        var H = (theta0 + lon - ra);
+        H = ((H % 360) + 360) % 360;
+        if (H > 180) H -= 360;
+
+        // Altitude
+        var latR2 = lat * d2r, decR = dec * d2r, HR = H * d2r;
+        var alt = Math.asin(Math.sin(latR2) * Math.sin(decR) + Math.cos(latR2) * Math.cos(decR) * Math.cos(HR)) * r2d;
+        return alt;
+    }
+
+    function _calcMoonRiseSet(lat, lon, dateMs) {
+        // Sample every 5 minutes through the day; find sign changes in altitude (horizon = -0.833 deg)
+        var horizon = -0.833;
+        var stepMs = 5 * 60 * 1000;
+        var dayStart = new Date(dateMs);
+        dayStart.setHours(0, 0, 0, 0);
+        var t0 = dayStart.getTime();
+        var riseMs = null, setMs = null;
+        var prevAlt = null;
+        for (var i = 0; i <= 288; i++) {
+            var ms = t0 + i * stepMs;
+            var jd = ms / 86400000 + 2440587.5;
+            var alt = _getMoonAltitude(jd, lat, lon) - horizon;
+            if (prevAlt !== null) {
+                if (prevAlt < 0 && alt >= 0 && riseMs === null) {
+                    // rising: interpolate
+                    var frac = -prevAlt / (alt - prevAlt);
+                    riseMs = ms - stepMs + frac * stepMs;
+                }
+                if (prevAlt >= 0 && alt < 0 && setMs === null) {
+                    var frac2 = prevAlt / (prevAlt - alt);
+                    setMs = ms - stepMs + frac2 * stepMs;
+                }
+            }
+            prevAlt = alt;
+        }
+        return { riseMs: riseMs, setMs: setMs };
+    }
+
+    function _fmtMoonTime(ms) {
+        if (!ms) return '—';
+        var d = new Date(ms);
+        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        var h12 = h % 12 || 12;
+        return (h12 < 10 ? '0' : '') + h12 + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s + ' ' + ampm;
+    }
+
+    var _moonRiseSetCache = { lat: null, lon: null, dateKey: null, riseMs: null, setMs: null };
+    var _moonRiseSetTicker = null;
+
+    function _tickMoonRiseSet() {
+        var riseEl = document.getElementById('moonRiseTime');
+        var setEl  = document.getElementById('moonSetTime');
+        if (!riseEl || !setEl) return;
+        var nowMs = Date.now();
+        var c = _moonRiseSetCache;
+        if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
+        function fmt(evMs) {
+            if (!evMs) return '—';
+            var diff = evMs - nowMs;
+            if (diff > 0) {
+                // Countdown: in XXh XXm XXs
+                var ts = Math.floor(diff / 1000);
+                var h = Math.floor(ts / 3600), m = Math.floor((ts % 3600) / 60), s = ts % 60;
+                return 'in ' + (h < 10 ? '0' : '') + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+            }
+            // Past: show actual time with h m s labels
+            return _fmtMoonTime(evMs);
+        }
+        riseEl.textContent = fmt(c.riseMs);
+        setEl.textContent  = fmt(c.setMs);
+    }
+
+    function _updateMoonRiseSet() {
+        var riseEl = document.getElementById('moonRiseTime');
+        var setEl  = document.getElementById('moonSetTime');
+        var tzEl   = document.getElementById('moonRiseSetTz');
+        if (!riseEl || !setEl) return;
+
+        function compute(lat, lon) {
+            var today = Date.now();
+            var dateKey = new Date(today).toDateString();
+            var c = _moonRiseSetCache;
+            if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return; // already computed today
+            var res = _calcMoonRiseSet(lat, lon, today);
+            _moonRiseSetCache = { lat: lat, lon: lon, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
+            if (tzEl) {
+                var tzName = '';
+                try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+                tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
+            }
+            // Start per-second ticker
+            if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
+            _tickMoonRiseSet();
+            _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(pos) { compute(pos.coords.latitude, pos.coords.longitude); },
+                function() {
+                    // Fallback: use timezone offset to guess latitude ~0, rough longitude
+                    var tzOff = -(new Date().getTimezoneOffset()); // minutes east of UTC
+                    var lon = tzOff / 4; // rough: 15 deg per hour
+                    compute(14.5, lon); // default lat ~Philippines if denied
+                    if (tzEl) tzEl.textContent = 'approximate (location access denied)';
+                },
+                { timeout: 5000, maximumAge: 3600000 }
+            );
+        } else {
+            var tzOff = -(new Date().getTimezoneOffset());
+            compute(14.5, tzOff / 4);
+        }
     }
 
     if (document.readyState === 'loading') {
