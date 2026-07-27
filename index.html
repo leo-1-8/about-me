@@ -1250,6 +1250,17 @@
         }
 
         /* Dark mode (main page + modals basic) */
+        #moonMainName {
+            color: #111;
+        }
+        body.dark-mode #moonMainName, body.dark-mode #moonPhaseName {
+            color: rgba(255,255,255,0.9);
+        }
+        /* Moon glow driven by illumination % — set via JS on each icon container */
+        body.dark-mode #moonPhaseIcon svg,
+        body.dark-mode #moonMainIcon svg {
+            filter: var(--moon-glow, none);
+        }
         body.dark-mode {
             background: #070b14;
             color: rgba(255, 255, 255, 0.92);
@@ -11654,7 +11665,7 @@
         ">
             <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:20px; height:20px; flex-shrink:0; line-height:1;"><svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
             <div style="display: flex; flex-direction: column; gap: 1px; line-height: 1.1; align-items: center;">
-                <span id="moonMainName" style="font-family:'Poppins',sans-serif; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">New Moon</span>
+                <span id="moonMainName" style="font-family:'Poppins',sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">New Moon</span>
                 <span id="moonMainPercent" style="font-family:'Poppins',sans-serif; font-size: 11px; font-weight: 700; color: #f5e642; text-align: center;">0.00%</span>
             </div>
         </div>
@@ -15609,7 +15620,7 @@
                             <div id="moonIconPercent" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:6px; color:#1a1a2e; text-align:center; pointer-events:none; line-height:1;">0%</div>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
-                            <div id="moonPhaseName" style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px; color: rgba(255,255,255,0.9);">New Moon</div>
+                            <div id="moonPhaseName" style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px;">New Moon</div>
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); flex-shrink:0;">Illumination:</div>
                                 <div style="flex: 1; height: 5px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden;">
@@ -17706,19 +17717,48 @@ window.closeSettings = closeSettings;
         // Modal Functions
         // Server time helper (global) for countdowns that must ignore device time.
         // Uses multiple providers + timeouts, returns Date or null.
-        // ── Time anchor ──
-        var _timeAnchorDeviceMs = Date.now();
+        // ── Time anchor (tamperproof — uses network time, NOT device clock) ──
+        var _timeAnchorDeviceMs = Date.now(); // temp until first network sync
         var _timeAnchorPerfMs   = performance.now();
 
         (function _syncServerAnchor() {
-            _timeAnchorDeviceMs = Date.now();
-            _timeAnchorPerfMs   = performance.now();
-            setTimeout(_syncServerAnchor, 5 * 60 * 1000);
+            var endpoints = [
+                'https://worldtimeapi.org/api/timezone/Etc/UTC',
+                'https://timeapi.io/api/time/current/zone?timeZone=UTC'
+            ];
+            var tried = 0;
+            function tryNext() {
+                if (tried >= endpoints.length) {
+                    setTimeout(_syncServerAnchor, 60 * 1000);
+                    return;
+                }
+                var url = endpoints[tried++];
+                fetch(url, { cache: 'no-store' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(json) {
+                        var unixSec = json.unixtime || json.unixSeconds || null;
+                        if (unixSec) {
+                            _timeAnchorDeviceMs = unixSec * 1000;
+                            _timeAnchorPerfMs   = performance.now();
+                            setTimeout(_syncServerAnchor, 5 * 60 * 1000);
+                        } else {
+                            tryNext();
+                        }
+                    })
+                    .catch(tryNext);
+            }
+            tryNext();
         })();
 
         function getServerTimeNow() {
             var elapsed = performance.now() - _timeAnchorPerfMs;
             return Promise.resolve(new Date(_timeAnchorDeviceMs + elapsed));
+        }
+
+        // Tamperproof wall-clock ms — uses performance.now() offset from server anchor.
+        // Immune to device clock/date changes in system settings.
+        function _safeNow() {
+            return _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs);
         }
 
         // ── Live OS-timezone-change watcher ──────────────────────────────
@@ -18905,7 +18945,7 @@ window.closeSettings = closeSettings;
 
         function resumeClockAppUi() {
             if (timerState.running && timerState.endAt) {
-                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                 if (timerState.remainingMs > 0 && !timerState.tickInterval) {
                     timerState.tickInterval = setInterval(timerTick, 100);
                 }
@@ -18950,7 +18990,7 @@ window.closeSettings = closeSettings;
                 return swState.accumulatedMs + (performance.now() - swState.segmentStart);
             }
             if (swState.bgWallStart != null) {
-                return swState.accumulatedMs + (Date.now() - swState.bgWallStart);
+                return swState.accumulatedMs + (_safeNow() - swState.bgWallStart);
             }
             return swState.accumulatedMs;
         }
@@ -18959,14 +18999,14 @@ window.closeSettings = closeSettings;
             if (swState.running && swState.segmentStart != null) {
                 swState.accumulatedMs += performance.now() - swState.segmentStart;
                 swState.segmentStart = null;
-                swState.bgWallStart = Date.now();
+                swState.bgWallStart = _safeNow();
             }
             stopStopwatchRaf();
         }
 
         function resumeStopwatchUi() {
             if (swState.running && swState.bgWallStart != null) {
-                swState.accumulatedMs += Date.now() - swState.bgWallStart;
+                swState.accumulatedMs += _safeNow() - swState.bgWallStart;
                 swState.bgWallStart = null;
                 swState.segmentStart = performance.now();
             } else if (swState.running && swState.segmentStart == null && swState.bgWallStart == null) {
@@ -18979,7 +19019,7 @@ window.closeSettings = closeSettings;
 
         function pauseTimerBackground() {
             if (timerState.running && timerState.tickInterval) {
-                timerState.endAt = Date.now() + timerState.remainingMs;
+                timerState.endAt = _safeNow() + timerState.remainingMs;
                 clearInterval(timerState.tickInterval);
                 timerState.tickInterval = null;
                 ensureTimerBackgroundTick();
@@ -18988,7 +19028,7 @@ window.closeSettings = closeSettings;
 
         function resumeTimerBackground() {
             if (timerState.running && timerState.endAt) {
-                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                 if (timerState.remainingMs <= 0) {
                     timerState.remainingMs = 0;
                     timerState.running = false;
@@ -19010,7 +19050,7 @@ window.closeSettings = closeSettings;
             if (timerState.tickInterval) return;
             timerState.tickInterval = setInterval(function () {
                 if (!timerState.running || !timerState.endAt) return;
-                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                 if (timerState.remainingMs <= 0) {
                     timerState.remainingMs = 0;
                     timerState.running = false;
@@ -19068,7 +19108,7 @@ window.closeSettings = closeSettings;
                     timerState.running = !!d.timer.running;
                     if (timerState.running && d.timer.endAt) {
                         timerState.endAt = d.timer.endAt;
-                        timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                        timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                         if (timerState.remainingMs <= 0) {
                             timerState.remainingMs = 0;
                             timerState.running = false;
@@ -19634,7 +19674,7 @@ window.closeSettings = closeSettings;
         function timerTick() {
             if (!timerState.running) return;
             if (timerState.endAt) {
-                timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
             } else {
                 timerState.remainingMs -= 100;
             }
@@ -19654,7 +19694,7 @@ window.closeSettings = closeSettings;
                 timerState.tickInterval = null;
             }
             timerState.running = true;
-            timerState.endAt = Date.now() + timerState.remainingMs;
+            timerState.endAt = _safeNow() + timerState.remainingMs;
             setTimerPlayRunIcon(false);
             timerState.tickInterval = setInterval(timerTick, 100);
         }
@@ -19676,7 +19716,7 @@ window.closeSettings = closeSettings;
             if (timerState.remainingMs <= 0) return;
             if (timerState.running) {
                 if (timerState.endAt) {
-                    timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                    timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                 }
                 if (timerState.tickInterval) {
                     clearInterval(timerState.tickInterval);
@@ -19778,7 +19818,7 @@ window.closeSettings = closeSettings;
                 window.addEventListener('pagehide', function () {
                     pauseStopwatchUi();
                     if (timerState.running && timerState.endAt) {
-                        timerState.remainingMs = Math.max(0, timerState.endAt - Date.now());
+                        timerState.remainingMs = Math.max(0, timerState.endAt - _safeNow());
                     }
                     persistClockAppState();
                 });
@@ -20025,7 +20065,7 @@ window.closeSettings = closeSettings;
             if (localStorage.getItem('accountCreatedOnDevice')) {
                 var loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
                 var hasActiveSession = !!localStorage.getItem('userNameForMessage');
-                var twentyFourHoursPassed = loggedOutAt > 0 && (Date.now() - loggedOutAt) >= 1168 * 60 * 60 * 1000;
+                var twentyFourHoursPassed = loggedOutAt > 0 && (_safeNow() - loggedOutAt) >= 1168 * 60 * 60 * 1000;
                 if (!hasActiveSession && twentyFourHoursPassed) {
                     // 1168 hours elapsed without logging back in — allow a new account
                     localStorage.removeItem('accountCreatedOnDevice');
@@ -20284,7 +20324,7 @@ window.closeSettings = closeSettings;
             if (localStorage.getItem('accountCreatedOnDevice')) {
                 var loggedOutAt2 = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
                 var hasActiveSession2 = !!localStorage.getItem('userNameForMessage');
-                var twentyFourHoursPassed2 = loggedOutAt2 > 0 && (Date.now() - loggedOutAt2) >= 1168 * 60 * 60 * 1000;
+                var twentyFourHoursPassed2 = loggedOutAt2 > 0 && (_safeNow() - loggedOutAt2) >= 1168 * 60 * 60 * 1000;
                 if (!hasActiveSession2 && twentyFourHoursPassed2) {
                     // 1168 hours elapsed without logging back in — allow a new account
                     localStorage.removeItem('accountCreatedOnDevice');
@@ -21491,7 +21531,7 @@ window.closeSettings = closeSettings;
                 return;
             }
 
-            var elapsed = Date.now() - loggedOutAt;
+            var elapsed = _safeNow() - loggedOutAt;
             var remaining = ACCOUNT_COOLDOWN_MS - elapsed;
 
             if (remaining <= 0) {
@@ -21551,7 +21591,7 @@ window.closeSettings = closeSettings;
             if (localStorage.getItem('userNameForMessage')) return; // logged in, no timer
             var loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
             if (!loggedOutAt) return;
-            var elapsed = Date.now() - loggedOutAt;
+            var elapsed = _safeNow() - loggedOutAt;
             if (elapsed < ACCOUNT_COOLDOWN_MS) {
                 // Still in cooldown — show timer immediately
                 // Defer slightly to make sure DOM is ready
@@ -21610,7 +21650,7 @@ window.closeSettings = closeSettings;
             if (!expiresAtStr) return; // "don't log out automatically" or no session
             var expiresAt = parseInt(expiresAtStr, 10);
             if (!expiresAt) return;
-            var remaining = expiresAt - Date.now();
+            var remaining = expiresAt - _safeNow();
             if (remaining <= 0) {
                 // Timer already expired. Before showing the auto-logged-out warning,
                 // check Firebase to see if another device already handled this logout.
@@ -22340,7 +22380,7 @@ window.closeSettings = closeSettings;
                     if (hasAccount) {
                         // Check if 1168h cooldown has expired — if so, unlock new account creation
                         var _loggedOutAt = parseInt(localStorage.getItem('autoLoggedOutAt') || '0');
-                        var _cooldownPassed = _loggedOutAt > 0 && (Date.now() - _loggedOutAt) >= 1168 * 60 * 60 * 1000;
+                        var _cooldownPassed = _loggedOutAt > 0 && (_safeNow() - _loggedOutAt) >= 1168 * 60 * 60 * 1000;
                         // Also treat as expired if the owner already pressed END TIMER for this session
                         var _endedByOwner = !!(typeof senderConversationMeta !== 'undefined' && senderConversationMeta && senderConversationMeta.cooldownEndedByOwnerAt && _loggedOutAt > 0 && Number(senderConversationMeta.cooldownEndedByOwnerAt) >= _loggedOutAt);
                         if (!hasActiveSession && (_cooldownPassed || _endedByOwner)) {
@@ -24391,7 +24431,7 @@ window.closeSettings = closeSettings;
             if (sessionExpirationTimeoutId !== null) {
                 clearTimeout(sessionExpirationTimeoutId);
             }
-            const remaining = expireAt - Date.now();
+            const remaining = expireAt - _safeNow();
             if (remaining <= 0) {
                 expireSecretSession();
                 return;
@@ -24421,7 +24461,7 @@ window.closeSettings = closeSettings;
         function checkSecretSessionOnLoad() {
             const stored = localStorage.getItem(SECRET_SESSION_EXPIRES_KEY);
             const expireAt = stored ? parseInt(stored, 10) : NaN;
-            if (!expireAt || isNaN(expireAt) || expireAt <= Date.now()) {
+            if (!expireAt || isNaN(expireAt) || expireAt <= _safeNow()) {
                 localStorage.removeItem(INBOX_UNLOCK_KEY);
                 localStorage.removeItem(SECRET_SESSION_EXPIRES_KEY);
                 return;
@@ -24452,7 +24492,7 @@ window.closeSettings = closeSettings;
             const stored = localStorage.getItem(SECRET_SESSION_EXPIRES_KEY);
             const expireAt = stored ? parseInt(stored, 10) : null;
             
-            if (!expireAt || expireAt <= Date.now()) {
+            if (!expireAt || expireAt <= _safeNow()) {
                 const timerEl = document.getElementById('sessionTimerDisplay');
                 if (timerEl) timerEl.textContent = '00:00:00';
                 stopSessionTimer();
@@ -24461,7 +24501,7 @@ window.closeSettings = closeSettings;
                 return;
             }
             
-            const remaining = expireAt - Date.now();
+            const remaining = expireAt - _safeNow();
             const timerEl = document.getElementById('sessionTimerDisplay');
             if (timerEl) {
                 timerEl.textContent = formatSessionTimeRemaining(remaining);
@@ -26090,7 +26130,7 @@ window.closeSettings = closeSettings;
             // Show END TIMER button only when the 1168h cooldown is actively counting down
             var endTimerBtn = document.getElementById('userSettingsEndTimerBtn');
             if (endTimerBtn) {
-                var timerIsActive = isLoggedOut && !cooldownWasEndedEarly && loggedOutAt > 0 && (Number(loggedOutAt) + 1168 * 60 * 60 * 1000) > Date.now();
+                var timerIsActive = isLoggedOut && !cooldownWasEndedEarly && loggedOutAt > 0 && (Number(loggedOutAt) + 1168 * 60 * 60 * 1000) > _safeNow();
                 endTimerBtn.style.display = timerIsActive ? 'flex' : 'none';
             }
 
@@ -36979,13 +37019,13 @@ function updateLoginLordIconColor() {
     // SVG moon phase icons — one per phase (yellowish moon color)
     var MOON_SVGS = {
         new:      '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><g opacity="0.5"><circle cx="10" cy="10" r="3.5" fill="#3a3e55"/><circle cx="20" cy="8" r="2" fill="#3a3e55"/><circle cx="8" cy="20" r="2.5" fill="#3a3e55"/><circle cx="22" cy="20" r="3" fill="#3a3e55"/><circle cx="15" cy="24" r="1.5" fill="#3a3e55"/><circle cx="18" cy="14" r="1.2" fill="#3a3e55"/></g></svg>',
-        waxCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wc"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wc)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="18" r="3" fill="#b09040"/><circle cx="21" cy="25" r="2" fill="#b09040"/><circle cx="26" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        firstQ:   '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fq"><path d="M16 2a14 14 0 0 1 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 1 0 28z" fill="#e8d47a"/><g clip-path="url(#fq)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="17" r="3.5" fill="#b09040"/><circle cx="20" cy="25" r="2" fill="#b09040"/><circle cx="27" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        waxGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wg"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wg)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="14" cy="12" r="3" fill="#b09040"/><circle cx="22" cy="19" r="3.5" fill="#b09040"/><circle cx="18" cy="25" r="2" fill="#b09040"/><circle cx="11" cy="22" r="1.5" fill="#b09040"/></g></svg>',
-        full:     '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fm"><circle cx="16" cy="16" r="14"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#e8d47a" stroke="rgba(255,235,130,0.5)" stroke-width="1.2"/><g clip-path="url(#fm)" opacity="0.35"><circle cx="10" cy="10" r="3.5" fill="#b09040"/><circle cx="20" cy="8" r="2" fill="#b09040"/><circle cx="8" cy="20" r="2.5" fill="#b09040"/><circle cx="22" cy="20" r="3.5" fill="#b09040"/><circle cx="15" cy="24" r="2" fill="#b09040"/><circle cx="18" cy="14" r="1.5" fill="#b09040"/><circle cx="25" cy="14" r="1.2" fill="#b09040"/></g></svg>',
-        wanGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wng"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wng)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="18" cy="12" r="3" fill="#b09040"/><circle cx="10" cy="19" r="3.5" fill="#b09040"/><circle cx="14" cy="25" r="2" fill="#b09040"/><circle cx="21" cy="22" r="1.5" fill="#b09040"/></g></svg>',
-        lastQ:    '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="tq"><path d="M16 2a14 14 0 0 0 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 0 0 28z" fill="#e8d47a"/><g clip-path="url(#tq)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="17" r="3.5" fill="#b09040"/><circle cx="12" cy="25" r="2" fill="#b09040"/><circle cx="5" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        wanCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wnc"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wnc)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="18" r="3" fill="#b09040"/><circle cx="11" cy="25" r="2" fill="#b09040"/><circle cx="6" cy="13" r="1.5" fill="#b09040"/></g></svg>',
+        waxCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wc"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z"/></clipPath><filter id="wc-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wc)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="18" r="3" fill="#b09040"/><circle cx="21" cy="25" r="2" fill="#b09040"/><circle cx="26" cy="13" r="1.5" fill="#b09040"/></g></svg>',
+        firstQ:   '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fq"><path d="M16 2a14 14 0 0 1 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28z" fill="#e8d47a"/><g clip-path="url(#fq)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="17" r="3.5" fill="#b09040"/><circle cx="20" cy="25" r="2" fill="#b09040"/><circle cx="27" cy="13" r="1.5" fill="#b09040"/></g></svg>',
+        waxGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wg"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wg)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="14" cy="12" r="3" fill="#b09040"/><circle cx="22" cy="19" r="3.5" fill="#b09040"/><circle cx="18" cy="25" r="2" fill="#b09040"/><circle cx="11" cy="22" r="1.5" fill="#b09040"/></g></svg>',
+        full:     '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fm"><circle cx="16" cy="16" r="14"/></clipPath></defs><circle class="moon-lit" cx="16" cy="16" r="14" fill="#e8d47a" stroke="rgba(255,235,130,0.5)" stroke-width="1.2"/><g clip-path="url(#fm)" opacity="0.35"><circle cx="10" cy="10" r="3.5" fill="#b09040"/><circle cx="20" cy="8" r="2" fill="#b09040"/><circle cx="8" cy="20" r="2.5" fill="#b09040"/><circle cx="22" cy="20" r="3.5" fill="#b09040"/><circle cx="15" cy="24" r="2" fill="#b09040"/><circle cx="18" cy="14" r="1.5" fill="#b09040"/><circle cx="25" cy="14" r="1.2" fill="#b09040"/></g></svg>',
+        wanGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wng"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wng)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="18" cy="12" r="3" fill="#b09040"/><circle cx="10" cy="19" r="3.5" fill="#b09040"/><circle cx="14" cy="25" r="2" fill="#b09040"/><circle cx="21" cy="22" r="1.5" fill="#b09040"/></g></svg>',
+        lastQ:    '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="tq"><path d="M16 2a14 14 0 0 0 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28z" fill="#e8d47a"/><g clip-path="url(#tq)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="17" r="3.5" fill="#b09040"/><circle cx="12" cy="25" r="2" fill="#b09040"/><circle cx="5" cy="13" r="1.5" fill="#b09040"/></g></svg>',
+        wanCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wnc"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wnc)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="18" r="3" fill="#b09040"/><circle cx="11" cy="25" r="2" fill="#b09040"/><circle cx="6" cy="13" r="1.5" fill="#b09040"/></g></svg>',
     };
 
     function getElongationAtMs(ms) {
@@ -36999,6 +37039,32 @@ function updateLoginLordIconColor() {
         var sunLon = L0 + C;
         var Lm = ((218.3165 + 13.17639648 * d) % 360 + 360) % 360;
         return ((Lm - sunLon) % 360 + 360) % 360;
+    }
+
+    // Glow intensity per phase (matches the % scale requested)
+    var _moonGlowByPhase = {
+        'New Moon':        0,      // 0%
+        'Waxing Crescent': 0.125,  // 12.5%
+        'First Quarter':   0.375,  // 37.5%
+        'Waxing Gibbous':  0.75,   // 75%
+        'Full Moon':       1.0,    // 100%
+        'Waning Gibbous':  0.75,   // 75%
+        'Third Quarter':   0.375,  // 37.5%
+        'Waning Crescent': 0.125,  // 12.5%
+    };
+
+    function _moonGlowFilter(phaseName) {
+        var t = _moonGlowByPhase[phaseName] || 0;
+        if (t === 0) return 'none';
+        var px1 = (8 * t).toFixed(1);
+        var px2 = (16 * t).toFixed(1);
+        var px3 = (32 * t).toFixed(1);
+        var a1  = (0.9 * t).toFixed(2);
+        var a2  = (0.6 * t).toFixed(2);
+        var a3  = (0.4 * t).toFixed(2);
+        return 'drop-shadow(0 0 ' + px1 + 'px rgba(255,220,80,' + a1 + ')) '
+             + 'drop-shadow(0 0 ' + px2 + 'px rgba(255,200,50,' + a2 + ')) '
+             + 'drop-shadow(0 0 ' + px3 + 'px rgba(255,190,30,' + a3 + '))';
     }
 
     function getMoonData() {
@@ -37197,11 +37263,19 @@ function updateLoginLordIconColor() {
 
         if (iconEl) {
             iconEl.innerHTML = data.icon;
+            var phase = data.name === 'New Moon' ? 'new' : data.name === 'Full Moon' ? 'full' : 'lit';
+            iconEl.setAttribute('data-phase', phase);
+            iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
         }
         if (nameEl) nameEl.textContent = data.name;
         if (barEl)  barEl.style.width  = data.illum + '%';
         if (pctEl)  pctEl.textContent  = data.illum.toFixed(2) + '%';
-        if (mainIcon) mainIcon.innerHTML = data.icon.replace('width="32" height="32"', 'width="20" height="20"');
+        if (mainIcon) {
+            mainIcon.innerHTML = data.icon.replace('width="32" height="32"', 'width="20" height="20"');
+            var mphase = data.name === 'New Moon' ? 'new' : data.name === 'Full Moon' ? 'full' : 'lit';
+            mainIcon.setAttribute('data-phase', mphase);
+            mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
+        }
         if (mainPct)  mainPct.textContent  = data.illum.toFixed(2) + '%';
         if (mainName) mainName.textContent = data.name;
         if (nextLabel) nextLabel.textContent = getNextPhaseLabel(data).replace(/^Next:\s*/, '');
