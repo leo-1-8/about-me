@@ -37436,12 +37436,9 @@ function updateLoginLordIconColor() {
         // Sample every 5 minutes through the day; find sign changes in altitude (horizon = -0.833 deg)
         var horizon = -0.833;
         var stepMs = 5 * 60 * 1000;
-        // Compute local midnight using the network-anchored clock offset,
-        // NOT new Date().setHours() which reads the tampered device clock.
-        var tzOffsetMs = -(new Date(getNowMs()).getTimezoneOffset()) * 60000;
-        var localMs = dateMs + tzOffsetMs;
-        var localMidnightMs = localMs - (localMs % 86400000);
-        var t0 = localMidnightMs - tzOffsetMs; // back to UTC ms
+        var dayStart = new Date(dateMs);
+        dayStart.setHours(0, 0, 0, 0);
+        var t0 = dayStart.getTime();
         var riseMs = null, setMs = null;
         var prevAlt = null;
         for (var i = 0; i <= 288; i++) {
@@ -37466,15 +37463,8 @@ function updateLoginLordIconColor() {
 
     function _fmtMoonTime(ms) {
         if (!ms) return '—';
-        // Use the real UTC offset derived from the network-anchored clock,
-        // not new Date() which would reflect a tampered device clock/timezone.
-        var tzOffsetMs = -(new Date(getNowMs()).getTimezoneOffset()) * 60000;
-        var local = ms + tzOffsetMs;
-        var totalSec = Math.floor(local / 1000);
-        var h = Math.floor((totalSec % 86400) / 3600);
-        var m = Math.floor((totalSec % 3600) / 60);
-        var s = totalSec % 60;
-        if (h < 0) h += 24;
+        var d = new Date(ms);
+        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
         var ampm = h >= 12 ? 'PM' : 'AM';
         var h12 = h % 12 || 12;
         return (h12 < 10 ? '0' : '') + h12 + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s + ' ' + ampm;
@@ -37487,7 +37477,7 @@ function updateLoginLordIconColor() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         if (!riseEl || !setEl) return;
-        var nowMs = getNowMs();
+        var nowMs = Date.now();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
         function fmt(evMs) {
@@ -37515,22 +37505,19 @@ function updateLoginLordIconColor() {
         var locBtn = document.getElementById('moonEnableLocationBtn');
         if (!riseEl || !setEl) return;
 
-        function setTzLabel(tzName) {
-            if (!tzEl) return;
-            tzEl.textContent = tzName ? 'based on your location (' + tzName + ')' : 'based on your location';
-        }
-
-        function compute(lat, lon, fromGeo, tzName) {
-            var today = getNowMs();
-            var tzOffsetMs = -(new Date(getNowMs()).getTimezoneOffset()) * 60000;
-            var dateKey = new Date(today + tzOffsetMs).toUTCString().slice(0, 16);
+        function compute(lat, lon, fromGeo) {
+            var today = Date.now();
+            var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
             if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return;
             var res = _calcMoonRiseSet(lat, lon, today);
             _moonRiseSetCache = { lat: lat, lon: lon, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
             if (tzEl) {
                 if (fromGeo) {
-                    setTzLabel(tzName || '');
+                    var tzName = '';
+                    try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+                    tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
+                    // Hide the button once location is granted
                     if (locBtn) locBtn.style.display = 'none';
                 } else {
                     tzEl.textContent = 'Approximately (location access denied)';
@@ -37541,95 +37528,58 @@ function updateLoginLordIconColor() {
             _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
         }
 
-        function fetchTzAndCompute(lat, lon) {
-            // Use the timeapi.io timezone-by-location endpoint — free, no API key needed
-            var url = 'https://timeapi.io/api/timezone/coordinate?latitude=' + lat + '&longitude=' + lon;
-            fetch(url, { cache: 'no-store' })
-                .then(function(r) { return r.json(); })
-                .then(function(json) {
-                    var tz = (json && json.timeZone) ? json.timeZone : '';
-                    compute(lat, lon, true, tz);
-                })
-                .catch(function() {
-                    // Fallback: derive from device tz only as last resort
-                    var tz = '';
-                    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
-                    compute(lat, lon, true, tz);
-                });
-        }
-
         // On load: use timezone fallback silently, no GPS prompt
         var tzOff = -(new Date().getTimezoneOffset());
         var lon = tzOff / 4;
         compute(14.5, lon, false);
-    }
 
-    // Bind Enable Location button ONCE after DOM ready — outside the update loop
-    function _bindMoonLocationBtn() {
-        var locBtn = document.getElementById('moonEnableLocationBtn');
-        if (!locBtn || locBtn._bound) return;
-        locBtn._bound = true;
+        // Enable Location button: only triggers GPS prompt when tapped
+        if (locBtn && !locBtn._bound) {
+            locBtn._bound = true;
 
-        if (!navigator.geolocation) {
-            locBtn.style.display = 'none';
-            var tzEl2 = document.getElementById('moonRiseSetTz');
-            if (tzEl2) {
-                var noGeoMsg = document.createElement('div');
-                noGeoMsg.style.cssText = 'font-family:\'Poppins\',sans-serif;font-size:8px;color:rgba(255,200,80,0.6);margin-top:5px;text-align:center;';
-                noGeoMsg.textContent = 'Location not supported on this browser. Please enable location access manually.';
-                tzEl2.parentNode.insertBefore(noGeoMsg, locBtn.nextSibling);
+            // Hide button and show message if geolocation not supported at all
+            if (!navigator.geolocation) {
+                locBtn.style.display = 'none';
+                if (tzEl) {
+                    var noGeoMsg = document.createElement('div');
+                    noGeoMsg.style.cssText = 'font-family:\'Poppins\',sans-serif; font-size:8px; color:rgba(255,200,80,0.6); margin-top:5px; text-align:center;';
+                    noGeoMsg.textContent = 'Location not supported on this browser. Please enable location access manually.';
+                    tzEl.parentNode.insertBefore(noGeoMsg, locBtn.nextSibling);
+                }
             }
-            return;
+
+            locBtn.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    if (tzEl) tzEl.textContent = 'Location not supported on this browser. Please enable location access manually.';
+                    locBtn.style.display = 'none';
+                    return;
+                }
+                // Clear old watcher if any
+                if (_moonWatchId !== null) {
+                    navigator.geolocation.clearWatch(_moonWatchId);
+                    _moonWatchId = null;
+                }
+                if (tzEl) tzEl.textContent = 'Waiting for location…';
+                _moonWatchId = navigator.geolocation.watchPosition(
+                    function(pos) {
+                        compute(pos.coords.latitude, pos.coords.longitude, true);
+                    },
+                    function(err) {
+                        if (tzEl) tzEl.textContent = 'Approximately (location access denied)';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
+                );
+            });
         }
-
-        locBtn.addEventListener('click', function() {
-            if (_moonWatchId !== null) {
-                navigator.geolocation.clearWatch(_moonWatchId);
-                _moonWatchId = null;
-            }
-            var tzEl3 = document.getElementById('moonRiseSetTz');
-            if (tzEl3) tzEl3.textContent = 'Waiting for location…';
-            _moonWatchId = navigator.geolocation.watchPosition(
-                function(pos) {
-                    var lat = pos.coords.latitude;
-                    var lon2 = pos.coords.longitude;
-                    var today = getNowMs();
-                    var tzOffMs = -(new Date(today).getTimezoneOffset()) * 60000;
-                    var dateKey = new Date(today + tzOffMs).toUTCString().slice(0, 16);
-                    var res = _calcMoonRiseSet(lat, lon2, today);
-                    _moonRiseSetCache = { lat: lat, lon: lon2, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
-                    var tzEl4 = document.getElementById('moonRiseSetTz');
-                    if (tzEl4) {
-                        var tzName = '';
-                        try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
-                        tzEl4.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your location';
-                    }
-                    var btn = document.getElementById('moonEnableLocationBtn');
-                    if (btn) btn.style.display = 'none';
-                    if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
-                    _tickMoonRiseSet();
-                    _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
-                },
-                function() {
-                    var tzEl4 = document.getElementById('moonRiseSetTz');
-                    if (tzEl4) tzEl4.textContent = 'Approximately (location access denied)';
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
-            );
-        });
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { updateWidget(); _bindMoonLocationBtn(); });
+        document.addEventListener('DOMContentLoaded', updateWidget);
     } else {
         updateWidget();
-        _bindMoonLocationBtn();
     }
     setInterval(updateWidget, 60000);
     setTimeout(updateWidget, 2000);
-    // Also try binding after a short delay in case settings panel renders late
-    setTimeout(_bindMoonLocationBtn, 1000);
-    setTimeout(_bindMoonLocationBtn, 3000);
 
     // Re-run immediately when tab becomes visible again
     // (browsers throttle/freeze setInterval on hidden tabs)
