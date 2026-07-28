@@ -47995,19 +47995,20 @@ class GravSimEndpoint {
             </div>
             <div style="display:flex; flex-direction:column; gap:4px; padding-left:2px; border-top:1px solid rgba(255,255,255,0.08); padding-top:9px;">
                 <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                    Next Full Moon: <span id="moonNextFullDateModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    Moon Rise: <span id="moonRiseTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
                 </div>
-                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                    Next New Moon: <span id="moonNextNewDateModal" style="color:rgba(255,220,80,0.9);">—</span>
+                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                    Moon Set: <span id="moonSetTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:7px;">
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                        Moon Rise: <span id="moonRiseTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        Next Full Moon: <span id="moonNextFullDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                        Moon Set: <span id="moonSetTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        Next New Moon: <span id="moonNextNewDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
                         <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Moon Position</div>
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                             Altitude: <span id="moonAltitudeModal" style="color:rgba(255,220,80,0.9);">—</span>
@@ -48015,41 +48016,41 @@ class GravSimEndpoint {
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Azimuth: <span id="moonAzimuthModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
+                </div>
+                <!-- Orbital Information -->
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Orbital Information</div>
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Current Distance: <span id="moonOrbDistValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <!-- Orbital Information -->
-                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Orbital Information</div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                            Current Distance: <span id="moonOrbDistValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                            Moving: <span id="moonOrbMovingValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                            Next Perigee: <span id="moonNextPerigeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                            Next Apogee: <span id="moonNextApogeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                        Moving: <span id="moonOrbMovingValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <!-- Moon Age -->
-                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                            Moon Age: <span id="moonAgeValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                        Next Perigee: <span id="moonNextPerigeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <!-- Apparent Magnitude -->
-                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                            Apparent Magnitude: <span id="moonMagValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                        Next Apogee: <span id="moonNextApogeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <!-- Zodiac Constellation -->
-                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                            Zodiac Constellation: <span id="moonZodiacValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                        </div>
+                </div>
+                <!-- Moon Age -->
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Moon Age: <span id="moonAgeValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
+                </div>
+                <!-- Apparent Magnitude -->
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Apparent Magnitude: <span id="moonMagValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    </div>
+                </div>
+                <!-- Zodiac Constellation -->
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Zodiac Constellation: <span id="moonZodiacValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    </div>
+                </div>
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
                         <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Observer</div>
                         <div id="moonObsLocationGroup" style="display:none;">
