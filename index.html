@@ -47181,7 +47181,7 @@ class GravSimEndpoint {
     var _moonRiseSetCache = { lat: null, lon: null, dateKey: null, riseMs: null, setMs: null };
     var _moonRiseSetTicker = null;
 
-    function _tickMoonRiseSet() {
+    function _tickMoonRiseSet(nowMs) {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         if (!riseEl || !setEl) return;
@@ -47195,7 +47195,7 @@ class GravSimEndpoint {
             if (setElMx)  setElMx.innerHTML  = _redDash;
             return;
         }
-        var nowMs = getNowMs();
+        if (nowMs === undefined) nowMs = getNowMs();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
         function fmtCountdown(diff) {
@@ -47351,10 +47351,10 @@ class GravSimEndpoint {
 
     function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
 
-    function _tickNextPhaseCountdown() {
+    function _tickNextPhaseCountdown(nowMs) {
         var nextLabel = document.getElementById('moonNextPhaseLabelInner');
         if (!nextLabel) return;
-        var nowMs = getNowMs();
+        if (nowMs === undefined) nowMs = getNowMs();
         var info = getNextPhaseInfo(nowMs);
         if (!info) { nextLabel.textContent = '\u2014'; return; }
         var diffMs = info.eventMs - nowMs;
@@ -47399,16 +47399,9 @@ class GravSimEndpoint {
     }
 
     function _startNextPhaseCountdown() {
-        if (_nextPhaseCountdownInterval) clearInterval(_nextPhaseCountdownInterval);
-        var _nextPhaseExpected = Date.now() + 1000;
-        function _driftTick() {
-            _tickNextPhaseCountdown();
-            var drift = Date.now() - _nextPhaseExpected;
-            _nextPhaseExpected += 1000;
-            _nextPhaseCountdownInterval = setTimeout(_driftTick, Math.max(0, 1000 - drift));
-        }
+        if (_nextPhaseCountdownInterval) { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
+        // rAF loop handles per-second ticking; just do an immediate first tick
         _tickNextPhaseCountdown();
-        _nextPhaseCountdownInterval = setTimeout(_driftTick, 1000);
     }
 
     function updateWidget() {
@@ -47497,7 +47490,7 @@ class GravSimEndpoint {
         // Core astronomy computation — runs every 500ms, stores results in cache for 1s ticker
         var state = _moonPositionState;
         try {
-            var now    = new Date();
+            var now    = new Date((typeof getNowMs === 'function') ? getNowMs() : Date.now());
             var obs    = new Astronomy.Observer(state.lat, state.lon, 0);
             var equ    = Astronomy.Equator(Astronomy.Body.Moon, now, obs, true, true);
             var hor    = Astronomy.Horizon(now, obs, equ.ra, equ.dec, 'normal');
@@ -47525,7 +47518,7 @@ class GravSimEndpoint {
     // ── Apsis search: runs once on load then every 6 hours (heavy, keep off main ticker) ──
     function _refreshApsisCache() {
         try {
-            var apsis1 = Astronomy.SearchLunarApsis(new Date());
+            var apsis1 = Astronomy.SearchLunarApsis(new Date((typeof getNowMs === 'function') ? getNowMs() : Date.now()));
             var apsis2 = Astronomy.NextLunarApsis(apsis1);
             _moonApsisCache.peri = (apsis1.kind === 0 ? apsis1 : apsis2).time.date;
             _moonApsisCache.apo  = (apsis1.kind === 1 ? apsis1 : apsis2).time.date;
@@ -47538,9 +47531,9 @@ class GravSimEndpoint {
     (function() {
         var _months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var _lastSec = -1;
-        function _fmt(target) {
+        function _fmt(target, nowMs) {
             if (!target) return '—';
-            var diffMs = target - Date.now();
+            var diffMs = target - (nowMs || (typeof getNowMs === 'function' ? getNowMs() : Date.now()));
             var h12 = target.getHours() % 12 || 12;
             var ampm = target.getHours() < 12 ? 'AM' : 'PM';
             var timeStr = String(h12).padStart(2,'0') + ':' +
@@ -47559,14 +47552,18 @@ class GravSimEndpoint {
                 String(diffSecs).padStart(2,'0') + 's)';
         }
         function _rafTick() {
-            var sec = Math.floor(Date.now() / 1000);
+            var sec = Math.floor(((typeof getNowMs === 'function') ? getNowMs() : Date.now()) / 1000);
             if (sec !== _lastSec) {
                 _lastSec = sec;
+                // Fire all countdowns together on the same wall-clock second
+                var _nowMs = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
+                if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet(_nowMs);
+                if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
                 // Apsis countdowns — only when location granted
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
-                    var perStr = _fmt(_moonApsisCache.peri);
-                    var apoStr = _fmt(_moonApsisCache.apo);
+                    var perStr = _fmt(_moonApsisCache.peri, _nowMs);
+                    var apoStr = _fmt(_moonApsisCache.apo, _nowMs);
                     var vals  = [perStr, apoStr];
                     pairs.forEach(function(pair, i) {
                         var el  = document.getElementById(pair[0]); if (el)  el.textContent  = vals[i];
@@ -47639,7 +47636,7 @@ class GravSimEndpoint {
                             // Zodiac Constellation
                             var _equ2   = Astronomy.Equator(Astronomy.Body.Moon, _c.now, _c.obs, false, true);
                             var _con    = Astronomy.Constellation(_equ2.ra, _equ2.dec);
-                            var _zodStr = _con.name + ' (' + _con.symbol + ')';
+                            var _zodStr = _con.name;
                             var _zdEl  = document.getElementById('moonZodiacVal');      if (_zdEl)  _zdEl.textContent  = _zodStr;
                             var _zdElM = document.getElementById('moonZodiacValModal'); if (_zdElM) _zdElM.textContent = _zodStr;
 
@@ -47745,16 +47742,8 @@ class GravSimEndpoint {
                 if (locGroup4) locGroup4.style.display = 'none';
                 if (deniedMsg4) deniedMsg4.style.display = 'block';
             }
-            if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
+            if (_moonRiseSetTicker) { clearInterval(_moonRiseSetTicker); _moonRiseSetTicker = null; }
             _tickMoonRiseSet();
-            var _riseSetExpected = Date.now() + 1000;
-            function _riseSetDriftTick() {
-                _tickMoonRiseSet();
-                var drift = Date.now() - _riseSetExpected;
-                _riseSetExpected += 1000;
-                _moonRiseSetTicker = setTimeout(_riseSetDriftTick, Math.max(0, 1000 - drift));
-            }
-            _moonRiseSetTicker = setTimeout(_riseSetDriftTick, 1000);
         }
 
         // On load: use timezone fallback silently, no GPS prompt
