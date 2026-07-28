@@ -15862,7 +15862,7 @@
     <div class="settings-caution-overlay" id="settingsMoonPhaseNoteOverlay" aria-hidden="true">
         <div class="settings-caution-box" role="dialog" aria-labelledby="settingsMoonPhaseNoteTitle">
             <div id="settingsMoonPhaseNoteTitle" class="settings-caution-text" style="text-align:left; font-weight:600; font-size:13px; line-height:1.6;">
-                <p style="margin-bottom:8px;"><strong>Note:</strong> Enable your device's location to detect your current location. Otherwise, your location will be displayed as "<em>Approximately (location access denied)</em>".</p>
+                <p style="margin-bottom:8px;"><strong>Note:</strong> Enable your device's location to detect your current location. Otherwise, your location will be displayed as "<em>Approximately Time Zone (Location Access Denied)</em>".</p>
                 <p style="margin-bottom:8px;"><strong>Optional:</strong> Tap the <em>Enable Location</em> button below the Moon Rise &amp; Set to use your GPS location. The BLOCK / ALLOW prompt will appear, we respect whatever you choose.<br>If you turn on the location, please wait a few moments. Your time zone will then update automatically based on your location (for example, <em>Asia/Manila</em>).</p>
                 <p>Your location information is <em>not collected, stored or shared</em>, so you don't have to worry about your privacy.</p>
             </div>
@@ -47451,6 +47451,25 @@ class GravSimEndpoint {
         _moonPositionTicker = setInterval(_tickMoonPosition, 500);
     })();
 
+    // Track whether location was successfully granted so we can restore on visibility
+    var _moonGeoGranted = false;
+    var _moonGeoLat = 14.5;
+    var _moonGeoLon = 0;
+
+    function _setTzElGranted(tzEl, locBtn) {
+        if (!tzEl) return;
+        var tzName = '';
+        try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+        tzEl.innerHTML = '<span style="color:#4cde80;">' + (tzName ? 'based on your time (' + tzName + ')' : 'based on your local time') + '</span>';
+        if (locBtn) locBtn.style.display = 'none';
+    }
+
+    function _setTzElDenied(tzEl, locBtn) {
+        if (!tzEl) return;
+        tzEl.innerHTML = '<span style="color:#ff8a8a;">Location Locked. Please enable it manually.</span>';
+        if (locBtn) { locBtn.style.display = ''; locBtn.disabled = false; }
+    }
+
     function _updateMoonRiseSet() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
@@ -47467,19 +47486,17 @@ class GravSimEndpoint {
             var today = getNowMs();
             var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
-            if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return;
+            if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) {
+                if (fromGeo) _setTzElGranted(tzEl, locBtn);
+                return;
+            }
             var res = _calcMoonRiseSet(lat, lon, today);
             _moonRiseSetCache = { lat: lat, lon: lon, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
-            if (tzEl) {
-                if (fromGeo) {
-                    var tzName = '';
-                    try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
-                    tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
-                    // Hide the button once location is granted
-                    if (locBtn) locBtn.style.display = 'none';
-                } else {
-                    tzEl.innerHTML = '<span style="color:#ff8a8a;">Approximately Time Zone (Location Access Denied)</span>';
-                }
+            if (fromGeo) {
+                _setTzElGranted(tzEl, locBtn);
+            } else {
+                // Initial fallback — no button pressed yet, just show approximate notice
+                if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">Approximately Time Zone (Location Access Denied)</span>';
             }
             if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
             _tickMoonRiseSet();
@@ -47490,7 +47507,13 @@ class GravSimEndpoint {
         var tzOff = -(new Date().getTimezoneOffset());
         var lon = tzOff / 4;
         _moonPositionState.lon = lon; // seed before first compute
-        compute(14.5, lon, false);
+
+        // If location was already granted this session, restore it silently
+        if (_moonGeoGranted) {
+            compute(_moonGeoLat, _moonGeoLon, true);
+        } else {
+            compute(14.5, lon, false);
+        }
 
         // Enable Location button: only triggers GPS prompt when tapped
         if (locBtn && !locBtn._bound) {
@@ -47518,35 +47541,46 @@ class GravSimEndpoint {
                     navigator.geolocation.clearWatch(_moonWatchId);
                     _moonWatchId = null;
                 }
-                // Check if already permanently blocked before prompting —
-                // if denied, skip the doomed silent fail and show instructions immediately.
+
                 function _showBlockedMsg() {
-                    if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">Location blocked. Please enable location manually.</span>';
-                    locBtn.disabled = false;
+                    _moonGeoGranted = false;
+                    _setTzElDenied(tzEl, locBtn);
                 }
 
                 function _doGetLocation() {
-                    if (tzEl) tzEl.textContent = 'Waiting for location…';
+                    if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Waiting for location…</span>';
                     locBtn.disabled = true;
                     navigator.geolocation.getCurrentPosition(
                         function(pos) {
+                            _moonGeoGranted = true;
+                            _moonGeoLat = pos.coords.latitude;
+                            _moonGeoLon = pos.coords.longitude;
                             locBtn.disabled = false;
+                            // Hide the locked hint if visible
+                            var hint = document.getElementById('moonLockedHint');
+                            if (hint) hint.style.display = 'none';
                             compute(pos.coords.latitude, pos.coords.longitude, true);
                             if (_moonWatchId !== null) navigator.geolocation.clearWatch(_moonWatchId);
                             _moonWatchId = navigator.geolocation.watchPosition(
-                                function(pos2) { compute(pos2.coords.latitude, pos2.coords.longitude, true); },
+                                function(pos2) {
+                                    _moonGeoLat = pos2.coords.latitude;
+                                    _moonGeoLon = pos2.coords.longitude;
+                                    compute(pos2.coords.latitude, pos2.coords.longitude, true);
+                                },
                                 function() {},
                                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
                             );
                         },
                         function(err) {
+                            _moonGeoGranted = false;
                             locBtn.disabled = false;
                             if (err.code === 1) {
                                 _showBlockedMsg();
                             } else if (err.code === 2) {
-                                if (tzEl) tzEl.textContent = 'Location unavailable. Try again or check GPS.';
+                                if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">Location unavailable. Try again or check GPS.</span>';
+                                if (locBtn) { locBtn.style.display = ''; locBtn.disabled = false; }
                             } else {
-                                if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">Location blocked. Please enable location manually.</span>';
+                                _showBlockedMsg();
                             }
                         },
                         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -47579,8 +47613,40 @@ class GravSimEndpoint {
     // Re-run immediately when tab becomes visible again
     // (browsers throttle/freeze setInterval on hidden tabs)
     document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) updateWidget();
+        if (!document.hidden) {
+            // If we had GPS, silently re-verify permission hasn't been revoked
+            if (_moonGeoGranted && navigator.permissions) {
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'denied') {
+                        _moonGeoGranted = false;
+                        var tzEl   = document.getElementById('moonRiseSetTz');
+                        var locBtn = document.getElementById('moonEnableLocationBtn');
+                        _setTzElDenied(tzEl, locBtn);
+                    } else {
+                        updateWidget();
+                    }
+                }).catch(function() { updateWidget(); });
+            } else {
+                updateWidget();
+            }
+        }
     });
+
+    // Watch for permission changes in real time (e.g. user revokes in browser settings)
+    if (navigator.permissions) {
+        navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+            result.addEventListener('change', function() {
+                var tzEl   = document.getElementById('moonRiseSetTz');
+                var locBtn = document.getElementById('moonEnableLocationBtn');
+                if (result.state === 'denied') {
+                    _moonGeoGranted = false;
+                    _setTzElDenied(tzEl, locBtn);
+                } else if (result.state === 'granted' && _moonGeoGranted) {
+                    _setTzElGranted(tzEl, locBtn);
+                }
+            });
+        }).catch(function() {});
+    }
 })();
 </script>
 
