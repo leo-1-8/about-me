@@ -15646,7 +15646,31 @@
                             <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
                                 Moon Set: <span id="moonSetTime" style="color:rgba(255,220,80,0.9);">—</span>
                             </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:8px; color:rgba(255,255,255,0.3); margin-top:3px;" id="moonRiseSetTz">based on your local time</div>
+                            <!-- Divider after Moon Set -->
+                            <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:6px;">
+                                <div style="font-family:'Poppins',sans-serif; font-size:9px; font-weight:700; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Moon Position</div>
+                                <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55);">
+                                    Altitude: <span id="moonAltitude" style="color:rgba(255,220,80,0.9);">—</span>
+                                </div>
+                                <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
+                                    Azimuth: <span id="moonAzimuth" style="color:rgba(255,220,80,0.9);">—</span>
+                                </div>
+                                <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
+                                    Distance: <span id="moonDistance" style="color:rgba(255,220,80,0.9);">—</span>
+                                </div>
+                            </div>
+                            <!-- Divider before Observer -->
+                            <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:6px;">
+                                <div style="font-family:'Poppins',sans-serif; font-size:9px; font-weight:700; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Observer</div>
+                                <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55);">
+                                    Latitude: <span id="moonObsLat" style="color:rgba(255,220,80,0.9);">—</span>
+                                </div>
+                                <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
+                                    Longitude: <span id="moonObsLon" style="color:rgba(255,220,80,0.9);">—</span>
+                                </div>
+                            </div>
+                            <!-- Location note and Enable button moved here -->
+                            <div style="font-family:'Poppins',sans-serif; font-size:8px; color:rgba(255,255,255,0.3); margin-top:5px;" id="moonRiseSetTz">based on your local time</div>
                             <div style="text-align:center; margin-top:8px;">
                                 <button type="button" id="moonEnableLocationBtn" style="
                                     font-family:'Poppins',sans-serif;
@@ -47378,6 +47402,55 @@ class GravSimEndpoint {
 
     var _moonWatchId = null;
 
+    // ── Moon Position + Observer (lives outside _updateMoonRiseSet so it persists) ──
+    var _moonPositionTicker = null;
+    var _moonPositionState  = { lat: 14.5, lon: 0, ready: false };
+
+    function _getAzimuthLabel(az) {
+        var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+        return dirs[Math.round(az / 22.5) % 16];
+    }
+
+    function _tickMoonPosition() {
+        var state  = _moonPositionState;
+        var altEl  = document.getElementById('moonAltitude');
+        var azEl   = document.getElementById('moonAzimuth');
+        var distEl = document.getElementById('moonDistance');
+        var latEl  = document.getElementById('moonObsLat');
+        var lonEl  = document.getElementById('moonObsLon');
+        if (!altEl || !azEl || !distEl) return;
+
+        try {
+            var now    = new Date();
+            var obs    = new Astronomy.Observer(state.lat, state.lon, 0);
+            var equ    = Astronomy.Equator(Astronomy.Body.Moon, now, obs, true, true);
+            var hor    = Astronomy.Horizon(now, obs, equ.ra, equ.dec, 'normal');
+            var distKm = equ.dist * 1.495978707e8; // AU → km
+
+            altEl.textContent  = hor.altitude.toFixed(1) + '°';
+            azEl.textContent   = hor.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(hor.azimuth) + ')';
+            distEl.textContent = Math.round(distKm).toLocaleString() + ' km';
+
+            if (latEl && lonEl) {
+                var latSign = state.lat >= 0 ? 'N' : 'S';
+                var lonSign = state.lon >= 0 ? 'E' : 'W';
+                latEl.textContent = Math.abs(state.lat).toFixed(2) + '° ' + latSign;
+                lonEl.textContent = Math.abs(state.lon).toFixed(2) + '° ' + lonSign;
+            }
+        } catch(e) {
+            if (altEl)  altEl.textContent  = '—';
+            if (azEl)   azEl.textContent   = '—';
+            if (distEl) distEl.textContent = '—';
+        }
+    }
+
+    // Start the position ticker once — it reads from _moonPositionState each tick
+    (function() {
+        _tickMoonPosition();
+        if (_moonPositionTicker) clearInterval(_moonPositionTicker);
+        _moonPositionTicker = setInterval(_tickMoonPosition, 500);
+    })();
+
     function _updateMoonRiseSet() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
@@ -47386,6 +47459,11 @@ class GravSimEndpoint {
         if (!riseEl || !setEl) return;
 
         function compute(lat, lon, fromGeo) {
+            // Always update position state so the ticker uses the latest coords
+            _moonPositionState.lat = lat;
+            _moonPositionState.lon = lon;
+            _tickMoonPosition();
+
             var today = getNowMs();
             var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
@@ -47411,6 +47489,7 @@ class GravSimEndpoint {
         // On load: use timezone fallback silently, no GPS prompt
         var tzOff = -(new Date().getTimezoneOffset());
         var lon = tzOff / 4;
+        _moonPositionState.lon = lon; // seed before first compute
         compute(14.5, lon, false);
 
         // Enable Location button: only triggers GPS prompt when tapped
