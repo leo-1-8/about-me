@@ -37562,54 +37562,74 @@ function updateLoginLordIconColor() {
         var tzOff = -(new Date().getTimezoneOffset());
         var lon = tzOff / 4;
         compute(14.5, lon, false);
+    }
 
-        // Enable Location button: only triggers GPS prompt when tapped
-        if (locBtn && !locBtn._bound) {
-            locBtn._bound = true;
+    // Bind Enable Location button ONCE after DOM ready — outside the update loop
+    function _bindMoonLocationBtn() {
+        var locBtn = document.getElementById('moonEnableLocationBtn');
+        if (!locBtn || locBtn._bound) return;
+        locBtn._bound = true;
 
-            // Hide button and show message if geolocation not supported at all
-            if (!navigator.geolocation) {
-                locBtn.style.display = 'none';
-                if (tzEl) {
-                    var noGeoMsg = document.createElement('div');
-                    noGeoMsg.style.cssText = 'font-family:\'Poppins\',sans-serif; font-size:8px; color:rgba(255,200,80,0.6); margin-top:5px; text-align:center;';
-                    noGeoMsg.textContent = 'Location not supported on this browser. Please enable location access manually.';
-                    tzEl.parentNode.insertBefore(noGeoMsg, locBtn.nextSibling);
-                }
+        if (!navigator.geolocation) {
+            locBtn.style.display = 'none';
+            var tzEl2 = document.getElementById('moonRiseSetTz');
+            if (tzEl2) {
+                var noGeoMsg = document.createElement('div');
+                noGeoMsg.style.cssText = 'font-family:\'Poppins\',sans-serif;font-size:8px;color:rgba(255,200,80,0.6);margin-top:5px;text-align:center;';
+                noGeoMsg.textContent = 'Location not supported on this browser. Please enable location access manually.';
+                tzEl2.parentNode.insertBefore(noGeoMsg, locBtn.nextSibling);
             }
-
-            locBtn.addEventListener('click', function() {
-                if (!navigator.geolocation) {
-                    if (tzEl) tzEl.textContent = 'Location not supported on this browser. Please enable location access manually.';
-                    locBtn.style.display = 'none';
-                    return;
-                }
-                // Clear old watcher if any
-                if (_moonWatchId !== null) {
-                    navigator.geolocation.clearWatch(_moonWatchId);
-                    _moonWatchId = null;
-                }
-                if (tzEl) tzEl.textContent = 'Waiting for location…';
-                _moonWatchId = navigator.geolocation.watchPosition(
-                    function(pos) {
-                        fetchTzAndCompute(pos.coords.latitude, pos.coords.longitude);
-                    },
-                    function(err) {
-                        if (tzEl) tzEl.textContent = 'Approximately (location access denied)';
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
-                );
-            });
+            return;
         }
+
+        locBtn.addEventListener('click', function() {
+            if (_moonWatchId !== null) {
+                navigator.geolocation.clearWatch(_moonWatchId);
+                _moonWatchId = null;
+            }
+            var tzEl3 = document.getElementById('moonRiseSetTz');
+            if (tzEl3) tzEl3.textContent = 'Waiting for location…';
+            _moonWatchId = navigator.geolocation.watchPosition(
+                function(pos) {
+                    var lat = pos.coords.latitude;
+                    var lon2 = pos.coords.longitude;
+                    var today = getNowMs();
+                    var tzOffMs = -(new Date(today).getTimezoneOffset()) * 60000;
+                    var dateKey = new Date(today + tzOffMs).toUTCString().slice(0, 16);
+                    var res = _calcMoonRiseSet(lat, lon2, today);
+                    _moonRiseSetCache = { lat: lat, lon: lon2, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
+                    var tzEl4 = document.getElementById('moonRiseSetTz');
+                    if (tzEl4) {
+                        var tzName = '';
+                        try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+                        tzEl4.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your location';
+                    }
+                    var btn = document.getElementById('moonEnableLocationBtn');
+                    if (btn) btn.style.display = 'none';
+                    if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
+                    _tickMoonRiseSet();
+                    _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
+                },
+                function() {
+                    var tzEl4 = document.getElementById('moonRiseSetTz');
+                    if (tzEl4) tzEl4.textContent = 'Approximately (location access denied)';
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
+            );
+        });
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateWidget);
+        document.addEventListener('DOMContentLoaded', function() { updateWidget(); _bindMoonLocationBtn(); });
     } else {
         updateWidget();
+        _bindMoonLocationBtn();
     }
     setInterval(updateWidget, 60000);
     setTimeout(updateWidget, 2000);
+    // Also try binding after a short delay in case settings panel renders late
+    setTimeout(_bindMoonLocationBtn, 1000);
+    setTimeout(_bindMoonLocationBtn, 3000);
 
     // Re-run immediately when tab becomes visible again
     // (browsers throttle/freeze setInterval on hidden tabs)
