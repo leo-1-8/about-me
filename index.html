@@ -37582,39 +37582,52 @@ function updateLoginLordIconColor() {
                     navigator.geolocation.clearWatch(_moonWatchId);
                     _moonWatchId = null;
                 }
-                if (tzEl) tzEl.textContent = 'Waiting for location…';
-                locBtn.disabled = true;
+                // Check if already permanently blocked before prompting —
+                // if denied, skip the doomed silent fail and show instructions immediately.
+                function _showBlockedMsg() {
+                    if (tzEl) tzEl.textContent = 'Location blocked. Please enable location manually.';
+                    locBtn.disabled = false;
+                }
 
-                // Use maximumAge:0 to force the browser permission prompt every time.
-                // watchPosition with a high maximumAge silently returns a cached position
-                // without ever showing the allow/block popup.
-                navigator.geolocation.getCurrentPosition(
-                    function(pos) {
-                        locBtn.disabled = false;
-                        compute(pos.coords.latitude, pos.coords.longitude, true);
-                        // After permission is granted, start watching for updates
-                        if (_moonWatchId !== null) navigator.geolocation.clearWatch(_moonWatchId);
-                        _moonWatchId = navigator.geolocation.watchPosition(
-                            function(pos2) { compute(pos2.coords.latitude, pos2.coords.longitude, true); },
-                            function() {},
-                            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-                        );
-                    },
-                    function(err) {
-                        locBtn.disabled = false;
-                        if (err.code === 1) {
-                            // PERMISSION_DENIED
-                            if (tzEl) tzEl.textContent = 'Location blocked. Please allow it in your browser settings.';
-                        } else if (err.code === 2) {
-                            // POSITION_UNAVAILABLE
-                            if (tzEl) tzEl.textContent = 'Location unavailable. Try again or check GPS.';
+                function _doGetLocation() {
+                    if (tzEl) tzEl.textContent = 'Waiting for location…';
+                    locBtn.disabled = true;
+                    navigator.geolocation.getCurrentPosition(
+                        function(pos) {
+                            locBtn.disabled = false;
+                            compute(pos.coords.latitude, pos.coords.longitude, true);
+                            if (_moonWatchId !== null) navigator.geolocation.clearWatch(_moonWatchId);
+                            _moonWatchId = navigator.geolocation.watchPosition(
+                                function(pos2) { compute(pos2.coords.latitude, pos2.coords.longitude, true); },
+                                function() {},
+                                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                            );
+                        },
+                        function(err) {
+                            locBtn.disabled = false;
+                            if (err.code === 1) {
+                                _showBlockedMsg();
+                            } else if (err.code === 2) {
+                                if (tzEl) tzEl.textContent = 'Location unavailable. Try again or check GPS.';
+                            } else {
+                                if (tzEl) tzEl.textContent = 'Location timed out. Please try again.';
+                            }
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                }
+
+                if (navigator.permissions) {
+                    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                        if (result.state === 'denied') {
+                            _showBlockedMsg();
                         } else {
-                            // TIMEOUT or other
-                            if (tzEl) tzEl.textContent = 'Approximately (location timed out)';
+                            _doGetLocation();
                         }
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
+                    }).catch(function() { _doGetLocation(); });
+                } else {
+                    _doGetLocation();
+                }
             });
         }
     }
