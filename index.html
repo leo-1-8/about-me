@@ -34989,19 +34989,25 @@ window.closeSettings = closeSettings;
                         var tabSuffix = _getTabSuffix();
                         var username = localStorage.getItem('userNameForMessage');
                         if (username && username.trim()) {
+                            // Logged-in users still get a tab suffix so two tabs of the
+                            // same account each count separately.
                             return String(username.trim()).replace(/[.#$\[\]/]/g, '_') + tabSuffix;
                         }
-                        var base = localStorage.getItem('rtdbPresenceSid');
-                        return base ? base + tabSuffix : null;
+                        // Guest: use the per-tab sessionStorage ID (no suffix needed,
+                        // the ID itself is already unique per tab via guestCounter).
+                        return sessionStorage.getItem('presenceGuestId') || null;
                     } catch (e) {
                         return null;
                     }
                 }
 
                 async function assignGuestPresenceId() {
-                    // Check if this device already has a permanent guest ID
+                    // Each tab gets its own unique guest ID stored in sessionStorage.
+                    // We intentionally do NOT reuse the localStorage guest_ ID here —
+                    // that was the bug: every device shared guest_1 and all wrote to
+                    // the same presence slot, making the count always show 1.
                     var stored = null;
-                    try { stored = localStorage.getItem('rtdbPresenceSid'); } catch(e) {}
+                    try { stored = sessionStorage.getItem('presenceGuestId'); } catch(e) {}
                     if (stored && stored.startsWith('guest_')) return stored;
 
                     // First time on this device — claim next guest number from Firebase counter
@@ -35015,7 +35021,7 @@ window.closeSettings = closeSettings;
                         });
                         guestId = 'guest_' + newNum;
                     } catch(e) {}
-                    try { localStorage.setItem('rtdbPresenceSid', guestId); } catch(e) {}
+                    try { sessionStorage.setItem('presenceGuestId', guestId); } catch(e) {}
                     return guestId;
                 }
 
@@ -35028,7 +35034,8 @@ window.closeSettings = closeSettings;
                     try {
                         var username = localStorage.getItem('userNameForMessage');
                         if (username && username.trim()) {
-                            return String(username.trim()).replace(/[.#$\[\]/]/g, '_');
+                            // Include tab suffix so each tab of a logged-in user is counted separately
+                            return String(username.trim()).replace(/[.#$\[\]/]/g, '_') + _getTabSuffix();
                         }
                     } catch (e) {}
                     return null;
@@ -35040,7 +35047,6 @@ window.closeSettings = closeSettings;
                         var expectedSid = getExpectedPresenceSid();
                         if (expectedSid) {
                             presenceSid = expectedSid;
-                            try { localStorage.setItem('rtdbPresenceSid', presenceSid); } catch(e) {}
                         } else {
                             presenceSid = await assignGuestPresenceId();
                         }
