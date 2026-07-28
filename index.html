@@ -781,7 +781,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 18px;
+            margin-top: 6px;
             gap: 8px;
             width: 100%;
         }
@@ -5351,6 +5351,25 @@
         /* Moon phase modal open state */
         #moonPhaseModal.active {
             display: flex !important;
+        }
+
+        /* Moon phase modal scrollbar */
+        #moonPhaseModal {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 transparent;
+        }
+        #moonPhaseModal::-webkit-scrollbar {
+            width: 5px;
+        }
+        #moonPhaseModal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #moonPhaseModal::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+        #moonPhaseModal::-webkit-scrollbar-thumb:hover {
+            background: #60a5fa;
         }
 
         .modal-box {
@@ -15698,7 +15717,7 @@
                     <input id="settingsBrightnessSlider" class="settings-slider" type="range" min="30" max="100" value="100" step="1" aria-label="Adjust brightness">
                 </div>
 
-                <div id="astronomySection">
+                <div id="astronomySection" style="display:grid; gap:12px;">
                 <div class="settings-lang-heading-row">
                     <span class="settings-control-left">
                         <span class="settings-row-label">Astronomy <span style="color:#4cde80; font-size:10px; font-weight:700; font-style:italic;">Added 8/1/2026</span> <span style="color:#4cde80; font-size:11px; font-weight:700;">[NEW]</span></span>
@@ -15724,6 +15743,13 @@
                     <span id="moonDistance"></span>
                     <span id="moonObsLat"></span>
                     <span id="moonObsLon"></span>
+                    <span id="moonAgeVal"></span>
+                    <span id="moonOrbDistVal"></span>
+                    <span id="moonOrbMovingVal"></span>
+                    <span id="moonNextPerigeeVal"></span>
+                    <span id="moonNextApogeeVal"></span>
+                    <span id="moonMagVal"></span>
+                    <span id="moonZodiacVal"></span>
                     <div id="moonRiseSetTz"></div>
                     <button type="button" id="moonEnableLocationBtn">Enable Location</button>
                 </div>
@@ -47159,6 +47185,16 @@ class GravSimEndpoint {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         if (!riseEl || !setEl) return;
+        // If location not granted, show placeholder dashes
+        if (!_moonGeoGranted) {
+            var _redDash = '<span style="color:#ff8a8a;">---</span>';
+            riseEl.innerHTML = _redDash; setEl.innerHTML = _redDash;
+            var riseElMx = document.getElementById('moonRiseTimeModal');
+            var setElMx  = document.getElementById('moonSetTimeModal');
+            if (riseElMx) riseElMx.innerHTML = _redDash;
+            if (setElMx)  setElMx.innerHTML  = _redDash;
+            return;
+        }
         var nowMs = getNowMs();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
@@ -47168,8 +47204,7 @@ class GravSimEndpoint {
             var hh = (h < 10 ? '0' : '') + h;
             var mm = (m < 10 ? '0' : '') + m;
             var ss = (s < 10 ? '0' : '') + s;
-            // Use monospace + tabular-nums so digits don't shift as they change
-            return '<span style="font-family:\'Poppins\',sans-serif;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0.02em;">' + hh + 'h ' + mm + 'm ' + ss + 's</span>';
+            return hh + 'h ' + mm + 'm ' + ss + 's';
         }
         function fmt(evMs) {
             if (!evMs) return '—';
@@ -47340,20 +47375,27 @@ class GravSimEndpoint {
         } else {
             countdownText = displayName + ' in ' + _padTwo(hrs) + ':' + _padTwo(mins) + ':' + _padTwo(secs);
         }
-        nextLabel.textContent = countdownText;
+        nextLabel.innerHTML = _moonGeoGranted ? countdownText : '<span style="color:#ff8a8a;">---</span>';
         // Mirror to modal
         var nextLabelM = document.getElementById('moonNextPhaseLabelInnerModal');
-        if (nextLabelM) nextLabelM.textContent = countdownText;
-        // Keep full/new moon date displays ticking in sync
+        if (nextLabelM) nextLabelM.innerHTML = _moonGeoGranted ? countdownText : '<span style="color:#ff8a8a;">---</span>';
+        // Keep full/new moon date displays ticking in sync — only when location granted
         var fullEl = document.getElementById('moonNextFullDate');
         var newEl  = document.getElementById('moonNextNewDate');
-        if (fullEl && _nextFullMs) fullEl.textContent = formatMoonEventDate(_nextFullMs);
-        if (newEl  && _nextNewMs)  newEl.textContent  = formatMoonEventDate(_nextNewMs);
-        // Mirror dates to modal
         var fullElM = document.getElementById('moonNextFullDateModal');
         var newElM  = document.getElementById('moonNextNewDateModal');
-        if (fullElM && _nextFullMs) fullElM.textContent = formatMoonEventDate(_nextFullMs);
-        if (newElM  && _nextNewMs)  newElM.textContent  = formatMoonEventDate(_nextNewMs);
+        if (_moonGeoGranted) {
+            if (fullEl && _nextFullMs) fullEl.textContent = formatMoonEventDate(_nextFullMs);
+            if (newEl  && _nextNewMs)  newEl.textContent  = formatMoonEventDate(_nextNewMs);
+            if (fullElM && _nextFullMs) fullElM.textContent = formatMoonEventDate(_nextFullMs);
+            if (newElM  && _nextNewMs)  newElM.textContent  = formatMoonEventDate(_nextNewMs);
+        } else {
+            var _rd = '<span style="color:#ff8a8a;">---</span>';
+            if (fullEl)  fullEl.innerHTML  = _rd;
+            if (newEl)   newEl.innerHTML   = _rd;
+            if (fullElM) fullElM.innerHTML = _rd;
+            if (newElM)  newElM.innerHTML  = _rd;
+        }
     }
 
     function _startNextPhaseCountdown() {
@@ -47422,8 +47464,14 @@ class GravSimEndpoint {
         var nextNewMs  = findNextMoonEvent(0, nowMs);
         _nextFullMs = nextFullMs;
         _nextNewMs  = nextNewMs;
-        if (nextFullEl && nextFullMs) nextFullEl.textContent = formatMoonEventDate(nextFullMs);
-        if (nextNewEl  && nextNewMs)  nextNewEl.textContent  = formatMoonEventDate(nextNewMs);
+        if (_moonGeoGranted) {
+            if (nextFullEl && nextFullMs) nextFullEl.textContent = formatMoonEventDate(nextFullMs);
+            if (nextNewEl  && nextNewMs)  nextNewEl.textContent  = formatMoonEventDate(nextNewMs);
+        } else {
+            var _rd2 = '<span style="color:#ff8a8a;">---</span>';
+            if (nextFullEl) nextFullEl.innerHTML = _rd2;
+            if (nextNewEl)  nextNewEl.innerHTML  = _rd2;
+        }
 
         // (Re)start the live countdown — it handles its own label
         _startNextPhaseCountdown();
@@ -47437,6 +47485,8 @@ class GravSimEndpoint {
     // ── Moon Position + Observer (lives outside _updateMoonRiseSet so it persists) ──
     var _moonPositionTicker = null;
     var _moonPositionState  = { lat: 14.5, lon: 0, ready: false };
+    var _moonApsisCache = { peri: null, apo: null }; // cached Date objects for countdown ticker
+    var _moonOrbCache   = { distKm: null, obs: null, altitude: null, azimuth: null, lat: null, lon: null, now: null, equ: null }; // cache for 1s ticker
 
     function _getAzimuthLabel(az) {
         var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
@@ -47444,58 +47494,181 @@ class GravSimEndpoint {
     }
 
     function _tickMoonPosition() {
-        var state  = _moonPositionState;
-        var altEl  = document.getElementById('moonAltitude');
-        var azEl   = document.getElementById('moonAzimuth');
-        var distEl = document.getElementById('moonDistance');
-        var latEl  = document.getElementById('moonObsLat');
-        var lonEl  = document.getElementById('moonObsLon');
-        if (!altEl || !azEl || !distEl) return;
-
+        // Core astronomy computation — runs every 500ms, stores results in cache for 1s ticker
+        var state = _moonPositionState;
         try {
             var now    = new Date();
             var obs    = new Astronomy.Observer(state.lat, state.lon, 0);
             var equ    = Astronomy.Equator(Astronomy.Body.Moon, now, obs, true, true);
             var hor    = Astronomy.Horizon(now, obs, equ.ra, equ.dec, 'normal');
-            var distKm = equ.dist * 1.495978707e8; // AU → km
+            var distKm = equ.dist * 1.495978707e8;
 
-            altEl.textContent  = hor.altitude.toFixed(1) + '°';
-            azEl.textContent   = hor.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(hor.azimuth) + ')';
-            distEl.textContent = distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
-
-            if (latEl && lonEl) {
-                var latSign = state.lat >= 0 ? 'N' : 'S';
-                var lonSign = state.lon >= 0 ? 'E' : 'W';
-                latEl.textContent = Math.abs(state.lat).toFixed(2) + '° ' + latSign;
-                lonEl.textContent = Math.abs(state.lon).toFixed(2) + '° ' + lonSign;
-            }
-            // Mirror to modal elements
-            var altElM  = document.getElementById('moonAltitudeModal');
-            var azElM   = document.getElementById('moonAzimuthModal');
-            var distElM = document.getElementById('moonDistanceModal');
-            var latElM  = document.getElementById('moonObsLatModal');
-            var lonElM  = document.getElementById('moonObsLonModal');
-            if (altElM)  altElM.textContent  = hor.altitude.toFixed(1) + '°';
-            if (azElM)   azElM.textContent   = hor.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(hor.azimuth) + ')';
-            if (distElM) distElM.textContent = distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
-            if (latElM && lonElM) {
-                var latSignM = state.lat >= 0 ? 'N' : 'S';
-                var lonSignM = state.lon >= 0 ? 'E' : 'W';
-                latElM.textContent = Math.abs(state.lat).toFixed(2) + '° ' + latSignM;
-                lonElM.textContent = Math.abs(state.lon).toFixed(2) + '° ' + lonSignM;
-            }
-        } catch(e) {
-            if (altEl)  altEl.textContent  = '—';
-            if (azEl)   azEl.textContent   = '—';
-            if (distEl) distEl.textContent = '—';
-        }
+            // Store in shared cache for the 1s rAF ticker to render
+            _moonOrbCache.distKm   = distKm;
+            _moonOrbCache.obs      = obs;
+            _moonOrbCache.altitude = hor.altitude;
+            _moonOrbCache.azimuth  = hor.azimuth;
+            _moonOrbCache.lat      = state.lat;
+            _moonOrbCache.lon      = state.lon;
+            _moonOrbCache.now      = now;
+            _moonOrbCache.equ      = equ;
+        } catch(e) {}
     }
 
     // Start the position ticker once — it reads from _moonPositionState each tick
     (function() {
         _tickMoonPosition();
         if (_moonPositionTicker) clearInterval(_moonPositionTicker);
-        _moonPositionTicker = setInterval(_tickMoonPosition, 500);
+        _moonPositionTicker = setInterval(_tickMoonPosition, 1000);
+    })();
+
+    // ── Apsis search: runs once on load then every 6 hours (heavy, keep off main ticker) ──
+    function _refreshApsisCache() {
+        try {
+            var apsis1 = Astronomy.SearchLunarApsis(new Date());
+            var apsis2 = Astronomy.NextLunarApsis(apsis1);
+            _moonApsisCache.peri = (apsis1.kind === 0 ? apsis1 : apsis2).time.date;
+            _moonApsisCache.apo  = (apsis1.kind === 1 ? apsis1 : apsis2).time.date;
+        } catch(e) {}
+    }
+    _refreshApsisCache();
+    setInterval(_refreshApsisCache, 6 * 60 * 60 * 1000);
+
+    // ── Smooth 1-second apsis countdown using requestAnimationFrame ──
+    (function() {
+        var _months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var _lastSec = -1;
+        function _fmt(target) {
+            if (!target) return '—';
+            var diffMs = target - Date.now();
+            var h12 = target.getHours() % 12 || 12;
+            var ampm = target.getHours() < 12 ? 'AM' : 'PM';
+            var timeStr = String(h12).padStart(2,'0') + ':' +
+                          String(target.getMinutes()).padStart(2,'0') + ':' +
+                          String(target.getSeconds()).padStart(2,'0') + ' ' + ampm;
+            var dateStr = _months[target.getMonth()] + ' ' + target.getDate() + ', ' + target.getFullYear() + ' ' + timeStr;
+            if (diffMs < 0) return dateStr + ' (passed)';
+            var diffDays = Math.floor(diffMs / 86400000);
+            var diffHrs  = Math.floor((diffMs % 86400000) / 3600000);
+            var diffMins = Math.floor((diffMs % 3600000) / 60000);
+            var diffSecs = Math.floor((diffMs % 60000) / 1000);
+            return dateStr +
+                ' (in ' + diffDays + 'd ' +
+                String(diffHrs).padStart(2,'0') + 'h ' +
+                String(diffMins).padStart(2,'0') + 'm ' +
+                String(diffSecs).padStart(2,'0') + 's)';
+        }
+        function _rafTick() {
+            var sec = Math.floor(Date.now() / 1000);
+            if (sec !== _lastSec) {
+                _lastSec = sec;
+                // Apsis countdowns — only when location granted
+                var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
+                if (_moonGeoGranted) {
+                    var perStr = _fmt(_moonApsisCache.peri);
+                    var apoStr = _fmt(_moonApsisCache.apo);
+                    var vals  = [perStr, apoStr];
+                    pairs.forEach(function(pair, i) {
+                        var el  = document.getElementById(pair[0]); if (el)  el.textContent  = vals[i];
+                        var elM = document.getElementById(pair[1]); if (elM) elM.textContent = vals[i];
+                    });
+                } else {
+                    var _apsisRd = '<span style="color:#ff8a8a;">---</span>';
+                    pairs.forEach(function(pair) {
+                        var el  = document.getElementById(pair[0]); if (el  && el.innerHTML  !== _apsisRd) el.innerHTML  = _apsisRd;
+                        var elM = document.getElementById(pair[1]); if (elM && elM.innerHTML !== _apsisRd) elM.innerHTML = _apsisRd;
+                    });
+                }
+                // ── All 1s DOM updates from cache ──
+                try {
+                    var _c = _moonOrbCache;
+                    if (_c.obs && _c.distKm !== null) {
+
+                        if (_moonGeoGranted) {
+                            var _distStr  = _c.distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
+
+                            // Altitude + Azimuth
+                            var _altLabel = _c.altitude >= 0 ? ' (Above horizon)' : ' (Below horizon)';
+                            var _altStr   = _c.altitude.toFixed(1) + '°' + _altLabel;
+                            var _azStr    = _c.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(_c.azimuth) + ')';
+                            var _altEl  = document.getElementById('moonAltitude');      if (_altEl)  _altEl.textContent  = _altStr;
+                            var _altElM = document.getElementById('moonAltitudeModal'); if (_altElM) _altElM.textContent = _altStr;
+                            var _azEl   = document.getElementById('moonAzimuth');       if (_azEl)   _azEl.textContent   = _azStr;
+                            var _azElM  = document.getElementById('moonAzimuthModal');  if (_azElM)  _azElM.textContent  = _azStr;
+
+                            // Distance
+                            var _dEl  = document.getElementById('moonDistance');      if (_dEl)  _dEl.textContent  = _distStr;
+                            var _dElM = document.getElementById('moonDistanceModal'); if (_dElM) _dElM.textContent = _distStr;
+
+                            // Observer lat/lon
+                            if (_c.lat !== null && _c.lon !== null) {
+                                var _latSign = _c.lat >= 0 ? 'N' : 'S';
+                                var _lonSign = _c.lon >= 0 ? 'E' : 'W';
+                                var _latStr  = Math.abs(_c.lat).toFixed(2) + '° ' + _latSign;
+                                var _lonStr  = Math.abs(_c.lon).toFixed(2) + '° ' + _lonSign;
+                                var _laEl  = document.getElementById('moonObsLat');      if (_laEl)  _laEl.textContent  = _latStr;
+                                var _laElM = document.getElementById('moonObsLatModal'); if (_laElM) _laElM.textContent = _latStr;
+                                var _loEl  = document.getElementById('moonObsLon');      if (_loEl)  _loEl.textContent  = _lonStr;
+                                var _loElM = document.getElementById('moonObsLonModal'); if (_loElM) _loElM.textContent = _lonStr;
+                            }
+
+                            // Current distance (Orbital Information)
+                            var _odEl  = document.getElementById('moonOrbDistVal');      if (_odEl)  _odEl.textContent  = _distStr;
+                            var _odElM = document.getElementById('moonOrbDistValModal'); if (_odElM) _odElM.textContent = _distStr;
+
+                            // Moving direction
+                            var _ahead  = new Date(_c.now.getTime() + 60000);
+                            var _equAhd = Astronomy.Equator(Astronomy.Body.Moon, _ahead, _c.obs, true, true);
+                            var _dAhd   = _equAhd.dist * 1.495978707e8;
+                            var _movStr = _dAhd < _c.distKm ? 'Toward Earth ↓' : 'Away from Earth ↑';
+                            var _mEl  = document.getElementById('moonOrbMovingVal');      if (_mEl)  _mEl.textContent  = _movStr;
+                            var _mElM = document.getElementById('moonOrbMovingValModal'); if (_mElM) _mElM.textContent = _movStr;
+
+                            // Moon Age
+                            var _moonPhase = Astronomy.MoonPhase(_c.now);
+                            var _ageStr    = ((_moonPhase / 360) * 29.53059).toFixed(2) + ' days';
+                            var _agEl  = document.getElementById('moonAgeVal');      if (_agEl)  _agEl.textContent  = _ageStr;
+                            var _agElM = document.getElementById('moonAgeValModal'); if (_agElM) _agElM.textContent = _ageStr;
+
+                            // Apparent Magnitude
+                            var _illum  = Astronomy.Illumination(Astronomy.Body.Moon, _c.now);
+                            var _magStr = _illum.mag.toFixed(2);
+                            var _mgEl  = document.getElementById('moonMagVal');      if (_mgEl)  _mgEl.textContent  = _magStr;
+                            var _mgElM = document.getElementById('moonMagValModal'); if (_mgElM) _mgElM.textContent = _magStr;
+
+                            // Zodiac Constellation
+                            var _equ2   = Astronomy.Equator(Astronomy.Body.Moon, _c.now, _c.obs, false, true);
+                            var _con    = Astronomy.Constellation(_equ2.ra, _equ2.dec);
+                            var _zodStr = _con.name + ' (' + _con.symbol + ')';
+                            var _zdEl  = document.getElementById('moonZodiacVal');      if (_zdEl)  _zdEl.textContent  = _zodStr;
+                            var _zdElM = document.getElementById('moonZodiacValModal'); if (_zdElM) _zdElM.textContent = _zodStr;
+
+                        } else {
+                            // No location granted — blank out all observer-dependent fields
+                            var _dash = '<span style="color:#ff8a8a;">---</span>';
+                            var _noLocIds = [
+                                ['moonAltitude','moonAltitudeModal'],
+                                ['moonAzimuth','moonAzimuthModal'],
+                                ['moonDistance','moonDistanceModal'],
+                                ['moonObsLat','moonObsLatModal'],
+                                ['moonObsLon','moonObsLonModal'],
+                                ['moonOrbDistVal','moonOrbDistValModal'],
+                                ['moonOrbMovingVal','moonOrbMovingValModal'],
+                                ['moonAgeVal','moonAgeValModal'],
+                                ['moonMagVal','moonMagValModal'],
+                                ['moonZodiacVal','moonZodiacValModal'],
+                            ];
+                            _noLocIds.forEach(function(pair) {
+                                var el  = document.getElementById(pair[0]); if (el  && el.innerHTML  !== _dash) el.innerHTML  = _dash;
+                                var elM = document.getElementById(pair[1]); if (elM && elM.innerHTML !== _dash) elM.innerHTML = _dash;
+                            });
+                        }
+                    }
+                } catch(e) {}
+            }
+            requestAnimationFrame(_rafTick);
+        }
+        requestAnimationFrame(_rafTick);
     })();
 
     // Track whether location was successfully granted so we can restore on visibility
@@ -47518,6 +47691,8 @@ class GravSimEndpoint {
         if (tzElM)    { tzElM.style.color = '#4cde80'; tzElM.textContent = tzDisplay; }
         if (locBtnM)  locBtnM.style.display = 'none';
         if (locGroup) locGroup.style.display = 'block';
+        var tzRowM = document.getElementById('moonObsTzRowModal');
+        if (tzRowM) tzRowM.style.display = 'block';
         if (deniedMsg) { deniedMsg.style.display = 'none'; deniedMsg.style.color = '#ff8a8a'; }
     }
 
@@ -47533,6 +47708,8 @@ class GravSimEndpoint {
         if (tzElM)    tzElM.innerHTML = '';
         if (locBtnM)  { locBtnM.style.display = ''; locBtnM.disabled = false; }
         if (locGroup) locGroup.style.display = 'none';
+        var tzRowM2 = document.getElementById('moonObsTzRowModal');
+        if (tzRowM2) tzRowM2.style.display = 'none';
         if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#ff8a8a'; deniedMsg.textContent = deniedText; }
     }
 
@@ -47769,35 +47946,42 @@ class GravSimEndpoint {
     flex-direction: column;
     overflow-y: auto;
 ">
+    <!-- Fixed X button — always stays top-right regardless of scroll -->
+    <button type="button" onclick="closeMoonPhaseModal()" style="
+        position: fixed;
+        top: 18px;
+        right: 20px;
+        z-index: 9999;
+        background: rgba(255,255,255,0.10);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 22px;
+        color: rgba(255,255,255,0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        pointer-events: auto;
+    " id="moonPhaseModalCloseBtn" onmouseenter="this.style.background='rgba(255,255,255,0.2)'" onmouseleave="this.style.background='rgba(255,255,255,0.10)'">×</button>
+
     <div style="width:100%; max-width:600px; margin:0 auto; flex:1; display:flex; flex-direction:column;">
-        <!-- Header -->
+        <!-- Header — scrolls with content -->
         <div style="
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 20px 24px 14px 24px;
             border-bottom: 1px solid rgba(255,255,255,0.10);
-            position: sticky;
-            top: 0;
-            background: linear-gradient(160deg, #0d1b3e 0%, #1a1a2e 100%);
-            z-index: 1;
         ">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-family:'Poppins',sans-serif; font-size:17px; font-weight:700; color:#fff; letter-spacing:0.5px;">MOON PHASE</span>
                 <button type="button" class="settings-warning-btn" id="moonModalNoteBtn" aria-label="Note about Moon Phase" style="margin-left:2px;">!</button>
             </div>
-            <button type="button" onclick="closeMoonPhaseModal()" style="
-                background: rgba(255,255,255,0.10);
-                border: none;
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                cursor: pointer;
-                font-size: 22px;
-                color: rgba(255,255,255,0.7);
-                display: flex; align-items: center; justify-content: center;
-                transition: background 0.2s;
-            " onmouseenter="this.style.background='rgba(255,255,255,0.2)'" onmouseleave="this.style.background='rgba(255,255,255,0.10)'">×</button>
+            <!-- Spacer so title stays left-aligned with room for the fixed X -->
+            <div style="width:36px; flex-shrink:0;"></div>
         </div>
         <!-- Moon Phase Content -->
         <div style="padding: 24px 24px 40px 24px; display:flex; flex-direction:column; gap:14px; flex:1;">
@@ -47842,8 +48026,39 @@ class GravSimEndpoint {
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Azimuth: <span id="moonAzimuthModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
+                    </div>
+                    <!-- Orbital Information -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Orbital Information</div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                            Current Distance: <span id="moonOrbDistValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                            Distance: <span id="moonDistanceModal" style="color:rgba(255,220,80,0.9);">—</span>
+                            Moving: <span id="moonOrbMovingValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                            Next Perigee: <span id="moonNextPerigeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                            Next Apogee: <span id="moonNextApogeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
+                    </div>
+                    <!-- Moon Age -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                            Moon Age: <span id="moonAgeValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
+                    </div>
+                    <!-- Apparent Magnitude -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                            Apparent Magnitude: <span id="moonMagValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                        </div>
+                    </div>
+                    <!-- Zodiac Constellation -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                            Zodiac Constellation: <span id="moonZodiacValModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
                     </div>
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
@@ -47852,15 +48067,15 @@ class GravSimEndpoint {
                             <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                                 Location: <span id="moonObsLocationModal" style="color:#4cde80;">—</span>
                             </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                                Latitude: <span id="moonObsLatModal" style="color:rgba(255,220,80,0.9);">—</span>
-                            </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                                Longitude: <span id="moonObsLonModal" style="color:rgba(255,220,80,0.9);">—</span>
-                            </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;" id="moonObsTzRowModal">
-                                Time Zone: <span id="moonRiseSetTzModal" style="color:#4cde80;">—</span>
-                            </div>
+                        </div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:400; color:rgba(255,255,255,0.72); margin-top:4px;">
+                            Latitude: <span id="moonObsLatModal" style="color:rgba(255,220,80,0.9);">---</span>
+                        </div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:400; color:rgba(255,255,255,0.72); margin-top:4px;">
+                            Longitude: <span id="moonObsLonModal" style="color:rgba(255,220,80,0.9);">---</span>
+                        </div>
+                        <div id="moonObsTzRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                            Time Zone: <span id="moonRiseSetTzModal" style="color:#4cde80;">—</span>
                         </div>
                         <div id="moonObsDeniedMsg" style="font-family:'Poppins',sans-serif; font-size:11px; color:#ff8a8a;">Approximately Time Zone (Location Access Denied)</div>
                     </div>
@@ -47905,7 +48120,6 @@ class GravSimEndpoint {
         ['moonSetTime',           'moonSetTimeModal'],
         ['moonAltitude',          'moonAltitudeModal'],
         ['moonAzimuth',           'moonAzimuthModal'],
-        ['moonDistance',          'moonDistanceModal'],
         ['moonObsLat',            'moonObsLatModal'],
         ['moonObsLon',            'moonObsLonModal'],
     ];
@@ -47944,8 +48158,10 @@ class GravSimEndpoint {
 
     window.openMoonPhaseModal = function() {
         var modal = document.getElementById('moonPhaseModal');
+        var closeBtn = document.getElementById('moonPhaseModalCloseBtn');
         if (modal) {
             modal.classList.add('active');
+            if (closeBtn) closeBtn.style.display = 'flex';
             history.pushState({ modal: 'moonPhaseModal' }, '', '');
             // Force fresh tick immediately so modal never shows stale countdown
             if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown();
@@ -47970,7 +48186,9 @@ class GravSimEndpoint {
             if (e.type === 'click' && modal && e.target !== modal) return;
         }
         var modal = document.getElementById('moonPhaseModal');
+        var closeBtn = document.getElementById('moonPhaseModalCloseBtn');
         if (modal) modal.classList.remove('active');
+        if (closeBtn) closeBtn.style.display = 'none';
         if (_moonModalSyncInterval) { clearInterval(_moonModalSyncInterval); _moonModalSyncInterval = null; }
     };
 
