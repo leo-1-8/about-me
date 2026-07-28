@@ -34971,13 +34971,28 @@ window.closeSettings = closeSettings;
                 var PRESENCE_STALE_MS = 45000;
                 var PRESENCE_HEARTBEAT_MS = 12000;
 
+                // Each browser tab gets a unique suffix stored in sessionStorage so that
+                // two tabs on the same device each occupy their own presence slot in Firebase.
+                function _getTabSuffix() {
+                    try {
+                        var s = sessionStorage.getItem('presenceTabSuffix');
+                        if (!s) {
+                            s = '_tab' + Math.random().toString(36).slice(2, 7);
+                            sessionStorage.setItem('presenceTabSuffix', s);
+                        }
+                        return s;
+                    } catch(e) { return ''; }
+                }
+
                 function getPresenceSessionId() {
                     try {
+                        var tabSuffix = _getTabSuffix();
                         var username = localStorage.getItem('userNameForMessage');
                         if (username && username.trim()) {
-                            return String(username.trim()).replace(/[.#$\[\]/]/g, '_');
+                            return String(username.trim()).replace(/[.#$\[\]/]/g, '_') + tabSuffix;
                         }
-                        return localStorage.getItem('rtdbPresenceSid') || null;
+                        var base = localStorage.getItem('rtdbPresenceSid');
+                        return base ? base + tabSuffix : null;
                     } catch (e) {
                         return null;
                     }
@@ -35126,12 +35141,25 @@ window.closeSettings = closeSettings;
                 window.addEventListener('pagehide', function() {
                     try { if (myPresenceRef) remove(myPresenceRef); } catch(e) {}
                 });
-                // visibilitychange: fires when tab is backgrounded or closed on mobile
+                // visibilitychange: re-register presence when tab comes back into view.
+                // We do NOT remove on 'hidden' — that caused the count to flicker to 0/1
+                // whenever a device locked its screen or switched apps. The onDisconnect
+                // handler and PRESENCE_STALE_MS window already handle real disconnects.
+                var _hiddenAt = 0;
                 document.addEventListener('visibilitychange', async function() {
                     if (document.visibilityState === 'hidden') {
-                        try { if (myPresenceRef) remove(myPresenceRef); } catch(e) {}
+                        _hiddenAt = Date.now();
                     } else if (document.visibilityState === 'visible') {
-                        try { await refreshPresenceRecord(); } catch(e) {}
+                        // Only fully re-register if we were gone longer than the stale window.
+                        // For short app-switches just refresh the heartbeat timestamp.
+                        var awayMs = Date.now() - _hiddenAt;
+                        try {
+                            if (awayMs > PRESENCE_STALE_MS) {
+                                await refreshPresenceRecord();
+                            } else {
+                                await presenceHeartbeat();
+                            }
+                        } catch(e) {}
                     }
                 });
                 window.addEventListener('focus', async function() {
