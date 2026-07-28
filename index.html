@@ -37477,7 +37477,7 @@ function updateLoginLordIconColor() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         if (!riseEl || !setEl) return;
-        var nowMs = getNowMs();
+        var nowMs = Date.now();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
         function fmt(evMs) {
@@ -37505,13 +37505,8 @@ function updateLoginLordIconColor() {
         var locBtn = document.getElementById('moonEnableLocationBtn');
         if (!riseEl || !setEl) return;
 
-        function setTzLabel(tzName) {
-            if (!tzEl) return;
-            tzEl.textContent = tzName ? 'based on your location (' + tzName + ')' : 'based on your location';
-        }
-
-        function compute(lat, lon, fromGeo, tzName) {
-            var today = getNowMs();
+        function compute(lat, lon, fromGeo) {
+            var today = Date.now();
             var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
             if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return;
@@ -37519,7 +37514,10 @@ function updateLoginLordIconColor() {
             _moonRiseSetCache = { lat: lat, lon: lon, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
             if (tzEl) {
                 if (fromGeo) {
-                    setTzLabel(tzName || '');
+                    var tzName = '';
+                    try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+                    tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
+                    // Hide the button once location is granted
                     if (locBtn) locBtn.style.display = 'none';
                 } else {
                     tzEl.textContent = 'Approximately (location access denied)';
@@ -37528,23 +37526,6 @@ function updateLoginLordIconColor() {
             if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
             _tickMoonRiseSet();
             _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
-        }
-
-        function fetchTzAndCompute(lat, lon) {
-            // Use the timeapi.io timezone-by-location endpoint — free, no API key needed
-            var url = 'https://timeapi.io/api/timezone/coordinate?latitude=' + lat + '&longitude=' + lon;
-            fetch(url, { cache: 'no-store' })
-                .then(function(r) { return r.json(); })
-                .then(function(json) {
-                    var tz = (json && json.timeZone) ? json.timeZone : '';
-                    compute(lat, lon, true, tz);
-                })
-                .catch(function() {
-                    // Fallback: derive from device tz only as last resort
-                    var tz = '';
-                    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
-                    compute(lat, lon, true, tz);
-                });
         }
 
         // On load: use timezone fallback silently, no GPS prompt
@@ -37581,7 +37562,7 @@ function updateLoginLordIconColor() {
                 if (tzEl) tzEl.textContent = 'Waiting for location…';
                 _moonWatchId = navigator.geolocation.watchPosition(
                     function(pos) {
-                        fetchTzAndCompute(pos.coords.latitude, pos.coords.longitude);
+                        compute(pos.coords.latitude, pos.coords.longitude, true);
                     },
                     function(err) {
                         if (tzEl) tzEl.textContent = 'Approximately (location access denied)';
