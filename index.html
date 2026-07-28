@@ -17788,8 +17788,8 @@ window.closeSettings = closeSettings;
 
         (function _syncServerAnchor() {
             var endpoints = [
-                'https://worldtimeapi.org/api/timezone/Etc/UTC',
-                'https://timeapi.io/api/time/current/zone?timeZone=UTC'
+                { url: 'https://worldtimeapi.org/api/timezone/Etc/UTC', key: 'unixtime' },
+                { url: 'https://timeapi.io/api/time/current/zone?timeZone=UTC', key: 'unixSeconds' }
             ];
             var tried = 0;
             function tryNext() {
@@ -17797,11 +17797,14 @@ window.closeSettings = closeSettings;
                     setTimeout(_syncServerAnchor, 60 * 1000);
                     return;
                 }
-                var url = endpoints[tried++];
-                fetch(url, { cache: 'no-store' })
-                    .then(function(r) { return r.json(); })
+                var ep = endpoints[tried++];
+                fetch(ep.url, { cache: 'no-store' })
+                    .then(function(r) {
+                        if (!r.ok) throw new Error('non-200');
+                        return r.json();
+                    })
                     .then(function(json) {
-                        var unixSec = json.unixtime || json.unixSeconds || null;
+                        var unixSec = json[ep.key] || json.unixtime || json.unixSeconds || null;
                         if (unixSec) {
                             _timeAnchorDeviceMs = unixSec * 1000;
                             _timeAnchorPerfMs   = performance.now();
@@ -17810,7 +17813,7 @@ window.closeSettings = closeSettings;
                             tryNext();
                         }
                     })
-                    .catch(tryNext);
+                    .catch(function() { tryNext(); });
             }
             tryNext();
         })();
@@ -37355,7 +37358,7 @@ function updateLoginLordIconColor() {
         if (hrs >= 24) {
             var days = Math.floor(hrs / 24);
             var remHrs = hrs % 24;
-            nextLabel.textContent = displayName + ' in ' + days + 'd ' + _padTwo(remHrs) + 'h ' + _padTwo(mins) + 'm';
+            nextLabel.textContent = displayName + ' in ' + days + 'd ' + _padTwo(remHrs) + 'h ' + _padTwo(mins) + 'm ' + _padTwo(secs) + 's';
         } else {
             nextLabel.textContent = displayName + ' in ' + _padTwo(hrs) + ':' + _padTwo(mins) + ':' + _padTwo(secs);
         }
@@ -37505,21 +37508,39 @@ function updateLoginLordIconColor() {
         var nowMs = getNowMs();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
+        function fmtCountdown(diff) {
+            var ts = Math.floor(Math.abs(diff) / 1000);
+            var h = Math.floor(ts / 3600), m = Math.floor((ts % 3600) / 60), s = ts % 60;
+            var hh = (h < 10 ? '0' : '') + h;
+            var mm = (m < 10 ? '0' : '') + m;
+            var ss = (s < 10 ? '0' : '') + s;
+            // Use monospace + tabular-nums so digits don't shift as they change
+            return '<span style="font-family:\'Poppins\',sans-serif;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0.02em;">' + hh + 'h ' + mm + 'm ' + ss + 's</span>';
+        }
         function fmt(evMs) {
             if (!evMs) return '—';
             var diff = evMs - nowMs;
             if (diff > 0) {
-                // Show: HH:MM:SS AM/PM (in XXh XXm XXs)
-                var ts = Math.floor(diff / 1000);
-                var h = Math.floor(ts / 3600), m = Math.floor((ts % 3600) / 60), s = ts % 60;
-                var countdown = 'in ' + (h < 10 ? '0' : '') + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (s < 10 ? '0' : '') + s + 's';
-                return _fmtMoonTime(evMs) + ' (' + countdown + ')';
+                return _fmtMoonTime(evMs) + ' (in ' + fmtCountdown(diff) + ')';
             }
-            // Past: show actual time only
-            return _fmtMoonTime(evMs);
+            return _fmtMoonTime(evMs) + ' (' + fmtCountdown(diff) + ' ago)';
         }
-        riseEl.textContent = fmt(c.riseMs);
-        setEl.textContent  = fmt(c.setMs);
+
+        // For Moon Set: only look ahead to tomorrow AFTER Moon Rise has already passed.
+        // While Moon Rise is still upcoming, show today's set as "ago".
+        // Once Moon Rise is done, switch Moon Set to tomorrow's upcoming set time.
+        var displaySetMs = c.setMs;
+        var riseAlreadyPast = c.riseMs && c.riseMs < nowMs;
+        if (riseAlreadyPast && c.setMs && c.setMs < nowMs) {
+            var tomorrowMs = nowMs + 24 * 3600000;
+            var next = _calcMoonRiseSet(c.lat, c.lon, tomorrowMs);
+            if (next.setMs && next.setMs > nowMs) {
+                displaySetMs = next.setMs;
+            }
+        }
+
+        riseEl.innerHTML = fmt(c.riseMs);
+        setEl.innerHTML  = fmt(displaySetMs);
     }
 
     var _moonWatchId = null;
