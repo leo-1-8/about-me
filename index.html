@@ -15053,12 +15053,13 @@
                         <p style="margin-top: 12px;"><strong>🏡 Main Menu</strong></p>
                         <p>Added a Music Pill.</p>
                         <p>Added lyrics below the Music Pill. (Lyrics are hidden when no music is playing).</p>
+                        <p>Added a Moon Pill that displays the current Moon phase and illumination percentage.</p>
                         <p>Removed Exit button in About Me.</p>
                         <p>Changed the fonts across the website to Bold Poppins.</p>
                         <p style="margin-top: 20px;"><strong>💙 Others</strong></p>
                         <p>Reworked the music system.</p>
                         <p>Added 42 new songs.</p>
-                        <p>- Added search bar</p>
+                        <p>Added search bar</p>
                         <p>Added a queue.</p>
                         <p>Added See Full Lyrics.</p>
                         <p>Added synchronized lyrics.</p>
@@ -15066,7 +15067,7 @@
                         <p>Changed the background modal.</p>
                         <p>Changed the Play/Pause button.</p>
                         <p>Changed the Retry button.</p>
-                        <p>Changed My Top 23 Songs to My Top 60 Songs.</p>
+                        <p>Changed My Top 23 Songs to My Top 65 Songs.</p>
                         <p>Changed the scroll button.</p>
                         <p>Removed the Exit button in Gaming and My Apps.</p>
                         <p>Removed the -5 and +5 buttons.</p>
@@ -15075,6 +15076,7 @@
                         <p>Fixed the progress bar.</p>
                         <p>Fixed the exclamation mark.</p>
                         <p style="margin-top: 20px;"><strong>⚙️ Settings</strong></p>
+                        <p>Added Astronomy with Open button.</p>
                         <p>Adjusted the Night Mode logo.</p>
                         <p>Fixed review submissions in Write a Review.</p>
                         <p style="margin-top: 20px;"><strong>✨ Remodeled Icons</strong></p>
@@ -48002,6 +48004,11 @@ class GravSimEndpoint {
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:7px;">
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Moon Age: <span id="moonAgeValModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    </div>
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:7px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                         Next Full Moon: <span id="moonNextFullDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
@@ -48033,12 +48040,7 @@ class GravSimEndpoint {
                         Next Apogee: <span id="moonNextApogeeValModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
                 </div>
-                <!-- Moon Age -->
-                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                        Moon Age: <span id="moonAgeValModal" style="color:rgba(255,220,80,0.9);">—</span>
-                    </div>
-                </div>
+
                 <!-- Apparent Magnitude -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
