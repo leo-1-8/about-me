@@ -15839,7 +15839,7 @@
         <div class="settings-caution-box" role="dialog" aria-labelledby="settingsMoonPhaseNoteTitle">
             <div id="settingsMoonPhaseNoteTitle" class="settings-caution-text" style="text-align:left; font-weight:600; font-size:13px; line-height:1.6;">
                 <p style="margin-bottom:8px;"><strong>Note:</strong> Enable your device's location to detect your current location. Otherwise, your location will be displayed as "<em>Approximately (location access denied)</em>".</p>
-                <p style="margin-bottom:8px;"><strong>Optional:</strong> Tap the <em>Enable Location</em> button below the Moon Rise &amp; Set to use your GPS location. The BLOCK / ALLOW prompt will appear, we respect whatever you choose.<br>If you turn on the location manually, please wait a few moments. Your time zone will then update automatically based on your location (for example, <em>Asia/Manila</em>).</p>
+                <p style="margin-bottom:8px;"><strong>Optional:</strong> Tap the <em>Enable Location</em> button below the Moon Rise &amp; Set to use your GPS location. The BLOCK / ALLOW prompt will appear, we respect whatever you choose.<br>If you turn on the location, please wait a few moments. Your time zone will then update automatically based on your location (for example, <em>Asia/Manila</em>).</p>
                 <p>Your location information is <em>not collected, stored or shared</em>, so you don't have to worry about your privacy.</p>
             </div>
             <button type="button" class="settings-caution-ok" id="settingsMoonPhaseNoteOkBtn">OK</button>
@@ -37536,9 +37536,22 @@ function updateLoginLordIconColor() {
         // Enable Location button: only triggers GPS prompt when tapped
         if (locBtn && !locBtn._bound) {
             locBtn._bound = true;
+
+            // Hide button and show message if geolocation not supported at all
+            if (!navigator.geolocation) {
+                locBtn.style.display = 'none';
+                if (tzEl) {
+                    var noGeoMsg = document.createElement('div');
+                    noGeoMsg.style.cssText = 'font-family:\'Poppins\',sans-serif; font-size:8px; color:rgba(255,200,80,0.6); margin-top:5px; text-align:center;';
+                    noGeoMsg.textContent = 'Location not supported on this browser. Please enable location access manually.';
+                    tzEl.parentNode.insertBefore(noGeoMsg, locBtn.nextSibling);
+                }
+            }
+
             locBtn.addEventListener('click', function() {
                 if (!navigator.geolocation) {
-                    if (tzEl) tzEl.textContent = 'Geolocation not supported by your browser';
+                    if (tzEl) tzEl.textContent = 'Location not supported on this browser. Please enable location access manually.';
+                    locBtn.style.display = 'none';
                     return;
                 }
                 // Clear old watcher if any
@@ -37546,11 +37559,12 @@ function updateLoginLordIconColor() {
                     navigator.geolocation.clearWatch(_moonWatchId);
                     _moonWatchId = null;
                 }
+                if (tzEl) tzEl.textContent = 'Waiting for location…';
                 _moonWatchId = navigator.geolocation.watchPosition(
                     function(pos) {
                         compute(pos.coords.latitude, pos.coords.longitude, true);
                     },
-                    function() {
+                    function(err) {
                         if (tzEl) tzEl.textContent = 'Approximately (location access denied)';
                     },
                     { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
