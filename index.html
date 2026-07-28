@@ -37100,7 +37100,9 @@ function updateLoginLordIconColor() {
             // performance.now() is a monotonic clock — immune to device clock edits
             return _moonAnchorUtcMs + (performance.now() - _moonAnchorPerfMs);
         }
-        // Fallback only before first network response arrives (~first few seconds)
+        // Fallback: use global _safeNow() if available (also server-anchored),
+        // otherwise Date.now() — only used for the first ~2s before network responds.
+        if (typeof _safeNow === 'function') return _safeNow();
         return Date.now();
     }
 
@@ -37255,7 +37257,7 @@ function updateLoginLordIconColor() {
             var year  = get('year');
             var hour  = get('hour');
             var min   = get('minute');
-            var ampm  = get('dayPeriod').toLowerCase();
+            var ampm  = get('dayPeriod').toUpperCase();
             var tz    = get('timeZoneName');
 
             return month + ' ' + day + ', ' + year + ' at ' + hour + ':' + min + ampm + (tz ? ' (' + tz + ')' : '');
@@ -37500,19 +37502,20 @@ function updateLoginLordIconColor() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         if (!riseEl || !setEl) return;
-        var nowMs = Date.now();
+        var nowMs = getNowMs();
         var c = _moonRiseSetCache;
         if (c.riseMs === null && c.setMs === null) { riseEl.textContent = '—'; setEl.textContent = '—'; return; }
         function fmt(evMs) {
             if (!evMs) return '—';
             var diff = evMs - nowMs;
             if (diff > 0) {
-                // Countdown: in XXh XXm XXs
+                // Show: HH:MM:SS AM/PM (in XXh XXm XXs)
                 var ts = Math.floor(diff / 1000);
                 var h = Math.floor(ts / 3600), m = Math.floor((ts % 3600) / 60), s = ts % 60;
-                return 'in ' + (h < 10 ? '0' : '') + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+                var countdown = 'in ' + (h < 10 ? '0' : '') + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+                return _fmtMoonTime(evMs) + ' (' + countdown + ')';
             }
-            // Past: show actual time with h m s labels
+            // Past: show actual time only
             return _fmtMoonTime(evMs);
         }
         riseEl.textContent = fmt(c.riseMs);
@@ -37529,7 +37532,7 @@ function updateLoginLordIconColor() {
         if (!riseEl || !setEl) return;
 
         function compute(lat, lon, fromGeo) {
-            var today = Date.now();
+            var today = getNowMs();
             var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
             if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return;
@@ -37610,7 +37613,7 @@ function updateLoginLordIconColor() {
                             } else if (err.code === 2) {
                                 if (tzEl) tzEl.textContent = 'Location unavailable. Try again or check GPS.';
                             } else {
-                                if (tzEl) tzEl.textContent = 'Location timed out. Please try again.';
+                                if (tzEl) tzEl.textContent = 'Location blocked. Please enable location manually.';
                             }
                         },
                         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
