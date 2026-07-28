@@ -2228,6 +2228,15 @@
                 rateUsHighlightFadeOut 0.7s ease-in forwards 2.8s;
         }
 
+        .astronomy-highlight {
+            border-radius: 10px;
+            outline: 3px solid rgba(255, 215, 0, 0);
+            outline-offset: 6px;
+            animation:
+                rateUsHighlightPulse 0.7s ease-in-out 4,
+                rateUsHighlightFadeOut 0.7s ease-in forwards 2.8s;
+        }
+
         .christmas-modal-box {
             background: #fff5f5;
             border-radius: 18px;
@@ -11673,10 +11682,11 @@
             padding: 5px 10px 5px 8px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
             height: 44px;
             box-sizing: border-box;
-        ">
+        " onclick="handleMoonWidgetClick()">
             <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:20px; height:20px; flex-shrink:0; line-height:1;"><svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
             <div style="display: flex; flex-direction: column; gap: 1px; line-height: 1.1; align-items: center;">
                 <span id="moonMainName" style="font-family:'Poppins',sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">New Moon</span>
@@ -15613,33 +15623,6 @@
                 </div>
             </div>
             <div class="settings-card-body">
-                <div class="settings-lang-heading-row">
-                    <span class="settings-control-left">
-                        <span class="settings-row-label">Astronomy</span>
-                    </span>
-                </div>
-                <button type="button" class="settings-open-btn" id="settingsOpenMoonPhaseBtn">Open</button>
-                <!-- Hidden sync sources for moon phase modal -->
-                <div style="display:none;" id="moonPhaseWidget">
-                    <div id="moonPhaseIcon"></div>
-                    <div id="moonIconPercent"></div>
-                    <div id="moonPhaseName"></div>
-                    <div id="moonPhaseBar"></div>
-                    <div id="moonPhasePercent"></div>
-                    <div id="moonNextPhaseLabel"></div>
-                    <span id="moonNextPhaseLabelInner"></span>
-                    <span id="moonNextFullDate"></span>
-                    <span id="moonNextNewDate"></span>
-                    <span id="moonRiseTime"></span>
-                    <span id="moonSetTime"></span>
-                    <span id="moonAltitude"></span>
-                    <span id="moonAzimuth"></span>
-                    <span id="moonDistance"></span>
-                    <span id="moonObsLat"></span>
-                    <span id="moonObsLon"></span>
-                    <div id="moonRiseSetTz"></div>
-                    <button type="button" id="moonEnableLocationBtn">Enable Location</button>
-                </div>
                 <div class="settings-row-label" data-i18n="settings_whats_new">What's New</div>
                 <button type="button" class="settings-open-btn" id="settingsOpenUpdatesBtn" data-i18n="settings_open">Open</button>
                 <div class="settings-lang-heading-row">
@@ -15713,6 +15696,36 @@
                 </div>
                 <div class="settings-control-group">
                     <input id="settingsBrightnessSlider" class="settings-slider" type="range" min="30" max="100" value="100" step="1" aria-label="Adjust brightness">
+                </div>
+
+                <div id="astronomySection">
+                <div class="settings-lang-heading-row">
+                    <span class="settings-control-left">
+                        <span class="settings-row-label">Astronomy <span style="color:#4cde80; font-size:10px; font-weight:700; font-style:italic;">Added 8/1/2026</span> <span style="color:#4cde80; font-size:11px; font-weight:700;">[NEW]</span></span>
+                    </span>
+                </div>
+                <button type="button" class="settings-open-btn" id="settingsOpenMoonPhaseBtn">Open</button>
+                </div>
+                <!-- Hidden sync sources for moon phase modal -->
+                <div style="display:none;" id="moonPhaseWidget">
+                    <div id="moonPhaseIcon"></div>
+                    <div id="moonIconPercent"></div>
+                    <div id="moonPhaseName"></div>
+                    <div id="moonPhaseBar"></div>
+                    <div id="moonPhasePercent"></div>
+                    <div id="moonNextPhaseLabel"></div>
+                    <span id="moonNextPhaseLabelInner"></span>
+                    <span id="moonNextFullDate"></span>
+                    <span id="moonNextNewDate"></span>
+                    <span id="moonRiseTime"></span>
+                    <span id="moonSetTime"></span>
+                    <span id="moonAltitude"></span>
+                    <span id="moonAzimuth"></span>
+                    <span id="moonDistance"></span>
+                    <span id="moonObsLat"></span>
+                    <span id="moonObsLon"></span>
+                    <div id="moonRiseSetTz"></div>
+                    <button type="button" id="moonEnableLocationBtn">Enable Location</button>
                 </div>
 
                 <!-- Star Rating -->
@@ -16413,6 +16426,37 @@ window.closeSettings = closeSettings;
                 }
             }
             window.handleRateUsClick = handleRateUsClick;
+
+            function handleMoonWidgetClick() {
+                if (document.documentElement.scrollHeight > window.innerHeight) {
+                    window.scrollTo({ top: 0, behavior: 'auto' });
+                }
+                openSettings();
+                setTimeout(function() {
+                    var astronomyRow = document.querySelector('.settings-lang-heading-row .settings-row-label');
+                    // Find the Astronomy heading specifically
+                    var allLabels = document.querySelectorAll('.settings-row-label');
+                    var astroEl = null;
+                    allLabels.forEach(function(el) {
+                        if (el.textContent.trim().indexOf('Astronomy') === 0) astroEl = el;
+                    });
+                    var scrollBody = document.querySelector('.settings-card-body');
+                    if (astroEl && scrollBody) {
+                        var cardTop = scrollBody.getBoundingClientRect().top;
+                        var astroTop = astroEl.getBoundingClientRect().top;
+                        var offset = astroTop - cardTop - (scrollBody.clientHeight / 2) + (astroEl.offsetHeight / 2);
+                        scrollBody.scrollBy({ top: offset, behavior: 'smooth' });
+                        var astroWrap = document.getElementById('astronomySection');
+                        if (astroWrap) {
+                            astroWrap.classList.add('astronomy-highlight');
+                            setTimeout(function() {
+                                astroWrap.classList.remove('astronomy-highlight');
+                            }, 3600);
+                        }
+                    }
+                }, 80);
+            }
+            window.handleMoonWidgetClick = handleMoonWidgetClick;
             var rateUsLinkEl = document.getElementById('rateUsLink');
             if (rateUsLinkEl) {
                 rateUsLinkEl.addEventListener('keydown', function(e) {
@@ -47314,8 +47358,15 @@ class GravSimEndpoint {
 
     function _startNextPhaseCountdown() {
         if (_nextPhaseCountdownInterval) clearInterval(_nextPhaseCountdownInterval);
+        var _nextPhaseExpected = Date.now() + 1000;
+        function _driftTick() {
+            _tickNextPhaseCountdown();
+            var drift = Date.now() - _nextPhaseExpected;
+            _nextPhaseExpected += 1000;
+            _nextPhaseCountdownInterval = setTimeout(_driftTick, Math.max(0, 1000 - drift));
+        }
         _tickNextPhaseCountdown();
-        _nextPhaseCountdownInterval = setInterval(_tickNextPhaseCountdown, 1000);
+        _nextPhaseCountdownInterval = setTimeout(_driftTick, 1000);
     }
 
     function updateWidget() {
@@ -47410,7 +47461,7 @@ class GravSimEndpoint {
 
             altEl.textContent  = hor.altitude.toFixed(1) + '°';
             azEl.textContent   = hor.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(hor.azimuth) + ')';
-            distEl.textContent = Math.round(distKm).toLocaleString() + ' km';
+            distEl.textContent = distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
 
             if (latEl && lonEl) {
                 var latSign = state.lat >= 0 ? 'N' : 'S';
@@ -47426,7 +47477,7 @@ class GravSimEndpoint {
             var lonElM  = document.getElementById('moonObsLonModal');
             if (altElM)  altElM.textContent  = hor.altitude.toFixed(1) + '°';
             if (azElM)   azElM.textContent   = hor.azimuth.toFixed(1) + '° (' + _getAzimuthLabel(hor.azimuth) + ')';
-            if (distElM) distElM.textContent = Math.round(distKm).toLocaleString() + ' km';
+            if (distElM) distElM.textContent = distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
             if (latElM && lonElM) {
                 var latSignM = state.lat >= 0 ? 'N' : 'S';
                 var lonSignM = state.lon >= 0 ? 'E' : 'W';
@@ -47482,7 +47533,7 @@ class GravSimEndpoint {
         if (tzElM)    tzElM.innerHTML = '';
         if (locBtnM)  { locBtnM.style.display = ''; locBtnM.disabled = false; }
         if (locGroup) locGroup.style.display = 'none';
-        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.textContent = deniedText; }
+        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#ff8a8a'; deniedMsg.textContent = deniedText; }
     }
 
     function _updateMoonRiseSet() {
@@ -47519,7 +47570,14 @@ class GravSimEndpoint {
             }
             if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
             _tickMoonRiseSet();
-            _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
+            var _riseSetExpected = Date.now() + 1000;
+            function _riseSetDriftTick() {
+                _tickMoonRiseSet();
+                var drift = Date.now() - _riseSetExpected;
+                _riseSetExpected += 1000;
+                _moonRiseSetTicker = setTimeout(_riseSetDriftTick, Math.max(0, 1000 - drift));
+            }
+            _moonRiseSetTicker = setTimeout(_riseSetDriftTick, 1000);
         }
 
         // On load: use timezone fallback silently, no GPS prompt
@@ -47561,9 +47619,20 @@ class GravSimEndpoint {
                     _moonWatchId = null;
                 }
 
+                var _blockedTimer = null;
                 function _showBlockedMsg() {
                     _moonGeoGranted = false;
-                    _setTzElDenied(tzEl, locBtn, 'Location blocked. Please enable it manually.');
+                    // Clear any previous timer and restart — never stack
+                    if (_blockedTimer) { clearTimeout(_blockedTimer); _blockedTimer = null; }
+                    var msg = 'Location blocked. Please enable your location manually.';
+                    var deniedMsg = document.getElementById('moonObsDeniedMsg');
+                    if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">' + msg + '</span>';
+                    if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#ff8a8a'; deniedMsg.textContent = msg; }
+                    if (locBtn) { locBtn.style.display = ''; locBtn.disabled = false; }
+                    _blockedTimer = setTimeout(function() {
+                        _blockedTimer = null;
+                        _setTzElDenied(tzEl, locBtn, 'Approximately Time Zone (Location Access Denied)');
+                    }, 10000);
                 }
 
                 function _doGetLocation() {
@@ -47740,7 +47809,7 @@ class GravSimEndpoint {
                 <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
                     <div id="moonPhaseNameModal" style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 15px; color:#fff;">New Moon</div>
                     <div style="display: flex; align-items: center; gap: 6px; width: 100%;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:rgba(255,255,255,0.55); flex-shrink:0; white-space:nowrap;">Illumination:</div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:rgba(255,255,255,0.72); flex-shrink:0; white-space:nowrap;">Illumination:</div>
                         <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden; align-self: center; min-width: 0;">
                             <div id="moonPhaseBarModal" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ffe94d, #fff8c0); border-radius: 999px; transition: width 1s ease;"></div>
                         </div>
@@ -47748,48 +47817,48 @@ class GravSimEndpoint {
                     </div>
                 </div>
             </div>
-            <div id="moonNextPhaseLabelModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; padding-left:2px; color:rgba(255,255,255,0.8);">
-                <span style="color:rgba(255,255,255,0.55);">Next:</span> <span style="color:rgba(255,220,80,0.85);" id="moonNextPhaseLabelInnerModal">Full Moon in — days</span>
+            <div id="moonNextPhaseLabelModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; padding-left:2px; color:rgba(255,255,255,0.88);">
+                <span style="color:rgba(255,255,255,0.72);">Next:</span> <span style="color:rgba(255,220,80,0.85);" id="moonNextPhaseLabelInnerModal">Full Moon in — days</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:4px; padding-left:2px; border-top:1px solid rgba(255,255,255,0.08); padding-top:9px;">
-                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55);">
+                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                     Next Full Moon: <span id="moonNextFullDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                 </div>
-                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55);">
+                <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                     Next New Moon: <span id="moonNextNewDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                 </div>
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:7px;">
-                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55);">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                         Moon Rise: <span id="moonRiseTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
-                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                         Moon Set: <span id="moonSetTimeModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Moon Position</div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55);">
+                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Moon Position</div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                             Altitude: <span id="moonAltitudeModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Azimuth: <span id="moonAzimuthModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Distance: <span id="moonDistanceModal" style="color:rgba(255,220,80,0.9);">—</span>
                         </div>
                     </div>
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Observer</div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Observer</div>
                         <div id="moonObsLocationGroup" style="display:none;">
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55);">
-                                Location: <span id="moonObsLocationModal" style="color:rgba(255,220,80,0.9);">—</span>
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                                Location: <span id="moonObsLocationModal" style="color:#4cde80;">—</span>
                             </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;">
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                                 Latitude: <span id="moonObsLatModal" style="color:rgba(255,220,80,0.9);">—</span>
                             </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;">
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                                 Longitude: <span id="moonObsLonModal" style="color:rgba(255,220,80,0.9);">—</span>
                             </div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:4px;" id="moonObsTzRowModal">
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;" id="moonObsTzRowModal">
                                 Time Zone: <span id="moonRiseSetTzModal" style="color:#4cde80;">—</span>
                             </div>
                         </div>
@@ -47810,6 +47879,11 @@ class GravSimEndpoint {
                             box-shadow: 0 2px 8px rgba(245,230,66,0.35);
                             transition: opacity 0.2s;
                         " onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">Enable Location</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:16px; padding:0 4px;">
+                        <div style="flex:1; height:1px; background:rgba(255,255,255,0.15);"></div>
+                        <span style="font-family:'Poppins',sans-serif; font-size:9px; font-weight:700; letter-spacing:2px; color:rgba(255,255,255,0.50); text-transform:uppercase; white-space:nowrap;">MORE COMING SOON</span>
+                        <div style="flex:1; height:1px; background:rgba(255,255,255,0.15);"></div>
                     </div>
                 </div>
             </div>
@@ -47873,13 +47947,18 @@ class GravSimEndpoint {
         if (modal) {
             modal.classList.add('active');
             history.pushState({ modal: 'moonPhaseModal' }, '', '');
-            // Sync immediately and also after a tick (widget may still be computing)
+            // Force fresh tick immediately so modal never shows stale countdown
+            if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown();
+            if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet();
             syncMoonModal();
-            setTimeout(syncMoonModal, 200);
-            setTimeout(syncMoonModal, 800);
-            // Keep syncing every 0.5s while modal is open so Moon Position updates in real time
+            setTimeout(function() {
+                if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown();
+                if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet();
+                syncMoonModal();
+            }, 200);
+            // Keep syncing every 100ms while modal is open
             if (_moonModalSyncInterval) clearInterval(_moonModalSyncInterval);
-            _moonModalSyncInterval = setInterval(syncMoonModal, 500);
+            _moonModalSyncInterval = setInterval(syncMoonModal, 100);
         }
     };
 
