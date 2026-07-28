@@ -34995,32 +34995,21 @@ window.closeSettings = closeSettings;
                         }
                         // Guest: use the per-tab sessionStorage ID (no suffix needed,
                         // the ID itself is already unique per tab via guestCounter).
-                        return sessionStorage.getItem('presenceGuestId') || null;
+                        return assignGuestPresenceId();
                     } catch (e) {
                         return null;
                     }
                 }
 
-                async function assignGuestPresenceId() {
-                    // Each tab gets its own unique guest ID stored in sessionStorage.
-                    // We intentionally do NOT reuse the localStorage guest_ ID here —
-                    // that was the bug: every device shared guest_1 and all wrote to
-                    // the same presence slot, making the count always show 1.
+                function assignGuestPresenceId() {
+                    // Each tab gets its own unique random ID stored in sessionStorage.
+                    // No Firebase guestCounter transaction — that caused a race where all
+                    // devices simultaneously read counter=0 and all got guest_1.
                     var stored = null;
                     try { stored = sessionStorage.getItem('presenceGuestId'); } catch(e) {}
-                    if (stored && stored.startsWith('guest_')) return stored;
-
-                    // First time on this device — claim next guest number from Firebase counter
-                    var guestId = 'guest_1';
-                    try {
-                        var guestCounterRef = ref(db, 'guestCounter');
-                        var newNum = 1;
-                        await runTransaction(guestCounterRef, function(current) {
-                            newNum = (current || 0) + 1;
-                            return newNum;
-                        });
-                        guestId = 'guest_' + newNum;
-                    } catch(e) {}
+                    if (stored) return stored;
+                    var rand = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
+                    var guestId = 'guest_' + rand;
                     try { sessionStorage.setItem('presenceGuestId', guestId); } catch(e) {}
                     return guestId;
                 }
@@ -35048,7 +35037,7 @@ window.closeSettings = closeSettings;
                         if (expectedSid) {
                             presenceSid = expectedSid;
                         } else {
-                            presenceSid = await assignGuestPresenceId();
+                            presenceSid = assignGuestPresenceId();
                         }
                         myPresenceRef = ref(db, 'presence/' + presenceSid);
                         onDisconnectConfigured = false;
@@ -35063,7 +35052,7 @@ window.closeSettings = closeSettings;
                         var expectedSid = getExpectedPresenceSid();
                         var desiredSid = expectedSid || presenceSid || null;
                         if (!desiredSid) {
-                            desiredSid = await assignGuestPresenceId();
+                            desiredSid = assignGuestPresenceId();
                         }
                         if (!myPresenceRef || !presenceSid || presenceSid !== desiredSid) {
                             await refreshPresenceRecord();
