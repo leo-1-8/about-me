@@ -47210,9 +47210,9 @@ class GravSimEndpoint {
             if (!evMs) return '—';
             var diff = evMs - nowMs;
             if (diff > 0) {
-                return _fmtMoonTime(evMs) + ' (in ' + fmtCountdown(diff) + ')';
+                return _fmtMoonTime(evMs) + ' (<span style="color:#4cde80;">in ' + fmtCountdown(diff) + '</span>)';
             }
-            return _fmtMoonTime(evMs) + ' (' + fmtCountdown(diff) + ' ago)';
+            return _fmtMoonTime(evMs) + ' (<span style="color:#ff8a8a;">' + fmtCountdown(diff) + ' ago</span>)';
         }
 
         // For Moon Set: only look ahead to tomorrow AFTER Moon Rise has already passed.
@@ -47539,17 +47539,17 @@ class GravSimEndpoint {
             var timeStr = String(h12).padStart(2,'0') + ':' +
                           String(target.getMinutes()).padStart(2,'0') + ':' +
                           String(target.getSeconds()).padStart(2,'0') + ' ' + ampm;
-            var dateStr = _months[target.getMonth()] + ' ' + target.getDate() + ', ' + target.getFullYear() + ' ' + timeStr;
-            if (diffMs < 0) return dateStr + ' (passed)';
+            var dateStr = _months[target.getMonth()] + ' ' + target.getDate() + ', ' + target.getFullYear() + ' at ' + timeStr;
+            if (diffMs < 0) return dateStr + ' (<span style="color:#ff8a8a;">passed</span>)';
             var diffDays = Math.floor(diffMs / 86400000);
             var diffHrs  = Math.floor((diffMs % 86400000) / 3600000);
             var diffMins = Math.floor((diffMs % 3600000) / 60000);
             var diffSecs = Math.floor((diffMs % 60000) / 1000);
             return dateStr +
-                ' (in ' + diffDays + 'd ' +
+                ' (<span style="color:#4cde80;">in ' + diffDays + 'd ' +
                 String(diffHrs).padStart(2,'0') + 'h ' +
                 String(diffMins).padStart(2,'0') + 'm ' +
-                String(diffSecs).padStart(2,'0') + 's)';
+                String(diffSecs).padStart(2,'0') + 's</span>)';
         }
         function _rafTick() {
             var sec = Math.floor(((typeof getNowMs === 'function') ? getNowMs() : Date.now()) / 1000);
@@ -47566,8 +47566,8 @@ class GravSimEndpoint {
                     var apoStr = _fmt(_moonApsisCache.apo, _nowMs);
                     var vals  = [perStr, apoStr];
                     pairs.forEach(function(pair, i) {
-                        var el  = document.getElementById(pair[0]); if (el)  el.textContent  = vals[i];
-                        var elM = document.getElementById(pair[1]); if (elM) elM.textContent = vals[i];
+                        var el  = document.getElementById(pair[0]); if (el)  el.innerHTML  = vals[i];
+                        var elM = document.getElementById(pair[1]); if (elM) elM.innerHTML = vals[i];
                     });
                 } else {
                     var _apsisRd = '<span style="color:#ff8a8a;">---</span>';
