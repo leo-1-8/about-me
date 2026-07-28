@@ -15602,6 +15602,7 @@
                 <div class="settings-lang-heading-row">
                     <span class="settings-control-left">
                         <span class="settings-row-label">Moon Phase</span>
+                        <button type="button" class="settings-warning-btn" id="settingsMoonPhaseNoteBtn" aria-label="Note about Moon Phase">!</button>
                     </span>
                 </div>
                 <div id="moonPhaseWidget" style="
@@ -15640,12 +15641,28 @@
                         </div>
                         <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:5px; padding-top:5px;">
                             <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55);">
-                                🌕 Moon Rise: <span id="moonRiseTime" style="color:rgba(255,220,80,0.9);">—</span>
+                                Moon Rise: <span id="moonRiseTime" style="color:rgba(255,220,80,0.9);">—</span>
                             </div>
                             <div style="font-family:'Poppins',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.55); margin-top:3px;">
-                                🌑 Moon Set: <span id="moonSetTime" style="color:rgba(255,220,80,0.9);">—</span>
+                                Moon Set: <span id="moonSetTime" style="color:rgba(255,220,80,0.9);">—</span>
                             </div>
                             <div style="font-family:'Poppins',sans-serif; font-size:8px; color:rgba(255,255,255,0.3); margin-top:3px;" id="moonRiseSetTz">based on your local time</div>
+                            <div style="text-align:center; margin-top:8px;">
+                                <button type="button" id="moonEnableLocationBtn" style="
+                                    font-family:'Poppins',sans-serif;
+                                    font-size:10px;
+                                    font-weight:700;
+                                    color:#1a1a1a;
+                                    background: linear-gradient(135deg, #a0a0a0, #f5e642);
+                                    border: none;
+                                    border-radius: 20px;
+                                    padding: 5px 14px;
+                                    cursor: pointer;
+                                    letter-spacing: 0.3px;
+                                    box-shadow: 0 2px 8px rgba(245,230,66,0.35);
+                                    transition: opacity 0.2s;
+                                " onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">Enable Location</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -15818,6 +15835,17 @@
             <button type="button" class="settings-caution-ok" id="settingsLangNoteOkBtn" data-i18n="btn_ok">OK</button>
         </div>
     </div>
+    <div class="settings-caution-overlay" id="settingsMoonPhaseNoteOverlay" aria-hidden="true">
+        <div class="settings-caution-box" role="dialog" aria-labelledby="settingsMoonPhaseNoteTitle">
+            <div id="settingsMoonPhaseNoteTitle" class="settings-caution-text" style="text-align:left; font-weight:600; font-size:13px; line-height:1.6;">
+                <p style="margin-bottom:8px;"><strong>Note:</strong> Enable your device's location to detect your current location. Otherwise, your location will be displayed as "<em>Approximately (location access denied)</em>".</p>
+                <p style="margin-bottom:8px;"><strong>Optional:</strong> Tap the <em>Enable Location</em> button below the Moon Rise &amp; Set to use your GPS location. The BLOCK / ALLOW prompt will appear, we respect whatever you choose.<br>If you turn on the location manually, please wait a few moments. Your time zone will then update automatically based on your location (for example, <em>Asia/Manila</em>).</p>
+                <p>Your location information is <em>not collected, stored or shared</em>, so you don't have to worry about your privacy.</p>
+            </div>
+            <button type="button" class="settings-caution-ok" id="settingsMoonPhaseNoteOkBtn">OK</button>
+        </div>
+    </div>
+
     <div class="settings-caution-overlay" id="settingsInfoNoteOverlay" aria-hidden="true">
         <div class="settings-caution-box" role="dialog" aria-labelledby="settingsInfoNoteTitle">
             <div id="settingsInfoNoteTitle" class="settings-caution-text"></div>
@@ -16278,6 +16306,33 @@
                     e.stopPropagation();
                 });
             }
+            // Moon Phase note button
+            var settingsMoonPhaseNoteBtn = document.getElementById('settingsMoonPhaseNoteBtn');
+            var settingsMoonPhaseNoteOverlay = document.getElementById('settingsMoonPhaseNoteOverlay');
+            var settingsMoonPhaseNoteOkBtn = document.getElementById('settingsMoonPhaseNoteOkBtn');
+            if (settingsMoonPhaseNoteBtn) {
+                settingsMoonPhaseNoteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (settingsMoonPhaseNoteOverlay) {
+                        settingsMoonPhaseNoteOverlay.classList.add('show');
+                        settingsMoonPhaseNoteOverlay.setAttribute('aria-hidden', 'false');
+                    }
+                });
+                settingsMoonPhaseNoteBtn.addEventListener('pointerdown', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            if (settingsMoonPhaseNoteOkBtn) {
+                settingsMoonPhaseNoteOkBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (settingsMoonPhaseNoteOverlay) {
+                        settingsMoonPhaseNoteOverlay.classList.remove('show');
+                        settingsMoonPhaseNoteOverlay.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+
             if (settingsInfoNoteOkBtn) {
                 settingsInfoNoteOkBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -16331,6 +16386,7 @@
                 if (typeof closeSettingsLangMenu === 'function') closeSettingsLangMenu();
                 if (typeof closeSettingsLangNote === 'function') closeSettingsLangNote();
                 if (typeof closeSettingsInfoNote === 'function') closeSettingsInfoNote();
+                if (settingsMoonPhaseNoteOverlay) { settingsMoonPhaseNoteOverlay.classList.remove('show'); settingsMoonPhaseNoteOverlay.setAttribute('aria-hidden', 'true'); }
                 if (!settingsOverlay) return;
                 settingsOverlay.classList.remove('show');
                 settingsOverlay.setAttribute('aria-hidden', 'true');
@@ -37440,45 +37496,66 @@ function updateLoginLordIconColor() {
         setEl.textContent  = fmt(c.setMs);
     }
 
+    var _moonWatchId = null;
+
     function _updateMoonRiseSet() {
         var riseEl = document.getElementById('moonRiseTime');
         var setEl  = document.getElementById('moonSetTime');
         var tzEl   = document.getElementById('moonRiseSetTz');
+        var locBtn = document.getElementById('moonEnableLocationBtn');
         if (!riseEl || !setEl) return;
 
-        function compute(lat, lon) {
+        function compute(lat, lon, fromGeo) {
             var today = Date.now();
             var dateKey = new Date(today).toDateString();
             var c = _moonRiseSetCache;
-            if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return; // already computed today
+            if (c.lat === lat && c.lon === lon && c.dateKey === dateKey) return;
             var res = _calcMoonRiseSet(lat, lon, today);
             _moonRiseSetCache = { lat: lat, lon: lon, dateKey: dateKey, riseMs: res.riseMs, setMs: res.setMs };
             if (tzEl) {
-                var tzName = '';
-                try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
-                tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
+                if (fromGeo) {
+                    var tzName = '';
+                    try { tzName = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+                    tzEl.textContent = tzName ? 'based on your time (' + tzName + ')' : 'based on your local time';
+                    // Hide the button once location is granted
+                    if (locBtn) locBtn.style.display = 'none';
+                } else {
+                    tzEl.textContent = 'Approximately (location access denied)';
+                }
             }
-            // Start per-second ticker
             if (_moonRiseSetTicker) clearInterval(_moonRiseSetTicker);
             _tickMoonRiseSet();
             _moonRiseSetTicker = setInterval(_tickMoonRiseSet, 1000);
         }
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(pos) { compute(pos.coords.latitude, pos.coords.longitude); },
-                function() {
-                    // Fallback: use timezone offset to guess latitude ~0, rough longitude
-                    var tzOff = -(new Date().getTimezoneOffset()); // minutes east of UTC
-                    var lon = tzOff / 4; // rough: 15 deg per hour
-                    compute(14.5, lon); // default lat ~Philippines if denied
-                    if (tzEl) tzEl.textContent = 'approximate (location access denied)';
-                },
-                { timeout: 5000, maximumAge: 3600000 }
-            );
-        } else {
-            var tzOff = -(new Date().getTimezoneOffset());
-            compute(14.5, tzOff / 4);
+        // On load: use timezone fallback silently, no GPS prompt
+        var tzOff = -(new Date().getTimezoneOffset());
+        var lon = tzOff / 4;
+        compute(14.5, lon, false);
+
+        // Enable Location button: only triggers GPS prompt when tapped
+        if (locBtn && !locBtn._bound) {
+            locBtn._bound = true;
+            locBtn.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    if (tzEl) tzEl.textContent = 'Geolocation not supported by your browser';
+                    return;
+                }
+                // Clear old watcher if any
+                if (_moonWatchId !== null) {
+                    navigator.geolocation.clearWatch(_moonWatchId);
+                    _moonWatchId = null;
+                }
+                _moonWatchId = navigator.geolocation.watchPosition(
+                    function(pos) {
+                        compute(pos.coords.latitude, pos.coords.longitude, true);
+                    },
+                    function() {
+                        if (tzEl) tzEl.textContent = 'Approximately (location access denied)';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 3600000 }
+                );
+            });
         }
     }
 
