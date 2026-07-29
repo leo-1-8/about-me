@@ -10068,7 +10068,7 @@
         #newWelcomeOverlay {
             position: fixed;
             inset: 0;
-            z-index: 99999;
+            z-index: 100001;
             background: #ffffff;
             display: none;
             align-items: center;
@@ -10184,6 +10184,102 @@
             border-color: rgba(100,160,255,0.5);
         }
         
+        /* ── Background Color Picker Modal ── */
+        #bgPickerOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: #000000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+        }
+        #bgPickerOverlay.show {
+            display: flex;
+        }
+        #bgPickerOverlay.hide {
+            display: none;
+        }
+        #bgPickerBox {
+            background: linear-gradient(145deg, #1a6fd4 0%, #4fa3e8 35%, #a8d4f5 65%, #ffffff 100%);
+            border-radius: 18px;
+            box-shadow: 0 16px 48px rgba(0,80,200,0.35), 0 4px 16px rgba(0,0,0,0.18);
+            width: 88%;
+            max-width: 420px;
+            padding: 32px 28px 28px;
+            text-align: center;
+            border: 1.5px solid rgba(255,255,255,0.6);
+            pointer-events: all;
+        }
+        body.dark-mode #bgPickerBox {
+            background: linear-gradient(145deg, #0d3d7a 0%, #1a6fd4 35%, #2d5fa8 65%, #1a1a2e 100%);
+            box-shadow: 0 16px 48px rgba(0,30,100,0.6), 0 4px 16px rgba(0,0,0,0.4);
+            border: 1.5px solid rgba(100,160,255,0.3);
+        }
+        #bgPickerTitle {
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,50,150,0.3);
+            margin-bottom: 26px;
+        }
+        #bgPickerOptions {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 14px;
+        }
+        .bg-picker-btn {
+            flex: 1;
+            padding: 14px 10px;
+            border-radius: 13px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .bg-picker-btn:active {
+            transform: translateY(3px);
+        }
+        #bgPickerDay {
+            background: #f0f4ff;
+            color: #1a4a9e;
+            box-shadow: 0 6px 0 rgba(0,40,120,0.25), 0 10px 20px rgba(0,0,0,0.15);
+        }
+        #bgPickerDay:hover {
+            border-color: #4fa3e8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 rgba(0,40,120,0.25), 0 14px 24px rgba(0,0,0,0.2);
+        }
+        #bgPickerNight {
+            background: #0d1b3e;
+            color: #c8deff;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.45), 0 10px 20px rgba(0,0,0,0.3);
+        }
+        #bgPickerNight:hover {
+            border-color: #4fa3e8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.5), 0 14px 24px rgba(0,0,0,0.35);
+        }
+        .bg-picker-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
         .intro-box {
             position: fixed;
             top: 50%;
@@ -10263,9 +10359,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: rgba(15, 23, 42, 0.42);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            background: #000000;
             pointer-events: auto;
         }
         .updated-splash-card {
@@ -10336,7 +10430,7 @@
         }
 
         body.dark-mode .updated-splash-overlay {
-            background: rgba(0, 0, 0, 0.68);
+            background: #000000;
         }
         body.dark-mode .updated-splash-card {
             background: linear-gradient(165deg, #1e3a5f 0%, #162d4a 48%, #0f172a 100%);
@@ -10361,6 +10455,9 @@
 
         body.updated-splash-open {
             overflow: hidden;
+        }
+        body.updated-splash-open .music-mini-card {
+            display: none !important;
         }
 
         /* Warning Message Box */
@@ -11875,7 +11972,8 @@
                 <span class="update14-new-dot" aria-hidden="true"></span>
                 <span id="updatedSplashHeadingText" data-i18n="updated_title">UPDATED</span>
             </h2>
-            <p class="updated-splash-text" id="updatedSplashBody" data-i18n="updated_body">Thank you for patiently waiting while my website is updating. The new version has now been successfully applied.<br><span style="font-size: 12px; margin-top: 8px; display: block;">NEW: System Settings >> What's More</span></p>
+            <p class="updated-splash-text" id="updatedSplashBody" data-i18n="updated_body">Thank you for patiently waiting while my website is updating. The new version has now been successfully applied.</p>
+            <p id="updatedSplashNew" style="font-size: 12px; margin-top: 8px; text-align: center; font-weight: 600; letter-spacing: 0.3px;">NEW: System Settings &gt;&gt; What's More</p>
             <button type="button" id="updatedSplashOk" class="updated-splash-ok" data-i18n="btn_ok">OK</button>
         </div>
     </div>
@@ -11888,6 +11986,23 @@
             <div id="newWelcomeTimer">Closes in <span id="newWelcomeCountdown">30</span>s</div>
             <button id="newWelcomeSkip" onclick="closeNewWelcome()">SKIP</button>
             <div id="newWelcomeAutoSkipLabel" style="margin-top:10px;font-size:11px;font-weight:600;letter-spacing:0.5px;text-align:center;">AUTO SKIP <span id="newWelcomeAutoSkipCount">30</span>s</div>
+        </div>
+    </div>
+
+    <!-- Background Color Picker Modal -->
+    <div id="bgPickerOverlay">
+        <div id="bgPickerBox">
+            <div id="bgPickerTitle">CHOOSE YOUR BACKGROUND COLOR</div>
+            <div id="bgPickerOptions">
+                <button class="bg-picker-btn" id="bgPickerDay" onclick="chooseBgMode('light')">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path></svg>
+                    <span class="bg-picker-label">DAY MODE</span>
+                </button>
+                <button class="bg-picker-btn" id="bgPickerNight" onclick="chooseBgMode('dark')">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    <span class="bg-picker-label">NIGHT MODE</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -13940,6 +14055,7 @@
                                     <source src="NVMD-Denise Julia.mp3" type="audio/mpeg">
                                 </audio>
                                 <div class="music-progress-container" id="musicProgressContainer-nvmd">
+                                    <div class="explicit-above-row"><span class="explicit-badge" onclick="toggleExplicitNote(this)" title="Explicit content">E</span><span class="explicit-note" style="display:none;"><em>This track contains explicit words. Listener discretion is advised.</em></span></div>
                                     <div class="music-time">
                                         <span id="currentTime-nvmd">0:00</span>
                                         <div class="music-progress-bar-wrapper">
@@ -13951,7 +14067,6 @@
                             </div>
                             <button class="song-queue-btn" onclick="addToQueue('nvmd')" title="Add to Queue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path d="M2 4h11v2H2V4zm0 4h11v2H2V8zm0 4h7v2H2v-2zm13-1v-3l4 4-4 4v-3h-4v-2h4z"/></svg>+ Queue</button>
                             <div class="lyrics-display" id="lyricsDisplay-nvmd"><span class="lyrics-line" id="lyricsLine-nvmd"></span><button class="see-full-lyrics-btn" onclick="openFullLyricsModal('nvmd')">See full lyrics</button></div>
-                            
                         </div>
                     </div>
                     <div class="info-item song-item">
@@ -16988,7 +17103,7 @@ window.closeSettings = closeSettings;
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v2.0';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v2.1';
             
             function hasSeenUpdatedSplashOnce() {
                 try {
@@ -17092,11 +17207,11 @@ window.closeSettings = closeSettings;
 
             function showUpdatedSplashThenIntro() {
                 if (hasSeenUpdatedSplashOnce()) {
-                    beginWelcomeIntroFlow();
+                    showNewWelcome();
                     return;
                 }
                 if (!updatedSplashOverlayEl) {
-                    beginWelcomeIntroFlow();
+                    showNewWelcome();
                     return;
                 }
                 openUpdatedSplashOverlay();
@@ -17122,7 +17237,7 @@ window.closeSettings = closeSettings;
                         updatedSplashOverlayEl.setAttribute('aria-hidden', 'true');
                     }
                     document.body.classList.remove('updated-splash-open');
-                    beginWelcomeIntroFlow();
+                    showNewWelcome();
                 });
             }
             if (introBox) {
@@ -17405,7 +17520,8 @@ window.closeSettings = closeSettings;
                     // Stop message rotation
                     stopMessageRotation();
                     // Show welcome modal FIRST before loading screen fades — prevents flash
-                    showNewWelcome();
+                    // Show UPDATED splash first (if unseen), then welcome modal
+                    showUpdatedSplashThenIntro();
                     setTimeout(function() {
                         loadingScreen.classList.add('hidden');
                         // Hide verse immediately when loading ends
@@ -17438,7 +17554,10 @@ window.closeSettings = closeSettings;
                 var overlay = document.getElementById('newWelcomeOverlay');
                 if (!overlay) return;
                 overlay.style.display = 'flex';
-                setTimeout(function() { overlay.classList.add('show'); }, 20);
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'all';
+                overlay.classList.remove('hide');
+                overlay.classList.add('show');
 
                 // Countdown
                 var secondsLeft = 30;
@@ -17465,14 +17584,54 @@ window.closeSettings = closeSettings;
                 if (!overlay) return;
                 overlay.classList.remove('show');
                 overlay.classList.add('hide');
-                setTimeout(function() {
-                    overlay.style.display = 'none';
-                    overlay.classList.remove('hide');
-                }, 500);
+                overlay.style.display = 'none';
+                overlay.classList.remove('hide');
+                showBgPicker();
             }
             window.closeNewWelcome = closeNewWelcome;
 
-            // Clicking outside the box does nothing (overlay blocks it)
+            var BG_PICKER_SEEN_KEY = 'aboutMySelf_bgPickerSeen_v1';
+
+            function hasBgPickerBeenSeen() {
+                try { return localStorage.getItem(BG_PICKER_SEEN_KEY) === '1'; } catch(e) { return false; }
+            }
+
+            function markBgPickerSeen() {
+                try { localStorage.setItem(BG_PICKER_SEEN_KEY, '1'); } catch(e) {}
+            }
+
+            function showBgPicker() {
+                if (hasBgPickerBeenSeen()) return;
+                var picker = document.getElementById('bgPickerOverlay');
+                if (!picker) return;
+                picker.style.display = 'flex';
+                picker.classList.add('show');
+            }
+
+            function closeBgPicker() {
+                var picker = document.getElementById('bgPickerOverlay');
+                if (!picker) return;
+                picker.style.display = 'none';
+                picker.classList.remove('show');
+            }
+
+            function chooseBgMode(mode) {
+                if (typeof applyTheme === 'function') applyTheme(mode);
+                markBgPickerSeen();
+                closeBgPicker();
+            }
+            window.chooseBgMode = chooseBgMode;
+
+            // Block outside clicks — only the two buttons can dismiss it
+            var bgPickerOverlayEl = document.getElementById('bgPickerOverlay');
+            if (bgPickerOverlayEl) {
+                bgPickerOverlayEl.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+            }
+
+            // Block outside clicks on welcome overlay
             document.getElementById('newWelcomeOverlay').addEventListener('click', function(e) {
                 e.stopPropagation();
             });
@@ -48244,9 +48403,9 @@ class GravSimEndpoint {
                 </div>
                 <!-- Moon Position -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                    <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Position':'Hide Position';})(this,document.getElementById('moonPositionBody'))" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; user-select:none;">
                         <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px;">Moon Position</div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px;">
+                        <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Position':'Hide Position';})(this,document.getElementById('moonPositionBody'))" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px; cursor:pointer; padding:2px 0 2px 12px;">
                             <span class="moon-toggle-arrow" style="font-size:9px;">▼</span>
                             <span class="moon-toggle-label">Show Position</span>
                         </div>
@@ -48262,9 +48421,9 @@ class GravSimEndpoint {
                 </div>
                 <!-- Orbital Information -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                    <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Information':'Hide Information';})(this,document.getElementById('moonOrbitalBody'))" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; user-select:none;">
                         <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px;">Orbital Information</div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px;">
+                        <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Information':'Hide Information';})(this,document.getElementById('moonOrbitalBody'))" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px; cursor:pointer; padding:2px 0 2px 12px;">
                             <span class="moon-toggle-arrow" style="font-size:9px;">▼</span>
                             <span class="moon-toggle-label">Show Information</span>
                         </div>
@@ -48286,9 +48445,9 @@ class GravSimEndpoint {
                 </div>
                 <!-- Observer -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                    <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Observer':'Hide Observer';})(this,document.getElementById('moonObserverBody'))" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; user-select:none;">
                         <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px;">Observer</div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px;">
+                        <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Observer':'Hide Observer';})(this,document.getElementById('moonObserverBody'))" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px; cursor:pointer; padding:2px 0 2px 12px;">
                             <span class="moon-toggle-arrow" style="font-size:9px;">▼</span>
                             <span class="moon-toggle-label">Show Observer</span>
                         </div>
@@ -48319,9 +48478,9 @@ class GravSimEndpoint {
                 </div>
                     <!-- Upcoming Moon Events (collapsible) -->
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Events':'Hide Events';})(this,document.getElementById('moonEclipseBody'))" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; user-select:none;">
                             <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px;">Upcoming Moon Events <span style="color:rgba(255,255,255,0.35)">(6)</span></div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px;">
+                            <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Events':'Hide Events';})(this,document.getElementById('moonEclipseBody'))" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px; cursor:pointer; padding:2px 0 2px 12px;">
                                 <span class="moon-toggle-arrow" style="font-size:9px;">▼</span>
                                 <span class="moon-toggle-label">Show Events</span>
                             </div>
@@ -48350,9 +48509,9 @@ class GravSimEndpoint {
 
                     <!-- Special Lunar Events (collapsible) -->
                     <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
-                        <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Events':'Hide Events';})(this,document.getElementById('moonSpecialBody'))" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; user-select:none;">
                             <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:700; color:rgba(255,255,255,0.50); text-transform:uppercase; letter-spacing:1px;">Special Lunar Events <span style="color:rgba(255,255,255,0.35)">(6)</span></div>
-                            <div style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px;">
+                            <div onclick="(function(btn,body){var open=body.style.display!=='none';body.style.display=open?'none':'block';btn.querySelector('.moon-toggle-arrow').textContent=open?'▼':'▲';btn.querySelector('.moon-toggle-label').textContent=open?'Show Events':'Hide Events';})(this,document.getElementById('moonSpecialBody'))" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; display:flex; flex-direction:column; align-items:flex-end; gap:1px; cursor:pointer; padding:2px 0 2px 12px;">
                                 <span class="moon-toggle-arrow" style="font-size:9px;">▼</span>
                                 <span class="moon-toggle-label">Show Events</span>
                             </div>
