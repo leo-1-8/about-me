@@ -478,6 +478,40 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        /* Floating location label below OTHERS button */
+        .others-float-label {
+            color: rgba(0, 0, 0, 0.45);
+        }
+        body.dark-mode .others-float-label {
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* Glowing location dot */
+        .loc-blink-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #4cde80;
+            margin-right: 5px;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+            animation: locDotGlow 1.5s ease-in-out infinite;
+        }
+        @keyframes locDotGlow {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 4px 1px #4cde80, 0 0 8px 3px rgba(76, 222, 128, 0.6), 0 0 14px 5px rgba(76, 222, 128, 0.3);
+            }
+            50% {
+                opacity: 0.55;
+                transform: scale(0.75);
+                box-shadow: 0 0 2px 1px rgba(76, 222, 128, 0.3), 0 0 4px 2px rgba(76, 222, 128, 0.15);
+            }
+        }
+
         body.dark-mode .settings-button {
             border-color: rgba(255, 255, 255, 0.18);
             background: rgba(0, 0, 0, 0.35);
@@ -11786,13 +11820,16 @@
                 <span class="christmas-deco-right">❄️</span>
                 <span data-i18n="btn_about">About Me</span>
             </button>
-            <div class="favorites-and-whatsnew-row">
+            <div class="favorites-and-whatsnew-row" style="position:relative;">
                 <button class="main-button btn-favorites" onclick="openModal('favorites')">
                     <span class="btn-sweep"></span>
                     <span class="christmas-deco-left">⛄</span>
                     <span class="christmas-deco-right">🎀</span>
                     <span data-i18n="btn_others">OTHERS</span>
                 </button>
+                <div id="othersFloatingLocation" style="display:none; position:absolute; top:100%; left:0; margin-top:4px; white-space:nowrap; font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; pointer-events:none; z-index:10; line-height:1.3;">
+                    <span class="loc-blink-dot"></span><span class="others-float-label">Location: </span><span id="othersFloatingLocationText" style="color:#4cde80;"></span>
+                </div>
             </div>
         </div>
         <div class="update-button-container hidden" id="updateButtonContainer" style="display: none !important;">
@@ -15775,7 +15812,7 @@
                 <div id="astronomySection" style="display:grid; gap:12px;">
                 <div class="settings-lang-heading-row">
                     <span class="settings-control-left">
-                        <span class="settings-row-label">Astronomy <span style="color:#4cde80; font-size:10px; font-weight:700; font-style:italic;">Added 8/1/2026</span> <span style="color:#4cde80; font-size:11px; font-weight:700;">[NEW]</span></span>
+                        <span class="settings-row-label">Astronomy <span style="color:#4cde80; font-size:11px; font-weight:700;">[NEW]</span></span>
                     </span>
                 </div>
                 <button type="button" class="settings-open-btn" id="settingsOpenMoonPhaseBtn">Open</button>
@@ -17884,6 +17921,17 @@ window.closeSettings = closeSettings;
         // ── Time anchor (tamperproof — uses network time, NOT device clock) ──
         var _timeAnchorDeviceMs = Date.now(); // temp until first network sync
         var _timeAnchorPerfMs   = performance.now();
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                var _wn = Date.now();
+                var _pe = _timeAnchorDeviceMs + (performance.now() - _timeAnchorPerfMs);
+                if (Math.abs(_wn - _pe) > 200) {
+                    _timeAnchorDeviceMs = _wn;
+                    _timeAnchorPerfMs   = performance.now();
+                }
+            }
+        });
 
         (function _syncServerAnchor() {
             var endpoints = [
@@ -37127,7 +37175,7 @@ function updateLoginLordIconColor() {
     function update() {
         var nowMs = getNowMs();
         var diffMs = nowMs - UPDATED_SINCE_UTC_MS;
-        var days = Math.floor(Math.abs(diffMs) / 86400000);
+        var days = diffMs < 0 ? Math.ceil(Math.abs(diffMs) / 86400000) : Math.floor(Math.abs(diffMs) / 86400000);
         var cardWrap = document.getElementById('musicUpdatedLabelCard');
         if (!cardWrap) return;
         if (diffMs < 0) {
@@ -37196,6 +37244,17 @@ function updateLoginLordIconColor() {
     // Fetch on load and re-sync every 5 minutes
     _fetchNetworkTime();
     setInterval(_fetchNetworkTime, 5 * 60 * 1000);
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && _moonAnchorUtcMs !== null) {
+            var _wn = Date.now();
+            var _perfBased = _moonAnchorUtcMs + (performance.now() - _moonAnchorPerfMs);
+            if (Math.abs(_wn - _perfBased) > 200) {
+                _moonAnchorUtcMs  = _wn;
+                _moonAnchorPerfMs = performance.now();
+            }
+        }
+    });
 
     function getNowMs() {
         if (_moonAnchorUtcMs !== null) {
@@ -47408,11 +47467,15 @@ class GravSimEndpoint {
     function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
 
     function _tickNextPhaseCountdown(nowMs) {
-        var nextLabel = document.getElementById('moonNextPhaseLabelInner');
-        if (!nextLabel) return;
-        if (nowMs === undefined) nowMs = getNowMs();
+        if (nowMs === undefined) nowMs = Date.now();
+        var nextLabelInner = document.getElementById('moonNextPhaseLabelInner');
+        var nextLabelM     = document.getElementById('moonNextPhaseLabelInnerModal');
         var info = getNextPhaseInfo(nowMs);
-        if (!info) { nextLabel.textContent = '\u2014'; return; }
+        if (!info) {
+            if (nextLabelInner) nextLabelInner.textContent = '\u2014';
+            if (nextLabelM)     nextLabelM.textContent     = '\u2014';
+            return;
+        }
         var diffMs = info.eventMs - nowMs;
         if (diffMs <= 0) {
             updateWidget();
@@ -47431,18 +47494,17 @@ class GravSimEndpoint {
         } else {
             countdownText = displayName + ' in ' + _padTwo(hrs) + 'h ' + _padTwo(mins) + 'm ' + _padTwo(secs) + 's';
         }
-        nextLabel.innerHTML = _moonGeoGranted ? countdownText : '<span style="color:#ff8a8a;">---</span>';
-        // Mirror to modal
-        var nextLabelM = document.getElementById('moonNextPhaseLabelInnerModal');
-        if (nextLabelM) nextLabelM.innerHTML = _moonGeoGranted ? countdownText : '<span style="color:#ff8a8a;">---</span>';
-        // Keep full/new moon date displays ticking in sync — only when location granted
-        var fullEl = document.getElementById('moonNextFullDate');
-        var newEl  = document.getElementById('moonNextNewDate');
+        var html = _moonGeoGranted ? countdownText : '<span style="color:#ff8a8a;">---</span>';
+        if (nextLabelInner) nextLabelInner.innerHTML = html;
+        if (nextLabelM)     nextLabelM.innerHTML     = html;
+        // Keep full/new moon date displays ticking in sync
+        var fullEl  = document.getElementById('moonNextFullDate');
+        var newEl   = document.getElementById('moonNextNewDate');
         var fullElM = document.getElementById('moonNextFullDateModal');
         var newElM  = document.getElementById('moonNextNewDateModal');
         if (_moonGeoGranted) {
-            if (fullEl && _nextFullMs) fullEl.textContent = formatMoonEventDate(_nextFullMs);
-            if (newEl  && _nextNewMs)  newEl.textContent  = formatMoonEventDate(_nextNewMs);
+            if (fullEl  && _nextFullMs) fullEl.textContent  = formatMoonEventDate(_nextFullMs);
+            if (newEl   && _nextNewMs)  newEl.textContent   = formatMoonEventDate(_nextNewMs);
             if (fullElM && _nextFullMs) fullElM.textContent = formatMoonEventDate(_nextFullMs);
             if (newElM  && _nextNewMs)  newElM.textContent  = formatMoonEventDate(_nextNewMs);
         } else {
@@ -47454,10 +47516,15 @@ class GravSimEndpoint {
         }
     }
 
+    var _nextPhaseCountdownTimer = null;
+
     function _startNextPhaseCountdown() {
-        if (_nextPhaseCountdownInterval) { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
-        // rAF loop handles per-second ticking; just do an immediate first tick
-        _tickNextPhaseCountdown();
+        if (_nextPhaseCountdownTimer !== null) { clearInterval(_nextPhaseCountdownTimer); _nextPhaseCountdownTimer = null; }
+        if (_nextPhaseCountdownInterval)       { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
+        _tickNextPhaseCountdown(Date.now());
+        _nextPhaseCountdownTimer = setInterval(function() {
+            _tickNextPhaseCountdown(Date.now());
+        }, 1000);
     }
 
     function updateWidget() {
@@ -47614,7 +47681,7 @@ class GravSimEndpoint {
                 _lastSec = sec;
                 // Fire all countdowns together on the same wall-clock second
                 if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet(_nowMs);
-                if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
+                // Note: _tickNextPhaseCountdown has its own drift-corrected setTimeout loop
                 // Apsis countdowns — only when location granted
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
@@ -47641,7 +47708,7 @@ class GravSimEndpoint {
                             var _distStr  = _c.distKm.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' km';
 
                             // Altitude + Azimuth
-                            var _altLabel = _c.altitude >= 0 ? ' <span style="color:#f5a623;">(Above horizon)</span>' : ' <span style="color:#f5a623;">(Below horizon)</span>';
+                            var _altLabel = _c.altitude >= 0 ? ' <span style="color:#ffe066;">(</span><span style="color:#f5a623;">Above horizon</span><span style="color:#ffe066;">)</span>' : ' <span style="color:#ffe066;">(</span><span style="color:#f5a623;">Below horizon</span><span style="color:#ffe066;">)</span>';
                             var _altStr   = _c.altitude.toFixed(1) + '°' + _altLabel;
                             var _azLabel  = _getAzimuthLabel(_c.azimuth);
                             var _azStr    = _c.azimuth.toFixed(1) + '° (<span style="color:#f5a623;">' + _azLabel + '</span>)';
@@ -47722,9 +47789,6 @@ class GravSimEndpoint {
             }
             requestAnimationFrame(_rafTick);
         }
-        // Use rAF as the heartbeat — it pauses when the tab/app is backgrounded
-        // and resumes frame-by-frame when visible again, so there's no freeze or
-        // teleport caused by throttled/batched setTimeout callbacks on mobile.
         requestAnimationFrame(_rafTick);
     })();
 
@@ -47732,6 +47796,51 @@ class GravSimEndpoint {
     var _moonGeoGranted = false; window._moonGeoGranted = false;
     var _moonGeoLat = 14.5;
     var _moonGeoLon = 0;
+
+    window._moonDisableLocation = function() {
+        // Stop watching
+        if (typeof _moonWatchId !== 'undefined' && _moonWatchId !== null) {
+            navigator.geolocation.clearWatch(_moonWatchId);
+            _moonWatchId = null;
+        }
+        // Reset granted flag
+        _moonGeoGranted = false; window._moonGeoGranted = false;
+
+        // Reset modal observer fields to ---
+        var dash = '<span style="color:#ff8a8a;">---</span>';
+        var ids = ['moonObsLatModal','moonObsLonModal','moonObsLocationModal','moonRiseSetTzModal','moonObsSourceModal','moonObsUpdatedModal'];
+        ids.forEach(function(id) { var el = document.getElementById(id); if (el) el.innerHTML = '---'; });
+
+        // Hide rows that were shown
+        ['moonObsLocationGroup','moonObsTzRowModal','moonObsSourceRowModal','moonObsUpdatedRowModal'].forEach(function(id) {
+            var el = document.getElementById(id); if (el) el.style.display = 'none';
+        });
+
+        // Hide floating location label
+        var _floatEl = document.getElementById('othersFloatingLocation');
+        if (_floatEl) _floatEl.style.display = 'none';
+
+        // Show the Enable Location button again
+        var locBtnM = document.getElementById('moonEnableLocationBtnModal');
+        if (locBtnM) { locBtnM.style.display = ''; locBtnM.disabled = false; }
+        var locBtn = document.getElementById('moonEnableLocationBtn');
+        if (locBtn) { locBtn.style.display = ''; locBtn.disabled = false; }
+
+        // Show denied status section
+        var statusSection = document.getElementById('moonObsStatusSection');
+        if (statusSection) statusSection.style.display = 'block';
+        var deniedMsg = document.getElementById('moonObsDeniedMsg');
+        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#ff8a8a'; deniedMsg.textContent = 'Estimated Time Zone (Location Access Denied)'; }
+
+        // Reset timezone display
+        var tzEl = document.getElementById('moonRiseSetTz');
+        if (tzEl) tzEl.innerHTML = '<span style="color:#ff8a8a;">Estimated Time Zone (Location Access Denied)</span>';
+
+        // Re-render eclipses (will show ---)
+        if (typeof window._renderEclipses === 'function') {
+            window._renderEclipses((typeof getNowMs === 'function') ? getNowMs() : Date.now());
+        }
+    };
 
     function _setTzElGranted(tzEl, locBtn) {
         if (!tzEl) return;
@@ -47902,7 +48011,7 @@ class GravSimEndpoint {
                             h = h % 12 || 12;
                             var updStr = months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear() + ' \u2022 ' + h + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
                             if (updEl) { updEl.textContent = updStr; }
-                            if (updRow) updRow.style.display = 'block';
+                            if (updRow) updRow.style.display = 'flex';
                             // Reverse geocode to get City, Country
                             var locEl = document.getElementById('moonObsLocationModal');
                             if (locEl) { locEl.textContent = 'Getting location…'; locEl.style.color = '#4cde80'; }
@@ -47918,6 +48027,13 @@ class GravSimEndpoint {
                                     var country = (data.countryName || '').replace(/\s*\(.*?\)\s*/g, '').trim();
                                     var parts = [municipality, province, country].filter(function(x) { return x; });
                                     if (locEl) { locEl.textContent = parts.length ? parts.join(', ') : 'Unknown'; locEl.style.color = '#4cde80'; }
+                                    // Floating label below OTHERS button
+                                    var _floatEl = document.getElementById('othersFloatingLocation');
+                                    var _floatText = document.getElementById('othersFloatingLocationText');
+                                    if (_floatEl && _floatText) {
+                                        _floatText.textContent = parts.length ? parts.join(', ') : 'Unknown';
+                                        _floatEl.style.display = 'block';
+                                    }
                                 })
                                 .catch(function() { if (locEl) { locEl.textContent = 'Unknown'; locEl.style.color = '#4cde80'; } });
                             if (_moonWatchId !== null) navigator.geolocation.clearWatch(_moonWatchId);
@@ -48178,25 +48294,26 @@ class GravSimEndpoint {
                         </div>
                     </div>
                     <div id="moonObserverBody" style="display:none; margin-top:8px;">
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        <div id="moonObsLocationGroup" style="display:none;">
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                                Location: <span id="moonObsLocationModal" style="color:#4cde80;">---</span>
+                            </div>
+                        </div>
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Latitude: <span id="moonObsLatModal" style="color:rgba(255,220,80,0.9);">---</span>
                         </div>
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Longitude: <span id="moonObsLonModal" style="color:rgba(255,220,80,0.9);">---</span>
                         </div>
-                        <div id="moonObsLocationGroup" style="display:none;">
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
-                                Location: <span id="moonObsLocationModal" style="color:#4cde80;">---</span>
-                            </div>
-                            <div id="moonObsTzRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                                Time Zone: <span id="moonRiseSetTzModal" style="color:rgba(255,220,80,0.9);">---</span>
-                            </div>
-                            <div id="moonObsSourceRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                                Location Source: <span id="moonObsSourceModal" style="color:#4cde80;">---</span>
-                            </div>
-                            <div id="moonObsUpdatedRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                                Updated: <span id="moonObsUpdatedModal" style="color:#4cde80;">---</span>
-                            </div>
+                        <div id="moonObsTzRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                            Time Zone: <span id="moonRiseSetTzModal" style="color:rgba(255,220,80,0.9);">---</span>
+                        </div>
+                        <div id="moonObsSourceRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                            Location Source: <span id="moonObsSourceModal" style="color:#4cde80;">---</span>
+                        </div>
+                        <div id="moonObsUpdatedRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none; flex-direction:row; align-items:center; justify-content:space-between;">
+                            <span>Updated: <span id="moonObsUpdatedModal" style="color:#4cde80;">---</span></span>
+                            <span id="moonDisableLocationBtn" onclick="window._moonDisableLocation()" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#b8a832; cursor:pointer; text-decoration:none; user-select:none; letter-spacing:0.3px; white-space:nowrap; margin-left:8px;">Disable Location</span>
                         </div>
                     </div>
                 </div>
@@ -48320,7 +48437,6 @@ class GravSimEndpoint {
     var syncMap = [
         ['moonPhaseName',         'moonPhaseNameModal'],
         ['moonPhasePercent',      'moonPhasePercentModal'],
-        ['moonNextPhaseLabelInner','moonNextPhaseLabelInnerModal'],
         ['moonNextFullDate',      'moonNextFullDateModal'],
         ['moonNextNewDate',       'moonNextNewDateModal'],
         ['moonRiseTime',          'moonRiseTimeModal'],
@@ -48381,7 +48497,7 @@ class GravSimEndpoint {
             }, 200);
             // Keep syncing every 100ms while modal is open
             if (_moonModalSyncInterval) clearInterval(_moonModalSyncInterval);
-            _moonModalSyncInterval = setInterval(syncMoonModal, 100);
+            _moonModalSyncInterval = setInterval(syncMoonModal, 1000);
         }
     };
 
@@ -48429,7 +48545,7 @@ class GravSimEndpoint {
             if (diffMs < 0) {
                 // Before Aug 1 — count days until
                 var daysUntil = Math.ceil(-diffMs / (1000 * 60 * 60 * 24));
-                agoEl.textContent = 'Added in ' + daysUntil + (daysUntil === 1 ? ' day' : ' days');
+                agoEl.textContent = '8/1/2026 (Added in ' + daysUntil + (daysUntil === 1 ? ' day)' : ' days)');
             } else {
                 var diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
                 var diffHours = Math.floor(diffMs / (1000 * 60 * 60));
