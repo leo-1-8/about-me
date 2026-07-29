@@ -11966,14 +11966,14 @@
     </div>
 
     <!-- Post-update notice (shown after loading, before welcome intro; only OK closes) -->
-    <div id="updatedSplashOverlay" class="updated-splash-overlay" aria-hidden="true" style="display: none;">
+    <div id="updatedSplashOverlay" class="updated-splash-overlay" style="display: none;">
         <div class="updated-splash-card" role="dialog" aria-modal="true" aria-labelledby="updatedSplashTitle" tabindex="-1">
             <h2 id="updatedSplashTitle" class="updated-splash-title updated-splash-title-row">
                 <span class="update14-new-dot" aria-hidden="true"></span>
                 <span id="updatedSplashHeadingText" data-i18n="updated_title">UPDATED</span>
             </h2>
             <p class="updated-splash-text" id="updatedSplashBody" data-i18n="updated_body">Thank you for patiently waiting while my website is updating. The new version has now been successfully applied.</p>
-            <p id="updatedSplashNew" style="font-size: 12px; margin-top: 8px; text-align: center; font-weight: 600; letter-spacing: 0.3px;">NEW: System Settings &gt;&gt; What's More</p>
+            <p id="updatedSplashNew" style="font-size: 12px; margin-top: 8px; text-align: center; font-weight: 600; letter-spacing: 0.3px; color: #4cde80;">NEW: System Settings &gt;&gt; What's More</p>
             <button type="button" id="updatedSplashOk" class="updated-splash-ok" data-i18n="btn_ok">OK</button>
         </div>
     </div>
@@ -17103,7 +17103,7 @@ window.closeSettings = closeSettings;
                 runIntroSkip(e);
             }, true);
 
-            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v2.1';
+            const UPDATED_SPLASH_SEEN_KEY = 'aboutMySelf_updatedSplashSeen_v2.0';
             
             function hasSeenUpdatedSplashOnce() {
                 try {
@@ -17234,7 +17234,6 @@ window.closeSettings = closeSettings;
                     } catch (err) {}
                     if (updatedSplashOverlayEl) {
                         updatedSplashOverlayEl.style.display = 'none';
-                        updatedSplashOverlayEl.setAttribute('aria-hidden', 'true');
                     }
                     document.body.classList.remove('updated-splash-open');
                     showNewWelcome();
@@ -37001,7 +37000,9 @@ body:not(.dark-mode) #fnpLyrics {
             !document.body.classList.contains('intro-pending') &&
             (!hasOtherModal) &&
             !(document.getElementById('settingsOverlay') && document.getElementById('settingsOverlay').classList.contains('show')) &&
-            !(document.getElementById('newWelcomeOverlay') && document.getElementById('newWelcomeOverlay').classList.contains('show'))
+            !(document.getElementById('newWelcomeOverlay') && document.getElementById('newWelcomeOverlay').classList.contains('show')) &&
+            !(document.getElementById('updatedSplashOverlay') && document.getElementById('updatedSplashOverlay').style.display !== 'none') &&
+            !(document.getElementById('bgPickerOverlay') && document.getElementById('bgPickerOverlay').classList.contains('show'))
         );
 
         
