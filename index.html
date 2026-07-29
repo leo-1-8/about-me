@@ -47720,18 +47720,12 @@ class GravSimEndpoint {
                     }
                 } catch(e) {}
             }
-            // Schedule next tick at the exact next second boundary to prevent drift/skip
-            var _msNow = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
-            var _msUntilNext = 1000 - (_msNow % 1000);
-            // Clamp: fire a tiny bit after the boundary to ensure the second has flipped
-            setTimeout(_rafTick, _msUntilNext + 5);
+            requestAnimationFrame(_rafTick);
         }
-        // Initial tick — align immediately to next second boundary
-        (function() {
-            var _msNow = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
-            var _msUntilNext = 1000 - (_msNow % 1000);
-            setTimeout(_rafTick, _msUntilNext + 5);
-        })();
+        // Use rAF as the heartbeat — it pauses when the tab/app is backgrounded
+        // and resumes frame-by-frame when visible again, so there's no freeze or
+        // teleport caused by throttled/batched setTimeout callbacks on mobile.
+        requestAnimationFrame(_rafTick);
     })();
 
     // Track whether location was successfully granted so we can restore on visibility
@@ -48184,25 +48178,25 @@ class GravSimEndpoint {
                         </div>
                     </div>
                     <div id="moonObserverBody" style="display:none; margin-top:8px;">
-                        <div id="moonObsLocationGroup" style="display:none;">
-                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
-                                Location: <span id="moonObsLocationModal" style="color:#4cde80;">---</span>
-                            </div>
-                        </div>
-                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                        <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
                             Latitude: <span id="moonObsLatModal" style="color:rgba(255,220,80,0.9);">---</span>
                         </div>
                         <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
                             Longitude: <span id="moonObsLonModal" style="color:rgba(255,220,80,0.9);">---</span>
                         </div>
-                        <div id="moonObsTzRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                            Time Zone: <span id="moonRiseSetTzModal" style="color:rgba(255,220,80,0.9);">---</span>
-                        </div>
-                        <div id="moonObsSourceRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                            Location Source: <span id="moonObsSourceModal" style="color:#4cde80;">---</span>
-                        </div>
-                        <div id="moonObsUpdatedRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
-                            Updated: <span id="moonObsUpdatedModal" style="color:#4cde80;">---</span>
+                        <div id="moonObsLocationGroup" style="display:none;">
+                            <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                                Location: <span id="moonObsLocationModal" style="color:#4cde80;">---</span>
+                            </div>
+                            <div id="moonObsTzRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                                Time Zone: <span id="moonRiseSetTzModal" style="color:rgba(255,220,80,0.9);">---</span>
+                            </div>
+                            <div id="moonObsSourceRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                                Location Source: <span id="moonObsSourceModal" style="color:#4cde80;">---</span>
+                            </div>
+                            <div id="moonObsUpdatedRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none;">
+                                Updated: <span id="moonObsUpdatedModal" style="color:#4cde80;">---</span>
+                            </div>
                         </div>
                     </div>
                 </div>
