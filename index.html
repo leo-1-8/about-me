@@ -1568,6 +1568,10 @@
         }
 
         /* About Me (dark): light panels had white text from old wildcard — use dark panels + light text */
+        body.dark-mode #aboutModal .modal-about {
+            background: linear-gradient(160deg, #4a9bb5 0%, #5a6a7a 50%, #4a9bb5 100%) !important;
+        }
+
         body.dark-mode #aboutModal .modal-content {
             color: rgba(255, 255, 255, 0.92);
         }
@@ -1577,19 +1581,19 @@
         body.dark-mode #aboutModal .about-favorites-box .personal-info-container,
         body.dark-mode #aboutModal .hobbies-box,
         body.dark-mode #aboutModal .about-favorites-box {
-            background: rgba(28, 36, 52, 0.95) !important;
-            border-color: rgba(255, 255, 255, 0.12) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         body.dark-mode #aboutModal .favorites-topics-container {
             background: transparent;
         }
         body.dark-mode #aboutModal .favorite-topic-box {
-            background: rgba(28, 36, 52, 0.95) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
         body.dark-mode #aboutModal .info-label {
-            color: rgba(255, 255, 255, 0.75) !important;
+            color: rgba(255, 255, 255, 0.95) !important;
         }
         /* [NEW] badge must stay green even inside dark-mode info-label — placed here
            so source order beats the rule above */
@@ -1608,8 +1612,8 @@
             color: #86efac !important;
         }
         body.dark-mode #aboutModal .access-gate {
-            background: rgba(28, 36, 52, 0.95) !important;
-            border-color: rgba(255, 255, 255, 0.15) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
         }
         body.dark-mode #aboutModal .access-gate-title,
         body.dark-mode #aboutModal .access-gate-msg {
@@ -5362,9 +5366,86 @@
             pointer-events: auto !important;
         }
 
+        .whats-new-blink-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00e676;
+            box-shadow: 0 0 6px 2px #00e676;
+            margin-left: 6px;
+            vertical-align: middle;
+            animation: whatsNewBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes whatsNewBlink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px 3px #00e676; }
+            50% { opacity: 0; box-shadow: 0 0 0px 0px #00e676; }
+        }
+
         /* Keep What's New above settings when opened from settings */
         #updatesModal {
             z-index: 28010;
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+        }
+
+        body.dark-mode #updatesModal {
+            background: #070b14 !important;
+        }
+
+        #updatesModal .modal-box {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 10px 0 0 0 !important;
+        }
+
+        #updatesModal .modal-updates.modal-content,
+        #updatesModal .modal-content {
+            flex: 1 !important;
+            max-height: none !important;
+            height: 100% !important;
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        #updatesModal .modal-content h2 {
+            padding: 0 20px !important;
+        }
+
+        #updatesModal .updates-scroll-body {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            max-height: none !important;
+            height: 100% !important;
+            padding: 0 12px 30px 20px !important;
+            margin-right: 0 !important;
+            font-size: 12px !important;
+        }
+
+        #updatesModal .updates-scroll-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #updatesModal .updates-scroll-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 0;
+            margin: 0;
+        }
+
+        #updatesModal .updates-scroll-body::-webkit-scrollbar-thumb {
+            border-radius: 0;
         }
 
         /* Keep the secret inbox gate / quiz above settings when triggered from the
@@ -5456,17 +5537,17 @@
             pointer-events: none;
             line-height: 1;
             font-style: normal;
-            animation: twinkleA 4.5s ease-in-out var(--delay, 0s) infinite,
-                       starDrift 4.5s ease-in-out var(--delay, 0s) infinite;
+            animation: twinkleA var(--td, 4.5s) ease-in-out var(--delay, 0s) infinite,
+                       starDrift var(--td, 4.5s) ease-in-out var(--delay, 0s) infinite;
         }
-        .moon-twinkle-star:nth-child(2) { animation-name: twinkleB, starDrift; animation-timing-function: ease-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(3) { animation-name: twinkleC, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(4) { animation-name: twinkleD, starDrift; animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
-        .moon-twinkle-star:nth-child(5) { animation-name: twinkleE, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(6) { animation-name: twinkleA, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(7) { animation-name: twinkleC, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(8) { animation-name: twinkleB, starDrift; animation-timing-function: ease-out, ease-in-out; }
-        .moon-twinkle-star:nth-child(9) { animation-name: twinkleD, starDrift; animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
+        .moon-twinkle-star:nth-child(2) { animation-name: twinkleB, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(3) { animation-name: twinkleC, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(4) { animation-name: twinkleD, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
+        .moon-twinkle-star:nth-child(5) { animation-name: twinkleE, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(6) { animation-name: twinkleA, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(7) { animation-name: twinkleC, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(8) { animation-name: twinkleB, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: ease-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(9) { animation-name: twinkleD, starDrift; animation-duration: var(--td, 4.5s), var(--td, 4.5s); animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
 
         /* Hide stars in day/light mode — only show in dark mode */
         body:not(.dark-mode) .moon-twinkle-star {
@@ -5501,7 +5582,38 @@
         }
 
         .modal-about {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background: linear-gradient(160deg, #87ceeb 0%, #ffffff 50%, #87ceeb 100%);
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+
+        #aboutModal.modal-overlay {
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        #aboutModal .modal-box {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 30px 0 0px !important;
+            box-shadow: none !important;
+            overflow-y: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
 
         /* Balance absolute close button so title reads visually centered */
@@ -5572,6 +5684,14 @@
             z-index: 10003;
         }
 
+        #updatesModal .close-button-left {
+            left: auto;
+            right: 20px;
+            width: 35px;
+            height: 35px;
+            font-size: 19px;
+        }
+
         .close-button-left:hover {
             background: rgba(255, 255, 255, 0.5);
             transform: rotate(90deg);
@@ -5605,6 +5725,13 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Full-screen override for updates modal */
+        #updatesModal .modal-updates.modal-content {
+            max-height: calc(100vh - 100px) !important;
+            height: calc(100vh - 100px) !important;
+            padding-right: 0 !important;
         }
 
         .music-list,
@@ -6189,9 +6316,14 @@
             }
 
             .modal-about .modal-box {
-                max-height: 98vh;
-                max-width: 95vw;
-                padding: 15px;
+                max-height: 100vh !important;
+                height: 100vh !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                min-height: 100vh !important;
+                border-radius: 0 !important;
+                padding: 20px 15px 15px !important;
+                margin: 0 !important;
             }
 
             .modal-about .modal-title {
@@ -6200,9 +6332,9 @@
             }
 
             .modal-about .modal-content {
-                max-height: calc(98vh - 80px);
+                max-height: none;
                 overflow-y: auto;
-                padding-right: 5px;
+                padding-right: 0;
             }
         }
 
@@ -6241,6 +6373,63 @@
             background: rgba(0, 0, 0, 0.4);
         }
 
+        /* About modal scrollbar — on modal-content, so track only covers content area */
+        #aboutModal .modal-box {
+            scrollbar-width: none;
+        }
+        #aboutModal .modal-box::-webkit-scrollbar {
+            display: none;
+            width: 0;
+        }
+        #aboutModal .modal-content {
+            scrollbar-width: thin;
+            scrollbar-color: #87ceeb transparent;
+        }
+        #aboutModal .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        #aboutModal .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #aboutModal .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #9e9e9e 0%, #87ceeb 100%);
+            border-radius: 3px;
+        }
+        #aboutModal .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #bdbdbd 0%, #5bb8d4 100%);
+        }
+
+        #aboutModal .modal-content {
+            padding-bottom: 0px;
+            padding-left: 20px;
+            padding-right: 20px;
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            min-height: 0 !important;
+            max-height: none !important;
+        }
+
+        #aboutModal .modal-title {
+            padding-left: 72px !important;
+            padding-right: 52px !important;
+        }
+
+        #aboutModal > .modal-box > .back-button-box {
+            flex-shrink: 0;
+            margin: 0;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-bottom: none;
+            border-top: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 12px 20px;
+            background: transparent !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+        }
+
         .modal-title {
             text-align: center;
             font-size: 36px;
@@ -6270,7 +6459,7 @@
             gap: 15px;
             justify-content: space-between;
             margin-top: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 0px;
         }
 
         .modal-action-button {
@@ -6294,7 +6483,7 @@
         }
 
         .btn-back {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e90ff 0%, #87ceeb 100%);
             color: white;
         }
 
@@ -6537,28 +6726,44 @@
         }
 
         .info-toggle-button {
-            background: #4CAF50;
-            border: none;
-            border-radius: 8px;
-            width: 35px;
-            height: 30px;
+            background: linear-gradient(135deg, rgba(30,144,255,0.25) 0%, rgba(135,206,235,0.18) 100%);
+            border: 1.5px solid rgba(135, 206, 235, 0.45);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
             cursor: pointer;
-            font-size: 18px;
-            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+            box-shadow: 0 2px 10px rgba(30,144,255,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
             flex-shrink: 0;
-            font-weight: bold;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: transparent;
+            font-size: 0;
+        }
+
+        .info-toggle-button svg {
+            display: block;
+            flex-shrink: 0;
+            transition: stroke 0.2s;
+        }
+
+        .info-toggle-button:hover svg polyline {
+            stroke: #fff;
         }
 
         .info-toggle-button.disabled {
-            background: #808080;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            background: rgba(128,128,128,0.2);
+            border-color: rgba(128,128,128,0.3);
+            box-shadow: none;
             cursor: not-allowed;
-            opacity: 0.9;
+            opacity: 0.6;
+        }
+
+        .info-toggle-button.disabled::after {
+            border-color: #aaa;
         }
 
         .info-toggle-button.disabled:hover,
@@ -6567,21 +6772,30 @@
         }
 
         .info-toggle-button:hover {
-            background: #45a049;
-            transform: translateX(3px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+            background: linear-gradient(135deg, rgba(30,144,255,0.4) 0%, rgba(135,206,235,0.3) 100%);
+            border-color: rgba(135,206,235,0.8);
+            box-shadow: 0 4px 16px rgba(30,144,255,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .info-toggle-button:hover::after {
+            border-color: #fff;
         }
 
         .info-toggle-button:active {
-            transform: translateX(1px);
+            transform: scale(0.95);
         }
 
         .info-toggle-button.rotated {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
 
         .info-toggle-button.rotated:hover {
-            transform: rotate(180deg) translateX(-3px);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .info-toggle-button.disabled::after {
+            border-color: #aaa;
         }
 
         .personal-info-box {
@@ -6593,7 +6807,7 @@
         }
 
         .personal-info-box.show {
-            max-height: 500px;
+            max-height: 900px;
             opacity: 1;
             margin-top: 20px;
             margin-bottom: 15px;
@@ -6655,7 +6869,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border: 2px solid rgba(102, 126, 234, 0.3);
             margin-top: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 0px;
             display: flex;
             gap: 10px;
             justify-content: space-between;
@@ -6691,13 +6905,21 @@
         }
 
         .favorites-topics-container {
-            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin: 0;
+            display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
         .favorites-topics-container.show {
-            display: flex;
+            max-height: 6000px;
+            opacity: 1;
+            margin-top: 20px;
+            margin-bottom: 15px;
         }
 
         .favorite-topic-box {
@@ -9846,11 +10068,12 @@
         .access-gate {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 15px;
-            padding: 16px;
+            padding: 16px 16px 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border: 2px solid rgba(128, 128, 128, 0.4);
             margin-top: 12px;
+            margin-bottom: 20px;
             display: none;
         }
 
@@ -9870,7 +10093,7 @@
         }
 
         .access-gate-link {
-            color: #808080;
+            color: #1a6b3a;
             cursor: pointer;
             font-weight: 700;
             text-decoration: none;
@@ -9878,7 +10101,7 @@
         }
 
         .access-gate-link:hover {
-            color: #707070;
+            color: #145230;
         }
 
         .otp-container {
@@ -10681,9 +10904,9 @@
             }
 
             .info-toggle-button {
-                width: 32px;
-                height: 28px;
-                font-size: 16px;
+                width: 30px;
+                height: 30px;
+                font-size: 0;
             }
 
             .name-with-button, .hobbies-with-button, .favorites-with-button, .social-with-button {
@@ -12040,7 +12263,7 @@
                 <div class="info-item name-item">
                     <div class="info-label name-with-button">
                         <span data-i18n="about_personal_details">Personal Details</span>
-                        <button id="personalToggleBtn" class="info-toggle-button" data-i18n-title="about_toggle_access" title="Toggle access">▶</button>
+                        <button id="personalToggleBtn" class="info-toggle-button" data-i18n-title="about_toggle_access" title="Toggle access"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="3,1 7,5 3,9" stroke="#87ceeb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div>
                 </div>
                 <div class="access-gate" id="personalAccessGate">
@@ -12102,12 +12325,28 @@
                             <div class="info-label" data-i18n="about_label_birthplace">Birthplace</div>
                             <div class="info-value" data-i18n="about_birthplace_value">Dr. Rafael S. Tumbukon Memorial Hospital</div>
                         </div>
+                        <div class="info-item">
+                            <div class="info-label">Mother</div>
+                            <div class="info-value">Irene De Mariano</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Father</div>
+                            <div class="info-value">Christian Yamaguchi</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Religion</div>
+                            <div class="info-value">Roman Catholic</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Favorite Color</div>
+                            <div class="info-value">Sky Blue / Blue</div>
+                        </div>
                     </div>
                 </div>
                 <div class="info-item hobbies-item">
                     <div class="info-label hobbies-with-button">
                         <span data-i18n="about_hobbies">Hobbies</span>
-                        <button class="info-toggle-button" onclick="toggleHobbies()" data-i18n-title="about_toggle_hobbies" title="Click to view hobbies">▶</button>
+                        <button class="info-toggle-button" onclick="toggleHobbies()" data-i18n-title="about_toggle_hobbies" title="Click to view hobbies"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="3,1 7,5 3,9" stroke="#87ceeb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div>
                 </div>
                 <div class="hobbies-box" id="hobbiesBox">
@@ -12123,9 +12362,10 @@
                 <div class="info-item favorites-item">
                     <div class="info-label favorites-with-button">
                         <span data-i18n="about_my_favorites">My Favorites</span>
-                        <button class="info-toggle-button" onclick="toggleAboutFavorites()" data-i18n-title="about_toggle_favorites" title="Click to view favorites">▶</button>
+                        <button class="info-toggle-button" onclick="toggleAboutFavorites()" data-i18n-title="about_toggle_favorites" title="Click to view favorites"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="3,1 7,5 3,9" stroke="#87ceeb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div>
-                    <div class="favorites-topics-container" id="aboutFavoritesBox">
+                </div>
+                <div class="favorites-topics-container" id="aboutFavoritesBox">
                         <div class="favorite-topic-box">
                             <div class="favorite-topic-header">
                                 <span class="favorite-topic-emoji">🐱</span>
@@ -12215,14 +12455,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
                 <div class="info-item social-media-item">
                     <div class="info-label social-with-button">
                         <span>Social Media</span>
-                        <button class="info-toggle-button" onclick="toggleSocialMediaLinks()" title="Click to view social media">▶</button>
+                        <button class="info-toggle-button" onclick="toggleSocialMediaLinks()" title="Click to view social media"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="3,1 7,5 3,9" stroke="#87ceeb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div>
-                    <div class="sm-links-box" id="socialMediaBox" style="display:none;flex-direction:column;gap:0.6rem;padding:0.5rem 0 0.2rem;">
+                    <div class="sm-links-box" id="socialMediaBox" style="display:none;flex-direction:column;gap:12px;padding:0.75rem 0 0.2rem;">
 
                             <a class="sm-card" href="https://www.facebook.com/share/1Hm5attbBU/" target="_blank" rel="noopener">
                               <div class="sm-img-wrap">
@@ -12276,14 +12515,13 @@
                             </a>
                     </div>
                 </div>
-                <div class="back-button-box" style="justify-content:center;">
-                    <button class="modal-action-button btn-back small-button" onclick="closeModal('about')" data-i18n="btn_back_main">Back to Main Menu</button>
-                </div>
+            </div>
+            <!-- Floating footer — direct child of modal-box flex column, always pinned to bottom -->
+            <div class="back-button-box" style="justify-content:center; flex-shrink:0; margin-top:0;">
+                <button class="modal-action-button btn-back small-button" onclick="closeModal('about')" data-i18n="btn_back_main">Back to Main Menu</button>
             </div>
         </div>
     </div>
-
-    <!-- Others Modal (previously My Favorites) -->
     <div class="modal-overlay" id="favoritesModal">
         <div class="modal-box modal-favorites">
             <button class="close-button" onclick="closeModal('favorites')" data-i18n-title="aria_close" title="Close">×</button>
@@ -15340,18 +15578,27 @@
         <div class="modal-box modal-updates">
             <button class="close-button-left" onclick="closeModal('updates')" title="Close">×</button>
             <div class="modal-content">
-                <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
+                <h2 style="text-align: center; font-size: 28px; margin-bottom: 20px; margin-top: 0; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">WHAT'S NEW</h2>
                 <div class="updates-scroll-body notranslate">
                     <p class="update14-heading update16-heading-first">
                         <strong class="update20-rainbow-title">UPDATE 2.0 [NEW]</strong>
-                        <span style="font-size: 0.75em; color: #00cc44 !important;">8/1/2026, 12:00PM</span>
+                        <span style="font-size: 0.75em; color: #00cc44 !important;">8/1/2026, 12:00 PM</span>
                     </p>
                     <p id="update20-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
-                        In this update, I completely reworked the music system. I hope you'll enjoy this small update!
+                        In this update, I completely reworked the Music system and About Me section. I hope you'll enjoy this small update!
                         <span id="update20-toggle-top" class="see-more-link" onclick="toggleUpdate20Details()">See more...</span>
                     </p>
                     <div id="update20-details" style="display:none; margin-bottom: 15px;">
-                        <p style="margin-top: 12px;"><strong>🏡 Main Menu</strong></p>
+                        <p style="margin-top: 12px;"><strong>🫱🏻‍🫲🏽 About Me</strong></p>
+                        <p>Reworked the About Me section.</p>
+                        <p>Reworked the arrow button.</p>
+                        <p>Reworked the scrollbar.</p>
+                        <p>Expanded the About Me modal to full screen.</p>
+                        <p>Added Social Media with links.</p>
+                        <p>Fixed the bottom padding.</p>
+                        <p>Fixed the password input.</p>
+                        <p>Fixed the social media links.</p>
+                        <p style="margin-top: 20px;"><strong>🏡 Main Menu</strong></p>
                         <p>Added a Music Pill.</p>
                         <p>Added lyrics below the Music Pill. (Lyrics are hidden when no music is playing).</p>
                         <p>Added a Moon Pill that displays the current Moon phase and illumination percentage.</p>
@@ -15380,6 +15627,8 @@
                         <p>Added Astronomy with Open button.</p>
                         <p>Adjusted the Night Mode logo.</p>
                         <p>Fixed review submissions in Write a Review.</p>
+                        <p>Expanded the What's New modal to full screen.</p>
+                        <p>Smaller the fonts from 16px down to 12px.</p>
                         <p style="margin-top: 20px;"><strong>✨ Remodeled Icons</strong></p>
                         <p>Gaming</p>
                         <p>Music</p>
@@ -15402,7 +15651,7 @@
 
                     <p class="update14-heading update16-heading-first">
                         <strong class="update19-title">UPDATE 1.9</strong>
-                        <span style="font-size: 0.75em; color: #c8a800 !important;">7/16/26, 8:00AM</span>
+                        <span style="font-size: 0.75em; color: #c8a800 !important;">7/16/26, 8:00 AM</span>
                     </p>
                     <p id="update19-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I optimized parts of my website and made a few small improvements.
@@ -15440,7 +15689,7 @@
 
                     <p class="update14-heading update16-heading-first">
                         <strong class="update18-title">UPDATE 1.8</strong>
-                        <span class="update-old-date" style="font-size: 0.75em;">7/2/26, 12:00PM</span>
+                        <span class="update-old-date" style="font-size: 0.75em;">7/2/26, 12:00 PM</span>
                     </p>
                     <p id="update18-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I fixed several bugs and made improvements to my website.
@@ -15479,7 +15728,7 @@
 
                     <p class="update14-heading update16-heading-first">
                         <strong class="update-old-title">UPDATE 1.7</strong>
-                        <span class="update-old-date">6/10/26, 12:00PM</span>
+                        <span class="update-old-date">6/10/26, 12:00 PM</span>
                     </p>
                     <p id="update17-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I improved a bit on my website.
@@ -15504,7 +15753,7 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.6</strong> <span class="update-old-date">5/25/26, 8:00AM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.6</strong> <span class="update-old-date">5/25/26, 8:00 AM</span></p>
                     <p id="update16-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I added Clock on my website.
                         <span id="update16-toggle-top" class="see-more-link" onclick="toggleUpdate16Details()">see more...</span>
@@ -15542,7 +15791,7 @@
                             <span id="update16-toggle-bottom" class="see-more-link" onclick="toggleUpdate16Details()">see less...</span>
                         </p>
                     </div>
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.5</strong> <span class="update-old-date">4/20/26, 8:00AM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.5</strong> <span class="update-old-date">4/20/26, 8:00 AM</span></p>
                     <p id="update15-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I fixed some small issues on my website.
                         <span id="update15-toggle-top" class="see-more-link" onclick="toggleUpdate15Details()">see more...</span>
@@ -15569,7 +15818,7 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.4</strong> <span class="update-old-date">3/15/26, 8:00AM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.4</strong> <span class="update-old-date">3/15/26, 8:00 AM</span></p>
                     <p id="update14-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         In this update, I've added many improvements to my website.
                         <span id="update14-toggle-top" class="see-more-link" onclick="toggleUpdate14Details()">see more...</span>
@@ -15617,7 +15866,7 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.3</strong> <span class="update-old-date">1/1/26, 12:00PM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.3</strong> <span class="update-old-date">1/1/26, 12:00 PM</span></p>
                     <p id="update13-summary" style="margin-bottom: 2px; margin-top: 1px; font-style: italic;">
                         This Version Is Fixed
                         <span id="update13-toggle-top" class="see-more-link" onclick="toggleUpdate13Details()">see more...</span>
@@ -15633,7 +15882,7 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.2</strong> <span class="update-old-date">11/5/25, 12:00PM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.2</strong> <span class="update-old-date">11/5/25, 12:00 PM</span></p>
                     <p id="update12-summary" style="margin-bottom: 8px;">
                         <span style="font-style: italic;">These are the updates and fixes</span>
                         <span id="update12-toggle-top" class="see-more-link" onclick="toggleUpdate12Details()">see more...</span>
@@ -15671,8 +15920,8 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.1</strong> <span class="update-old-date">9/30/25, 12:00PM</span></p>
-                    <p id="update11-summary" style="font-style: italic; font-size: 16px; margin-bottom: 10px; color: #555;">
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.1</strong> <span class="update-old-date">9/30/25, 12:00 PM</span></p>
+                    <p id="update11-summary" style="font-style: italic; margin-bottom: 10px; color: #555;">
                         These fixes are now applied in this version
                         <span id="update11-toggle-top" class="see-more-link" onclick="toggleUpdate11Details()">see more...</span>
                     </p>
@@ -15685,7 +15934,7 @@
                         </p>
                     </div>
 
-                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.0</strong> <span class="update-old-date">7/25/25, 10:00AM</span></p>
+                    <p style="margin-top: 12px; margin-bottom: 2px;"><strong class="update-old-title">UPDATE 1.0</strong> <span class="update-old-date">7/25/25, 10:00 AM</span></p>
                     <p id="update1-summary" style="margin-bottom: 8px;">
                         UI REFORGE + MUSIC SYSTEM UPGRADE
                         <span id="update1-toggle-top" class="see-more-link" onclick="toggleUpdateDetails()">see more...</span>
@@ -15945,7 +16194,7 @@
                 </div>
             </div>
             <div class="settings-card-body">
-                <div class="settings-row-label" data-i18n="settings_whats_new">What's New</div>
+                <div class="settings-row-label" style="display:inline-flex; align-items:center; gap:6px;"><span data-i18n="settings_whats_new">What's New</span><span class="whats-new-blink-dot"></span></div>
                 <button type="button" class="settings-open-btn" id="settingsOpenUpdatesBtn" data-i18n="settings_open">Open</button>
                 <div class="settings-lang-heading-row">
                     <span class="settings-control-left">
@@ -37037,22 +37286,24 @@ body:not(.dark-mode) #fnpLyrics {
 }
 
         /* Social Media Links row in About Modal */
-        .sm-links-box { display: none; flex-direction: column; gap: 0.6rem; }
+        .sm-links-box { display: none; flex-direction: column; gap: 12px; }
         .sm-links-box.show { display: flex !important; }
         .sm-card {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            background: rgba(102,126,234,0.08);
-            border: 1px solid rgba(102,126,234,0.2);
-            border-radius: 12px;
-            padding: 0.55rem 0.85rem;
+            gap: 0.85rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            padding: 14px 16px;
             text-decoration: none;
-            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .sm-card:hover {
-            background: rgba(102,126,234,0.18);
-            transform: translateX(3px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
         .sm-img-wrap {
             width: 40px; height: 40px;
@@ -37061,16 +37312,17 @@ body:not(.dark-mode) #fnpLyrics {
         }
         .sm-img-wrap img { object-fit: contain; border-radius: 8px; }
         .sm-text { display: flex; flex-direction: column; gap: 0.1rem; flex: 1; min-width: 0; }
-        .sm-name { color: #333; font-size: 0.88rem; font-weight: 600; }
-        .sm-handle { color: #888; font-size: 0.72rem; }
+        .sm-name { color: #333; font-size: 0.95rem; font-weight: 700; }
+        .sm-handle { color: #666; font-size: 0.78rem; }
         .sm-arrow { color: #aaa; font-size: 1rem; flex-shrink: 0; }
-        body.dark-mode .sm-name { color: #e0e0e0; }
-        body.dark-mode .sm-handle { color: #999; }
+        body.dark-mode .sm-name { color: #ffffff; }
+        body.dark-mode .sm-handle { color: #ffffff; }
+        body.dark-mode .sm-arrow { color: #bbb; }
         body.dark-mode .sm-card {
-            background: rgba(102,126,234,0.1);
+            background: rgba(255, 255, 255, 0.07);
             border-color: rgba(102,126,234,0.28);
         }
-        body.dark-mode .sm-card:hover { background: rgba(102,126,234,0.22); }
+        body.dark-mode .sm-card:hover { background: rgba(255, 255, 255, 0.12); }
 </style>
 
 <div id="floatingNowPlaying">
@@ -47713,42 +47965,70 @@ class GravSimEndpoint {
     }
 
     function getNextPhaseInfo(nowMs) {
+        // All 8 phases in cycle order, with the elongation boundary that ends each phase.
+        // When we cross that boundary we enter the next phase.
+        // elongThresh is the elongation value at which this phase ENDS (= next phase begins).
+        var phaseSequence = [
+            { name: 'Waxing Crescent', elongThresh: 90,  useQuarter: true,  quarter: 1 }, // → First Quarter
+            { name: 'Waxing Gibbous',  elongThresh: 180, useSearch: true,  target: 180 }, // → Full Moon
+            { name: 'Waning Gibbous',  elongThresh: 270, useQuarter: true,  quarter: 3 }, // → Third Quarter
+            { name: 'Waning Crescent', elongThresh: 0,   useSearch: true,  target: 0   }, // → New Moon
+            { name: 'New Moon',        elongThresh: 45,  elongCross: 45  },               // → Waxing Crescent
+            { name: 'First Quarter',   elongThresh: 135, elongCross: 135 },               // → Waxing Gibbous
+            { name: 'Full Moon',       elongThresh: 225, elongCross: 225 },               // → Waning Gibbous
+            { name: 'Third Quarter',   elongThresh: 315, elongCross: 315 },               // → Waning Crescent
+        ];
+
+        // Determine current phase from elongation
+        var elong = getElongationAtMs(nowMs);
+        var currentPhaseName;
+        if      (elong < 45)  currentPhaseName = 'New Moon';
+        else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
+        else if (elong < 135) currentPhaseName = 'First Quarter';
+        else if (elong < 180) currentPhaseName = 'Waxing Gibbous';
+        else if (elong < 225) currentPhaseName = 'Full Moon';
+        else if (elong < 270) currentPhaseName = 'Waning Gibbous';
+        else if (elong < 315) currentPhaseName = 'Third Quarter';
+        else                  currentPhaseName = 'Waning Crescent';
+
+        // The next phase name (what we are counting down to)
+        var nextPhaseOrder = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
+                              'Full Moon','Waning Gibbous','Third Quarter','Waning Crescent'];
+        var idx = nextPhaseOrder.indexOf(currentPhaseName);
+        var nextName = nextPhaseOrder[(idx + 1) % 8];
+
+        // Find the event time for the next phase transition
+        var eventMs = null;
         try {
-            // Use Astronomy Engine: find next moon quarter
-            var t = Astronomy.MakeTime(new Date(nowMs + 60000));
-            var q = Astronomy.SearchMoonQuarter(t);
-            if (!q) return null;
-            var phaseNames = ['New Moon', 'First Quarter', 'Full Moon', 'Third Quarter'];
-            return { name: phaseNames[q.quarter] || 'New Moon', eventMs: q.time.date.getTime() };
+            if (nextName === 'First Quarter' || nextName === 'Third Quarter' ||
+                nextName === 'New Moon' || nextName === 'Full Moon') {
+                // Use Astronomy Engine quarter search for the 4 main phases
+                var t = Astronomy.MakeTime(new Date(nowMs + 60000));
+                var q = Astronomy.SearchMoonQuarter(t);
+                if (q) eventMs = q.time.date.getTime();
+            } else if (nextName === 'Waxing Crescent') {
+                eventMs = findNextElongationCross(45, nowMs);
+            } else if (nextName === 'Waxing Gibbous') {
+                eventMs = findNextElongationCross(135, nowMs);
+            } else if (nextName === 'Waning Gibbous') {
+                eventMs = findNextElongationCross(225, nowMs);
+            } else if (nextName === 'Waning Crescent') {
+                eventMs = findNextElongationCross(315, nowMs);
+            }
         } catch(e) {
-            // Fallback: elongation-based search
-            var elong = getElongationAtMs(nowMs);
-            var phaseMap = [
-                { name: 'New Moon',        thresh: 0   },
-                { name: 'Waxing Crescent', thresh: 45  },
-                { name: 'First Quarter',   thresh: 90  },
-                { name: 'Waxing Gibbous',  thresh: 135 },
-                { name: 'Full Moon',       thresh: 180 },
-                { name: 'Waning Gibbous',  thresh: 225 },
-                { name: 'Third Quarter',   thresh: 270 },
-                { name: 'Waning Crescent', thresh: 315 },
-            ];
-            var nextPhase = null, nextThresh = null;
-            if      (elong < 45)  { nextPhase = phaseMap[1]; nextThresh = 45;  }
-            else if (elong < 90)  { nextPhase = phaseMap[2]; nextThresh = 90;  }
-            else if (elong < 135) { nextPhase = phaseMap[3]; nextThresh = 135; }
-            else if (elong < 180) { nextPhase = phaseMap[4]; nextThresh = 180; }
-            else if (elong < 225) { nextPhase = phaseMap[5]; nextThresh = 225; }
-            else if (elong < 270) { nextPhase = phaseMap[6]; nextThresh = 270; }
-            else if (elong < 315) { nextPhase = phaseMap[7]; nextThresh = 315; }
-            else                  { nextPhase = phaseMap[0]; nextThresh = 0;   }
-            if (!nextPhase) return null;
-            var eventMs;
-            if      (nextThresh === 180) eventMs = findNextMoonEvent(180, nowMs);
-            else if (nextThresh === 0)   eventMs = findNextMoonEvent(0, nowMs);
-            else                         eventMs = findNextElongationCross(nextThresh, nowMs);
-            return eventMs ? { name: nextPhase.name, eventMs: eventMs } : null;
+            // Fallback: elongation cross search for all
+            var threshMap = { 'Waxing Crescent': 45, 'First Quarter': 90, 'Waxing Gibbous': 135,
+                              'Waning Gibbous': 225, 'Third Quarter': 270, 'Waning Crescent': 315 };
+            if (nextName === 'Full Moon')  eventMs = findNextMoonEvent(180, nowMs);
+            else if (nextName === 'New Moon') eventMs = findNextMoonEvent(0, nowMs);
+            else if (threshMap[nextName])  eventMs = findNextElongationCross(threshMap[nextName], nowMs);
         }
+
+        if (!eventMs) return null;
+
+        // Apply Full Moon seasonal name if applicable
+        var displayName = (nextName === 'Full Moon') ? getFullMoonName(eventMs) : nextName;
+        return { name: displayName, eventMs: eventMs };
     }
 
     // ── Countdown ticker for "Next: <Phase> in HH:MM:SS" ──────────────────────
@@ -47759,7 +48039,7 @@ class GravSimEndpoint {
     function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
 
     function _tickNextPhaseCountdown(nowMs) {
-        if (nowMs === undefined) nowMs = Date.now();
+        if (nowMs === undefined) nowMs = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
         var nextLabelInner = document.getElementById('moonNextPhaseLabelInner');
         var nextLabelM     = document.getElementById('moonNextPhaseLabelInnerModal');
         var info = getNextPhaseInfo(nowMs);
@@ -47811,12 +48091,12 @@ class GravSimEndpoint {
     var _nextPhaseCountdownTimer = null;
 
     function _startNextPhaseCountdown() {
+        // Clear any old independent timers — the RAF loop (_rafTick) now drives
+        // _tickNextPhaseCountdown on every wall-clock second so it stays in sync
+        // with all other moon countdowns and uses getNowMs() (server-anchored time).
         if (_nextPhaseCountdownTimer !== null) { clearInterval(_nextPhaseCountdownTimer); _nextPhaseCountdownTimer = null; }
         if (_nextPhaseCountdownInterval)       { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
-        _tickNextPhaseCountdown(Date.now());
-        _nextPhaseCountdownTimer = setInterval(function() {
-            _tickNextPhaseCountdown(Date.now());
-        }, 1000);
+        _tickNextPhaseCountdown(); // fire once immediately
     }
 
     function updateWidget() {
@@ -47973,7 +48253,7 @@ class GravSimEndpoint {
                 _lastSec = sec;
                 // Fire all countdowns together on the same wall-clock second
                 if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet(_nowMs);
-                // Note: _tickNextPhaseCountdown has its own drift-corrected setTimeout loop
+                if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
                 // Apsis countdowns — only when location granted
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
@@ -48479,14 +48759,14 @@ class GravSimEndpoint {
                 <!-- Moon icon with twinkling stars -->
                 <div class="moon-star-wrap" style="width:106px; height:106px; flex-shrink:0;">
                     <!-- Scattered twinkling stars around the moon -->
-                    <span class="moon-twinkle-star" style="--delay:0s;   --td:2.1s; top:-10px; left:50%;   font-size:10px; color:#fff9c4;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:2.7s; --td:1.7s; top:6px;   left:-8px;  font-size:8px;  color:#ffe082;">★</span>
-                    <span class="moon-twinkle-star" style="--delay:1.1s; --td:2.5s; top:-5px;  right:-9px; font-size:9px;  color:#ffffff;">✧</span>
-                    <span class="moon-twinkle-star" style="--delay:3.9s; --td:1.9s; bottom:-8px;left:20%;  font-size:7px;  color:#fff9c4;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:0.6s; --td:2.3s; bottom:4px; right:-6px; font-size:11px; color:#ffe082;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:4.1s; --td:1.6s; top:50%;   left:-12px; font-size:8px;  color:#ffffff;">★</span>
-                    <span class="moon-twinkle-star" style="--delay:1.8s; --td:2.8s; bottom:-11px;right:18%;font-size:9px;  color:#fff8e1;">✧</span>
-                    <span class="moon-twinkle-star" style="--delay:3.2s; --td:2.0s; top:12px;  right:-14px;font-size:7px;  color:#ffe082;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:-0.5s;  --td:2.1s; top:-10px; left:50%;   font-size:10px; color:#fff9c4;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:-1.3s;  --td:1.7s; top:6px;   left:-8px;  font-size:8px;  color:#ffe082;">★</span>
+                    <span class="moon-twinkle-star" style="--delay:-0.8s;  --td:2.5s; top:-5px;  right:-9px; font-size:9px;  color:#ffffff;">✧</span>
+                    <span class="moon-twinkle-star" style="--delay:-1.7s;  --td:1.9s; bottom:-8px;left:20%;  font-size:7px;  color:#fff9c4;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:-0.3s;  --td:2.3s; bottom:4px; right:-6px; font-size:11px; color:#ffe082;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:-1.5s;  --td:1.6s; top:50%;   left:-12px; font-size:8px;  color:#ffffff;">★</span>
+                    <span class="moon-twinkle-star" style="--delay:-2.1s;  --td:2.8s; bottom:-11px;right:18%;font-size:9px;  color:#fff8e1;">✧</span>
+                    <span class="moon-twinkle-star" style="--delay:-0.9s;  --td:2.0s; top:12px;  right:-14px;font-size:7px;  color:#ffe082;">✦</span>
                     <div id="moonPhaseIconModal" style="display:flex; align-items:center; justify-content:center; width:90px; height:90px; position:relative;">
                         <svg width="90" height="90" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg>
                         <div id="moonIconPercentModal" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; color:#1a1a2e; text-align:center; pointer-events:none; line-height:1;">0%</div>
@@ -49276,11 +49556,11 @@ class GravSimEndpoint {
         if (isOpen) {
             box.classList.remove('show');
             box.style.display = 'none';
-            if (btn) btn.style.transform = 'rotate(0deg)';
+            if (btn) { btn.style.transform = ''; btn.classList.remove('rotated'); }
         } else {
             box.classList.add('show');
             box.style.display = 'flex';
-            if (btn) btn.style.transform = 'rotate(90deg)';
+            if (btn) { btn.style.transform = ''; btn.classList.add('rotated'); }
         }
     }
 </script>
