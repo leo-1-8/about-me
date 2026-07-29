@@ -5407,20 +5407,38 @@
         }
 
         /* ── Twinkling stars around moon icon ── */
-        @keyframes twinkle {
-            0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
-            35%       { opacity: 1; transform: scale(1.2) rotate(20deg); }
-            65%       { opacity: 0.5; transform: scale(0.8) rotate(-12deg); }
+        @keyframes twinkleA {
+            0%    { opacity:0; transform: scale(0.2) rotate(0deg); }
+            20%   { opacity:1; transform: scale(1.1) rotate(15deg); }
+            33%   { opacity:0; transform: scale(0.2) rotate(0deg); }
+            100%  { opacity:0; transform: scale(0.2) rotate(0deg); }
         }
-        @keyframes twinkle2 {
-            0%, 100% { opacity: 0.1; transform: scale(0.4) rotate(-20deg); }
-            40%       { opacity: 1; transform: scale(1.3) rotate(18deg); }
-            75%       { opacity: 0.3; transform: scale(0.7) rotate(-5deg); }
+        @keyframes twinkleB {
+            0%    { opacity:0; transform: scale(0.1); }
+            8%    { opacity:1; transform: scale(1.4); }
+            20%   { opacity:0.6; transform: scale(1.0); }
+            33%   { opacity:0; transform: scale(0.1); }
+            100%  { opacity:0; transform: scale(0.1); }
         }
-        @keyframes twinkle3 {
-            0%, 100% { opacity: 0.4; transform: scale(0.5) rotate(10deg); }
-            20%       { opacity: 0; transform: scale(0.2) rotate(-30deg); }
-            55%       { opacity: 1; transform: scale(1.15) rotate(25deg); }
+        @keyframes twinkleC {
+            0%    { opacity:0; transform: scale(0.4); }
+            15%   { opacity:0.9; transform: scale(1.0); }
+            30%   { opacity:0.4; transform: scale(0.7); }
+            33%   { opacity:0; transform: scale(0.4); }
+            100%  { opacity:0; transform: scale(0.4); }
+        }
+        @keyframes twinkleD {
+            0%    { opacity:0; transform: scale(0) rotate(-20deg); }
+            12%   { opacity:1; transform: scale(1.6) rotate(10deg); }
+            25%   { opacity:0.5; transform: scale(0.9) rotate(-5deg); }
+            33%   { opacity:0; transform: scale(0) rotate(-20deg); }
+            100%  { opacity:0; transform: scale(0) rotate(-20deg); }
+        }
+        @keyframes twinkleE {
+            0%    { opacity:0; transform: translateY(0px) scale(0.5); }
+            18%   { opacity:1; transform: translateY(-2px) scale(1.1); }
+            33%   { opacity:0; transform: translateY(0px) scale(0.5); }
+            100%  { opacity:0; transform: translateY(0px) scale(0.5); }
         }
         @keyframes starDrift {
             0%, 100% { translate: 0px 0px; }
@@ -5438,13 +5456,17 @@
             pointer-events: none;
             line-height: 1;
             font-style: normal;
-            animation: twinkle var(--td, 2.2s) ease-in-out var(--delay, 0s) infinite,
+            animation: twinkleA 4.5s ease-in-out var(--delay, 0s) infinite,
                        starDrift 4.5s ease-in-out var(--delay, 0s) infinite;
         }
-        .moon-twinkle-star:nth-child(2) { animation-name: twinkle2, starDrift; }
-        .moon-twinkle-star:nth-child(3) { animation-name: twinkle3, starDrift; }
-        .moon-twinkle-star:nth-child(5) { animation-name: twinkle2, starDrift; }
-        .moon-twinkle-star:nth-child(7) { animation-name: twinkle3, starDrift; }
+        .moon-twinkle-star:nth-child(2) { animation-name: twinkleB, starDrift; animation-timing-function: ease-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(3) { animation-name: twinkleC, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(4) { animation-name: twinkleD, starDrift; animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
+        .moon-twinkle-star:nth-child(5) { animation-name: twinkleE, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(6) { animation-name: twinkleA, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(7) { animation-name: twinkleC, starDrift; animation-timing-function: ease-in-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(8) { animation-name: twinkleB, starDrift; animation-timing-function: ease-out, ease-in-out; }
+        .moon-twinkle-star:nth-child(9) { animation-name: twinkleD, starDrift; animation-timing-function: cubic-bezier(.34,1.56,.64,1), ease-in-out; }
 
         /* Hide stars in day/light mode — only show in dark mode */
         body:not(.dark-mode) .moon-twinkle-star {
@@ -11883,12 +11905,15 @@
             box-sizing: border-box;
         " onclick="handleMoonWidgetClick()">
             <span class="moon-star-wrap" style="width:32px; height:32px; flex-shrink:0;">
-                <span class="moon-twinkle-star" style="--delay:0s;   --td:1.9s; top:-6px;  left:50%;  font-size:5px; color:#fff9c4;">✦</span>
-                <span class="moon-twinkle-star" style="--delay:0.5s; --td:2.3s; top:2px;   left:-5px; font-size:4px; color:#ffe082;">★</span>
-                <span class="moon-twinkle-star" style="--delay:1.0s; --td:1.7s; top:-3px;  right:-5px;font-size:5px; color:#ffffff;">✧</span>
-                <span class="moon-twinkle-star" style="--delay:1.4s; --td:2.1s; bottom:-5px;left:15%;font-size:4px; color:#fff9c4;">✦</span>
-                <span class="moon-twinkle-star" style="--delay:0.7s; --td:2.6s; bottom:1px; right:-4px;font-size:5px; color:#ffe082;">✦</span>
-                <span class="moon-twinkle-star" style="--delay:1.8s; --td:1.5s; top:50%;   left:-6px; font-size:4px; color:#ffffff;">★</span>
+                <span class="moon-twinkle-star" style="--delay:-0s;   --td:1.9s; top:-6px;  left:50%;  font-size:5px; color:#fff9c4;">✦</span>
+                <span class="moon-twinkle-star" style="--delay:-2.3s; --td:2.3s; top:2px;   left:-5px; font-size:4px; color:#ffe082;">★</span>
+                <span class="moon-twinkle-star" style="--delay:-0.7s; --td:1.7s; top:-3px;  right:-5px;font-size:5px; color:#ffffff;">✧</span>
+                <span class="moon-twinkle-star" style="--delay:-3.8s; --td:2.1s; bottom:-5px;left:15%;font-size:4px; color:#fff9c4;">✦</span>
+                <span class="moon-twinkle-star" style="--delay:-1.5s; --td:2.6s; bottom:1px; right:-4px;font-size:5px; color:#ffe082;">✦</span>
+                <span class="moon-twinkle-star" style="--delay:-4.2s; --td:1.5s; top:50%;   left:-6px; font-size:4px; color:#ffffff;">★</span>
+                <span class="moon-twinkle-star" style="--delay:-2.9s; --td:2.2s; top:-10px; left:20%; font-size:3px; color:#ffe082;">✦</span>
+                <span class="moon-twinkle-star" style="--delay:-0.4s; --td:1.8s; top:8px;   right:-9px;font-size:5px; color:#fff9c4;">✧</span>
+                <span class="moon-twinkle-star" style="--delay:-3.5s; --td:2.4s; bottom:-9px;right:20%;font-size:5px; color:#ffffff;">★</span>
                 <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:26px; height:26px; line-height:1; overflow:visible; flex-shrink:0;"><svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
             </span>
             <div style="display: flex; flex-direction: column; gap: 1px; line-height: 1.1; align-items: center;">
@@ -15235,6 +15260,17 @@
             <div style="display:flex; gap:12px;">
                 <button type="button" id="logoutCancelBtn" style="flex:1; padding:11px; border:none; border-radius:8px; background:#6b7280; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">CANCEL</button>
                 <button type="button" id="logoutConfirmBtn" style="flex:1; padding:11px; border:none; border-radius:8px; background:#22c55e; color:#fff; font-size:14px; font-weight:700; cursor:not-allowed; font-family:inherit; opacity:0.4;" disabled>YES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disable Location Confirm Modal -->
+    <div id="disableLocationConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:9999999; justify-content:center; align-items:center; pointer-events:auto;">
+        <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+            <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:24px;">ARE YOU SURE YOU WANT TO DISABLE IT?</div>
+            <div style="display:flex; gap:12px;">
+                <button type="button" onclick="document.getElementById('disableLocationConfirmModal').style.display='none'" style="flex:1; padding:11px; border:none; border-radius:8px; background:#6b7280; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">NO</button>
+                <button type="button" onclick="document.getElementById('disableLocationConfirmModal').style.display='none'; window._moonDisableLocation();" style="flex:1; padding:11px; border:none; border-radius:8px; background:#ef4444; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">YES</button>
             </div>
         </div>
     </div>
@@ -48138,14 +48174,21 @@ class GravSimEndpoint {
                     }, 10000);
                 }
 
-                function _doGetLocation() {
-                    if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Waiting for location…</span>';
+                function _doGetLocation(alreadyGranted) {
                     var deniedMsg = document.getElementById('moonObsDeniedMsg');
-                    if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Waiting for location...'; }
                     var _ws = document.getElementById('moonObsStatusSection'); if (_ws) _ws.style.display = 'block';
+                    if (alreadyGranted) {
+                        if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Getting your location…</span>';
+                        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Getting your location...'; }
+                    } else {
+                        if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Waiting for location permission…</span>';
+                        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Waiting for location permission...'; }
+                    }
                     locBtn.disabled = true;
                     navigator.geolocation.getCurrentPosition(
                         function(pos) {
+                            if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Getting your location…</span>';
+                            if (deniedMsg) { deniedMsg.textContent = 'Getting your location...'; }
                             _moonGeoGranted = true; window._moonGeoGranted = true;
                             _moonGeoLat = pos.coords.latitude;
                             _moonGeoLon = pos.coords.longitude;
@@ -48175,17 +48218,15 @@ class GravSimEndpoint {
                             // Reverse geocode to get City, Country
                             var locEl = document.getElementById('moonObsLocationModal');
                             if (locEl) { locEl.textContent = 'Getting location…'; locEl.style.color = '#4cde80'; }
-                            fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + pos.coords.latitude + '&longitude=' + pos.coords.longitude + '&localityLanguage=en')
+                            fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pos.coords.latitude + '&lon=' + pos.coords.longitude + '&format=json&addressdetails=1', { headers: { 'Accept-Language': 'en', 'User-Agent': 'MyWebsite/1.0' } })
                                 .then(function(r) { return r.json(); })
                                 .then(function(data) {
-                                    var admins = (data.localityInfo && data.localityInfo.administrative) || [];
-                                    var municipality = '', province = '';
-                                    admins.forEach(function(a) {
-                                        if (a.adminLevel === 6 && !municipality) municipality = a.name;
-                                        if (a.adminLevel === 4 && !province) province = a.name;
-                                    });
-                                    var country = (data.countryName || '').replace(/\s*\(.*?\)\s*/g, '').trim();
-                                    var parts = [municipality, province, country].filter(function(x) { return x; });
+                                    var addr = data.address || {};
+                                    var barangay = addr.quarter || addr.suburb || addr.neighbourhood || addr.village || addr.hamlet || '';
+                                    var municipality = addr.city || addr.town || addr.municipality || '';
+                                    var province = addr.state || addr.county || '';
+                                    var country = addr.country || '';
+                                    var parts = [barangay, municipality, province, country].filter(function(x) { return x; });
                                     if (locEl) { locEl.textContent = parts.length ? parts.join(', ') : 'Unknown'; locEl.style.color = '#4cde80'; }
                                     // Floating label below OTHERS button
                                     var _floatEl = document.getElementById('othersFloatingLocation');
@@ -48230,11 +48271,11 @@ class GravSimEndpoint {
                         if (result.state === 'denied') {
                             _showBlockedMsg();
                         } else {
-                            _doGetLocation();
+                            _doGetLocation(result.state === 'granted');
                         }
-                    }).catch(function() { _doGetLocation(); });
+                    }).catch(function() { _doGetLocation(false); });
                 } else {
-                    _doGetLocation();
+                    _doGetLocation(false);
                 }
             });
         }
@@ -48343,13 +48384,13 @@ class GravSimEndpoint {
                 <div class="moon-star-wrap" style="width:106px; height:106px; flex-shrink:0;">
                     <!-- Scattered twinkling stars around the moon -->
                     <span class="moon-twinkle-star" style="--delay:0s;   --td:2.1s; top:-10px; left:50%;   font-size:10px; color:#fff9c4;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:0.4s; --td:1.7s; top:6px;   left:-8px;  font-size:8px;  color:#ffe082;">★</span>
-                    <span class="moon-twinkle-star" style="--delay:0.8s; --td:2.5s; top:-5px;  right:-9px; font-size:9px;  color:#ffffff;">✧</span>
-                    <span class="moon-twinkle-star" style="--delay:1.2s; --td:1.9s; bottom:-8px;left:20%;  font-size:7px;  color:#fff9c4;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:0.2s; --td:2.3s; bottom:4px; right:-6px; font-size:11px; color:#ffe082;">✦</span>
-                    <span class="moon-twinkle-star" style="--delay:1.5s; --td:1.6s; top:50%;   left:-12px; font-size:8px;  color:#ffffff;">★</span>
-                    <span class="moon-twinkle-star" style="--delay:0.6s; --td:2.8s; bottom:-11px;right:18%;font-size:9px;  color:#fff8e1;">✧</span>
-                    <span class="moon-twinkle-star" style="--delay:1.8s; --td:2.0s; top:12px;  right:-14px;font-size:7px;  color:#ffe082;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:2.7s; --td:1.7s; top:6px;   left:-8px;  font-size:8px;  color:#ffe082;">★</span>
+                    <span class="moon-twinkle-star" style="--delay:1.1s; --td:2.5s; top:-5px;  right:-9px; font-size:9px;  color:#ffffff;">✧</span>
+                    <span class="moon-twinkle-star" style="--delay:3.9s; --td:1.9s; bottom:-8px;left:20%;  font-size:7px;  color:#fff9c4;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:0.6s; --td:2.3s; bottom:4px; right:-6px; font-size:11px; color:#ffe082;">✦</span>
+                    <span class="moon-twinkle-star" style="--delay:4.1s; --td:1.6s; top:50%;   left:-12px; font-size:8px;  color:#ffffff;">★</span>
+                    <span class="moon-twinkle-star" style="--delay:1.8s; --td:2.8s; bottom:-11px;right:18%;font-size:9px;  color:#fff8e1;">✧</span>
+                    <span class="moon-twinkle-star" style="--delay:3.2s; --td:2.0s; top:12px;  right:-14px;font-size:7px;  color:#ffe082;">✦</span>
                     <div id="moonPhaseIconModal" style="display:flex; align-items:center; justify-content:center; width:90px; height:90px; position:relative;">
                         <svg width="90" height="90" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg>
                         <div id="moonIconPercentModal" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:12px; color:#1a1a2e; text-align:center; pointer-events:none; line-height:1;">0%</div>
@@ -48473,7 +48514,7 @@ class GravSimEndpoint {
                         </div>
                         <div id="moonObsUpdatedRowModal" style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px; display:none; flex-direction:row; align-items:center; justify-content:space-between;">
                             <span>Updated: <span id="moonObsUpdatedModal" style="color:#4cde80;">---</span></span>
-                            <span id="moonDisableLocationBtn" onclick="window._moonDisableLocation()" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#b8a832; cursor:pointer; text-decoration:none; user-select:none; letter-spacing:0.3px; white-space:nowrap; margin-left:8px;">Disable Location</span>
+                            <span id="moonDisableLocationBtn" onclick="document.getElementById('disableLocationConfirmModal').style.display='flex'" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#b8a832; cursor:pointer; text-decoration:none; user-select:none; letter-spacing:0.3px; white-space:nowrap; margin-left:8px;">Disable Location</span>
                         </div>
                     </div>
                 </div>
