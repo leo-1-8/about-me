@@ -37862,17 +37862,179 @@ function updateLoginLordIconColor() {
         return Date.now();
     }
 
-    // SVG moon phase icons — one per phase (yellowish moon color)
+    // ── Dynamic terminator SVG generator ─────────────────────────────────────
+    // Draws a geometrically accurate moon terminator driven by the real elongation
+    // angle from Astronomy Engine. The terminator is an ellipse whose x-radius
+    // equals r (the moon radius) and whose y-radius scales with |cos(elongation)|.
+    // When elongation < 180° the right side is lit (waxing); when ≥ 180° the left
+    // side is lit (waning). A clipped crater layer gives surface texture.
+    //
+    // elongDeg : Astronomy.MoonPhase() result — 0=New, 90=FQ, 180=Full, 270=TQ
+    // size     : pixel dimension of the square SVG (default 32)
+    function generateMoonSVG(elongDeg, size) {
+        size = size || 32;
+        var uid  = Math.random().toString(36).slice(2, 7); // unique IDs so multiple icons don't clash
+        var r    = size * 0.4375;          // 14px for size=32, 39.375 for size=90
+        var cx   = size / 2;
+        var cy   = size / 2;
+        var top  = cy - r;
+        var bot  = cy + r;
+
+        // Normalise to [0, 360)
+        var e = ((elongDeg % 360) + 360) % 360;
+        var waxing = e < 180;
+
+        // The terminator ellipse x-radius is r (limb of moon).
+        // The terminator ellipse semi-minor-axis along x: rx_term = r * |cos(e)|
+        // When e=0 (New) rx_term=r — terminator overlaps the limb on the left side
+        // When e=90 (FQ)  rx_term=0 — straight vertical line
+        // When e=180(Full) rx_term=r — overlaps limb on right
+        var cosE     = Math.cos(e * Math.PI / 180);
+        var rx_term  = r * Math.abs(cosE);  // always positive
+
+        // Sweep flags for the SVG arcs
+        // Outer half-circle (limb) always sweeps along the lit side.
+        // Inner ellipse (terminator) shape: concave toward dark when crescent, convex toward dark when gibbous.
+        var litPath;
+
+        if (e < 1 || e > 359) {
+            // New Moon — fully dark, no lit path
+            litPath = '';
+        } else if (e > 179 && e < 181) {
+            // Full Moon — fully lit circle
+            litPath = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#e8d47a"/>';
+        } else {
+            // General case: lit region is bounded by the limb semicircle + the terminator ellipse.
+            //
+            // For WAXING (0 < e < 180): right side lit.
+            //   Limb: right semicircle (top → bottom, large-arc=1, sweep=1)
+            //   Terminator ellipse: from bottom → top
+            //     - Crescent (0<e<90):  terminator bulges LEFT  → sweep=0 (concave toward right)  → dark-side arc sweep=1 would fill wrong; we want the ellipse arc that goes through the LEFT side → sweep=1 (inner arc)
+            //     - Gibbous  (90<e<180): terminator bulges RIGHT → sweep=1 (convex toward right, covers most)
+            //
+            // For WANING (180 < e < 360): left side lit.
+            //   Mirror image.
+
+            var xT = cx;   // terminator ellipse centre x = moon centre x (terminator passes through top and bottom)
+            var sweepLimb, sweepTerm;
+
+            if (waxing) {
+                // Right side lit
+                sweepLimb = 1;  // right semicircle: top-right arc going down
+                // Crescent: e<90 → terminator curves toward dark (left) → small arc of ellipse is on lit side
+                // Gibbous:  e>90 → terminator curves toward lit (right) → large arc of ellipse is on lit side
+                sweepTerm = (e < 90) ? 1 : 0;
+            } else {
+                // Left side lit (e > 180)
+                sweepLimb = 0;  // left semicircle: top-left arc going down
+                var eLocal = e - 180; // 0..180
+                sweepTerm = (eLocal < 90) ? 0 : 1;
+            }
+
+            // The path: start at top of moon, arc around limb to bottom, then arc along terminator back to top.
+            // For waxing: start (cx, top) → limb right arc → (cx, bot) → terminator arc back → (cx, top)
+            // For waning: start (cx, top) → limb left arc → (cx, bot) → terminator arc back → (cx, top)
+            var largeArcLimb = 1;  // always half-circle = large arc
+            var largeArcTerm;
+            if (waxing) {
+                largeArcTerm = (e > 90) ? 1 : 0;
+            } else {
+                var eL2 = e - 180;
+                largeArcTerm = (eL2 > 90) ? 1 : 0;
+            }
+
+            litPath = '<path fill="#e8d47a" d="' +
+                'M ' + cx + ' ' + top + ' ' +
+                'A ' + r + ' ' + r + ' 0 ' + largeArcLimb + ' ' + sweepLimb + ' ' + cx + ' ' + bot + ' ' +
+                'A ' + rx_term.toFixed(3) + ' ' + r + ' 0 ' + largeArcTerm + ' ' + sweepTerm + ' ' + cx + ' ' + top + ' ' +
+                'Z"/>';
+        }
+
+        // Crater positions scaled from 32px reference
+        var sc = size / 32;
+        function crater(x, y, rr, dark) {
+            var f = dark ? '#3a3e55' : '#b09040';
+            return '<circle cx="' + (x*sc).toFixed(1) + '" cy="' + (y*sc).toFixed(1) + '" r="' + (rr*sc).toFixed(1) + '" fill="' + f + '"/>';
+        }
+
+        var darkCraters = crater(10,10,3.5,true) + crater(20,8,2,true) + crater(8,20,2.5,true) + crater(22,20,3,true) + crater(15,24,1.5,true) + crater(18,14,1.2,true);
+        var litCraters  = crater(10,10,3.5,false) + crater(20,8,2,false) + crater(8,20,2.5,false) + crater(22,20,3,false) + crater(15,24,1.5,false) + crater(18,14,1.2,false) + crater(25,14,1.2,false);
+
+        // Determine glow for full/near-full
+        var glowStroke = (e > 150 && e < 210) ? 'rgba(255,235,130,0.5)' : 'rgba(255,235,130,0.3)';
+
+        var svg = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            '<defs>' +
+            '<clipPath id="mlimb_' + uid + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"/></clipPath>' +
+            '</defs>' +
+            // Dark base
+            '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#2a2e40" stroke="' + glowStroke + '" stroke-width="' + (1.2*sc).toFixed(2) + '"/>' +
+            // Dark craters (visible on unlit side)
+            '<g clip-path="url(#mlimb_' + uid + ')" opacity="0.45">' + darkCraters + '</g>' +
+            // Lit area (terminator path or full circle)
+            litPath +
+            // Lit craters clipped to lit area — same clip as limb but layered above lit fill
+            (litPath ? '<g clip-path="url(#mlimb_' + uid + ')" opacity="0.30">' + litCraters + '</g>' : '') +
+            '</svg>';
+        return svg;
+    }
+
+    // Keep MOON_SVGS as a thin shim so any legacy callers still work,
+    // but getMoonData() now calls generateMoonSVG() with the real elongation.
     var MOON_SVGS = {
-        new:      '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><g opacity="0.5"><circle cx="10" cy="10" r="3.5" fill="#3a3e55"/><circle cx="20" cy="8" r="2" fill="#3a3e55"/><circle cx="8" cy="20" r="2.5" fill="#3a3e55"/><circle cx="22" cy="20" r="3" fill="#3a3e55"/><circle cx="15" cy="24" r="1.5" fill="#3a3e55"/><circle cx="18" cy="14" r="1.2" fill="#3a3e55"/></g></svg>',
-        waxCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wc"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z"/></clipPath><filter id="wc-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wc)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="18" r="3" fill="#b09040"/><circle cx="21" cy="25" r="2" fill="#b09040"/><circle cx="26" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        firstQ:   '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fq"><path d="M16 2a14 14 0 0 1 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28z" fill="#e8d47a"/><g clip-path="url(#fq)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="24" cy="17" r="3.5" fill="#b09040"/><circle cx="20" cy="25" r="2" fill="#b09040"/><circle cx="27" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        waxGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wg"><path d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 1 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wg)" opacity="0.35"><circle cx="20" cy="9" r="2.5" fill="#b09040"/><circle cx="14" cy="12" r="3" fill="#b09040"/><circle cx="22" cy="19" r="3.5" fill="#b09040"/><circle cx="18" cy="25" r="2" fill="#b09040"/><circle cx="11" cy="22" r="1.5" fill="#b09040"/></g></svg>',
-        full:     '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="fm"><circle cx="16" cy="16" r="14"/></clipPath></defs><circle class="moon-lit" cx="16" cy="16" r="14" fill="#e8d47a" stroke="rgba(255,235,130,0.5)" stroke-width="1.2"/><g clip-path="url(#fm)" opacity="0.35"><circle cx="10" cy="10" r="3.5" fill="#b09040"/><circle cx="20" cy="8" r="2" fill="#b09040"/><circle cx="8" cy="20" r="2.5" fill="#b09040"/><circle cx="22" cy="20" r="3.5" fill="#b09040"/><circle cx="15" cy="24" r="2" fill="#b09040"/><circle cx="18" cy="14" r="1.5" fill="#b09040"/><circle cx="25" cy="14" r="1.2" fill="#b09040"/></g></svg>',
-        wanGibb:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wng"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28 7 14 0 0 0 0-28z" fill="#e8d47a"/><g clip-path="url(#wng)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="18" cy="12" r="3" fill="#b09040"/><circle cx="10" cy="19" r="3.5" fill="#b09040"/><circle cx="14" cy="25" r="2" fill="#b09040"/><circle cx="21" cy="22" r="1.5" fill="#b09040"/></g></svg>',
-        lastQ:    '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="tq"><path d="M16 2a14 14 0 0 0 0 28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28z" fill="#e8d47a"/><g clip-path="url(#tq)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="17" r="3.5" fill="#b09040"/><circle cx="12" cy="25" r="2" fill="#b09040"/><circle cx="5" cy="13" r="1.5" fill="#b09040"/></g></svg>',
-        wanCres:  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="wnc"><path d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z"/></clipPath></defs><circle cx="16" cy="16" r="14" fill="#2a2e40" stroke="rgba(255,235,130,0.3)" stroke-width="1.2"/><path class="moon-lit" d="M16 2a14 14 0 0 0 0 28 7 14 0 0 1 0-28z" fill="#e8d47a"/><g clip-path="url(#wnc)" opacity="0.35"><circle cx="12" cy="9" r="2.5" fill="#b09040"/><circle cx="8" cy="18" r="3" fill="#b09040"/><circle cx="11" cy="25" r="2" fill="#b09040"/><circle cx="6" cy="13" r="1.5" fill="#b09040"/></g></svg>',
+        _legacy: true  // sentinel — not used in new code
     };
+
+    // ── Live terminator RAF: updates all moon icon elements every second ──────
+    // This runs independently of updateWidget so the terminator smoothly
+    // interpolates between phases in real time driven by actual astronomy data.
+    (function() {
+        var _lastTermSec = -1;
+
+        function _updateTerminatorIcons(nowMs) {
+            var t, elongDeg;
+            try {
+                t = msToAstroTime(nowMs);
+                elongDeg = Astronomy.MoonPhase(t);
+            } catch(e) {
+                return; // Astronomy Engine not ready yet
+            }
+
+            // Sizes: pill/mini=26, settings widget=32, modal=90
+            var svg26 = generateMoonSVG(elongDeg, 26);
+            var svg32 = generateMoonSVG(elongDeg, 32);
+            var svg90 = generateMoonSVG(elongDeg, 90);
+
+            // Settings widget icon
+            var iconEl = document.getElementById('moonPhaseIcon');
+            if (iconEl) iconEl.innerHTML = svg32;
+
+            // Modal icon
+            var iconElM = document.getElementById('moonPhaseIconModal');
+            if (iconElM) iconElM.innerHTML = svg90;
+
+            // Main pill icon
+            var mainIcon = document.getElementById('moonMainIcon');
+            if (mainIcon) mainIcon.innerHTML = svg26;
+        }
+
+        function _terminatorRAF() {
+            var nowMs = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
+            var sec   = Math.floor(nowMs / 1000);
+            if (sec !== _lastTermSec) {
+                _lastTermSec = sec;
+                _updateTerminatorIcons(nowMs);
+            }
+            requestAnimationFrame(_terminatorRAF);
+        }
+
+        // Kick off once DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() { requestAnimationFrame(_terminatorRAF); });
+        } else {
+            requestAnimationFrame(_terminatorRAF);
+        }
+    })();
 
 
     // ── Astronomy Engine (browser wrapper) ─────────────────────────────────────
@@ -47732,14 +47894,16 @@ class GravSimEndpoint {
         }
         waxing = elong < 180;
         var icon, name;
-        if      (illum < 1)                  { icon = MOON_SVGS.new;     name = 'New Moon'; }
-        else if (illum < 50 && waxing)       { icon = MOON_SVGS.waxCres; name = 'Waxing Crescent'; }
-        else if (illum < 51 && waxing)       { icon = MOON_SVGS.firstQ;  name = 'First Quarter'; }
-        else if (illum < 100 && waxing)      { icon = MOON_SVGS.waxGibb; name = 'Waxing Gibbous'; }
-        else if (illum >= 99.5)              { icon = MOON_SVGS.full;    name = getFullMoonName(nowMs); }
-        else if (illum > 50 && !waxing)      { icon = MOON_SVGS.wanGibb; name = 'Waning Gibbous'; }
-        else if (illum < 51 && !waxing)      { icon = MOON_SVGS.lastQ;   name = 'Third Quarter'; }
-        else                                 { icon = MOON_SVGS.wanCres;  name = 'Waning Crescent'; }
+        // Generate a live terminator SVG from the real elongation angle
+        icon = generateMoonSVG(elong, 32);
+        if      (illum < 1)                  { name = 'New Moon'; }
+        else if (illum < 50 && waxing)       { name = 'Waxing Crescent'; }
+        else if (illum < 51 && waxing)       { name = 'First Quarter'; }
+        else if (illum < 100 && waxing)      { name = 'Waxing Gibbous'; }
+        else if (illum >= 99.5)              { name = getFullMoonName(nowMs); }
+        else if (illum > 50 && !waxing)      { name = 'Waning Gibbous'; }
+        else if (illum < 51 && !waxing)      { name = 'Third Quarter'; }
+        else                                 { name = 'Waning Crescent'; }
         return { illum: illum, icon: icon, name: name, elong: elong };
     }
 
@@ -48165,14 +48329,14 @@ class GravSimEndpoint {
         var moonIconPct = document.getElementById('moonIconPercent');
 
         if (iconEl) {
-            iconEl.innerHTML = data.icon;
+            iconEl.innerHTML = generateMoonSVG(data.elong, 32);
             var phase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             iconEl.setAttribute('data-phase', phase);
             iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
-            // Mirror to modal icon
+            // Mirror to modal icon at correct size
             var iconElM = document.getElementById('moonPhaseIconModal');
             if (iconElM) {
-                iconElM.innerHTML = data.icon.replace('width="32" height="32"', 'width="90" height="90"');
+                iconElM.innerHTML = generateMoonSVG(data.elong, 90);
                 iconElM.setAttribute('data-phase', phase);
                 iconElM.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
             }
@@ -48190,7 +48354,7 @@ class GravSimEndpoint {
         if (pctElM)  pctElM.textContent   = data.illum.toFixed(2) + '%';
         if (pctIconM) pctIconM.textContent = data.illum.toFixed(0) + '%';
         if (mainIcon) {
-            mainIcon.innerHTML = data.icon.replace('width="32" height="32"', 'width="26" height="26"');
+            mainIcon.innerHTML = generateMoonSVG(data.elong, 26);
             var mphase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             mainIcon.setAttribute('data-phase', mphase);
             mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
@@ -49108,7 +49272,14 @@ class GravSimEndpoint {
         var iconSrc = document.getElementById('moonPhaseIcon');
         var iconDst = document.getElementById('moonPhaseIconModal');
         if (iconSrc && iconDst) {
-            iconDst.innerHTML = iconSrc.innerHTML.replace(/width="(\d+)" height="(\d+)"/g, 'width="90" height="90"');
+            // Re-generate at correct 90px size using live elongation
+            try {
+                var _syncT = msToAstroTime((typeof getNowMs === 'function') ? getNowMs() : Date.now());
+                var _syncE = Astronomy.MoonPhase(_syncT);
+                iconDst.innerHTML = generateMoonSVG(_syncE, 90);
+            } catch(_se) {
+                iconDst.innerHTML = iconSrc.innerHTML.replace(/width="(\d+)" height="(\d+)"/g, 'width="90" height="90"');
+            }
             var glowVal = iconSrc.style.getPropertyValue('--moon-glow');
             if (glowVal) iconDst.style.setProperty('--moon-glow', glowVal);
             var phase = iconSrc.getAttribute('data-phase');
