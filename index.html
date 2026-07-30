@@ -561,6 +561,71 @@
         body.dark-mode .settings-overlay {
             background: rgba(2, 8, 18, 0.88);
         }
+
+        /* Moon Info Modal — light/dark theming */
+        #moonInfoFullModal {
+            background: #ffffff !important;
+            color: #111111 !important;
+        }
+        #moonInfoFullModal .moon-info-header {
+            background: #ffffff !important;
+            border-bottom: 1px solid rgba(0,0,0,0.10) !important;
+        }
+        #moonInfoFullModal .moon-info-header span {
+            color: #111111 !important;
+        }
+        #moonInfoFullModal .moon-info-header button {
+            background: rgba(0,0,0,0.08) !important;
+            color: rgba(0,0,0,0.6) !important;
+        }
+        #moonInfoFullModal .moon-info-header button:hover {
+            background: rgba(0,0,0,0.15) !important;
+        }
+        #moonInfoFullModal .moon-info-body {
+            color: #111111 !important;
+        }
+        #moonInfoFullModal .moon-info-body p {
+            color: #111111 !important;
+        }
+        #moonInfoFullModal .moon-info-body strong {
+            color: #000000 !important;
+        }
+        #moonInfoFullModal .moon-info-divider {
+            background: rgba(0,0,0,0.10) !important;
+        }
+        #moonInfoFullModal .moon-info-source {
+            color: rgba(0,0,0,0.45) !important;
+        }
+        body.dark-mode #moonInfoFullModal {
+            background: #070b14 !important;
+            color: #ffffff !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-header {
+            background: #070b14 !important;
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-header span {
+            color: #ffffff !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-header button {
+            background: rgba(255,255,255,0.08) !important;
+            color: rgba(255,255,255,0.7) !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-body {
+            color: #ffffff !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-body p {
+            color: #ffffff !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-body strong {
+            color: #ffffff !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-divider {
+            background: rgba(255,255,255,0.08) !important;
+        }
+        body.dark-mode #moonInfoFullModal .moon-info-source {
+            color: rgba(255,255,255,0.55) !important;
+        }
         .settings-overlay.show {
             display: flex;
             pointer-events: auto;
@@ -48585,9 +48650,11 @@ class GravSimEndpoint {
     var _moonGeoLon = 0;
 
     window._moonDisableLocation = function() {
+        // Reset granted flag FIRST so any in-flight callbacks bail out immediately
+        _moonGeoGranted = false; window._moonGeoGranted = false;
         // Stop watching
         if (typeof _moonWatchId !== 'undefined' && _moonWatchId !== null) {
-            navigator.geolocation.clearWatch(_moonWatchId);
+            try { navigator.geolocation.clearWatch(_moonWatchId); } catch(e) {}
             _moonWatchId = null;
         }
         // Stop the updated-timestamp interval
@@ -48595,8 +48662,6 @@ class GravSimEndpoint {
             clearInterval(window._moonUpdatedInterval);
             window._moonUpdatedInterval = null;
         }
-        // Reset granted flag
-        _moonGeoGranted = false; window._moonGeoGranted = false;
 
         // Reset modal observer fields to ---
         var dash = '<span style="color:#ff8a8a;">---</span>';
@@ -48815,7 +48880,11 @@ class GravSimEndpoint {
                             // Auto-update the timestamp every minute while location is active
                             if (window._moonUpdatedInterval) clearInterval(window._moonUpdatedInterval);
                             window._moonUpdatedInterval = setInterval(function() {
-                                if (!_moonGeoGranted) { clearInterval(window._moonUpdatedInterval); return; }
+                                if (!_moonGeoGranted) {
+                                    clearInterval(window._moonUpdatedInterval);
+                                    window._moonUpdatedInterval = null;
+                                    return;
+                                }
                                 var el = document.getElementById('moonObsUpdatedModal');
                                 if (!el) return;
                                 var n = new Date();
@@ -48850,6 +48919,11 @@ class GravSimEndpoint {
                             if (_moonWatchId !== null) navigator.geolocation.clearWatch(_moonWatchId);
                             _moonWatchId = navigator.geolocation.watchPosition(
                                 function(pos2) {
+                                    if (!_moonGeoGranted) {
+                                        navigator.geolocation.clearWatch(_moonWatchId);
+                                        _moonWatchId = null;
+                                        return;
+                                    }
                                     _moonGeoLat = pos2.coords.latitude;
                                     _moonGeoLon = pos2.coords.longitude;
                                     compute(pos2.coords.latitude, pos2.coords.longitude, true);
@@ -48980,7 +49054,7 @@ class GravSimEndpoint {
             border-bottom: 1px solid rgba(255,255,255,0.10);
         ">
             <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-family:'Poppins',sans-serif; font-size:17px; font-weight:700; color:#fff; letter-spacing:0.5px;">MOON PHASE</span>
+                <span style="font-family:'Poppins',sans-serif; font-size:13px; font-weight:700; color:#fff; letter-spacing:0.5px;">MOON PHASE</span>
                 <button type="button" class="settings-warning-btn" id="moonModalNoteBtn" aria-label="Note about Moon Phase" style="margin-left:2px;">!</button>
                 <span id="moonPhaseAddedAgo" style="font-family:'Poppins',sans-serif; font-size:10px; font-weight:600; color:#4cde80; letter-spacing:0.3px;"></span>
             </div>
@@ -49029,35 +49103,34 @@ class GravSimEndpoint {
 
             <!-- Full-screen Moon Info Modal -->
             <div id="moonInfoFullModal"
-                style="display:none; position:fixed; inset:0; z-index:99999; background:#070b14; flex-direction:column; align-items:center; overflow-y:auto; -webkit-overflow-scrolling:touch; pointer-events:auto;">
+                style="display:none; position:fixed; inset:0; z-index:99999; flex-direction:column; align-items:center; overflow-y:auto; -webkit-overflow-scrolling:touch; pointer-events:auto;">
 
                 <!-- Header bar -->
-                <div style="width:100%; max-width:700px; display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px 20px; position:sticky; top:0; background:#070b14; z-index:2; border-bottom:1px solid rgba(255,255,255,0.08);">
-                    <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:17px; color:#fff; letter-spacing:0.5px;">About the Moon</span>
+                <div class="moon-info-header" style="width:100%; max-width:700px; display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px 20px; position:sticky; top:0; z-index:2;">
+                    <span style="font-family:'Poppins',sans-serif; font-weight:700; font-size:17px; letter-spacing:0.5px;">About the Moon</span>
                     <button onclick="document.getElementById('moonInfoFullModal').style.display='none'; document.body.style.overflow='';"
-                        style="background:rgba(255,255,255,0.08); border:none; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:rgba(255,255,255,0.7); transition:background 0.2s;"
-                        onmouseover="this.style.background='rgba(255,255,255,0.16)';"
-                        onmouseout="this.style.background='rgba(255,255,255,0.08)';">✕</button>
+                        class="moon-info-header"
+                        style="border:none; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; transition:background 0.2s;">✕</button>
                 </div>
 
                 <!-- Content -->
-                <div style="width:100%; max-width:700px; padding:22px 22px 40px 22px; font-family:'Poppins',sans-serif; font-size:13.5px; line-height:1.85; color:#ffffff; display:flex; flex-direction:column; gap:16px; text-align:justify;">
+                <div class="moon-info-body" style="width:100%; max-width:700px; padding:22px 22px 40px 22px; font-family:'Poppins',sans-serif; font-size:13.5px; line-height:1.85; display:flex; flex-direction:column; gap:16px; text-align:justify;">
 
                     <p><img src="PicRetouch_20260730_154655651.png" style="float:right; width:45%; border-radius:10px; margin:0 0 10px 14px; display:block;" alt="Full Moon">The <strong>Moon</strong> is the <strong>only natural satellite of Earth</strong>. It orbits around Earth at an <strong>average distance of 384,399 kilometers (238,854 mi)</strong>, a distance roughly <strong>30 times the width of Earth</strong>. It completes an orbit (<strong>lunar month</strong>) in relation to Earth and the Sun (<strong><em>synodically</em></strong>) every <strong>29.5 days</strong>. The Moon and Earth are bound by <strong>gravitational attraction</strong>, which is stronger on the sides facing each other. The resulting <strong>tidal forces</strong> are the main driver of Earth's tides, and have pulled the Moon to <strong>always face Earth with the same near side</strong>. This <strong>tidal locking</strong> effectively synchronizes the Moon's <strong>rotation period (lunar day)</strong> to its <strong>orbital period (lunar month)</strong>.</p>
 
-                    <div style="height:1px; background:rgba(255,255,255,0.08);"></div>
+                    <div class="moon-info-divider" style="height:1px;"></div>
 
                     <p>In geophysical terms, the Moon is a <strong>planetary-mass object</strong> or <strong>satellite planet</strong>. Its <strong>mass is 1.2% that of the Earth</strong>, and its <strong>diameter is 3,474 km (2,159 mi)</strong>, roughly <strong>one-quarter of Earth's</strong>. Within the Solar System, it is the <strong>fifth-largest and fifth-most massive moon</strong>, as well as the <strong>largest and most massive in relation to its parent planet</strong>. Its <strong>surface gravity is about one-sixth of Earth's</strong>, and the <strong>second-highest among all moons in the Solar System after Jupiter's moon Io</strong>. The body of the Moon is <strong>differentiated and terrestrial</strong>. The lunar surface is covered in <strong>regolith dust</strong>. The lunar crust is marked by <strong>impact craters</strong>; some younger ones feature <strong>bright ray-like streaks</strong>. The Moon was <strong>volcanically active until 1.2 billion years ago</strong>, forming the dark plains of basalt called <strong>maria ("seas")</strong>. Its origin is thought to be from a <strong>giant impact</strong> of a <strong>Mars-sized body</strong> <strong>4.51 billion years ago</strong>.</p>
 
-                    <div style="height:1px; background:rgba(255,255,255,0.08);"></div>
+                    <div class="moon-info-divider" style="height:1px;"></div>
 
                     <p>From a distance, the day and night phases are visible as the <strong>lunar phases</strong>. When the Moon passes through <strong>Earth's shadow</strong>, a <strong>lunar eclipse</strong> is observable. The Moon's <strong>apparent size in Earth's sky is about the same as that of the Sun</strong>, which causes it to cover the Sun completely during a <strong>total solar eclipse</strong>. The Moon is the <strong>brightest celestial object in Earth's night sky</strong>. The <strong>reflectance (albedo)</strong> of its surface is comparable to that of asphalt. About <strong>59% of the surface of the Moon is visible from Earth</strong> owing to <strong>libration</strong>, making parts of the <strong>far side of the Moon</strong> visible.</p>
 
-                    <div style="height:1px; background:rgba(255,255,255,0.08);"></div>
+                    <div class="moon-info-divider" style="height:1px;"></div>
 
                     <p>The Moon has been an <strong>important source of inspiration and knowledge in human history</strong>, having been crucial to <strong>cosmography</strong>, <strong>mythology</strong>, <strong>religion</strong>, <strong>art</strong>, <strong>time keeping</strong>, <strong>natural science</strong> and <strong>spaceflight</strong>. The first spaceflights to the Moon started in <strong>1959</strong> with the flyby of <strong>Luna 1</strong> (sent by the Soviet Union), and the intentional impact of <strong>Luna 2</strong>, followed in <strong>1966</strong> by the first soft landing (<strong>Luna 9</strong>) and orbital insertion (<strong>Luna 10</strong>). Humans first arrived in orbit with <strong>Apollo 8</strong> on <strong>December 24, 1968</strong>, and then on the surface with <strong>Apollo 11</strong> on <strong>July 20, 1969</strong>, making the Moon the <strong>only celestial body beyond Earth that humans have visited</strong>. By <strong>1972</strong>, <strong>six Apollo missions</strong> had landed <strong>twelve people on the Moon</strong>. Renewed robotic exploration, in particular to confirm the <strong>presence of water on the Moon</strong>, has fueled plans to <strong>return humans to the Moon</strong> through the <strong>Artemis program</strong> in the <strong>late 2020s</strong>.</p>
 
-                    <p style="font-size:11px; color:rgba(255,255,255,0.55); margin-top:4px;">Source: <a href="https://en.wikipedia.org/wiki/Moon" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" style="font-style:italic; color:#5b9ef6; text-decoration:none; pointer-events:auto; cursor:pointer; position:relative; z-index:1;"><em>Wikipedia</em></a></p>
+                    <p class="moon-info-source" style="font-size:11px; margin-top:4px;">Source: <a href="https://en.wikipedia.org/wiki/Moon" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" style="font-style:italic; color:#5b9ef6; text-decoration:none; pointer-events:auto; cursor:pointer; position:relative; z-index:1;"><em>Wikipedia</em></a></p>
 
                 </div>
             </div>
