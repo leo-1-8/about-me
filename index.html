@@ -2097,7 +2097,7 @@
         }
 
         .btn-about {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #87ceeb 0%, #ffe066 100%);
             color: white;
             overflow: visible;
             position: relative;
@@ -2114,7 +2114,7 @@
         }
 
         .btn-favorites {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #87ceeb 0%, #90ee90 100%);
             color: white;
             overflow: visible;
             position: relative;
@@ -5629,6 +5629,55 @@
 
         .modal-favorites {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        #favoritesModal {
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+            background: #fff !important;
+        }
+
+        body.dark-mode #favoritesModal {
+            background: #070b14 !important;
+        }
+
+        #favoritesModal .modal-box {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+
+        #favoritesModal .modal-box::-webkit-scrollbar,
+        #favoritesModal .modal-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #favoritesModal .modal-box::-webkit-scrollbar-track,
+        #favoritesModal .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #favoritesModal .modal-box::-webkit-scrollbar-thumb,
+        #favoritesModal .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(30, 100, 220, 0.6);
+            border-radius: 0;
+        }
+
+        #favoritesModal .modal-box::-webkit-scrollbar-thumb:hover,
+        #favoritesModal .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(30, 100, 220, 0.9);
+        }
+
+        #favoritesModal .modal-box,
+        #favoritesModal .modal-content {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(30, 100, 220, 0.6) transparent;
         }
 
         .modal-singer {
@@ -9295,8 +9344,8 @@
             position: fixed;
             inset: 0;
             z-index: 99998;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            justify-content: flex-start;
         }
         #fullLyricsModal.active { display: flex; }
         #fullLyricsModalBackdrop {
@@ -9309,16 +9358,17 @@
         #fullLyricsModalBox {
             position: relative;
             z-index: 1;
-            width: min(92vw, 520px);
-            max-height: 80vh;
-            border-radius: 16px;
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             background: linear-gradient(135deg, #f5e980 0%, #89b8e0 100%);
             color: #222;
-            box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+            box-shadow: none;
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
@@ -9382,6 +9432,7 @@
         body.dark-mode #fullLyricsModalBox {
             background: linear-gradient(135deg, #5a4a10 0%, #001a3a 100%);
             color: #e0e0e0;
+            border-radius: 0;
         }
         #fullLyricsModalTitle {
             font-size: 13px;
