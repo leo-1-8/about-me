@@ -6941,6 +6941,10 @@
             animation: slideDown 0.3s ease;
         }
 
+        .personal-info-container .info-item:last-child {
+            margin-bottom: 0;
+        }
+
         .personal-info-box .info-item:last-child {
             margin-bottom: 0;
         }
@@ -12253,7 +12257,7 @@
                 <span class="moon-twinkle-star" style="--delay:-2.9s; --td:2.2s; top:-10px; left:20%; font-size:3px; color:#ffe082;">✦</span>
                 <span class="moon-twinkle-star" style="--delay:-0.4s; --td:1.8s; top:8px;   right:-9px;font-size:5px; color:#fff9c4;">✧</span>
                 <span class="moon-twinkle-star" style="--delay:-3.5s; --td:2.4s; bottom:-9px;right:20%;font-size:5px; color:#ffffff;">★</span>
-                <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:26px; height:26px; line-height:1; overflow:visible; flex-shrink:0;"><svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
+                <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:26px; height:26px; line-height:1; overflow:visible; flex-shrink:0; transform-origin:center; transform:scale(0.8125);"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
             </span>
             <div style="display: flex; flex-direction: column; gap: 1px; line-height: 1.1; align-items: center;">
                 <span id="moonMainName" style="font-family:'Poppins',sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">New Moon</span>
@@ -37937,7 +37941,7 @@ function updateLoginLordIconColor() {
     //
     // elongDeg : Astronomy.MoonPhase() result — 0=New, 90=FQ, 180=Full, 270=TQ
     // size     : pixel dimension of the square SVG (default 32)
-    function generateMoonSVG(elongDeg, size) {
+    function generateMoonSVG(elongDeg, size, illumPct) {
         size = size || 32;
         var uid  = Math.random().toString(36).slice(2, 7); // unique IDs so multiple icons don't clash
         var r    = size * 0.4375;          // 14px for size=32, 39.375 for size=90
@@ -38026,8 +38030,9 @@ function updateLoginLordIconColor() {
         var darkCraters = crater(10,10,3.5,true) + crater(20,8,2,true) + crater(8,20,2.5,true) + crater(22,20,3,true) + crater(15,24,1.5,true) + crater(18,14,1.2,true);
         var litCraters  = crater(10,10,3.5,false) + crater(20,8,2,false) + crater(8,20,2.5,false) + crater(22,20,3,false) + crater(15,24,1.5,false) + crater(18,14,1.2,false) + crater(25,14,1.2,false);
 
-        // Determine glow for full/near-full
-        var glowStroke = (e > 150 && e < 210) ? 'rgba(255,235,130,0.5)' : 'rgba(255,235,130,0.3)';
+        // SVG stroke glow scales continuously with illumination (0.0 → 0.5 opacity)
+        var _illumFrac = Math.max(0, Math.min(1, (typeof illumPct === 'number' ? illumPct : (1 - Math.abs(Math.cos(e * Math.PI / 180)))) ));
+        var glowStroke = 'rgba(255,235,130,' + Math.min(0.45, 0.3 * _illumFrac * 1.5).toFixed(3) + ')';
 
         var svg = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" fill="none" xmlns="http://www.w3.org/2000/svg">' +
             '<defs>' +
@@ -38067,21 +38072,22 @@ function updateLoginLordIconColor() {
             }
 
             // Sizes: pill/mini=26, settings widget=32, modal=90
-            var svg26 = generateMoonSVG(elongDeg, 26);
-            var svg32 = generateMoonSVG(elongDeg, 32);
-            var svg90 = generateMoonSVG(elongDeg, 90);
+            var _illumRaf = (1 - Math.cos(elongDeg * Math.PI / 180)) / 2; // 0–1 fraction
+            var _glowRaf  = _moonGlowFilter(_illumRaf);
+            var svg32 = generateMoonSVG(elongDeg, 32, _illumRaf);
+            var svg90 = generateMoonSVG(elongDeg, 90, _illumRaf);
 
             // Settings widget icon
             var iconEl = document.getElementById('moonPhaseIcon');
-            if (iconEl) iconEl.innerHTML = svg32;
+            if (iconEl) { iconEl.innerHTML = svg32; iconEl.style.setProperty('--moon-glow', _glowRaf); }
 
             // Modal icon
             var iconElM = document.getElementById('moonPhaseIconModal');
-            if (iconElM) iconElM.innerHTML = svg90;
+            if (iconElM) { iconElM.innerHTML = svg90; iconElM.style.setProperty('--moon-glow', _glowRaf); }
 
-            // Main pill icon
+            // Main pill icon — rendered at 32px, CSS-scaled to 26px via transform on the container
             var mainIcon = document.getElementById('moonMainIcon');
-            if (mainIcon) mainIcon.innerHTML = svg26;
+            if (mainIcon) { mainIcon.innerHTML = svg32; mainIcon.style.setProperty('--moon-glow', _glowRaf); }
         }
 
         function _terminatorRAF() {
@@ -47961,18 +47967,23 @@ class GravSimEndpoint {
         waxing = elong < 180;
         var icon, name;
         // Generate a live terminator SVG from the real elongation angle
-        icon = generateMoonSVG(elong, 32);
-        // Use elongation-based phase detection (consistent with getNextPhaseInfo)
-        // so Full Moon is always shown correctly regardless of exact illumination value.
-        // Elongation bands: 0-45 New Moon, 45-90 Waxing Crescent, 90-135 First Quarter,
-        // 135-225 Full Moon, 225-270 Waning Gibbous, 270-315 Third Quarter, 315-360 Waning Crescent
-        if      (elong < 45)  { name = illum < 1 ? 'New Moon' : 'Waxing Crescent'; }
+        icon = generateMoonSVG(elong, 32, illum / 100);
+        // Use elongation-based phase detection (consistent with getNextPhaseInfo).
+        // New Moon sits at elong ~0°/360°; use a ±5° band around both endpoints.
+        // Full Moon band is 135°–225° (matches getNextPhaseInfo boundaries).
+        // For the seasonal Full Moon name, find the actual peak so month is correct
+        // even when viewed a day before/after the peak crosses a month boundary.
+        if      (elong < 5 || elong > 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
-        else if (elong < 225) { name = getFullMoonName(nowMs); }
+        else if (elong < 225) {
+            // Use the actual Full Moon peak time for the seasonal name (handles month-boundary edge case)
+            var _peakMs = findNextMoonEvent(180, nowMs - 2 * 24 * 3600000) || nowMs;
+            name = getFullMoonName(_peakMs);
+        }
         else if (elong < 270) { name = 'Waning Gibbous'; }
         else if (elong < 315) { name = 'Third Quarter'; }
-        else                  { name = elong >= 315 && illum < 1 ? 'New Moon' : 'Waning Crescent'; }
+        else                  { name = 'Waning Crescent'; }
         return { illum: illum, icon: icon, name: name, elong: elong };
     }
 
@@ -48202,24 +48213,18 @@ class GravSimEndpoint {
         return FULL_MOON_NAMES[new Date(ms).getMonth()];
     }
 
-    // Glow intensity per phase
-    var _moonGlowByPhase = {
-        'New Moon':        0,
-        'Waxing Crescent': 0.125,
-        'First Quarter':   0.375,
-        'Waxing Gibbous':  0.75,
-        'Full Moon':       1.0,
-        'Waning Gibbous':  0.75,
-        'Third Quarter':   0.375,
-        'Waning Crescent': 0.125,
-    };
-
-    function _moonGlowFilter(phaseName) {
-        var key = (phaseName && phaseName.indexOf('Full Moon') !== -1) ? 'Full Moon' : phaseName;
-        var t = _moonGlowByPhase[key] || 0;
-        if (t === 0) return 'none';
-        var px1 = (8 * t).toFixed(1), px2 = (16 * t).toFixed(1), px3 = (32 * t).toFixed(1);
-        var a1 = (0.9 * t).toFixed(2), a2 = (0.6 * t).toFixed(2), a3 = (0.4 * t).toFixed(2);
+    // Continuous glow: t = illumination fraction 0.0–1.0
+    // Scales every drop-shadow radius and opacity linearly with illumination,
+    // so the glow fades exactly as the lit area shrinks — frame by frame.
+    function _moonGlowFilter(illumFraction) {
+        var t = Math.max(0, Math.min(1.5, (illumFraction || 0) * 1.5));
+        if (t < 0.001) return 'none';
+        var px1 = (5  * t).toFixed(2);
+        var px2 = (10 * t).toFixed(2);
+        var px3 = (18 * t).toFixed(2);
+        var a1  = (0.7 * t).toFixed(3);
+        var a2  = (0.45 * t).toFixed(3);
+        var a3  = (0.25 * t).toFixed(3);
         return 'drop-shadow(0 0 ' + px1 + 'px rgba(255,220,80,' + a1 + ')) '
              + 'drop-shadow(0 0 ' + px2 + 'px rgba(255,200,50,' + a2 + ')) '
              + 'drop-shadow(0 0 ' + px3 + 'px rgba(255,190,30,' + a3 + '))';
@@ -48398,16 +48403,16 @@ class GravSimEndpoint {
         var moonIconPct = document.getElementById('moonIconPercent');
 
         if (iconEl) {
-            iconEl.innerHTML = generateMoonSVG(data.elong, 32);
+            iconEl.innerHTML = generateMoonSVG(data.elong, 32, data.illum / 100);
             var phase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             iconEl.setAttribute('data-phase', phase);
-            iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
+            iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
             // Mirror to modal icon at correct size
             var iconElM = document.getElementById('moonPhaseIconModal');
             if (iconElM) {
-                iconElM.innerHTML = generateMoonSVG(data.elong, 90);
+                iconElM.innerHTML = generateMoonSVG(data.elong, 90, data.illum / 100);
                 iconElM.setAttribute('data-phase', phase);
-                iconElM.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
+                iconElM.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
             }
         }
         if (nameEl) nameEl.textContent = data.name;
@@ -48423,10 +48428,10 @@ class GravSimEndpoint {
         if (pctElM)  pctElM.textContent   = data.illum.toFixed(2) + '%';
         if (pctIconM) pctIconM.textContent = data.illum.toFixed(0) + '%';
         if (mainIcon) {
-            mainIcon.innerHTML = generateMoonSVG(data.elong, 26);
+            mainIcon.innerHTML = generateMoonSVG(data.elong, 32, data.illum / 100);
             var mphase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             mainIcon.setAttribute('data-phase', mphase);
-            mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.name));
+            mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
         }
         if (mainPct)  mainPct.textContent  = data.illum.toFixed(2) + '%';
         if (mainName) mainName.textContent = data.name;
@@ -49396,7 +49401,8 @@ class GravSimEndpoint {
             try {
                 var _syncT = msToAstroTime((typeof getNowMs === 'function') ? getNowMs() : Date.now());
                 var _syncE = Astronomy.MoonPhase(_syncT);
-                iconDst.innerHTML = generateMoonSVG(_syncE, 90);
+                var _syncIllum = (1 - Math.cos(_syncE * Math.PI / 180)) / 2;
+                iconDst.innerHTML = generateMoonSVG(_syncE, 90, _syncIllum);
             } catch(_se) {
                 iconDst.innerHTML = iconSrc.innerHTML.replace(/width="(\d+)" height="(\d+)"/g, 'width="90" height="90"');
             }
