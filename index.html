@@ -48375,6 +48375,11 @@ class GravSimEndpoint {
             navigator.geolocation.clearWatch(_moonWatchId);
             _moonWatchId = null;
         }
+        // Stop the updated-timestamp interval
+        if (window._moonUpdatedInterval) {
+            clearInterval(window._moonUpdatedInterval);
+            window._moonUpdatedInterval = null;
+        }
         // Reset granted flag
         _moonGeoGranted = false; window._moonGeoGranted = false;
 
@@ -48557,8 +48562,8 @@ class GravSimEndpoint {
                         if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Getting your location…</span>';
                         if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Getting your location...'; }
                     } else {
-                        if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Waiting for location permission…</span>';
-                        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Waiting for location permission...'; }
+                        if (tzEl) tzEl.innerHTML = '<span style="color:#f5e642;">Getting your location…</span>';
+                        if (deniedMsg) { deniedMsg.style.display = 'block'; deniedMsg.style.color = '#f5e642'; deniedMsg.textContent = 'Getting your location...'; }
                     }
                     locBtn.disabled = true;
                     navigator.geolocation.getCurrentPosition(
@@ -48591,6 +48596,20 @@ class GravSimEndpoint {
                             var updStr = months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear() + ' \u2022 ' + h + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
                             if (updEl) { updEl.textContent = updStr; }
                             if (updRow) updRow.style.display = 'flex';
+
+                            // Auto-update the timestamp every minute while location is active
+                            if (window._moonUpdatedInterval) clearInterval(window._moonUpdatedInterval);
+                            window._moonUpdatedInterval = setInterval(function() {
+                                if (!_moonGeoGranted) { clearInterval(window._moonUpdatedInterval); return; }
+                                var el = document.getElementById('moonObsUpdatedModal');
+                                if (!el) return;
+                                var n = new Date();
+                                var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                                var hh = n.getHours(), mm = n.getMinutes();
+                                var ap = hh >= 12 ? 'PM' : 'AM';
+                                hh = hh % 12 || 12;
+                                el.textContent = mo[n.getMonth()] + ' ' + n.getDate() + ', ' + n.getFullYear() + ' \u2022 ' + hh + ':' + (mm < 10 ? '0' + mm : mm) + ' ' + ap;
+                            }, 60000);
                             // Reverse geocode to get City, Country
                             var locEl = document.getElementById('moonObsLocationModal');
                             if (locEl) { locEl.textContent = 'Getting location…'; locEl.style.color = '#4cde80'; }
@@ -49318,18 +49337,18 @@ class GravSimEndpoint {
             // Blue Moon — 2nd full moon in a calendar month OR 4th full moon in a season
             var nextBlueMoon = null;
             var bmDate = new Date(nowMs);
-            for (var b = 0; b < 48; b++) {
+            for (var b = 0; b < 60; b++) {
                 try {
-                    var bm1 = Astro.SearchMoonPhase(180, bmDate, 35);
+                    var bm1 = Astro.SearchMoonPhase(180, bmDate, 40);
                     if (!bm1) break;
-                    var bm2 = Astro.SearchMoonPhase(180, new Date(bm1.date.getTime() + 86400000 * 2), 35);
+                    var bm2 = Astro.SearchMoonPhase(180, new Date(bm1.date.getTime() + 86400000 * 25), 10);
                     if (bm2 && bm1.date.getMonth() === bm2.date.getMonth() && bm1.date.getFullYear() === bm2.date.getFullYear()) {
                         nextBlueMoon = { ms: bm2.date.getTime() };
                         break;
                     }
-                    // Advance past bm2 if found, else past bm1
-                    bmDate = new Date((bm2 ? bm2.date.getTime() : bm1.date.getTime()) + 86400000 * 2);
-                } catch(e3) { break; }
+                    // Advance past bm1 to find the next full moon
+                    bmDate = new Date(bm1.date.getTime() + 86400000 * 25);
+                } catch(e3) { bmDate = new Date(bmDate.getTime() + 86400000 * 29); }
             }
 
             // Black Moon — 2nd new moon in a calendar month
