@@ -48067,17 +48067,29 @@ class GravSimEndpoint {
     // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
     function findPrevMoonEvent(targetElong, nowMs) {
         try {
-            // A lunar cycle is ~29.53 days. Search from 16 days ago so we always
-            // land inside the CURRENT cycle and find the most recent event, not
-            // the one before it (which happened ~29 days ago).
-            var startT = msToAstroTime(nowMs - 16 * 24 * 3600000);
-            var result = Astronomy.SearchMoonPhase(targetElong, startT, 16);
-            if (result && result.date.getTime() < nowMs) return result.date.getTime();
-            // If not found within 16 days, try up to 30 days back as fallback
-            var startT2 = msToAstroTime(nowMs - 30 * 24 * 3600000);
-            var result2 = Astronomy.SearchMoonPhase(targetElong, startT2, 16);
-            if (result2 && result2.date.getTime() < nowMs) return result2.date.getTime();
-            return null;
+            // Strategy: search forward from progressively earlier start points and
+            // collect all candidates that are strictly before nowMs, then return
+            // the one closest to nowMs (the most recent one).
+            // We use two search windows:
+            //   1. From 2 days ago — catches events that just occurred (rollover case).
+            //   2. From 16 days ago — catches the normal case mid-cycle.
+            // SearchMoonPhase returns the FIRST match after the start time, so
+            // searching from 2 days ago guarantees we find a very recent event if
+            // one exists, rather than jumping past it to an older one.
+            var candidates = [];
+            var windows = [2, 16, 30];
+            for (var _wi = 0; _wi < windows.length; _wi++) {
+                var startT = msToAstroTime(nowMs - windows[_wi] * 24 * 3600000);
+                var result = Astronomy.SearchMoonPhase(targetElong, startT, windows[_wi] + 1);
+                if (result) {
+                    var t = result.date.getTime();
+                    if (t < nowMs) candidates.push(t);
+                }
+            }
+            if (candidates.length === 0) return null;
+            // Return the most recent candidate (closest to nowMs from behind)
+            candidates.sort(function(a, b) { return b - a; });
+            return candidates[0];
         } catch(e) {
             // Fallback: step backward
             var step = 6 * 3600000;
@@ -48516,10 +48528,16 @@ class GravSimEndpoint {
             var _needLastRefresh = false;
             if ((_curPhase === 'Waning Gibbous' || _curPhase === 'Third Quarter' || _curPhase === 'Waning Crescent') && !_lastFullMs) _needLastRefresh = true;
             if ((_curPhase === 'Waxing Crescent' || _curPhase === 'First Quarter' || _curPhase === 'Waxing Gibbous') && !_lastNewMs) _needLastRefresh = true;
-            if (_needLastRefresh || (_nextFullMs && _lastFullMs && _nextFullMs < nowMs) || (_nextNewMs && _lastNewMs && _nextNewMs < nowMs)) {
+            // Also refresh when next-event timestamps were invalidated by a phase rollover
+            // (set to null by the RAF phase-change handler) or when they have already passed.
+            if (!_lastFullMs || !_lastNewMs) _needLastRefresh = true;
+            if (_needLastRefresh || (_nextFullMs && _nextFullMs < nowMs) || (_nextNewMs && _nextNewMs < nowMs)) {
                 _lastFullMs = findPrevMoonEvent(180, nowMs);
                 _lastNewMs  = findPrevMoonEvent(0, nowMs);
             }
+            // Similarly, recompute next-event timestamps if they were nulled or have passed.
+            if (!_nextFullMs || _nextFullMs < nowMs) _nextFullMs = findNextMoonEvent(180, nowMs);
+            if (!_nextNewMs  || _nextNewMs  < nowMs) _nextNewMs  = findNextMoonEvent(0,   nowMs);
             var lastFEl  = document.getElementById('moonLastFullDate');
             var lastNEl  = document.getElementById('moonLastNewDate');
             var lastFElM = document.getElementById('moonLastFullDateModal');
@@ -48750,7 +48768,18 @@ class GravSimEndpoint {
                     var _ppEl  = document.getElementById('moonPhasePercent');    if (_ppEl)  _ppEl.textContent  = _ld.illum.toFixed(2) + '%';
                     var _ppElM = document.getElementById('moonPhasePercentModal'); if (_ppElM) _ppElM.textContent = _ld.illum.toFixed(2) + '%';
                     var _piElM = document.getElementById('moonIconPercentModal');  if (_piElM) _piElM.textContent = _ld.illum.toFixed(0) + '%';
-                    // Moon SVG shape + glow (throttle to every 10s — shape changes slowly)
+                    // Detect phase boundary crossing BEFORE the shape throttle check
+                    // so we can force an immediate redraw and event rollover in the same tick.
+                    if (!_rafTick._lastPhaseName) _rafTick._lastPhaseName = _ld.name;
+                    var _phaseChanged = (_rafTick._lastPhaseName !== _ld.name);
+                    if (_phaseChanged) {
+                        _rafTick._lastPhaseName = _ld.name;
+                        // Force shape/glow to redraw this tick regardless of throttle
+                        _rafTick._lastShape = -1;
+                    }
+
+                    // Moon SVG shape + glow (throttle to every 10s — shape changes slowly,
+                    // but _lastShape is reset to -1 on a phase boundary so it always fires then)
                     var _nowSec10 = Math.floor(_nowMs / 10000);
                     if (_nowSec10 !== (_rafTick._lastShape || -1)) {
                         _rafTick._lastShape = _nowSec10;
@@ -48763,11 +48792,15 @@ class GravSimEndpoint {
                         var _miEl = document.getElementById('moonMainIcon');
                         if (_miEl) { _miEl.innerHTML = generateMoonSVG(_ld.elong, 90, _ld.illum / 100).replace('width="90" height="90"', 'width="30" height="30"'); _miEl.setAttribute('data-phase', _phase); _miEl.style.setProperty('--moon-glow', _glow); }
                     }
-                    // If the phase just crossed a boundary, re-run full updateWidget
-                    // to refresh next/last full moon dates and event names immediately
-                    if (!_rafTick._lastPhaseName) _rafTick._lastPhaseName = _ld.name;
-                    if (_rafTick._lastPhaseName !== _ld.name) {
-                        _rafTick._lastPhaseName = _ld.name;
+
+                    // If the phase just crossed a boundary, immediately invalidate the
+                    // cached next/last timestamps so updateWidget recomputes them fresh,
+                    // then call updateWidget to refresh all event lists in this same tick.
+                    if (_phaseChanged) {
+                        _nextFullMs = null;
+                        _nextNewMs  = null;
+                        _lastFullMs = null;
+                        _lastNewMs  = null;
                         if (typeof updateWidget === 'function') updateWidget();
                     }
                 } catch(_e) {}
