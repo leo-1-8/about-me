@@ -1407,12 +1407,18 @@
             color: #7eb8f7 !important;
         }
 
-        /* New Ariana section label — green (day) / light green (dark) */
-        #sectionLabelAriNew {
+        /* New Ariana section label — yellow title, green subtitle */
+        #sectionLabelAriNew span:first-child {
+            color: #b8860b;
+        }
+        body.dark-mode #sectionLabelAriNew span:first-child {
+            color: #ffe066 !important;
+        }
+        #ariNewAddedLabel {
             color: #16a34a;
         }
-        body.dark-mode #sectionLabelAriNew {
-            color: #6ee7a0 !important;
+        body.dark-mode #ariNewAddedLabel {
+            color: #4cde80 !important;
         }
         body.dark-mode .whats-new-icon-btn {
             background: rgba(255, 255, 255, 0.18);
@@ -1733,7 +1739,7 @@
         body.dark-mode #musicModal .modal-content .see-full-lyrics-btn,
         body.dark-mode #musicModal .modal-content .music-title,
         body.dark-mode #musicModal .modal-content p,
-        body.dark-mode #musicModal .modal-content span:not(.new-badge):not(.explicit-note):not(.explicit-badge):not(.lyrics-line):not(.lyrics-line *) {
+        body.dark-mode #musicModal .modal-content span:not(.new-badge):not(.explicit-note):not(.explicit-badge):not(.lyrics-line):not(.lyrics-line *):not(#ariNewTitle):not(#ariNewAddedLabel) {
             color: rgba(255, 255, 255, 0.92) !important;
         }
         /* Section labels - blue in dark mode */
@@ -1742,10 +1748,7 @@
         body.dark-mode #sectionLabelRandom {
             color: #7eb8f7 !important;
         }
-        /* New Ariana section label - green in dark mode */
-        body.dark-mode #sectionLabelAriNew {
-            color: #6ee7a0 !important;
-        }
+        /* sectionLabelAriNew color is handled per-span via CSS and JS below */
         /* [NEW] badge - green in dark mode */
         body.dark-mode .new-badge {
             color: #86efac !important;
@@ -5694,6 +5697,9 @@
 
         .modal-favorites {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+        body.dark-mode .modal-favorites {
+            background: linear-gradient(135deg, #3a2a1a 0%, #4a1f10 100%) !important;
         }
 
         #favoritesModal {
@@ -13412,7 +13418,44 @@
                         </div>
                     </div>
                     <div class="song-divider" style="margin:10px 15px;border:none;border-top:2px solid rgba(128,128,128,0.35);border-radius:2px;"></div>
-                    <div id="sectionLabelAriNew" style="text-align:left; font-style:italic; font-size:14px; margin: 8px 15px 6px 15px; font-weight:700; letter-spacing:0.5px;">NEW SONGS OF ARIANA GRANDE</div>
+                    <div id="sectionLabelAriNew" style="text-align:left; margin: 8px 15px 6px 15px;">
+                        <span id="ariNewTitle" style="font-style:italic; font-size:14px; font-weight:700; letter-spacing:0.5px;">NEW SONGS OF ARIANA GRANDE</span>
+                        <span id="ariNewAddedLabel" style="display:block; font-size:11px; font-weight:600; margin-top:2px;"></span>
+                    </div>
+                    <script>
+                    (function() {
+                        function _ariNewColors() {
+                            var isDark = document.body.classList.contains('dark-mode');
+                            var title = document.getElementById('ariNewTitle');
+                            var sub   = document.getElementById('ariNewAddedLabel');
+                            if (title) title.style.setProperty('color', isDark ? '#ffe066' : '#b8860b', 'important');
+                            if (sub)   sub.style.setProperty('color',   isDark ? '#4cde80' : '#16a34a', 'important');
+                        }
+                        var addedDate = new Date('2026-07-31T12:00:00');
+                        function updateAriNewLabel() {
+                            var el = document.getElementById('ariNewAddedLabel');
+                            if (!el) return;
+                            var now = new Date();
+                            var diffMs = now - addedDate;
+                            var diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                            if (diffDays === 0) {
+                                el.textContent = '(Added today)';
+                            } else if (diffDays === 1) {
+                                el.textContent = '(Added 1 day ago)';
+                            } else {
+                                el.textContent = '(Added ' + diffDays + ' days ago)';
+                            }
+                        }
+                        updateAriNewLabel();
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', _ariNewColors);
+                        } else {
+                            _ariNewColors();
+                        }
+                        var _ariObs = new MutationObserver(_ariNewColors);
+                        _ariObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+                    })();
+                    </script>
                     <div class="info-item song-item">
                         <div class="info-label">12. KISS ME – ARIANA GRANDE <span class="new-badge">[NEW]</span></div>
                         <div class="info-value">
@@ -17298,8 +17341,10 @@ window.closeSettings = closeSettings;
                     var el = document.getElementById(id);
                     if (el) el.style.color = blue;
                 });
-                var elNew = document.getElementById('sectionLabelAriNew');
-                if (elNew) elNew.style.color = green;
+                var elNewTitle = document.querySelector('#sectionLabelAriNew span:first-child');
+                if (elNewTitle) elNewTitle.style.color = isDark ? '#ffe066' : '#b8860b';
+                var elNewSub = document.getElementById('ariNewAddedLabel');
+                if (elNewSub) elNewSub.style.color = isDark ? '#4cde80' : '#16a34a';
             }
 
             function applyTheme(mode) {
@@ -48447,6 +48492,15 @@ class GravSimEndpoint {
             if (newEl)   newEl.innerHTML   = _rd;
             if (fullElM) fullElM.innerHTML = _rd;
             if (newElM)  newElM.innerHTML  = _rd;
+            // Also reset Last Full/New Moon immediately when location is revoked
+            var lastFEl  = document.getElementById('moonLastFullDate');
+            var lastNEl  = document.getElementById('moonLastNewDate');
+            var lastFElM = document.getElementById('moonLastFullDateModal');
+            var lastNElM = document.getElementById('moonLastNewDateModal');
+            if (lastFEl)  lastFEl.innerHTML  = _rd;
+            if (lastNEl)  lastNEl.innerHTML  = _rd;
+            if (lastFElM) lastFElM.innerHTML = _rd;
+            if (lastNElM) lastNElM.innerHTML = _rd;
         }
     }
 
