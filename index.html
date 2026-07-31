@@ -48020,13 +48020,12 @@ class GravSimEndpoint {
         // Full Moon band is 135°–225° (matches getNextPhaseInfo boundaries).
         // For the seasonal Full Moon name, find the actual peak so month is correct
         // even when viewed a day before/after the peak crosses a month boundary.
-        if      (elong < 5 || elong > 355) { name = 'New Moon'; }
+        if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
         else if (elong < 225) {
             // Use the actual Full Moon peak time for the seasonal name (handles month-boundary edge case)
-            var _peakMs = findNextMoonEvent(180, nowMs - 2 * 24 * 3600000) || nowMs;
-            name = getFullMoonName(_peakMs);
+            name = getCurrentCycleMoonName(nowMs);
         }
         else if (elong < 270) { name = 'Waning Gibbous'; }
         else if (elong < 315) { name = 'Third Quarter'; }
@@ -48068,12 +48067,16 @@ class GravSimEndpoint {
     // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
     function findPrevMoonEvent(targetElong, nowMs) {
         try {
-            // Search backwards: start 1 minute before now, look back up to 35 days
-            var t = msToAstroTime(nowMs - 60000);
-            // SearchMoonPhase goes forward; search from ~35 days ago going forward to now
-            var startT = msToAstroTime(nowMs - 35 * 24 * 3600000);
-            var result = Astronomy.SearchMoonPhase(targetElong, startT, 35);
+            // A lunar cycle is ~29.53 days. Search from 16 days ago so we always
+            // land inside the CURRENT cycle and find the most recent event, not
+            // the one before it (which happened ~29 days ago).
+            var startT = msToAstroTime(nowMs - 16 * 24 * 3600000);
+            var result = Astronomy.SearchMoonPhase(targetElong, startT, 16);
             if (result && result.date.getTime() < nowMs) return result.date.getTime();
+            // If not found within 16 days, try up to 30 days back as fallback
+            var startT2 = msToAstroTime(nowMs - 30 * 24 * 3600000);
+            var result2 = Astronomy.SearchMoonPhase(targetElong, startT2, 16);
+            if (result2 && result2.date.getTime() < nowMs) return result2.date.getTime();
             return null;
         } catch(e) {
             // Fallback: step backward
@@ -48288,6 +48291,29 @@ class GravSimEndpoint {
         return FULL_MOON_NAMES[new Date(ms).getMonth()];
     }
 
+    // Returns the name of the CURRENT moon cycle — based on the last full moon,
+    // not the next one. e.g. after July's full moon, it stays "Buck Full Moon"
+    // until August's full moon actually occurs.
+    function getCurrentCycleMoonName(nowMs) {
+        try {
+            var lastMs = findPrevMoonEvent(180, nowMs);
+            if (lastMs) {
+                var idx = new Date(lastMs).getMonth();
+                if (idx >= 0 && idx < 12) return FULL_MOON_NAMES[idx];
+            }
+            // Fallback: use next full moon month
+            var nextMs = findNextMoonEvent(180, nowMs);
+            if (nextMs) {
+                var idx2 = new Date(nextMs).getMonth();
+                if (idx2 >= 0 && idx2 < 12) return FULL_MOON_NAMES[idx2];
+            }
+            // Last resort: current month
+            return FULL_MOON_NAMES[new Date(nowMs).getMonth()];
+        } catch(e) {
+            return FULL_MOON_NAMES[new Date(nowMs).getMonth()];
+        }
+    }
+
     // Continuous glow: t = illumination fraction 0.0–1.0
     // Scales every drop-shadow radius and opacity linearly with illumination,
     // so the glow fades exactly as the lit area shrinks — frame by frame.
@@ -48365,17 +48391,24 @@ class GravSimEndpoint {
             { name: 'Third Quarter',   elongThresh: 315, elongCross: 315 },               // → Waning Crescent
         ];
 
-        // Determine current phase from elongation
-        var elong = getElongationAtMs(nowMs);
+        // Determine current phase — use same method and boundaries as getMoonData
+        // so both always agree on which phase we are in.
+        var elong;
+        try { elong = Astronomy.MoonPhase(msToAstroTime(nowMs)); } catch(e) { elong = getElongationAtMs(nowMs); }
         var currentPhaseName;
-        if      (elong < 45)  currentPhaseName = 'New Moon';
-        else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
-        else if (elong < 135) currentPhaseName = 'First Quarter';
-        else if (elong < 180) currentPhaseName = 'Waxing Gibbous';
-        else if (elong < 225) currentPhaseName = 'Full Moon';
-        else if (elong < 270) currentPhaseName = 'Waning Gibbous';
-        else if (elong < 315) currentPhaseName = 'Third Quarter';
-        else                  currentPhaseName = 'Waning Crescent';
+        if      (elong < 5 || elong >= 355) currentPhaseName = 'New Moon';
+        else if (elong < 90)               currentPhaseName = 'Waxing Crescent';
+        else if (elong < 135)              currentPhaseName = 'First Quarter';
+        else if (elong < 225)              currentPhaseName = 'Waxing Gibbous';  // includes Full Moon band 135–225
+        else if (elong < 270)              currentPhaseName = 'Waning Gibbous';
+        else if (elong < 315)              currentPhaseName = 'Third Quarter';
+        else                               currentPhaseName = 'Waning Crescent';
+        // Narrow check: if we are actually inside the Full Moon band (135–225), mark as Full Moon
+        // so next phase is correctly Waning Gibbous instead of Full Moon again
+        if (elong >= 135 && elong < 225) {
+            // Check if we are past the peak (>180) or approaching it (<180)
+            currentPhaseName = (elong >= 180) ? 'Full Moon' : 'Waxing Gibbous';
+        }
 
         // The next phase name (what we are counting down to)
         var nextPhaseOrder = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
@@ -48412,7 +48445,9 @@ class GravSimEndpoint {
 
         if (!eventMs) return null;
 
-        // Apply Full Moon seasonal name if applicable
+        // Apply Full Moon seasonal name:
+        // - If counting DOWN to a full moon, use that future moon's own month (upcoming name)
+        // - getCurrentCycleMoonName is for the CURRENT phase display only
         var displayName = (nextName === 'Full Moon') ? getFullMoonName(eventMs) : nextName;
         return { name: displayName, eventMs: eventMs };
     }
@@ -48431,17 +48466,24 @@ class GravSimEndpoint {
         var nextLabelInner = document.getElementById('moonNextPhaseLabelInner');
         var nextLabelM     = document.getElementById('moonNextPhaseLabelInnerModal');
         var info = getNextPhaseInfo(nowMs);
-        if (!info) {
-            if (nextLabelInner) nextLabelInner.textContent = '\u2014';
-            if (nextLabelM)     nextLabelM.textContent     = '\u2014';
-            return;
-        }
-        var diffMs = info.eventMs - nowMs;
-        if (diffMs <= 0) {
+
+        // If countdown expired or no info, look 2s ahead to get the NEXT upcoming phase
+        // so the label switches instantly rather than going blank for a tick
+        if (!info || (info.eventMs - nowMs) <= 0) {
             updateWidget();
-            return;
+            // Re-query with a small offset so we land in the new phase and get the next event
+            var infoAhead = getNextPhaseInfo(nowMs + 2000);
+            if (infoAhead && (infoAhead.eventMs - nowMs) > 0) {
+                info = infoAhead;
+            } else {
+                if (nextLabelInner) nextLabelInner.textContent = '\u2014';
+                if (nextLabelM)     nextLabelM.textContent     = '\u2014';
+                return;
+            }
         }
-        var displayName = (info.name === 'Full Moon') ? getFullMoonName(info.eventMs) : info.name;
+
+        var diffMs = info.eventMs - nowMs;
+        var displayName = info.name; // name already resolved by getNextPhaseInfo
         var totalSec = Math.floor(diffMs / 1000);
         var hrs  = Math.floor(totalSec / 3600);
         var mins = Math.floor((totalSec % 3600) / 60);
@@ -48692,6 +48734,43 @@ class GravSimEndpoint {
                 // Fire all countdowns together on the same wall-clock second
                 if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet(_nowMs);
                 if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
+
+                // ── Live phase/illumination/glow/shape update every second ──
+                // Keeps phase name, moon shape, illumination bar and glow in sync
+                // without waiting for the 60s updateWidget interval.
+                try {
+                    var _ld = getMoonData();
+                    // Phase name
+                    var _pnEl  = document.getElementById('moonPhaseName');      if (_pnEl)  _pnEl.textContent  = _ld.name;
+                    var _pnElM = document.getElementById('moonPhaseNameModal'); if (_pnElM) _pnElM.textContent = _ld.name;
+                    var _mnEl  = document.getElementById('moonMainName');        if (_mnEl)  _mnEl.textContent  = _ld.name;
+                    // Illumination bar + percent
+                    var _pbEl  = document.getElementById('moonPhaseBar');        if (_pbEl)  _pbEl.style.width  = _ld.illum + '%';
+                    var _pbElM = document.getElementById('moonPhaseBarModal');   if (_pbElM) _pbElM.style.width = _ld.illum + '%';
+                    var _ppEl  = document.getElementById('moonPhasePercent');    if (_ppEl)  _ppEl.textContent  = _ld.illum.toFixed(2) + '%';
+                    var _ppElM = document.getElementById('moonPhasePercentModal'); if (_ppElM) _ppElM.textContent = _ld.illum.toFixed(2) + '%';
+                    var _piElM = document.getElementById('moonIconPercentModal');  if (_piElM) _piElM.textContent = _ld.illum.toFixed(0) + '%';
+                    // Moon SVG shape + glow (throttle to every 10s — shape changes slowly)
+                    var _nowSec10 = Math.floor(_nowMs / 10000);
+                    if (_nowSec10 !== (_rafTick._lastShape || -1)) {
+                        _rafTick._lastShape = _nowSec10;
+                        var _phase = _ld.name === 'New Moon' ? 'new' : (_ld.name.indexOf('Full Moon') !== -1 || _ld.name.indexOf('Moon') > 0 && _ld.illum > 90) ? 'full' : 'lit';
+                        var _glow  = _moonGlowFilter(_ld.illum / 100);
+                        var _iEl  = document.getElementById('moonPhaseIcon');
+                        if (_iEl)  { _iEl.innerHTML = generateMoonSVG(_ld.elong, 32, _ld.illum / 100); _iEl.setAttribute('data-phase', _phase); _iEl.style.setProperty('--moon-glow', _glow); }
+                        var _iElM = document.getElementById('moonPhaseIconModal');
+                        if (_iElM) { _iElM.innerHTML = generateMoonSVG(_ld.elong, 90, _ld.illum / 100); _iElM.setAttribute('data-phase', _phase); _iElM.style.setProperty('--moon-glow', _glow); }
+                        var _miEl = document.getElementById('moonMainIcon');
+                        if (_miEl) { _miEl.innerHTML = generateMoonSVG(_ld.elong, 90, _ld.illum / 100).replace('width="90" height="90"', 'width="30" height="30"'); _miEl.setAttribute('data-phase', _phase); _miEl.style.setProperty('--moon-glow', _glow); }
+                    }
+                    // If the phase just crossed a boundary, re-run full updateWidget
+                    // to refresh next/last full moon dates and event names immediately
+                    if (!_rafTick._lastPhaseName) _rafTick._lastPhaseName = _ld.name;
+                    if (_rafTick._lastPhaseName !== _ld.name) {
+                        _rafTick._lastPhaseName = _ld.name;
+                        if (typeof updateWidget === 'function') updateWidget();
+                    }
+                } catch(_e) {}
                 // Apsis countdowns — only when location granted
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
