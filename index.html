@@ -38001,79 +38001,68 @@ function updateLoginLordIconColor() {
         var e = ((elongDeg % 360) + 360) % 360;
         var waxing = e < 180;
 
-        // rx_term: x-radius of the terminator ellipse (y-radius is always r).
-        // cos(e) goes from 1 (New) → 0 (Quarter) → -1 (Full) → 0 (Quarter) → 1 (New).
-        // We use the raw cosine (signed) to drive the ellipse x-radius and its direction.
-        var cosE    = Math.cos(e * Math.PI / 180); // +1=New, 0=Quarter, -1=Full
-        var rx_term = r * Math.abs(cosE);
+        // The terminator ellipse x-radius is r (limb of moon).
+        // The terminator ellipse semi-minor-axis along x: rx_term = r * |cos(e)|
+        // When e=0 (New) rx_term=r — terminator overlaps the limb on the left side
+        // When e=90 (FQ)  rx_term=0 — straight vertical line
+        // When e=180(Full) rx_term=r — overlaps limb on right
+        var cosE     = Math.cos(e * Math.PI / 180);
+        var rx_term  = r * Math.abs(cosE);  // always positive
 
-        // ── Robust lit-area path ────────────────────────────────────────────────
-        // Strategy: use two clipPath regions combined with feComposite in SVG filter,
-        // but the simplest correct approach is:
-        //   1. Draw the lit half-disk (limb semicircle on the lit side).
-        //   2. Add or subtract the terminator ellipse half-disk depending on phase.
-        //
-        // Cleaner: express the lit area as a single closed path.
-        //
-        // For WAXING (0 < e < 180), right side is lit:
-        //   - Crescent (0 < e < 90):  lit = right limb arc  ∩  right half of terminator ellipse
-        //     Path: top→(right limb arc down)→bot→(terminator left arc up)→top
-        //     terminator arc goes through the LEFT (dark) side → sweep=0, largeArc=0
-        //   - Gibbous  (90 < e < 180): lit = right limb arc  ∪  right half of terminator ellipse
-        //     Path: top→(right limb arc down)→bot→(terminator right arc up)→top
-        //     terminator arc goes through the RIGHT (lit) side → sweep=1, largeArc=1
-        //
-        // For WANING (180 < e < 360), left side is lit — mirror image:
-        //   - Gibbous  (180 < e < 270): sweep=0, largeArc=1
-        //   - Crescent (270 < e < 360): sweep=1, largeArc=0
+        // Sweep flags for the SVG arcs
+        // Outer half-circle (limb) always sweeps along the lit side.
+        // Inner ellipse (terminator) shape: concave toward dark when crescent, convex toward dark when gibbous.
         var litPath;
 
         if (e < 1 || e > 359) {
-            // New Moon — fully dark
+            // New Moon — fully dark, no lit path
             litPath = '';
         } else if (e > 179 && e < 181) {
             // Full Moon — fully lit circle
             litPath = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#e8d47a"/>';
-        } else if (rx_term < 0.5) {
-            // Exactly at quarter — straight vertical line splits the moon
-            if (waxing) {
-                // Right half lit
-                litPath = '<path fill="#e8d47a" d="M ' + cx + ' ' + top + ' A ' + r + ' ' + r + ' 0 1 1 ' + cx + ' ' + bot + ' Z"/>';
-            } else {
-                // Left half lit
-                litPath = '<path fill="#e8d47a" d="M ' + cx + ' ' + top + ' A ' + r + ' ' + r + ' 0 1 0 ' + cx + ' ' + bot + ' Z"/>';
-            }
         } else {
-            var sweepLimb, sweepTerm, largeArcTerm;
+            // General case: lit region is bounded by the limb semicircle + the terminator ellipse.
+            //
+            // For WAXING (0 < e < 180): right side lit.
+            //   Limb: right semicircle (top → bottom, large-arc=1, sweep=1)
+            //   Terminator ellipse: from bottom → top
+            //     - Crescent (0<e<90):  terminator bulges LEFT  → sweep=0 (concave toward right)  → dark-side arc sweep=1 would fill wrong; we want the ellipse arc that goes through the LEFT side → sweep=1 (inner arc)
+            //     - Gibbous  (90<e<180): terminator bulges RIGHT → sweep=1 (convex toward right, covers most)
+            //
+            // For WANING (180 < e < 360): left side lit.
+            //   Mirror image.
+
+            var xT = cx;   // terminator ellipse centre x = moon centre x (terminator passes through top and bottom)
+            var sweepLimb, sweepTerm;
 
             if (waxing) {
-                sweepLimb   = 1; // right semicircle (top → bot, clockwise)
-                if (e < 90) {
-                    // Waxing Crescent: terminator arc goes LEFT (concave toward lit right side)
-                    sweepTerm   = 0;
-                    largeArcTerm = 0;
-                } else {
-                    // Waxing Gibbous: terminator arc goes RIGHT (convex, covers left dark area)
-                    sweepTerm   = 1;
-                    largeArcTerm = 1;
-                }
+                // Right side lit
+                sweepLimb = 1;  // right semicircle: top-right arc going down
+                // Crescent: e<90 → terminator curves toward dark (left) → small arc of ellipse is on lit side
+                // Gibbous:  e>90 → terminator curves toward lit (right) → large arc of ellipse is on lit side
+                sweepTerm = (e < 90) ? 1 : 0;
             } else {
-                sweepLimb   = 0; // left semicircle (top → bot, counter-clockwise)
-                var eW = e - 180; // 0..180
-                if (eW < 90) {
-                    // Waning Gibbous: terminator arc goes LEFT (convex, covers right dark area)
-                    sweepTerm   = 0;
-                    largeArcTerm = 1;
-                } else {
-                    // Waning Crescent: terminator arc goes RIGHT (concave toward lit left side)
-                    sweepTerm   = 1;
-                    largeArcTerm = 0;
-                }
+                // Left side lit (e > 180)
+                sweepLimb = 0;  // left semicircle: top-left arc going down
+                var eLocal = e - 180; // 0..180
+                sweepTerm = (eLocal < 90) ? 0 : 1;
+            }
+
+            // The path: start at top of moon, arc around limb to bottom, then arc along terminator back to top.
+            // For waxing: start (cx, top) → limb right arc → (cx, bot) → terminator arc back → (cx, top)
+            // For waning: start (cx, top) → limb left arc → (cx, bot) → terminator arc back → (cx, top)
+            var largeArcLimb = 1;  // always half-circle = large arc
+            var largeArcTerm;
+            if (waxing) {
+                largeArcTerm = (e > 90) ? 1 : 0;
+            } else {
+                var eL2 = e - 180;
+                largeArcTerm = (eL2 > 90) ? 1 : 0;
             }
 
             litPath = '<path fill="#e8d47a" d="' +
                 'M ' + cx + ' ' + top + ' ' +
-                'A ' + r + ' ' + r + ' 0 1 ' + sweepLimb + ' ' + cx + ' ' + bot + ' ' +
+                'A ' + r + ' ' + r + ' 0 ' + largeArcLimb + ' ' + sweepLimb + ' ' + cx + ' ' + bot + ' ' +
                 'A ' + rx_term.toFixed(3) + ' ' + r + ' 0 ' + largeArcTerm + ' ' + sweepTerm + ' ' + cx + ' ' + top + ' ' +
                 'Z"/>';
         }
@@ -48010,7 +47999,70 @@ class GravSimEndpoint {
         }
     }
 
+    // ── _computeAllLunar: ONE calculation per tick, shared by every UI element ──
+    // Call this ONCE per refresh with the current timestamp. Every component
+    // that needs lunar data MUST receive this object — never call getMoonData(),
+    // MoonPhase(), or Illumination() independently inside the same tick.
+    function _computeAllLunar(nowMs) {
+        var t = msToAstroTime(nowMs);
+        var elong, illum, illumFraction, waxing;
+        try {
+            elong = Astronomy.MoonPhase(t);
+            var illumObj = Astronomy.Illumination(Astronomy.Body.Moon, t);
+            illumFraction = illumObj.phase_fraction;
+            illum = Math.round(illumFraction * 10000) / 100;
+        } catch(e) {
+            elong = getElongationAtMs(nowMs);
+            illumFraction = (1 - Math.cos(elong * Math.PI / 180)) / 2;
+            illum = Math.round(illumFraction * 10000) / 100;
+        }
+        waxing = elong < 180;
+
+        // Phase name (same boundaries as getMoonData)
+        var name;
+        if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
+        else if (elong < 90)  { name = 'Waxing Crescent'; }
+        else if (elong < 135) { name = 'First Quarter'; }
+        else if (elong < 225) { name = getCurrentCycleMoonName(nowMs); }
+        else if (elong < 270) { name = 'Waning Gibbous'; }
+        else if (elong < 315) { name = 'Third Quarter'; }
+        else                  { name = 'Waning Crescent'; }
+
+        // Moon age in days (0–29.53)
+        var moonAgeDays = (elong / 360) * 29.53059;
+
+        // Glow filter string
+        var glow = _moonGlowFilter(illumFraction);
+
+        // SVG icons pre-built at both sizes so each caller doesn't regenerate
+        var svgSmall  = generateMoonSVG(elong, 32, illumFraction);
+        var svgLarge  = generateMoonSVG(elong, 90, illumFraction);
+        var svgMini   = generateMoonSVG(elong, 90, illumFraction).replace('width="90" height="90"', 'width="30" height="30"');
+
+        // data-phase attribute value
+        var phaseAttr = (name === 'New Moon') ? 'new'
+                      : (name.indexOf('Full Moon') !== -1) ? 'full'
+                      : 'lit';
+
+        return {
+            nowMs:        nowMs,
+            elong:        elong,
+            illum:        illum,
+            illumFraction:illumFraction,
+            waxing:       waxing,
+            name:         name,
+            moonAgeDays:  moonAgeDays,
+            glow:         glow,
+            svgSmall:     svgSmall,
+            svgLarge:     svgLarge,
+            svgMini:      svgMini,
+            phaseAttr:    phaseAttr
+        };
+    }
+
     // ── getMoonData: illumination & phase via Astronomy Engine ─────────────────
+    // Legacy wrapper — used by updateWidget and callers that need a quick snapshot.
+    // Inside the RAF tick we use _computeAllLunar() so all sub-updates share one object.
     function getMoonData() {
         var nowMs = getNowMs();
         var t = msToAstroTime(nowMs);
@@ -48587,8 +48639,11 @@ class GravSimEndpoint {
     }
 
     function updateWidget() {
-        var data = getMoonData();
+        // ── Single source of truth: compute ALL lunar values ONCE ──────────────
         var nowMs = getNowMs();
+        var ld = _computeAllLunar(nowMs); // ld = lunar data snapshot for this tick
+
+        // ── Visual elements (icon, name, bar, %, glow) — all from ld ──────────
         var iconEl   = document.getElementById('moonPhaseIcon');
         var nameEl   = document.getElementById('moonPhaseName');
         var barEl    = document.getElementById('moonPhaseBar');
@@ -48601,40 +48656,39 @@ class GravSimEndpoint {
         var moonIconPct = document.getElementById('moonIconPercent');
 
         if (iconEl) {
-            iconEl.innerHTML = generateMoonSVG(data.elong, 32, data.illum / 100);
-            var phase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
-            iconEl.setAttribute('data-phase', phase);
-            iconEl.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
-            // Mirror to modal icon at correct size
-            var iconElM = document.getElementById('moonPhaseIconModal');
-            if (iconElM) {
-                iconElM.innerHTML = generateMoonSVG(data.elong, 90, data.illum / 100);
-                iconElM.setAttribute('data-phase', phase);
-                iconElM.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
-            }
+            iconEl.innerHTML = ld.svgSmall;
+            iconEl.setAttribute('data-phase', ld.phaseAttr);
+            iconEl.style.setProperty('--moon-glow', ld.glow);
         }
-        if (nameEl) nameEl.textContent = data.name;
-        if (barEl)  barEl.style.width  = data.illum + '%';
-        if (pctEl)  pctEl.textContent  = data.illum.toFixed(2) + '%';
-        // Mirror phase name, bar, percent to modal
-        var nameElM = document.getElementById('moonPhaseNameModal');
-        var barElM  = document.getElementById('moonPhaseBarModal');
-        var pctElM  = document.getElementById('moonPhasePercentModal');
-        var pctIconM = document.getElementById('moonIconPercentModal');
-        if (nameElM) nameElM.textContent  = data.name;
-        if (barElM)  barElM.style.width   = data.illum + '%';
-        if (pctElM)  pctElM.textContent   = data.illum.toFixed(2) + '%';
-        if (pctIconM) pctIconM.textContent = data.illum.toFixed(0) + '%';
-        if (mainIcon) {
-            mainIcon.innerHTML = generateMoonSVG(data.elong, 90, data.illum / 100).replace('width="90" height="90"', 'width="30" height="30"');
-            var mphase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
-            mainIcon.setAttribute('data-phase', mphase);
-            mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
+        var iconElM = document.getElementById('moonPhaseIconModal');
+        if (iconElM) {
+            iconElM.innerHTML = ld.svgLarge;
+            iconElM.setAttribute('data-phase', ld.phaseAttr);
+            iconElM.style.setProperty('--moon-glow', ld.glow);
         }
-        if (mainPct)  mainPct.textContent  = data.illum.toFixed(2) + '%';
-        if (mainName) mainName.textContent = data.name;
+        if (nameEl) nameEl.textContent = ld.name;
+        if (barEl)  barEl.style.width  = ld.illum + '%';
+        if (pctEl)  pctEl.textContent  = ld.illum.toFixed(2) + '%';
+        if (moonIconPct) moonIconPct.textContent = ld.illum.toFixed(0) + '%';
 
-        // Next full moon and new moon dates
+        var nameElM  = document.getElementById('moonPhaseNameModal');
+        var barElM   = document.getElementById('moonPhaseBarModal');
+        var pctElM   = document.getElementById('moonPhasePercentModal');
+        var pctIconM = document.getElementById('moonIconPercentModal');
+        if (nameElM)  nameElM.textContent  = ld.name;
+        if (barElM)   barElM.style.width   = ld.illum + '%';
+        if (pctElM)   pctElM.textContent   = ld.illum.toFixed(2) + '%';
+        if (pctIconM) pctIconM.textContent = ld.illum.toFixed(0) + '%';
+
+        if (mainIcon) {
+            mainIcon.innerHTML = ld.svgMini;
+            mainIcon.setAttribute('data-phase', ld.phaseAttr);
+            mainIcon.style.setProperty('--moon-glow', ld.glow);
+        }
+        if (mainPct)  mainPct.textContent  = ld.illum.toFixed(2) + '%';
+        if (mainName) mainName.textContent = ld.name;
+
+        // ── Event timestamps — refresh from the same nowMs ────────────────────
         var nextFullMs = findNextMoonEvent(180, nowMs);
         var nextNewMs  = findNextMoonEvent(0, nowMs);
         _nextFullMs = nextFullMs;
@@ -48648,7 +48702,6 @@ class GravSimEndpoint {
             if (nextNewEl)  nextNewEl.innerHTML  = _rd2;
         }
 
-        // Last full moon and last new moon dates
         var lastFullMs = findPrevMoonEvent(180, nowMs);
         var lastNewMs  = findPrevMoonEvent(0, nowMs);
         _lastFullMs = lastFullMs;
@@ -48765,11 +48818,12 @@ class GravSimEndpoint {
                 if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
 
                 // ── Live phase/illumination/glow/shape update every second ──
-                // Keeps phase name, moon shape, illumination bar and glow in sync
-                // without waiting for the 60s updateWidget interval.
+                // ALL values come from ONE _computeAllLunar() call so nothing drifts.
                 try {
-                    var _ld = getMoonData();
-                    // Phase name
+                    // Single calculation for this tick — every sub-update reads from _ld
+                    var _ld = _computeAllLunar(_nowMs);
+
+                    // Phase name (widget, modal, main pill)
                     var _pnEl  = document.getElementById('moonPhaseName');      if (_pnEl)  _pnEl.textContent  = _ld.name;
                     var _pnElM = document.getElementById('moonPhaseNameModal'); if (_pnElM) _pnElM.textContent = _ld.name;
                     var _mnEl  = document.getElementById('moonMainName');        if (_mnEl)  _mnEl.textContent  = _ld.name;
@@ -48779,8 +48833,9 @@ class GravSimEndpoint {
                     var _ppEl  = document.getElementById('moonPhasePercent');    if (_ppEl)  _ppEl.textContent  = _ld.illum.toFixed(2) + '%';
                     var _ppElM = document.getElementById('moonPhasePercentModal'); if (_ppElM) _ppElM.textContent = _ld.illum.toFixed(2) + '%';
                     var _piElM = document.getElementById('moonIconPercentModal');  if (_piElM) _piElM.textContent = _ld.illum.toFixed(0) + '%';
+                    var _piEl  = document.getElementById('moonIconPercent');        if (_piEl)  _piEl.textContent  = _ld.illum.toFixed(0) + '%';
+
                     // Detect phase boundary crossing BEFORE the shape throttle check
-                    // so we can force an immediate redraw and event rollover in the same tick.
                     if (!_rafTick._lastPhaseName) _rafTick._lastPhaseName = _ld.name;
                     var _phaseChanged = (_rafTick._lastPhaseName !== _ld.name);
                     if (_phaseChanged) {
@@ -48789,19 +48844,18 @@ class GravSimEndpoint {
                         _rafTick._lastShape = -1;
                     }
 
-                    // Moon SVG shape + glow (throttle to every 10s — shape changes slowly,
-                    // but _lastShape is reset to -1 on a phase boundary so it always fires then)
+                    // Moon SVG shape + glow (throttle to every 10s to avoid thrashing the DOM;
+                    // _lastShape is reset to -1 on a phase boundary so it always redraws then).
+                    // All three icons use pre-built SVGs from the same _ld object.
                     var _nowSec10 = Math.floor(_nowMs / 10000);
                     if (_nowSec10 !== (_rafTick._lastShape || -1)) {
                         _rafTick._lastShape = _nowSec10;
-                        var _phase = _ld.name === 'New Moon' ? 'new' : (_ld.name.indexOf('Full Moon') !== -1 || _ld.name.indexOf('Moon') > 0 && _ld.illum > 90) ? 'full' : 'lit';
-                        var _glow  = _moonGlowFilter(_ld.illum / 100);
                         var _iEl  = document.getElementById('moonPhaseIcon');
-                        if (_iEl)  { _iEl.innerHTML = generateMoonSVG(_ld.elong, 32, _ld.illum / 100); _iEl.setAttribute('data-phase', _phase); _iEl.style.setProperty('--moon-glow', _glow); }
+                        if (_iEl)  { _iEl.innerHTML = _ld.svgSmall; _iEl.setAttribute('data-phase', _ld.phaseAttr); _iEl.style.setProperty('--moon-glow', _ld.glow); }
                         var _iElM = document.getElementById('moonPhaseIconModal');
-                        if (_iElM) { _iElM.innerHTML = generateMoonSVG(_ld.elong, 90, _ld.illum / 100); _iElM.setAttribute('data-phase', _phase); _iElM.style.setProperty('--moon-glow', _glow); }
+                        if (_iElM) { _iElM.innerHTML = _ld.svgLarge; _iElM.setAttribute('data-phase', _ld.phaseAttr); _iElM.style.setProperty('--moon-glow', _ld.glow); }
                         var _miEl = document.getElementById('moonMainIcon');
-                        if (_miEl) { _miEl.innerHTML = generateMoonSVG(_ld.elong, 90, _ld.illum / 100).replace('width="90" height="90"', 'width="30" height="30"'); _miEl.setAttribute('data-phase', _phase); _miEl.style.setProperty('--moon-glow', _glow); }
+                        if (_miEl) { _miEl.innerHTML = _ld.svgMini;  _miEl.setAttribute('data-phase', _ld.phaseAttr); _miEl.style.setProperty('--moon-glow', _ld.glow); }
                     }
 
                     // If the phase just crossed a boundary, immediately invalidate the
@@ -48878,15 +48932,20 @@ class GravSimEndpoint {
                             var _mEl  = document.getElementById('moonOrbMovingVal');      if (_mEl)  _mEl.textContent  = _movStr;
                             var _mElM = document.getElementById('moonOrbMovingValModal'); if (_mElM) _mElM.textContent = _movStr;
 
-                            // Moon Age
-                            var _moonPhase = Astronomy.MoonPhase(_c.now);
-                            var _ageStr    = ((_moonPhase / 360) * 29.53059).toFixed(2) + ' days';
+                            // Moon Age — use moonAgeDays from the shared _ld computed above
+                            // so this value is always in sync with the phase name and illumination.
+                            var _ageStr = (_ld && _ld.moonAgeDays !== undefined)
+                                ? _ld.moonAgeDays.toFixed(2) + ' days'
+                                : (function(){ try { return ((Astronomy.MoonPhase(_c.now)/360)*29.53059).toFixed(2)+' days'; } catch(e){ return '—'; } })();
                             var _agEl  = document.getElementById('moonAgeVal');      if (_agEl)  _agEl.textContent  = _ageStr;
                             var _agElM = document.getElementById('moonAgeValModal'); if (_agElM) _agElM.textContent = _ageStr;
 
-                            // Apparent Magnitude
-                            var _illum  = Astronomy.Illumination(Astronomy.Body.Moon, _c.now);
-                            var _magStr = _illum.mag.toFixed(2);
+                            // Apparent Magnitude — use the same Illumination object derived from _ld's timestamp
+                            var _magStr;
+                            try {
+                                var _illumObj = Astronomy.Illumination(Astronomy.Body.Moon, msToAstroTime(_nowMs));
+                                _magStr = _illumObj.mag.toFixed(2);
+                            } catch(e) { _magStr = '—'; }
                             var _mgEl  = document.getElementById('moonMagVal');      if (_mgEl)  _mgEl.textContent  = _magStr;
                             var _mgElM = document.getElementById('moonMagValModal'); if (_mgElM) _mgElM.textContent = _magStr;
 
