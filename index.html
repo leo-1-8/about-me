@@ -12257,7 +12257,7 @@
                 <span class="moon-twinkle-star" style="--delay:-2.9s; --td:2.2s; top:-10px; left:20%; font-size:3px; color:#ffe082;">✦</span>
                 <span class="moon-twinkle-star" style="--delay:-0.4s; --td:1.8s; top:8px;   right:-9px;font-size:5px; color:#fff9c4;">✧</span>
                 <span class="moon-twinkle-star" style="--delay:-3.5s; --td:2.4s; bottom:-9px;right:20%;font-size:5px; color:#ffffff;">★</span>
-                <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:26px; height:26px; line-height:1; overflow:visible; flex-shrink:0; transform-origin:center; transform:scale(0.8125);"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
+                <span id="moonMainIcon" style="display:inline-flex; align-items:center; width:30px; height:30px; line-height:1; overflow:visible; flex-shrink:0; background:transparent;"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" fill="#1a1a2e" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/></svg></span>
             </span>
             <div style="display: flex; flex-direction: column; gap: 1px; line-height: 1.1; align-items: center;">
                 <span id="moonMainName" style="font-family:'Poppins',sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">New Moon</span>
@@ -16408,6 +16408,8 @@
                     <span id="moonNextPhaseLabelInner"></span>
                     <span id="moonNextFullDate"></span>
                     <span id="moonNextNewDate"></span>
+                    <span id="moonLastFullDate"></span>
+                    <span id="moonLastNewDate"></span>
                     <span id="moonRiseTime"></span>
                     <span id="moonSetTime"></span>
                     <span id="moonAltitude"></span>
@@ -38085,9 +38087,9 @@ function updateLoginLordIconColor() {
             var iconElM = document.getElementById('moonPhaseIconModal');
             if (iconElM) { iconElM.innerHTML = svg90; iconElM.style.setProperty('--moon-glow', _glowRaf); }
 
-            // Main pill icon — rendered at 32px, CSS-scaled to 26px via transform on the container
+            // Main pill icon — generated at 90px detail but displayed at 32px
             var mainIcon = document.getElementById('moonMainIcon');
-            if (mainIcon) { mainIcon.innerHTML = svg32; mainIcon.style.setProperty('--moon-glow', _glowRaf); }
+            if (mainIcon) { mainIcon.innerHTML = svg90.replace('width="90" height="90"', 'width="30" height="30"'); mainIcon.style.setProperty('--moon-glow', _glowRaf); }
         }
 
         function _terminatorRAF() {
@@ -48018,6 +48020,34 @@ class GravSimEndpoint {
         }
     }
 
+    // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
+    function findPrevMoonEvent(targetElong, nowMs) {
+        try {
+            // Search backwards: start 1 minute before now, look back up to 35 days
+            var t = msToAstroTime(nowMs - 60000);
+            // SearchMoonPhase goes forward; search from ~35 days ago going forward to now
+            var startT = msToAstroTime(nowMs - 35 * 24 * 3600000);
+            var result = Astronomy.SearchMoonPhase(targetElong, startT, 35);
+            if (result && result.date.getTime() < nowMs) return result.date.getTime();
+            return null;
+        } catch(e) {
+            // Fallback: step backward
+            var step = 6 * 3600000;
+            var ms = nowMs - step;
+            var prevE = getElongationAtMs(nowMs);
+            for (var i = 0; i < 300; i++) {
+                var e = getElongationAtMs(ms);
+                if (targetElong === 180) {
+                    if (prevE >= 180 && e < 180) return ms + step / 2;
+                } else {
+                    if ((prevE > 300 || prevE < 60) && (e < 300 && e > 60)) return ms + step / 2;
+                }
+                prevE = e; ms -= step;
+            }
+            return null;
+        }
+    }
+
     // ── findNextElongationCross: SearchMoonPhase for quarter phases ────────────
     function findNextElongationCross(threshold, nowMs) {
         try {
@@ -48253,6 +48283,28 @@ class GravSimEndpoint {
         }
     }
 
+    function _fmtDHMS(diffMs) {
+        var total = Math.floor(Math.abs(diffMs) / 1000);
+        var d = Math.floor(total / 86400);
+        var h = Math.floor((total % 86400) / 3600);
+        var m = Math.floor((total % 3600) / 60);
+        var s = total % 60;
+        var p = function(n) { return n < 10 ? '0' + n : '' + n; };
+        return p(d) + 'd ' + p(h) + 'h ' + p(m) + 'm ' + p(s) + 's';
+    }
+
+    // Returns date string + green "in Xd Xh…" for future, red "Xd Xh… ago" for past
+    function formatMoonEventDateWithCountdown(ms, nowMs) {
+        var dateStr = formatMoonEventDate(ms);
+        var diff = ms - nowMs;
+        var yellow = 'style="color:#ffe066;"';
+        if (diff > 0) {
+            return dateStr + '<br><span ' + yellow + '>(</span><span style="color:#4cde80;">in ' + _fmtDHMS(diff) + '</span><span ' + yellow + '>)</span>';
+        } else {
+            return dateStr + '<br><span ' + yellow + '>(</span><span style="color:#ff8a8a;">' + _fmtDHMS(diff) + ' ago</span><span ' + yellow + '>)</span>';
+        }
+    }
+
     function getNextPhaseInfo(nowMs) {
         // All 8 phases in cycle order, with the elongation boundary that ends each phase.
         // When we cross that boundary we enter the next phase.
@@ -48324,6 +48376,8 @@ class GravSimEndpoint {
     var _nextPhaseCountdownInterval = null;
     var _nextFullMs = null;
     var _nextNewMs  = null;
+    var _lastFullMs = null;
+    var _lastNewMs  = null;
 
     function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
 
@@ -48364,10 +48418,29 @@ class GravSimEndpoint {
         var fullElM = document.getElementById('moonNextFullDateModal');
         var newElM  = document.getElementById('moonNextNewDateModal');
         if (_moonGeoGranted) {
-            if (fullEl  && _nextFullMs) fullEl.textContent  = formatMoonEventDate(_nextFullMs);
-            if (newEl   && _nextNewMs)  newEl.textContent   = formatMoonEventDate(_nextNewMs);
-            if (fullElM && _nextFullMs) fullElM.textContent = formatMoonEventDate(_nextFullMs);
-            if (newElM  && _nextNewMs)  newElM.textContent  = formatMoonEventDate(_nextNewMs);
+            if (fullEl  && _nextFullMs) fullEl.innerHTML  = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
+            if (newEl   && _nextNewMs)  newEl.innerHTML   = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
+            if (fullElM && _nextFullMs) fullElM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
+            if (newElM  && _nextNewMs)  newElM.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
+            // Auto-refresh last full/new moon when current phase transitions
+            // (Waning Gibbous = last full moon just happened; Waning Crescent = last new moon just happened)
+            var _curPhaseEl = document.getElementById('moonPhaseName');
+            var _curPhase = _curPhaseEl ? _curPhaseEl.textContent : '';
+            var _needLastRefresh = false;
+            if ((_curPhase === 'Waning Gibbous' || _curPhase === 'Third Quarter' || _curPhase === 'Waning Crescent') && !_lastFullMs) _needLastRefresh = true;
+            if ((_curPhase === 'Waxing Crescent' || _curPhase === 'First Quarter' || _curPhase === 'Waxing Gibbous') && !_lastNewMs) _needLastRefresh = true;
+            if (_needLastRefresh || (_nextFullMs && _lastFullMs && _nextFullMs < nowMs) || (_nextNewMs && _lastNewMs && _nextNewMs < nowMs)) {
+                _lastFullMs = findPrevMoonEvent(180, nowMs);
+                _lastNewMs  = findPrevMoonEvent(0, nowMs);
+            }
+            var lastFEl  = document.getElementById('moonLastFullDate');
+            var lastNEl  = document.getElementById('moonLastNewDate');
+            var lastFElM = document.getElementById('moonLastFullDateModal');
+            var lastNElM = document.getElementById('moonLastNewDateModal');
+            if (lastFEl  && _lastFullMs) lastFEl.innerHTML  = formatMoonEventDateWithCountdown(_lastFullMs, nowMs);
+            if (lastNEl  && _lastNewMs)  lastNEl.innerHTML  = formatMoonEventDateWithCountdown(_lastNewMs,  nowMs);
+            if (lastFElM && _lastFullMs) lastFElM.innerHTML = formatMoonEventDateWithCountdown(_lastFullMs, nowMs);
+            if (lastNElM && _lastNewMs)  lastNElM.innerHTML = formatMoonEventDateWithCountdown(_lastNewMs,  nowMs);
         } else {
             var _rd = '<span style="color:#ff8a8a;">---</span>';
             if (fullEl)  fullEl.innerHTML  = _rd;
@@ -48428,7 +48501,7 @@ class GravSimEndpoint {
         if (pctElM)  pctElM.textContent   = data.illum.toFixed(2) + '%';
         if (pctIconM) pctIconM.textContent = data.illum.toFixed(0) + '%';
         if (mainIcon) {
-            mainIcon.innerHTML = generateMoonSVG(data.elong, 32, data.illum / 100);
+            mainIcon.innerHTML = generateMoonSVG(data.elong, 90, data.illum / 100).replace('width="90" height="90"', 'width="30" height="30"');
             var mphase = data.name === 'New Moon' ? 'new' : (data.name.indexOf('Full Moon') !== -1) ? 'full' : 'lit';
             mainIcon.setAttribute('data-phase', mphase);
             mainIcon.style.setProperty('--moon-glow', _moonGlowFilter(data.illum / 100));
@@ -48442,12 +48515,34 @@ class GravSimEndpoint {
         _nextFullMs = nextFullMs;
         _nextNewMs  = nextNewMs;
         if (_moonGeoGranted) {
-            if (nextFullEl && nextFullMs) nextFullEl.textContent = formatMoonEventDate(nextFullMs);
-            if (nextNewEl  && nextNewMs)  nextNewEl.textContent  = formatMoonEventDate(nextNewMs);
+            if (nextFullEl && nextFullMs) nextFullEl.innerHTML = formatMoonEventDateWithCountdown(nextFullMs, nowMs);
+            if (nextNewEl  && nextNewMs)  nextNewEl.innerHTML  = formatMoonEventDateWithCountdown(nextNewMs,  nowMs);
         } else {
             var _rd2 = '<span style="color:#ff8a8a;">---</span>';
             if (nextFullEl) nextFullEl.innerHTML = _rd2;
             if (nextNewEl)  nextNewEl.innerHTML  = _rd2;
+        }
+
+        // Last full moon and last new moon dates
+        var lastFullMs = findPrevMoonEvent(180, nowMs);
+        var lastNewMs  = findPrevMoonEvent(0, nowMs);
+        _lastFullMs = lastFullMs;
+        _lastNewMs  = lastNewMs;
+        var lastFullEl  = document.getElementById('moonLastFullDate');
+        var lastNewEl   = document.getElementById('moonLastNewDate');
+        var lastFullElM = document.getElementById('moonLastFullDateModal');
+        var lastNewElM  = document.getElementById('moonLastNewDateModal');
+        if (_moonGeoGranted) {
+            if (lastFullEl  && lastFullMs) lastFullEl.innerHTML  = formatMoonEventDateWithCountdown(lastFullMs, nowMs);
+            if (lastNewEl   && lastNewMs)  lastNewEl.innerHTML   = formatMoonEventDateWithCountdown(lastNewMs,  nowMs);
+            if (lastFullElM && lastFullMs) lastFullElM.innerHTML = formatMoonEventDateWithCountdown(lastFullMs, nowMs);
+            if (lastNewElM  && lastNewMs)  lastNewElM.innerHTML  = formatMoonEventDateWithCountdown(lastNewMs,  nowMs);
+        } else {
+            var _rd3 = '<span style="color:#ff8a8a;">---</span>';
+            if (lastFullEl)  lastFullEl.innerHTML  = _rd3;
+            if (lastNewEl)   lastNewEl.innerHTML   = _rd3;
+            if (lastFullElM) lastFullElM.innerHTML = _rd3;
+            if (lastNewElM)  lastNewElM.innerHTML  = _rd3;
         }
 
         // (Re)start the live countdown — it handles its own label
@@ -49166,6 +49261,14 @@ class GravSimEndpoint {
                         Next New Moon: <span id="moonNextNewDateModal" style="color:rgba(255,220,80,0.9);">—</span>
                     </div>
                 </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:6px; padding-top:7px;">
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
+                        Last Full Moon: <span id="moonLastFullDateModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    </div>
+                    <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72); margin-top:4px;">
+                        Last New Moon: <span id="moonLastNewDateModal" style="color:rgba(255,220,80,0.9);">—</span>
+                    </div>
+                </div>
                 <!-- Apparent Magnitude -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:8px;">
                     <div style="font-family:'Poppins',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.72);">
@@ -49375,6 +49478,8 @@ class GravSimEndpoint {
         ['moonPhasePercent',      'moonPhasePercentModal'],
         ['moonNextFullDate',      'moonNextFullDateModal'],
         ['moonNextNewDate',       'moonNextNewDateModal'],
+        ['moonLastFullDate',      'moonLastFullDateModal'],
+        ['moonLastNewDate',       'moonLastNewDateModal'],
         ['moonRiseTime',          'moonRiseTimeModal'],
         ['moonSetTime',           'moonSetTimeModal'],
         ['moonAltitude',          'moonAltitudeModal'],
@@ -49626,7 +49731,7 @@ class GravSimEndpoint {
     var _eclipseCacheTime = 0;
 
     function _computeEclipses(nowMs) {
-        if (_eclipseCache && (nowMs - _eclipseCacheTime) < 600000) return _eclipseCache;
+        if (_eclipseCache && (nowMs - _eclipseCacheTime) < 30000) return _eclipseCache;
         try {
             var Astro = (typeof Astronomy !== 'undefined') ? Astronomy : null;
             if (!Astro) return null;
@@ -49759,7 +49864,8 @@ class GravSimEndpoint {
             vis = 'Night Side of Earth';
         }
         el.innerHTML =
-            '<span style="color:#ffe066;">' + dateStr + '</span> ' + countdown +
+            '<span style="color:#ffe066;">' + dateStr + '</span>' +
+            '<br>' + countdown +
             '<br><span style="color:#ffe066;">Visibility: </span><span style="color:#4cde80;">' + vis + '</span>' +
             (!isSolar && bestView ? '<br><span style="color:#ffe066;">Best View: </span><span style="color:#4cde80;">' + bestView + '</span>' : '');
     }
@@ -49774,7 +49880,8 @@ class GravSimEndpoint {
         var dateStr = _fmtDateMs(ms);
         var vis = visText || 'Global';
         el.innerHTML =
-            '<span style="color:#ffe066;">' + dateStr + '</span> ' + countdown +
+            '<span style="color:#ffe066;">' + dateStr + '</span>' +
+            '<br>' + countdown +
             '<br><span style="color:#ffe066;">Visibility: </span><span style="color:#4cde80;">' + vis + '</span>' +
             (bestView ? '<br><span style="color:#ffe066;">Best View: </span><span style="color:#4cde80;">' + bestView + '</span>' : '');
     }
