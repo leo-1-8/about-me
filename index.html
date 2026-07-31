@@ -38001,68 +38001,79 @@ function updateLoginLordIconColor() {
         var e = ((elongDeg % 360) + 360) % 360;
         var waxing = e < 180;
 
-        // The terminator ellipse x-radius is r (limb of moon).
-        // The terminator ellipse semi-minor-axis along x: rx_term = r * |cos(e)|
-        // When e=0 (New) rx_term=r — terminator overlaps the limb on the left side
-        // When e=90 (FQ)  rx_term=0 — straight vertical line
-        // When e=180(Full) rx_term=r — overlaps limb on right
-        var cosE     = Math.cos(e * Math.PI / 180);
-        var rx_term  = r * Math.abs(cosE);  // always positive
+        // rx_term: x-radius of the terminator ellipse (y-radius is always r).
+        // cos(e) goes from 1 (New) → 0 (Quarter) → -1 (Full) → 0 (Quarter) → 1 (New).
+        // We use the raw cosine (signed) to drive the ellipse x-radius and its direction.
+        var cosE    = Math.cos(e * Math.PI / 180); // +1=New, 0=Quarter, -1=Full
+        var rx_term = r * Math.abs(cosE);
 
-        // Sweep flags for the SVG arcs
-        // Outer half-circle (limb) always sweeps along the lit side.
-        // Inner ellipse (terminator) shape: concave toward dark when crescent, convex toward dark when gibbous.
+        // ── Robust lit-area path ────────────────────────────────────────────────
+        // Strategy: use two clipPath regions combined with feComposite in SVG filter,
+        // but the simplest correct approach is:
+        //   1. Draw the lit half-disk (limb semicircle on the lit side).
+        //   2. Add or subtract the terminator ellipse half-disk depending on phase.
+        //
+        // Cleaner: express the lit area as a single closed path.
+        //
+        // For WAXING (0 < e < 180), right side is lit:
+        //   - Crescent (0 < e < 90):  lit = right limb arc  ∩  right half of terminator ellipse
+        //     Path: top→(right limb arc down)→bot→(terminator left arc up)→top
+        //     terminator arc goes through the LEFT (dark) side → sweep=0, largeArc=0
+        //   - Gibbous  (90 < e < 180): lit = right limb arc  ∪  right half of terminator ellipse
+        //     Path: top→(right limb arc down)→bot→(terminator right arc up)→top
+        //     terminator arc goes through the RIGHT (lit) side → sweep=1, largeArc=1
+        //
+        // For WANING (180 < e < 360), left side is lit — mirror image:
+        //   - Gibbous  (180 < e < 270): sweep=0, largeArc=1
+        //   - Crescent (270 < e < 360): sweep=1, largeArc=0
         var litPath;
 
         if (e < 1 || e > 359) {
-            // New Moon — fully dark, no lit path
+            // New Moon — fully dark
             litPath = '';
         } else if (e > 179 && e < 181) {
             // Full Moon — fully lit circle
             litPath = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#e8d47a"/>';
-        } else {
-            // General case: lit region is bounded by the limb semicircle + the terminator ellipse.
-            //
-            // For WAXING (0 < e < 180): right side lit.
-            //   Limb: right semicircle (top → bottom, large-arc=1, sweep=1)
-            //   Terminator ellipse: from bottom → top
-            //     - Crescent (0<e<90):  terminator bulges LEFT  → sweep=0 (concave toward right)  → dark-side arc sweep=1 would fill wrong; we want the ellipse arc that goes through the LEFT side → sweep=1 (inner arc)
-            //     - Gibbous  (90<e<180): terminator bulges RIGHT → sweep=1 (convex toward right, covers most)
-            //
-            // For WANING (180 < e < 360): left side lit.
-            //   Mirror image.
-
-            var xT = cx;   // terminator ellipse centre x = moon centre x (terminator passes through top and bottom)
-            var sweepLimb, sweepTerm;
-
+        } else if (rx_term < 0.5) {
+            // Exactly at quarter — straight vertical line splits the moon
             if (waxing) {
-                // Right side lit
-                sweepLimb = 1;  // right semicircle: top-right arc going down
-                // Crescent: e<90 → terminator curves toward dark (left) → small arc of ellipse is on lit side
-                // Gibbous:  e>90 → terminator curves toward lit (right) → large arc of ellipse is on lit side
-                sweepTerm = (e < 90) ? 1 : 0;
+                // Right half lit
+                litPath = '<path fill="#e8d47a" d="M ' + cx + ' ' + top + ' A ' + r + ' ' + r + ' 0 1 1 ' + cx + ' ' + bot + ' Z"/>';
             } else {
-                // Left side lit (e > 180)
-                sweepLimb = 0;  // left semicircle: top-left arc going down
-                var eLocal = e - 180; // 0..180
-                sweepTerm = (eLocal < 90) ? 0 : 1;
+                // Left half lit
+                litPath = '<path fill="#e8d47a" d="M ' + cx + ' ' + top + ' A ' + r + ' ' + r + ' 0 1 0 ' + cx + ' ' + bot + ' Z"/>';
             }
+        } else {
+            var sweepLimb, sweepTerm, largeArcTerm;
 
-            // The path: start at top of moon, arc around limb to bottom, then arc along terminator back to top.
-            // For waxing: start (cx, top) → limb right arc → (cx, bot) → terminator arc back → (cx, top)
-            // For waning: start (cx, top) → limb left arc → (cx, bot) → terminator arc back → (cx, top)
-            var largeArcLimb = 1;  // always half-circle = large arc
-            var largeArcTerm;
             if (waxing) {
-                largeArcTerm = (e > 90) ? 1 : 0;
+                sweepLimb   = 1; // right semicircle (top → bot, clockwise)
+                if (e < 90) {
+                    // Waxing Crescent: terminator arc goes LEFT (concave toward lit right side)
+                    sweepTerm   = 0;
+                    largeArcTerm = 0;
+                } else {
+                    // Waxing Gibbous: terminator arc goes RIGHT (convex, covers left dark area)
+                    sweepTerm   = 1;
+                    largeArcTerm = 1;
+                }
             } else {
-                var eL2 = e - 180;
-                largeArcTerm = (eL2 > 90) ? 1 : 0;
+                sweepLimb   = 0; // left semicircle (top → bot, counter-clockwise)
+                var eW = e - 180; // 0..180
+                if (eW < 90) {
+                    // Waning Gibbous: terminator arc goes LEFT (convex, covers right dark area)
+                    sweepTerm   = 0;
+                    largeArcTerm = 1;
+                } else {
+                    // Waning Crescent: terminator arc goes RIGHT (concave toward lit left side)
+                    sweepTerm   = 1;
+                    largeArcTerm = 0;
+                }
             }
 
             litPath = '<path fill="#e8d47a" d="' +
                 'M ' + cx + ' ' + top + ' ' +
-                'A ' + r + ' ' + r + ' 0 ' + largeArcLimb + ' ' + sweepLimb + ' ' + cx + ' ' + bot + ' ' +
+                'A ' + r + ' ' + r + ' 0 1 ' + sweepLimb + ' ' + cx + ' ' + bot + ' ' +
                 'A ' + rx_term.toFixed(3) + ' ' + r + ' 0 ' + largeArcTerm + ' ' + sweepTerm + ' ' + cx + ' ' + top + ' ' +
                 'Z"/>';
         }
