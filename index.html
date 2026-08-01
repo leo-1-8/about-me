@@ -16839,8 +16839,6 @@
                 const safeVolume = clamp(volume01, 0, 1);
                 const audios = document.querySelectorAll('audio');
                 audios.forEach(function(audio) {
-                    // Song players (musicPlayer-*) always stay at 100% volume
-                    if (audio.id && audio.id.indexOf('musicPlayer-') === 0) return;
                     audio.volume = safeVolume;
                 });
                 if (typeof bgMusicAudio !== 'undefined' && bgMusicAudio) {
@@ -31264,8 +31262,11 @@ window.closeSettings = closeSettings;
                         audio.load();
                         return;
                     }
-                    // Always play songs at 100% volume
-                    audio.volume = 1.0;
+                    // Apply saved settings volume instead of hardcoding 1.0
+                    try {
+                        var _sv = localStorage.getItem('settingsVolumeLevel');
+                        audio.volume = (_sv !== null) ? Math.min(1, Math.max(0, parseFloat(_sv) / 100)) : 0.7;
+                    } catch(_ve) { audio.volume = 0.7; }
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.then(() => {
@@ -48022,13 +48023,23 @@ class GravSimEndpoint {
     // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
     function findPrevMoonEvent(targetElong, nowMs) {
         try {
-            // Search back up to 30 days (full lunar cycle ~29.5 days) to always
-            // find the most recent peak regardless of current phase position.
-            // We start from 30 days ago and search forward 30 days — the first
-            // result that is before nowMs is the most recent past peak.
-            var startT = msToAstroTime(nowMs - 30 * 24 * 3600000);
-            var result = Astronomy.SearchMoonPhase(targetElong, startT, 30);
-            if (result && result.date.getTime() < nowMs) return result.date.getTime();
+            // Search backward: start 1 ms before now and step back one full lunar
+            // cycle at a time until we find a result that is in the past.
+            // This always returns the MOST RECENT past full/new moon, not the
+            // oldest one in a 30-day forward window (which was the old bug).
+            var LUNAR_CYCLE_MS = 29.53059 * 24 * 3600000;
+            // Start just before nowMs so we don't pick up a simultaneous event
+            var searchStart = nowMs - 1;
+            // Walk back up to 2 lunar cycles to find the most recent past peak
+            for (var attempt = 0; attempt < 3; attempt++) {
+                var startMs = searchStart - attempt * LUNAR_CYCLE_MS;
+                var startT = msToAstroTime(startMs);
+                var result = Astronomy.SearchMoonPhase(targetElong, startT, 30);
+                if (result) {
+                    var t = result.date.getTime();
+                    if (t < nowMs) return t;
+                }
+            }
             return null;
         } catch(e) {
             // Fallback: step backward
@@ -48603,26 +48614,28 @@ class GravSimEndpoint {
         var fullElM = document.getElementById('moonNextFullDateModal');
         var newElM  = document.getElementById('moonNextNewDateModal');
         if (_moonGeoGranted) {
-            // Refresh ALL ms values first — before any rendering — so that when a
-            // Next event has just passed, _lastFullMs/_lastNewMs and _nextFullMs/_nextNewMs
-            // are all correct in the same tick, eliminating the one-tick delay where
-            // Last dates lag behind the Next dates rolling over.
+            // Refresh Next ms values when they have passed, then recompute Last to match.
+            // We only call findPrevMoonEvent when _nextFullMs/_nextNewMs roll over —
+            // not every tick — so Last dates update instantly on rollover without
+            // requiring a page refresh.
             try {
-                _lastFullMs = findPrevMoonEvent(180, nowMs);
-                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
                 if (!_nextFullMs || _nextFullMs < nowMs) {
                     _nextFullMs = findNextMoonEvent(180, nowMs);
+                    _lastFullMs = findPrevMoonEvent(180, nowMs); // rolled over — refresh Last too
                 }
                 if (!_nextNewMs || _nextNewMs < nowMs) {
                     _nextNewMs  = findNextMoonEvent(0,   nowMs);
+                    _lastNewMs  = findPrevMoonEvent(0,   nowMs); // rolled over — refresh Last too
                 }
+                if (!_lastFullMs) _lastFullMs = findPrevMoonEvent(180, nowMs);
+                if (!_lastNewMs)  _lastNewMs  = findPrevMoonEvent(0,   nowMs);
             } catch(e) {}
-            // Now render Next Full/New Moon with the freshly validated values
+            // Render Next Full/New Moon
             if (fullEl  && _nextFullMs) fullEl.innerHTML  = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newEl   && _nextNewMs)  newEl.innerHTML   = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
             if (fullElM && _nextFullMs) fullElM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newElM  && _nextNewMs)  newElM.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
-            // Render Last Full/New Moon — guaranteed to match the just-refreshed ms values
+            // Render Last Full/New Moon — updates immediately when Next rolls over
             var lastFEl  = document.getElementById('moonLastFullDate');
             var lastNEl  = document.getElementById('moonLastNewDate');
             var lastFElM = document.getElementById('moonLastFullDateModal');
