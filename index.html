@@ -48891,7 +48891,19 @@ class GravSimEndpoint {
                     var _nElM = document.getElementById('moonPhaseNameModal'); if (_nElM && _nElM.textContent !== _pName) _nElM.textContent = _pName;
                     var _mEl  = document.getElementById('moonMainName');       if (_mEl  && _mEl.textContent  !== _pName) _mEl.textContent  = _pName;
                 } catch(_pne) {}
-                // Apsis countdowns — only when location granted
+                // Apsis countdowns — only when location granted.
+                // If either apsis has just passed, immediately fetch the next one
+                // so the display never shows "passed" — it jumps straight to the next event.
+                var _periPassed = _moonApsisCache.peri && (_moonApsisCache.peri.getTime() <= _nowMs);
+                var _apoPassed  = _moonApsisCache.apo  && (_moonApsisCache.apo.getTime()  <= _nowMs);
+                if (_periPassed || _apoPassed) {
+                    try {
+                        var _ap1 = Astronomy.SearchLunarApsis(new Date(_nowMs + 60000));
+                        var _ap2 = Astronomy.NextLunarApsis(_ap1);
+                        _moonApsisCache.peri = (_ap1.kind === 0 ? _ap1 : _ap2).time.date;
+                        _moonApsisCache.apo  = (_ap1.kind === 1 ? _ap1 : _ap2).time.date;
+                    } catch(_are) {}
+                }
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
                     var perStr = _fmt(_moonApsisCache.peri, _nowMs);
@@ -49898,7 +49910,12 @@ class GravSimEndpoint {
 
     function _fmtCountdown(peakDate, nowMs) {
         var diffMs = peakDate.date - nowMs;
-        if (diffMs <= 0) return '<span style="color:#ff8a8a;">passed</span>';
+        if (diffMs <= 0) {
+            // Event just passed — bust the cache so _computeEclipses recomputes
+            // the next occurrence on the very next tick instead of showing "passed".
+            _eclipseCache = null;
+            return '<span style="color:#4cde80;">updating…</span>';
+        }
         var totalSec = Math.floor(diffMs / 1000);
         var days = Math.floor(totalSec / 86400);
         var hrs  = Math.floor((totalSec % 86400) / 3600);
@@ -49932,7 +49949,12 @@ class GravSimEndpoint {
 
     function _fmtCountdownMs(targetMs, nowMs) {
         var diffMs = targetMs - nowMs;
-        if (diffMs <= 0) return '<span style="color:#ff8a8a;">passed</span>';
+        if (diffMs <= 0) {
+            // Event just passed — bust the cache so _computeEclipses recomputes
+            // the next occurrence on the very next tick instead of showing "passed".
+            _eclipseCache = null;
+            return '<span style="color:#4cde80;">updating…</span>';
+        }
         var totalSec = Math.floor(diffMs / 1000);
         var days = Math.floor(totalSec / 86400);
         var hrs  = Math.floor((totalSec % 86400) / 3600);
