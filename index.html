@@ -47967,25 +47967,17 @@ class GravSimEndpoint {
         // Generate a live terminator SVG from the real elongation angle
         icon = generateMoonSVG(elong, 32, illum / 100);
         // Phase name boundaries:
-        //   New Moon  : elong < 5° or >= 355° (±5° around 0/360)
-        //   Full Moon : 150° <= elong <= 210° (~±30° = ~3 days around peak)
-        //   Seasonal name uses the CLOSEST full moon peak:
-        //     waxing side (150–180): use NEXT full moon peak (approaching)
-        //     waning side (180–210): use PREV full moon peak (just passed)
+        //   New Moon       : elong < 5° or >= 355°
+        //   Waxing Gibbous : 135°–180° (title stays "Waxing Gibbous" right up to the peak)
+        //   Full Moon name : 180°–210° (seasonal name only AFTER the peak passes)
+        //   Waning Gibbous : 210°–270°
         if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
-        else if (elong < 150) { name = 'Waxing Gibbous'; }
+        else if (elong < 180) { name = 'Waxing Gibbous'; }
         else if (elong <= 210) {
-            // In the Full Moon window — pick closest peak for seasonal name
-            var _peakMs;
-            if (elong < 180) {
-                // Waxing: approaching full — name after the UPCOMING peak
-                _peakMs = findNextMoonEvent(180, nowMs) || nowMs;
-            } else {
-                // Waning: just passed full — name after the MOST RECENT past peak
-                _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
-            }
+            // Post-peak: just passed full — name after the most recent past peak
+            var _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
             name = getFullMoonName(_peakMs);
         }
         else if (elong < 270) { name = 'Waning Gibbous'; }
