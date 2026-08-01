@@ -47985,18 +47985,17 @@ class GravSimEndpoint {
         else if (elong < 315) { name = 'Third Quarter'; }
         else                  { name = 'Waning Crescent'; }
 
-        // Snap illumination to exact values at quarter peaks:
-        // - New Moon    → 0.00%
-        // - First/Third Quarter → 50.00% (within ±5° of 90° and 270°)
-        // - Full Moon   → 100.00% (within ±5° of 180°)
-        if (name === 'New Moon') {
-            illum = 0.00;
+        // Snap illumination to exact values near each principal phase peak.
+        // Use elongation windows so the snap fires symmetrically around the peak
+        // regardless of which side the title name is on.
+        if (elong < 5 || elong >= 355) {
+            illum = 0.00;   // New Moon ±5°
         } else if (elong >= 85 && elong <= 95) {
-            illum = 50.00;
-        } else if (elong >= 265 && elong <= 275) {
-            illum = 50.00;
+            illum = 50.00;  // First Quarter ±5°
         } else if (elong >= 175 && elong <= 185) {
-            illum = 100.00;
+            illum = 100.00; // Full Moon ±5°
+        } else if (elong >= 265 && elong <= 275) {
+            illum = 50.00;  // Third Quarter ±5°
         }
 
         return { illum: illum, icon: icon, name: name, elong: elong };
