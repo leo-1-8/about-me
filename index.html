@@ -47975,10 +47975,9 @@ class GravSimEndpoint {
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
         else if (elong < 180) { name = 'Waxing Gibbous'; }
-        else if (elong < 225) {
-            // Use the most recent past Full Moon peak for the seasonal name.
-            // findPrevMoonEvent looks backwards from now, so it correctly returns
-            // the peak even after the calendar flips to the next month.
+        else if (elong < 185) {
+            // Tight ±5° band around the 180° peak — same width as New Moon band.
+            // Beyond 185° the moon is visibly waning so show Waning Gibbous instead.
             var _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
             name = getFullMoonName(_peakMs);
         }
@@ -48253,7 +48252,10 @@ class GravSimEndpoint {
     ];
 
     function getFullMoonName(ms) {
-        return FULL_MOON_NAMES[new Date(ms).getMonth()];
+        // Always use UTC month so the name is consistent regardless of local timezone.
+        // Without this, a Full Moon peaking near midnight UTC can show different names
+        // in "Next:" vs when it actually arrives, depending on the user's UTC offset.
+        return FULL_MOON_NAMES[new Date(ms).getUTCMonth()];
     }
 
     // Continuous glow: t = illumination fraction 0.0–1.0
@@ -48329,7 +48331,7 @@ class GravSimEndpoint {
             { name: 'Waning Crescent', elongThresh: 0,   useSearch: true,  target: 0   }, // → New Moon
             { name: 'New Moon',        elongThresh: 45,  elongCross: 45  },               // → Waxing Crescent
             { name: 'First Quarter',   elongThresh: 135, elongCross: 135 },               // → Waxing Gibbous
-            { name: 'Full Moon',       elongThresh: 225, elongCross: 225 },               // → Waning Gibbous
+            { name: 'Full Moon',       elongThresh: 185, elongCross: 185 },               // → Waning Gibbous
             { name: 'Third Quarter',   elongThresh: 315, elongCross: 315 },               // → Waning Crescent
         ];
 
@@ -48340,7 +48342,7 @@ class GravSimEndpoint {
         else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
         else if (elong < 135) currentPhaseName = 'First Quarter';
         else if (elong < 180) currentPhaseName = 'Waxing Gibbous';
-        else if (elong < 225) currentPhaseName = 'Full Moon';
+        else if (elong < 185) currentPhaseName = 'Full Moon';
         else if (elong < 270) currentPhaseName = 'Waning Gibbous';
         else if (elong < 315) currentPhaseName = 'Third Quarter';
         else                  currentPhaseName = 'Waning Crescent';
@@ -48451,7 +48453,7 @@ class GravSimEndpoint {
         else if (elong < 90)  return 'Waxing Crescent';
         else if (elong < 135) return 'First Quarter';
         else if (elong < 180) return 'Waxing Gibbous';
-        else if (elong < 225) return 'Full Moon';
+        else if (elong < 185) return 'Full Moon';
         else if (elong < 270) return 'Waning Gibbous';
         else if (elong < 315) return 'Third Quarter';
         else                  return 'Waning Crescent';
@@ -48475,7 +48477,7 @@ class GravSimEndpoint {
                 else if (_elong < 90)  _curPhase = 'Waxing Crescent';
                 else if (_elong < 135) _curPhase = 'First Quarter';
                 else if (_elong < 180) _curPhase = 'Waxing Gibbous';
-                else if (_elong < 225) _curPhase = 'Full Moon';
+                else if (_elong < 185) _curPhase = 'Full Moon';
                 else if (_elong < 270) _curPhase = 'Waning Gibbous';
                 else if (_elong < 315) _curPhase = 'Third Quarter';
                 else                   _curPhase = 'Waning Crescent';
