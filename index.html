@@ -47966,11 +47966,12 @@ class GravSimEndpoint {
         // Generate a live terminator SVG from the real elongation angle
         icon = generateMoonSVG(elong, 32, illum / 100);
         // Phase name boundaries:
-        //   New Moon       : elong < 5° or >= 355°
+        //   New Moon       : elong < 5° only (AFTER the peak passes, not before)
         //   Waxing Gibbous : 135°–180° (title stays "Waxing Gibbous" right up to the peak)
         //   Full Moon name : 180°–210° (seasonal name only AFTER the peak passes)
         //   Waning Gibbous : 210°–270°
-        if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
+        //   Waning Crescent: 315°–360° (stays "Waning Crescent" all the way to 360°/0° peak)
+        if      (elong < 5)   { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
         else if (elong < 180) { name = 'Waxing Gibbous'; }
@@ -48341,7 +48342,7 @@ class GravSimEndpoint {
         //   Pre-peak  (150-180°): display shows Full Moon name, countdown → Full Moon peak
         //   Post-peak (180-210°): display shows Full Moon name, countdown → Waning Gibbous
         var currentPhaseName;
-        if      (elong < 5  || elong >= 355) currentPhaseName = 'New Moon';
+        if      (elong < 5)   currentPhaseName = 'New Moon';
         else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
         else if (elong < 135) currentPhaseName = 'First Quarter';
         else if (elong < 150) currentPhaseName = 'Waxing Gibbous';
@@ -48436,7 +48437,7 @@ class GravSimEndpoint {
 
     function _getCurrentPhaseName(elong) {
         if (_elong === undefined) return null;
-        if      (elong < 5 || elong >= 355) return 'New Moon';
+        if      (elong < 5)   return 'New Moon';
         else if (elong < 90)  return 'Waxing Crescent';
         else if (elong < 135) return 'First Quarter';
         else if (elong < 150) return 'Waxing Gibbous';
@@ -48460,7 +48461,7 @@ class GravSimEndpoint {
             try {
                 var _elong = Astronomy.MoonPhase(Astronomy.MakeTime(new Date(nowMs)));
                 var _curPhase;
-                if      (_elong < 5 || _elong >= 355) _curPhase = 'New Moon';
+                if      (_elong < 5)   _curPhase = 'New Moon';
                 else if (_elong < 90)  _curPhase = 'Waxing Crescent';
                 else if (_elong < 135) _curPhase = 'First Quarter';
                 else if (_elong < 150) _curPhase = 'Waxing Gibbous';
