@@ -47966,24 +47966,33 @@ class GravSimEndpoint {
         var icon, name;
         // Generate a live terminator SVG from the real elongation angle
         icon = generateMoonSVG(elong, 32, illum / 100);
-        // Use elongation-based phase detection (consistent with getNextPhaseInfo).
-        // New Moon sits at elong ~0°/360°; use a ±5° band around both endpoints.
-        // Full Moon band is 135°–225° (matches getNextPhaseInfo boundaries).
-        // For the seasonal Full Moon name, find the actual peak so month is correct
-        // even when viewed a day before/after the peak crosses a month boundary.
+        // Phase name boundaries: New Moon ±5° around 0/360, Full Moon ±5° around 180.
+        // Waxing Gibbous ends at 175° so Full Moon band starts at 175° (not 180°),
+        // ensuring the name reads "Full Moon" before the peak, not "Waxing Gibbous".
         if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
-        else if (elong < 180) { name = 'Waxing Gibbous'; }
-        else if (elong < 185) {
-            // Tight ±5° band around the 180° peak — same width as New Moon band.
-            // Beyond 185° the moon is visibly waning so show Waning Gibbous instead.
+        else if (elong < 175) { name = 'Waxing Gibbous'; }
+        else if (elong <= 185) {
+            // ±5° band around the 180° Full Moon peak. Use prev-peak for seasonal name.
             var _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
             name = getFullMoonName(_peakMs);
         }
         else if (elong < 270) { name = 'Waning Gibbous'; }
         else if (elong < 315) { name = 'Third Quarter'; }
         else                  { name = 'Waning Crescent'; }
+
+        // Snap illumination to exact 0% / 100% when the phase name says New Moon or Full Moon.
+        // Without this, the astronomy formula gives 99.xx% a few hours before/after the peak.
+        if (name === 'New Moon') {
+            illum = 0.00;
+        } else if (name !== 'Waxing Crescent' && name !== 'Waxing Gibbous' &&
+                   name !== 'First Quarter'   && name !== 'Waning Gibbous'  &&
+                   name !== 'Third Quarter'   && name !== 'Waning Crescent') {
+            // Any Full Moon name (seasonal names like "Sturgeon Full Moon", "Buck Full Moon", etc.)
+            illum = 100.00;
+        }
+
         return { illum: illum, icon: icon, name: name, elong: elong };
     }
 
@@ -48022,26 +48031,32 @@ class GravSimEndpoint {
     // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
     function findPrevMoonEvent(targetElong, nowMs) {
         try {
-            // Search backward: start 1 ms before now and step back one full lunar
-            // cycle at a time until we find a result that is in the past.
-            // This always returns the MOST RECENT past full/new moon, not the
-            // oldest one in a 30-day forward window (which was the old bug).
             var LUNAR_CYCLE_MS = 29.53059 * 24 * 3600000;
-            // Start just before nowMs so we don't pick up a simultaneous event
-            var searchStart = nowMs - 1;
-            // Walk back up to 2 lunar cycles to find the most recent past peak
-            for (var attempt = 0; attempt < 3; attempt++) {
-                var startMs = searchStart - attempt * LUNAR_CYCLE_MS;
+            // Strategy: start SearchMoonPhase from roughly one lunar cycle BEFORE now.
+            // SearchMoonPhase searches forward, so starting ~1 cycle back reliably
+            // finds the most recent past peak. We then verify the result is in the past,
+            // and if not, step back further. Try up to 3 offsets to cover edge cases.
+            var offsets = [1.02, 1.0, 0.97]; // multipliers of one lunar cycle back
+            for (var attempt = 0; attempt < offsets.length; attempt++) {
+                var startMs = nowMs - offsets[attempt] * LUNAR_CYCLE_MS;
                 var startT = msToAstroTime(startMs);
-                var result = Astronomy.SearchMoonPhase(targetElong, startT, 30);
+                var result = Astronomy.SearchMoonPhase(targetElong, startT, 32);
                 if (result) {
                     var t = result.date.getTime();
+                    // Must be strictly in the past (not the upcoming event)
                     if (t < nowMs) return t;
                 }
             }
+            // Last resort: start 1.5 cycles back
+            var lastStart = nowMs - 1.5 * LUNAR_CYCLE_MS;
+            var lastResult = Astronomy.SearchMoonPhase(targetElong, msToAstroTime(lastStart), 32);
+            if (lastResult) {
+                var lt = lastResult.date.getTime();
+                if (lt < nowMs) return lt;
+            }
             return null;
         } catch(e) {
-            // Fallback: step backward
+            // Fallback: step backward in 6-hour increments
             var step = 6 * 3600000;
             var ms = nowMs - step;
             var prevE = getElongationAtMs(nowMs);
@@ -48585,6 +48600,28 @@ class GravSimEndpoint {
                 _lastNewMs  = findPrevMoonEvent(0,   nowMs);
             } catch(_me) {}
 
+            // Immediately render the updated Last/Next dates so UI is not stale after rollover
+            if (_moonGeoGranted) {
+                try {
+                    var _lfE  = document.getElementById('moonLastFullDate');
+                    var _lnE  = document.getElementById('moonLastNewDate');
+                    var _lfEM = document.getElementById('moonLastFullDateModal');
+                    var _lnEM = document.getElementById('moonLastNewDateModal');
+                    var _nfE  = document.getElementById('moonNextFullDate');
+                    var _nnE  = document.getElementById('moonNextNewDate');
+                    var _nfEM = document.getElementById('moonNextFullDateModal');
+                    var _nnEM = document.getElementById('moonNextNewDateModal');
+                    if (_lfE  && _lastFullMs) _lfE.innerHTML  = formatMoonEventDateWithCountdown(_lastFullMs, nowMs);
+                    if (_lnE  && _lastNewMs)  _lnE.innerHTML  = formatMoonEventDateWithCountdown(_lastNewMs,  nowMs);
+                    if (_lfEM && _lastFullMs) _lfEM.innerHTML = formatMoonEventDateWithCountdown(_lastFullMs, nowMs);
+                    if (_lnEM && _lastNewMs)  _lnEM.innerHTML = formatMoonEventDateWithCountdown(_lastNewMs,  nowMs);
+                    if (_nfE  && _nextFullMs) _nfE.innerHTML  = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
+                    if (_nnE  && _nextNewMs)  _nnE.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
+                    if (_nfEM && _nextFullMs) _nfEM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
+                    if (_nnEM && _nextNewMs)  _nnEM.innerHTML = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
+                } catch(_re) {}
+            }
+
             // Full widget refresh in background (icon, bar, name, %)
             setTimeout(function() { try { updateWidget(); } catch(_e) {} }, 0);
             // Clear cache so next tick recomputes a fresh, precise eventMs for the new phase
@@ -48594,7 +48631,10 @@ class GravSimEndpoint {
             setTimeout(function() { _tickNextPhaseCountdown(); }, 1500);
             return;
         }
-        var displayName = (info.name === 'Full Moon') ? getFullMoonName(info.eventMs) : info.name;
+        // Always re-derive the display name from the stable eventMs+UTC month so
+        // it can't drift if the cache was built in a different timezone context.
+        var _isFullMoonPhase = (info.name === 'Full Moon' || (info.name && info.name.indexOf('Full Moon') !== -1));
+        var displayName = _isFullMoonPhase ? getFullMoonName(info.eventMs) : info.name;
         var totalSec = Math.floor(diffMs / 1000);
         var hrs  = Math.floor(totalSec / 3600);
         var mins = Math.floor((totalSec % 3600) / 60);
@@ -48621,11 +48661,12 @@ class GravSimEndpoint {
             // not every tick — so Last dates update instantly on rollover without
             // requiring a page refresh.
             try {
-                if (!_nextFullMs || _nextFullMs < nowMs) {
+                // Use <= so rollover fires even when the timer hits exactly 0s
+                if (!_nextFullMs || _nextFullMs <= nowMs) {
                     _nextFullMs = findNextMoonEvent(180, nowMs);
                     _lastFullMs = findPrevMoonEvent(180, nowMs); // rolled over — refresh Last too
                 }
-                if (!_nextNewMs || _nextNewMs < nowMs) {
+                if (!_nextNewMs || _nextNewMs <= nowMs) {
                     _nextNewMs  = findNextMoonEvent(0,   nowMs);
                     _lastNewMs  = findPrevMoonEvent(0,   nowMs); // rolled over — refresh Last too
                 }
