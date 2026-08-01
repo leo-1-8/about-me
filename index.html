@@ -47970,7 +47970,7 @@ class GravSimEndpoint {
         // Full Moon band is 135°–225° (matches getNextPhaseInfo boundaries).
         // For the seasonal Full Moon name, find the actual peak so month is correct
         // even when viewed a day before/after the peak crosses a month boundary.
-        if      (elong < 5)   { name = 'New Moon'; }
+        if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
         else if (elong < 180) { name = 'Waxing Gibbous'; }
@@ -47983,8 +47983,7 @@ class GravSimEndpoint {
         }
         else if (elong < 270) { name = 'Waning Gibbous'; }
         else if (elong < 315) { name = 'Third Quarter'; }
-        else if (elong < 358) { name = 'Waning Crescent'; }
-        else                  { name = 'New Moon'; }
+        else                  { name = 'Waning Crescent'; }
         return { illum: illum, icon: icon, name: name, elong: elong };
     }
 
@@ -49825,7 +49824,36 @@ class GravSimEndpoint {
     var _eclipseCacheTime = 0;
 
     function _computeEclipses(nowMs) {
-        if (_eclipseCache && (nowMs - _eclipseCacheTime) < 30000) return _eclipseCache;
+        // Bust cache immediately if any tracked event has just passed, so the
+        // display never shows stale data after a phase/eclipse transitions.
+        if (_eclipseCache && (nowMs - _eclipseCacheTime) < 30000) {
+            var _ec = _eclipseCache;
+            var _anyPassed = false;
+            // Check all special lunar event timestamps
+            var _msChecks = [
+                _ec.nextSupermoon  && _ec.nextSupermoon.ms,
+                _ec.nextMicromoon  && _ec.nextMicromoon.ms,
+                _ec.nextBlueMoon   && _ec.nextBlueMoon.ms,
+                _ec.nextBlackMoon  && _ec.nextBlackMoon.ms,
+                _ec.nextHarvestMoon && _ec.nextHarvestMoon.ms,
+            ];
+            for (var _ci = 0; _ci < _msChecks.length; _ci++) {
+                if (_msChecks[_ci] && _msChecks[_ci] < nowMs) { _anyPassed = true; break; }
+            }
+            // Check eclipse peak times
+            var _peakChecks = [_ec.nextAnnular, _ec.nextPartialSolar, _ec.nextHybrid,
+                               _ec.nextTotalSolar, _ec.nextTotalLunar, _ec.nextPartialLunar,
+                               _ec.nextPenum, _ec.nextBloodMoon];
+            if (!_anyPassed) {
+                for (var _cj = 0; _cj < _peakChecks.length; _cj++) {
+                    var _pk = _peakChecks[_cj];
+                    if (_pk && _pk.peak && _pk.peak.date && _pk.peak.date.getTime() < nowMs) { _anyPassed = true; break; }
+                }
+            }
+            if (!_anyPassed) return _eclipseCache;
+            // An event passed — clear cache and recompute below
+            _eclipseCache = null;
+        }
         try {
             var Astro = (typeof Astronomy !== 'undefined') ? Astronomy : null;
             if (!Astro) return null;
@@ -49865,52 +49893,62 @@ class GravSimEndpoint {
             // Supermoon: full moon within ~360,000 km; Micromoon: full moon beyond ~405,000 km
             var nextSupermoon = null, nextMicromoon = null;
             var SUPERMOON_KM = 362000, MICROMOON_KM = 405000;
-            var fmDate = new Date(nowMs);
+            // Start 1 hour before now so a full moon happening right now is included.
+            var fmDate = new Date(nowMs - 3600000);
             for (var k = 0; k < 18; k++) {
                 try {
                     var fmEvent = Astro.SearchMoonPhase(180, fmDate, 35);
                     if (!fmEvent) break;
                     var fmMs = fmEvent.date.getTime();
+                    // Skip full moons already in the past (more than 30 min ago)
+                    if (fmMs < nowMs - 1800000) { fmDate = new Date(fmMs + 86400000 * 25); continue; }
                     var obs0 = new Astro.Observer(0, 0, 0);
                     var equ0 = Astro.Equator(Astro.Body.Moon, fmEvent, obs0, true, true);
                     var distKm = equ0.dist * 1.495978707e8;
                     if (!nextSupermoon && distKm <= SUPERMOON_KM) nextSupermoon = { ms: fmMs, distKm: distKm };
                     if (!nextMicromoon && distKm >= MICROMOON_KM) nextMicromoon = { ms: fmMs, distKm: distKm };
-                    fmDate = new Date(fmMs + 86400000 * 2);
+                    fmDate = new Date(fmMs + 86400000 * 25);
                 } catch(e2) { break; }
                 if (nextSupermoon && nextMicromoon) break;
             }
 
             // Blue Moon — 2nd full moon in a calendar month OR 4th full moon in a season
             var nextBlueMoon = null;
-            var bmDate = new Date(nowMs);
+            // Start 1 hour before now so a full moon happening right now is not missed
+            var bmDate = new Date(nowMs - 3600000);
             for (var b = 0; b < 60; b++) {
                 try {
                     var bm1 = Astro.SearchMoonPhase(180, bmDate, 40);
                     if (!bm1) break;
+                    // Skip full moons already in the past (more than 30 min ago)
+                    if (bm1.date.getTime() < nowMs - 1800000) { bmDate = new Date(bm1.date.getTime() + 86400000 * 25); continue; }
                     var bm2 = Astro.SearchMoonPhase(180, new Date(bm1.date.getTime() + 86400000 * 25), 10);
                     if (bm2 && bm1.date.getMonth() === bm2.date.getMonth() && bm1.date.getFullYear() === bm2.date.getFullYear()) {
                         nextBlueMoon = { ms: bm2.date.getTime() };
                         break;
                     }
-                    // Advance past bm1 to find the next full moon
                     bmDate = new Date(bm1.date.getTime() + 86400000 * 25);
                 } catch(e3) { bmDate = new Date(bmDate.getTime() + 86400000 * 29); }
             }
 
             // Black Moon — 2nd new moon in a calendar month
+            // Use SearchMoonPhase with target 360 (not 0) so the search always
+            // goes forward and doesn't re-find the current new moon at 0°.
             var nextBlackMoon = null;
             var nmDate = new Date(nowMs);
             for (var n = 0; n < 24; n++) {
                 try {
-                    var nm1 = Astro.SearchMoonPhase(0, nmDate, 35);
+                    // Search forward for next new moon; use 360 to avoid 0° wrap issue
+                    var nm1 = Astro.SearchMoonPhase(360, Astro.MakeTime(nmDate), 35);
+                    if (!nm1) nm1 = Astro.SearchMoonPhase(0, Astro.MakeTime(nmDate), 35);
                     if (!nm1) break;
-                    var nm2 = Astro.SearchMoonPhase(0, new Date(nm1.date.getTime() + 86400000 * 2), 35);
+                    var nm2 = Astro.SearchMoonPhase(360, Astro.MakeTime(new Date(nm1.date.getTime() + 86400000 * 25)), 10);
+                    if (!nm2) nm2 = Astro.SearchMoonPhase(0, Astro.MakeTime(new Date(nm1.date.getTime() + 86400000 * 25)), 10);
                     if (nm2 && nm1.date.getMonth() === nm2.date.getMonth() && nm1.date.getFullYear() === nm2.date.getFullYear()) {
                         nextBlackMoon = { ms: nm2.date.getTime() };
                         break;
                     }
-                    nmDate = new Date(nm1.date.getTime() + 86400000 * 2);
+                    nmDate = new Date(nm1.date.getTime() + 86400000 * 25);
                 } catch(e4) { break; }
             }
 
