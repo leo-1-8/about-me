@@ -47992,7 +47992,8 @@ class GravSimEndpoint {
     // targetElong: 0 = New Moon, 180 = Full Moon
     function findNextMoonEvent(targetElong, nowMs) {
         try {
-            var t = msToAstroTime(nowMs + 60000); // start 1 min ahead
+            // Start from nowMs (not +60000) so events less than 1 minute away are not skipped.
+            var t = msToAstroTime(nowMs);
             var result = Astronomy.SearchMoonPhase(targetElong, t, 40);
             return result ? result.date.getTime() : null;
         } catch(e) {
@@ -48051,7 +48052,9 @@ class GravSimEndpoint {
     // ── findNextElongationCross: SearchMoonPhase for quarter phases ────────────
     function findNextElongationCross(threshold, nowMs) {
         try {
-            var t = msToAstroTime(nowMs + 60000);
+            // Start from nowMs (not +60000) so events less than 1 minute away are not skipped.
+            // SearchMoonPhase searches forward from the given time for the target elongation.
+            var t = msToAstroTime(nowMs);
             var result = Astronomy.SearchMoonPhase(threshold, t, 40);
             return result ? result.date.getTime() : null;
         } catch(e) {
@@ -48323,15 +48326,14 @@ class GravSimEndpoint {
         // Determine current phase from elongation
         var elong = getElongationAtMs(nowMs);
         var currentPhaseName;
-        if      (elong < 5)   currentPhaseName = 'New Moon';
+        if      (elong < 5  || elong >= 355) currentPhaseName = 'New Moon';
         else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
         else if (elong < 135) currentPhaseName = 'First Quarter';
         else if (elong < 180) currentPhaseName = 'Waxing Gibbous';
         else if (elong < 225) currentPhaseName = 'Full Moon';
         else if (elong < 270) currentPhaseName = 'Waning Gibbous';
         else if (elong < 315) currentPhaseName = 'Third Quarter';
-        else if (elong < 358) currentPhaseName = 'Waning Crescent';
-        else                  currentPhaseName = 'New Moon';
+        else                  currentPhaseName = 'Waning Crescent';
 
         // The next phase name (what we are counting down to)
         var nextPhaseOrder = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
@@ -48341,13 +48343,35 @@ class GravSimEndpoint {
 
         // Find the event time for the next phase transition
         var eventMs = null;
+        // Map next phase name to expected Astronomy Engine quarter index (0=New,1=First,2=Full,3=Third)
+        var _quarterMap = { 'New Moon': 0, 'First Quarter': 1, 'Full Moon': 2, 'Third Quarter': 3 };
         try {
             if (nextName === 'First Quarter' || nextName === 'Third Quarter' ||
                 nextName === 'New Moon' || nextName === 'Full Moon') {
-                // Use Astronomy Engine quarter search for the 4 main phases
-                var t = Astronomy.MakeTime(new Date(nowMs + 60000));
+                // Use Astronomy Engine quarter search for the 4 main phases.
+                // Start from nowMs (NOT +60000) so events less than 1 minute away
+                // are not skipped and a far-future quarter is returned instead.
+                var t = Astronomy.MakeTime(new Date(nowMs));
                 var q = Astronomy.SearchMoonQuarter(t);
-                if (q) eventMs = q.time.date.getTime();
+                // SearchMoonQuarter returns the nearest quarter >= start, but may
+                // return a different quarter than the one we expect (e.g. when we are
+                // right at a boundary). Advance up to 3 times until we land on the
+                // correct quarter index.
+                var _expectedQ = _quarterMap[nextName];
+                var _safety = 0;
+                while (q && q.quarter !== _expectedQ && _safety < 3) {
+                    q = Astronomy.NextMoonQuarter(q);
+                    _safety++;
+                }
+                if (q && q.quarter === _expectedQ) eventMs = q.time.date.getTime();
+                // If we still don't have the right quarter, fall back to SearchMoonPhase
+                if (!eventMs) {
+                    // For New Moon (quarter 0), target longitude 0° can wrap; use 360° equivalent
+                    // so SearchMoonPhase reliably finds the next crossing going forward.
+                    var _targetLon = (_expectedQ === 0) ? 360 : _expectedQ * 90;
+                    var _res = Astronomy.SearchMoonPhase(_targetLon, Astronomy.MakeTime(new Date(nowMs)), 40);
+                    if (_res) eventMs = _res.date.getTime();
+                }
             } else if (nextName === 'Waxing Crescent') {
                 // Step every 10 min for up to 5 days — finds the 5° crossing reliably.
                 // Handles wrap: elong may start near 358-360° (approaching new moon)
