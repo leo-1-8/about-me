@@ -16839,6 +16839,8 @@
                 const safeVolume = clamp(volume01, 0, 1);
                 const audios = document.querySelectorAll('audio');
                 audios.forEach(function(audio) {
+                    // Song players (musicPlayer-*) always stay at 100% volume
+                    if (audio.id && audio.id.indexOf('musicPlayer-') === 0) return;
                     audio.volume = safeVolume;
                 });
                 if (typeof bgMusicAudio !== 'undefined' && bgMusicAudio) {
@@ -31262,6 +31264,8 @@ window.closeSettings = closeSettings;
                         audio.load();
                         return;
                     }
+                    // Always play songs at 100% volume
+                    audio.volume = 1.0;
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.then(() => {
