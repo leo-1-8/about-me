@@ -48428,11 +48428,59 @@ class GravSimEndpoint {
 
     function _padTwo(n) { return n < 10 ? '0' + n : '' + n; }
 
+    // Cache the next-phase info so eventMs stays stable between ticks.
+    // Without this, step-search phases (Waxing/Waning Crescent/Gibbous) return
+    // a coarse midpoint that shifts slightly each second, freezing the seconds digit.
+    var _cachedPhaseInfo   = null;  // { name, eventMs } — stable target, reused each tick
+    var _cachedCurrentPhase = null; // current phase name — triggers refresh when it changes
+
+    function _getCurrentPhaseName(elong) {
+        if (_elong === undefined) return null;
+        if      (elong < 5 || elong >= 355) return 'New Moon';
+        else if (elong < 90)  return 'Waxing Crescent';
+        else if (elong < 135) return 'First Quarter';
+        else if (elong < 180) return 'Waxing Gibbous';
+        else if (elong < 225) return 'Full Moon';
+        else if (elong < 270) return 'Waning Gibbous';
+        else if (elong < 315) return 'Third Quarter';
+        else                  return 'Waning Crescent';
+    }
+
     function _tickNextPhaseCountdown(nowMs) {
         if (nowMs === undefined) nowMs = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
         var nextLabelInner = document.getElementById('moonNextPhaseLabelInner');
         var nextLabelM     = document.getElementById('moonNextPhaseLabelInnerModal');
-        var info = getNextPhaseInfo(nowMs);
+
+        // Only recompute getNextPhaseInfo when: no cache, cached event already passed,
+        // or the current phase changed (we crossed a boundary).
+        // Recomputing every tick causes step-search phases (Waxing/Waning Crescent/Gibbous)
+        // to return a coarse midpoint that shifts each second, freezing the seconds digit.
+        var _needRefresh = !_cachedPhaseInfo || _cachedPhaseInfo.eventMs <= nowMs;
+        if (!_needRefresh) {
+            try {
+                var _elong = Astronomy.MoonPhase(Astronomy.MakeTime(new Date(nowMs)));
+                var _curPhase;
+                if      (_elong < 5 || _elong >= 355) _curPhase = 'New Moon';
+                else if (_elong < 90)  _curPhase = 'Waxing Crescent';
+                else if (_elong < 135) _curPhase = 'First Quarter';
+                else if (_elong < 180) _curPhase = 'Waxing Gibbous';
+                else if (_elong < 225) _curPhase = 'Full Moon';
+                else if (_elong < 270) _curPhase = 'Waning Gibbous';
+                else if (_elong < 315) _curPhase = 'Third Quarter';
+                else                   _curPhase = 'Waning Crescent';
+                if (_curPhase !== _cachedCurrentPhase) {
+                    _cachedCurrentPhase = _curPhase;
+                    _needRefresh = true;
+                }
+            } catch(_pe) {}
+        }
+        if (_needRefresh) {
+            var _fresh = getNextPhaseInfo(nowMs);
+            if (!_fresh) _fresh = getNextPhaseInfo(nowMs + 5000);
+            if (_fresh) { _cachedPhaseInfo = _fresh; }
+        }
+        var info = _cachedPhaseInfo;
+
         // Retry once if null — sometimes Astronomy Engine needs a moment
         if (!info) info = getNextPhaseInfo(nowMs + 5000);
         if (!info) {
@@ -48526,6 +48574,9 @@ class GravSimEndpoint {
 
             // Full widget refresh in background (icon, bar, name, %)
             setTimeout(function() { try { updateWidget(); } catch(_e) {} }, 0);
+            // Clear cache so next tick recomputes a fresh, precise eventMs for the new phase
+            _cachedPhaseInfo   = null;
+            _cachedCurrentPhase = null;
             // Resume normal ticking after a short settle so _rafTick takes over cleanly
             setTimeout(function() { _tickNextPhaseCountdown(); }, 1500);
             return;
@@ -48552,23 +48603,26 @@ class GravSimEndpoint {
         var fullElM = document.getElementById('moonNextFullDateModal');
         var newElM  = document.getElementById('moonNextNewDateModal');
         if (_moonGeoGranted) {
+            // Refresh ALL ms values first — before any rendering — so that when a
+            // Next event has just passed, _lastFullMs/_lastNewMs and _nextFullMs/_nextNewMs
+            // are all correct in the same tick, eliminating the one-tick delay where
+            // Last dates lag behind the Next dates rolling over.
+            try {
+                _lastFullMs = findPrevMoonEvent(180, nowMs);
+                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
+                if (!_nextFullMs || _nextFullMs < nowMs) {
+                    _nextFullMs = findNextMoonEvent(180, nowMs);
+                }
+                if (!_nextNewMs || _nextNewMs < nowMs) {
+                    _nextNewMs  = findNextMoonEvent(0,   nowMs);
+                }
+            } catch(e) {}
+            // Now render Next Full/New Moon with the freshly validated values
             if (fullEl  && _nextFullMs) fullEl.innerHTML  = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newEl   && _nextNewMs)  newEl.innerHTML   = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
             if (fullElM && _nextFullMs) fullElM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newElM  && _nextNewMs)  newElM.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
-            // Always keep _lastFullMs/_lastNewMs fresh from Astronomy Engine so
-            // the "Last New/Full Moon" display updates immediately — no caching lag.
-            // Also refresh _next* whenever the event has passed.
-            try {
-                _lastFullMs = findPrevMoonEvent(180, nowMs);
-                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
-                if (!_nextFullMs || (_nextFullMs && _nextFullMs < nowMs)) {
-                    _nextFullMs = findNextMoonEvent(180, nowMs);
-                }
-                if (!_nextNewMs  || (_nextNewMs  && _nextNewMs  < nowMs)) {
-                    _nextNewMs  = findNextMoonEvent(0,   nowMs);
-                }
-            } catch(e) {}
+            // Render Last Full/New Moon — guaranteed to match the just-refreshed ms values
             var lastFEl  = document.getElementById('moonLastFullDate');
             var lastNEl  = document.getElementById('moonLastNewDate');
             var lastFElM = document.getElementById('moonLastFullDateModal');
@@ -48603,6 +48657,10 @@ class GravSimEndpoint {
         // with all other moon countdowns and uses getNowMs() (server-anchored time).
         if (_nextPhaseCountdownTimer !== null) { clearInterval(_nextPhaseCountdownTimer); _nextPhaseCountdownTimer = null; }
         if (_nextPhaseCountdownInterval)       { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
+        // Clear the cached phase info so the first tick always recomputes a fresh,
+        // precise eventMs — prevents a stale midpoint from causing a frozen seconds digit.
+        _cachedPhaseInfo   = null;
+        _cachedCurrentPhase = null;
         // Seed all timestamps immediately from Astronomy Engine so "Last New Moon"
         // and "Next:" display correct values from the very first render with no delay.
         var _seedNow = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
@@ -48789,6 +48847,14 @@ class GravSimEndpoint {
                 // Fire all countdowns together on the same wall-clock second
                 if (typeof _tickMoonRiseSet === 'function') _tickMoonRiseSet(_nowMs);
                 if (typeof _tickNextPhaseCountdown === 'function') _tickNextPhaseCountdown(_nowMs);
+                // ── Update phase name every second so it switches instantly ──
+                try {
+                    var _phData = getMoonData();
+                    var _pName = _phData.name;
+                    var _nEl  = document.getElementById('moonPhaseName');      if (_nEl  && _nEl.textContent  !== _pName) _nEl.textContent  = _pName;
+                    var _nElM = document.getElementById('moonPhaseNameModal'); if (_nElM && _nElM.textContent !== _pName) _nElM.textContent = _pName;
+                    var _mEl  = document.getElementById('moonMainName');       if (_mEl  && _mEl.textContent  !== _pName) _mEl.textContent  = _pName;
+                } catch(_pne) {}
                 // Apsis countdowns — only when location granted
                 var pairs = [['moonNextPerigeeVal','moonNextPerigeeValModal'],['moonNextApogeeVal','moonNextApogeeValModal']];
                 if (_moonGeoGranted) {
