@@ -48417,7 +48417,21 @@ class GravSimEndpoint {
         }
         var diffMs = info.eventMs - nowMs;
         if (diffMs <= 0) {
-            updateWidget();
+            // Phase just passed — immediately refresh next/last timestamps from
+            // Astronomy Engine so the countdown restarts without waiting for the
+            // 60-second updateWidget() cycle.
+            try {
+                _nextFullMs = findNextMoonEvent(180, nowMs);
+                _nextNewMs  = findNextMoonEvent(0,   nowMs);
+                _lastFullMs = findPrevMoonEvent(180, nowMs);
+                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
+            } catch(e) {}
+            // Also schedule a full widget refresh (icon, bar, name …) in the
+            // background, but don't block the countdown on it.
+            setTimeout(updateWidget, 0);
+            // Re-tick immediately with the fresh timestamps so the "Next:" label
+            // switches to the new phase without any gap.
+            setTimeout(function() { _tickNextPhaseCountdown(); }, 50);
             return;
         }
         var displayName = (info.name === 'Full Moon') ? getFullMoonName(info.eventMs) : info.name;
@@ -48446,18 +48460,19 @@ class GravSimEndpoint {
             if (newEl   && _nextNewMs)  newEl.innerHTML   = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
             if (fullElM && _nextFullMs) fullElM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newElM  && _nextNewMs)  newElM.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
-            // Always ensure _lastFullMs and _lastNewMs are populated
-            if (!_lastFullMs) _lastFullMs = findPrevMoonEvent(180, nowMs);
-            if (!_lastNewMs)  _lastNewMs  = findPrevMoonEvent(0,   nowMs);
-            // Refresh last events when next event has passed
-            if (_nextFullMs && _lastFullMs && _nextFullMs < nowMs) {
+            // Always keep _lastFullMs/_lastNewMs fresh from Astronomy Engine so
+            // the "Last New/Full Moon" display updates immediately — no caching lag.
+            // Also refresh _next* whenever the event has passed.
+            try {
                 _lastFullMs = findPrevMoonEvent(180, nowMs);
-                _nextFullMs = findNextMoonEvent(180, nowMs);
-            }
-            if (_nextNewMs && _lastNewMs && _nextNewMs < nowMs) {
-                _lastNewMs = findPrevMoonEvent(0, nowMs);
-                _nextNewMs = findNextMoonEvent(0, nowMs);
-            }
+                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
+                if (!_nextFullMs || (_nextFullMs && _nextFullMs < nowMs)) {
+                    _nextFullMs = findNextMoonEvent(180, nowMs);
+                }
+                if (!_nextNewMs  || (_nextNewMs  && _nextNewMs  < nowMs)) {
+                    _nextNewMs  = findNextMoonEvent(0,   nowMs);
+                }
+            } catch(e) {}
             var lastFEl  = document.getElementById('moonLastFullDate');
             var lastNEl  = document.getElementById('moonLastNewDate');
             var lastFElM = document.getElementById('moonLastFullDateModal');
@@ -48492,6 +48507,15 @@ class GravSimEndpoint {
         // with all other moon countdowns and uses getNowMs() (server-anchored time).
         if (_nextPhaseCountdownTimer !== null) { clearInterval(_nextPhaseCountdownTimer); _nextPhaseCountdownTimer = null; }
         if (_nextPhaseCountdownInterval)       { clearInterval(_nextPhaseCountdownInterval); _nextPhaseCountdownInterval = null; }
+        // Seed all timestamps immediately from Astronomy Engine so "Last New Moon"
+        // and "Next:" display correct values from the very first render with no delay.
+        var _seedNow = (typeof getNowMs === 'function') ? getNowMs() : Date.now();
+        try {
+            if (!_nextFullMs || _nextFullMs < _seedNow) _nextFullMs = findNextMoonEvent(180, _seedNow);
+            if (!_nextNewMs  || _nextNewMs  < _seedNow) _nextNewMs  = findNextMoonEvent(0,   _seedNow);
+            _lastFullMs = findPrevMoonEvent(180, _seedNow);
+            _lastNewMs  = findPrevMoonEvent(0,   _seedNow);
+        } catch(e) {}
         _tickNextPhaseCountdown(); // fire once immediately
     }
 
