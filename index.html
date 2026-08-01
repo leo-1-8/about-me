@@ -48402,9 +48402,13 @@ class GravSimEndpoint {
         var nextLabelInner = document.getElementById('moonNextPhaseLabelInner');
         var nextLabelM     = document.getElementById('moonNextPhaseLabelInnerModal');
         var info = getNextPhaseInfo(nowMs);
+        // Retry once if null — sometimes Astronomy Engine needs a moment
+        if (!info) info = getNextPhaseInfo(nowMs + 5000);
         if (!info) {
             if (nextLabelInner) nextLabelInner.textContent = '\u2014';
             if (nextLabelM)     nextLabelM.textContent     = '\u2014';
+            // Schedule a retry in 3 seconds instead of giving up
+            setTimeout(function() { _tickNextPhaseCountdown(); }, 3000);
             return;
         }
         var diffMs = info.eventMs - nowMs;
@@ -48438,16 +48442,17 @@ class GravSimEndpoint {
             if (newEl   && _nextNewMs)  newEl.innerHTML   = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
             if (fullElM && _nextFullMs) fullElM.innerHTML = formatMoonEventDateWithCountdown(_nextFullMs, nowMs);
             if (newElM  && _nextNewMs)  newElM.innerHTML  = formatMoonEventDateWithCountdown(_nextNewMs,  nowMs);
-            // Auto-refresh last full/new moon when current phase transitions
-            // (Waning Gibbous = last full moon just happened; Waning Crescent = last new moon just happened)
-            var _curPhaseEl = document.getElementById('moonPhaseName');
-            var _curPhase = _curPhaseEl ? _curPhaseEl.textContent : '';
-            var _needLastRefresh = false;
-            if ((_curPhase === 'Waning Gibbous' || _curPhase === 'Third Quarter' || _curPhase === 'Waning Crescent') && !_lastFullMs) _needLastRefresh = true;
-            if ((_curPhase === 'Waxing Crescent' || _curPhase === 'First Quarter' || _curPhase === 'Waxing Gibbous') && !_lastNewMs) _needLastRefresh = true;
-            if (_needLastRefresh || (_nextFullMs && _lastFullMs && _nextFullMs < nowMs) || (_nextNewMs && _lastNewMs && _nextNewMs < nowMs)) {
+            // Always ensure _lastFullMs and _lastNewMs are populated
+            if (!_lastFullMs) _lastFullMs = findPrevMoonEvent(180, nowMs);
+            if (!_lastNewMs)  _lastNewMs  = findPrevMoonEvent(0,   nowMs);
+            // Refresh last events when next event has passed
+            if (_nextFullMs && _lastFullMs && _nextFullMs < nowMs) {
                 _lastFullMs = findPrevMoonEvent(180, nowMs);
-                _lastNewMs  = findPrevMoonEvent(0, nowMs);
+                _nextFullMs = findNextMoonEvent(180, nowMs);
+            }
+            if (_nextNewMs && _lastNewMs && _nextNewMs < nowMs) {
+                _lastNewMs = findPrevMoonEvent(0, nowMs);
+                _nextNewMs = findNextMoonEvent(0, nowMs);
             }
             var lastFEl  = document.getElementById('moonLastFullDate');
             var lastNEl  = document.getElementById('moonLastNewDate');
