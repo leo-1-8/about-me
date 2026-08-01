@@ -38017,25 +38017,26 @@ function updateLoginLordIconColor() {
         // Dark base
         inner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#2a2e40"/>';
 
-        // Dark craters
+        // Dark craters (always present as base layer)
         inner += '<g opacity="0.45">' + darkC + '</g>';
 
-        if (!isNew) {
-            if (isFull) {
-                // Fully lit
-                inner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#e8d47a"/>';
-                inner += '<g opacity="0.28">' + litC + '</g>';
-            } else if (isCrescent) {
-                // Lit half-rect, then punch out the terminator ellipse with dark colour
-                inner += '<rect x="' + litX.toFixed(3) + '" y="0" width="' + cx.toFixed(3) + '" height="' + size + '" fill="#e8d47a"/>';
-                inner += '<ellipse cx="' + cx.toFixed(3) + '" cy="' + cy.toFixed(3) + '" rx="' + rx.toFixed(3) + '" ry="' + r.toFixed(3) + '" fill="#2a2e40"/>';
-                inner += '<g opacity="0.45">' + darkC + '</g>'; // re-stamp dark craters over punched area
-            } else {
-                // Gibbous: lit half-rect + terminator ellipse both filled lit colour
-                inner += '<rect x="' + litX.toFixed(3) + '" y="0" width="' + cx.toFixed(3) + '" height="' + size + '" fill="#e8d47a"/>';
-                inner += '<ellipse cx="' + cx.toFixed(3) + '" cy="' + cy.toFixed(3) + '" rx="' + rx.toFixed(3) + '" ry="' + r.toFixed(3) + '" fill="#e8d47a"/>';
-                inner += '<g opacity="0.28">' + litC + '</g>';
-            }
+        if (isNew) {
+            // New Moon: dark disc but show same gray craters as Full Moon so they match
+            inner += '<g opacity="0.28">' + litC + '</g>';
+        } else if (isFull) {
+            // Fully lit
+            inner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#e8d47a"/>';
+            inner += '<g opacity="0.28">' + litC + '</g>';
+        } else if (isCrescent) {
+            // Lit half-rect, then punch out the terminator ellipse with dark colour
+            inner += '<rect x="' + litX.toFixed(3) + '" y="0" width="' + cx.toFixed(3) + '" height="' + size + '" fill="#e8d47a"/>';
+            inner += '<ellipse cx="' + cx.toFixed(3) + '" cy="' + cy.toFixed(3) + '" rx="' + rx.toFixed(3) + '" ry="' + r.toFixed(3) + '" fill="#2a2e40"/>';
+            inner += '<g opacity="0.45">' + darkC + '</g>'; // re-stamp dark craters over punched area
+        } else {
+            // Gibbous: lit half-rect + terminator ellipse both filled lit colour
+            inner += '<rect x="' + litX.toFixed(3) + '" y="0" width="' + cx.toFixed(3) + '" height="' + size + '" fill="#e8d47a"/>';
+            inner += '<ellipse cx="' + cx.toFixed(3) + '" cy="' + cy.toFixed(3) + '" rx="' + rx.toFixed(3) + '" ry="' + r.toFixed(3) + '" fill="#e8d47a"/>';
+            inner += '<g opacity="0.28">' + litC + '</g>';
         }
 
         return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" fill="none" xmlns="http://www.w3.org/2000/svg">' +
