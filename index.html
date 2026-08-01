@@ -48342,108 +48342,83 @@ class GravSimEndpoint {
     }
 
     function getNextPhaseInfo(nowMs) {
-        // All 8 phases in cycle order, with the elongation boundary that ends each phase.
-        // When we cross that boundary we enter the next phase.
-        // elongThresh is the elongation value at which this phase ENDS (= next phase begins).
-        var phaseSequence = [
-            { name: 'Waxing Crescent', elongThresh: 90,  useQuarter: true,  quarter: 1 }, // → First Quarter
-            { name: 'Waxing Gibbous',  elongThresh: 150, useSearch: true,  target: 180 }, // → Full Moon
-            { name: 'Waning Gibbous',  elongThresh: 270, useQuarter: true,  quarter: 3 }, // → Third Quarter
-            { name: 'Waning Crescent', elongThresh: 0,   useSearch: true,  target: 0   }, // → New Moon
-            { name: 'New Moon',        elongThresh: 45,  elongCross: 45  },               // → Waxing Crescent
-            { name: 'First Quarter',   elongThresh: 135, elongCross: 135 },               // → Waxing Gibbous
-            { name: 'Full Moon',       elongThresh: 210, elongCross: 210 },               // → Waning Gibbous
-            { name: 'Third Quarter',   elongThresh: 315, elongCross: 315 },               // → Waning Crescent
-        ];
-
-        // Determine current phase from elongation
         var elong = getElongationAtMs(nowMs);
+
+        // Determine current logical phase.
+        // IMPORTANT: The Full Moon display window is 150-210° but we split it into
+        // two countdown sub-phases so "Next:" always counts to the right target:
+        //   Pre-peak  (150-180°): display shows Full Moon name, countdown → Full Moon peak
+        //   Post-peak (180-210°): display shows Full Moon name, countdown → Waning Gibbous
         var currentPhaseName;
         if      (elong < 5  || elong >= 355) currentPhaseName = 'New Moon';
         else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
         else if (elong < 135) currentPhaseName = 'First Quarter';
         else if (elong < 150) currentPhaseName = 'Waxing Gibbous';
-        else if (elong <= 210) currentPhaseName = 'Full Moon';  // ±30° window
+        else if (elong < 180) currentPhaseName = 'Full Moon Pre';   // waxing into full — count to peak
+        else if (elong <= 210) currentPhaseName = 'Full Moon Post'; // waning from full — count to Waning Gibbous
         else if (elong < 270) currentPhaseName = 'Waning Gibbous';
         else if (elong < 315) currentPhaseName = 'Third Quarter';
         else                  currentPhaseName = 'Waning Crescent';
 
-        // The next phase name (what we are counting down to)
-        var nextPhaseOrder = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
-                              'Full Moon','Waning Gibbous','Third Quarter','Waning Crescent'];
-        var idx = nextPhaseOrder.indexOf(currentPhaseName);
-        var nextName = nextPhaseOrder[(idx + 1) % 8];
+        // Map current phase → next countdown target
+        var nextName;
+        switch (currentPhaseName) {
+            case 'New Moon':         nextName = 'Waxing Crescent'; break;
+            case 'Waxing Crescent':  nextName = 'First Quarter';   break;
+            case 'First Quarter':    nextName = 'Waxing Gibbous';  break;
+            case 'Waxing Gibbous':   nextName = 'Full Moon';       break;
+            case 'Full Moon Pre':    nextName = 'Full Moon';       break; // still counting to the peak
+            case 'Full Moon Post':   nextName = 'Waning Gibbous';  break; // peak passed, count to waning
+            case 'Waning Gibbous':   nextName = 'Third Quarter';   break;
+            case 'Third Quarter':    nextName = 'Waning Crescent'; break;
+            case 'Waning Crescent':  nextName = 'New Moon';        break;
+            default:                 nextName = 'Full Moon';        break;
+        }
 
         // Find the event time for the next phase transition
         var eventMs = null;
-        // Map next phase name to expected Astronomy Engine quarter index (0=New,1=First,2=Full,3=Third)
         var _quarterMap = { 'New Moon': 0, 'First Quarter': 1, 'Full Moon': 2, 'Third Quarter': 3 };
         try {
-            if (nextName === 'First Quarter' || nextName === 'Third Quarter' ||
-                nextName === 'New Moon' || nextName === 'Full Moon') {
-                // Use Astronomy Engine quarter search for the 4 main phases.
-                // Start from nowMs (NOT +60000) so events less than 1 minute away
-                // are not skipped and a far-future quarter is returned instead.
+            if (nextName === 'Full Moon' || nextName === 'New Moon' ||
+                nextName === 'First Quarter' || nextName === 'Third Quarter') {
                 var t = Astronomy.MakeTime(new Date(nowMs));
                 var q = Astronomy.SearchMoonQuarter(t);
-                // SearchMoonQuarter returns the nearest quarter >= start, but may
-                // return a different quarter than the one we expect (e.g. when we are
-                // right at a boundary). Advance up to 3 times until we land on the
-                // correct quarter index.
                 var _expectedQ = _quarterMap[nextName];
                 var _safety = 0;
-                while (q && q.quarter !== _expectedQ && _safety < 3) {
+                while (q && q.quarter !== _expectedQ && _safety < 4) {
                     q = Astronomy.NextMoonQuarter(q);
                     _safety++;
                 }
                 if (q && q.quarter === _expectedQ) eventMs = q.time.date.getTime();
-                // If we still don't have the right quarter, fall back to SearchMoonPhase
                 if (!eventMs) {
-                    // For New Moon (quarter 0), target longitude 0° can wrap; use 360° equivalent
-                    // so SearchMoonPhase reliably finds the next crossing going forward.
                     var _targetLon = (_expectedQ === 0) ? 360 : _expectedQ * 90;
                     var _res = Astronomy.SearchMoonPhase(_targetLon, Astronomy.MakeTime(new Date(nowMs)), 40);
                     if (_res) eventMs = _res.date.getTime();
                 }
             } else if (nextName === 'Waxing Crescent') {
-                // Step every 10 min for up to 5 days — finds the 5° crossing reliably.
-                // Handles wrap: elong may start near 358-360° (approaching new moon)
-                // then drop to 0° and rise. We track the lowest point then wait for 5°.
                 var _wcStep = 10 * 60000, _wcMs = nowMs + _wcStep;
                 var _wcPrev = getElongationAtMs(nowMs);
-                var _wcPassedZero = (_wcPrev < 10); // already past new moon if low
+                var _wcPassedZero = (_wcPrev < 10);
                 for (var _wci = 0; _wci < 720; _wci++) {
                     var _wcE = getElongationAtMs(_wcMs);
-                    // Detect wrap: elong drops from >350 to <10 means we passed new moon
                     if (_wcPrev > 350 && _wcE < 10) { _wcPassedZero = true; }
                     if (_wcPassedZero && _wcE >= 5 && _wcE < 30) { eventMs = _wcMs - _wcStep / 2; break; }
-                    // Safety bail if we've gone too far
                     if (_wcPassedZero && _wcE > 30) break;
                     _wcPrev = _wcE; _wcMs += _wcStep;
                 }
             } else if (nextName === 'Waxing Gibbous') {
                 eventMs = findNextElongationCross(135, nowMs);
             } else if (nextName === 'Waning Gibbous') {
-                eventMs = findNextElongationCross(225, nowMs);
+                eventMs = findNextElongationCross(210, nowMs); // exit Full Moon window at 210°
             } else if (nextName === 'Waning Crescent') {
                 eventMs = findNextElongationCross(315, nowMs);
             }
         } catch(e) {
-            // Fallback: elongation cross search for all
-            var threshMap = { 'Waxing Crescent': 5, 'First Quarter': 90, 'Waxing Gibbous': 135,
-                              'Waning Gibbous': 225, 'Third Quarter': 270, 'Waning Crescent': 315 };
             if (nextName === 'Full Moon')  eventMs = findNextMoonEvent(180, nowMs);
             else if (nextName === 'New Moon') eventMs = findNextMoonEvent(0, nowMs);
-            else if (nextName === 'Waxing Crescent') {
-                // Use tight 5-day window to avoid finding next cycle's crossing
-                var step2 = 3600000, ms2 = nowMs + step2, prevE2 = getElongationAtMs(nowMs);
-                for (var k = 0; k < 120; k++) {
-                    var e2 = getElongationAtMs(ms2);
-                    if (prevE2 < 5 && e2 >= 5) { eventMs = ms2 - step2 / 2; break; }
-                    prevE2 = e2; ms2 += step2;
-                }
-            }
-            else if (threshMap[nextName])  eventMs = findNextElongationCross(threshMap[nextName], nowMs);
+            else if (nextName === 'Waning Gibbous') eventMs = findNextElongationCross(210, nowMs);
+            else if (nextName === 'Waxing Gibbous') eventMs = findNextElongationCross(135, nowMs);
+            else if (nextName === 'Waning Crescent') eventMs = findNextElongationCross(315, nowMs);
         }
 
         if (!eventMs) return null;
@@ -48498,8 +48473,9 @@ class GravSimEndpoint {
                 else if (_elong < 90)  _curPhase = 'Waxing Crescent';
                 else if (_elong < 135) _curPhase = 'First Quarter';
                 else if (_elong < 150) _curPhase = 'Waxing Gibbous';
-                else if (_elong <= 210) _curPhase = 'Full Moon';  // ±30° window
-                else if (_elong < 270) _curPhase = 'Waning Gibbous';
+                else if (_elong < 180)  _curPhase = 'Full Moon Pre';   // waxing into full
+                else if (_elong <= 210) _curPhase = 'Full Moon Post';  // waning from full
+                else if (_elong < 270)  _curPhase = 'Waning Gibbous';
                 else if (_elong < 315) _curPhase = 'Third Quarter';
                 else                   _curPhase = 'Waning Crescent';
                 if (_curPhase !== _cachedCurrentPhase) {
@@ -48536,10 +48512,14 @@ class GravSimEndpoint {
             // The new "next" phase is the one after it.
             var _justEndedName = info.name;
             // Resolve seasonal full moon name back to 'Full Moon' for index lookup
-            var _justEndedKey = (_justEndedName !== 'New Moon' && _justEndedName !== 'Waxing Crescent' &&
-                                 _justEndedName !== 'First Quarter' && _justEndedName !== 'Waxing Gibbous' &&
-                                 _justEndedName !== 'Waning Gibbous' && _justEndedName !== 'Third Quarter' &&
-                                 _justEndedName !== 'Waning Crescent') ? 'Full Moon' : _justEndedName;
+            // Resolve seasonal full moon names and Pre/Post variants back to 'Full Moon' for index lookup
+            var _justEndedKey = _justEndedName;
+            if (_justEndedName !== 'New Moon' && _justEndedName !== 'Waxing Crescent' &&
+                _justEndedName !== 'First Quarter' && _justEndedName !== 'Waxing Gibbous' &&
+                _justEndedName !== 'Waning Gibbous' && _justEndedName !== 'Third Quarter' &&
+                _justEndedName !== 'Waning Crescent') {
+                _justEndedKey = 'Full Moon';
+            }
             var _endedIdx = _nextPhaseOrder.indexOf(_justEndedKey);
             var _newCurrentName = _nextPhaseOrder[(_endedIdx + 1) % 8]; // phase we just entered
             var _newNextName    = _nextPhaseOrder[(_endedIdx + 2) % 8]; // phase to count down to
