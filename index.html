@@ -37995,7 +37995,7 @@ function updateLoginLordIconColor() {
         var glowStroke = 'rgba(255,235,130,' + Math.min(0.45, 0.3 * _illumFrac * 1.5).toFixed(3) + ')';
 
         function crater(x, y, rr, dark) {
-            return '<circle cx="' + (x*sc).toFixed(1) + '" cy="' + (y*sc).toFixed(1) + '" r="' + (rr*sc).toFixed(1) + '" fill="' + (dark ? '#3a3e55' : '#b09040') + '"/>';
+            return '<circle cx="' + (x*sc).toFixed(1) + '" cy="' + (y*sc).toFixed(1) + '" r="' + (rr*sc).toFixed(1) + '" fill="' + (dark ? '#3a3e55' : '#8a8a7a') + '"/>';
         }
         var darkC = crater(10,10,3.5,true)+crater(20,8,2,true)+crater(8,20,2.5,true)+crater(22,20,3,true)+crater(15,24,1.5,true)+crater(18,14,1.2,true);
         var litC  = crater(10,10,3.5,false)+crater(20,8,2,false)+crater(8,20,2.5,false)+crater(22,20,3,false)+crater(15,24,1.5,false)+crater(18,14,1.2,false)+crater(25,14,1.2,false);
@@ -47969,10 +47969,11 @@ class GravSimEndpoint {
         if      (elong < 5 || elong > 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
+        else if (elong < 180) { name = 'Waxing Gibbous'; }
         else if (elong < 225) {
             // Use the most recent past Full Moon peak for the seasonal name.
             // findPrevMoonEvent looks backwards from now, so it correctly returns
-            // the July peak even after the calendar flips to August.
+            // the peak even after the calendar flips to the next month.
             var _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
             name = getFullMoonName(_peakMs);
         }
