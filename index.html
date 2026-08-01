@@ -48018,12 +48018,12 @@ class GravSimEndpoint {
     // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
     function findPrevMoonEvent(targetElong, nowMs) {
         try {
-            // A lunar cycle is ~29.5 days. Searching back only 15 days guarantees
-            // we find the MOST RECENT peak and never accidentally pick up the one
-            // before it (which would happen if we searched back 35 days and
-            // SearchMoonPhase returned the first hit going forward).
-            var startT = msToAstroTime(nowMs - 15 * 24 * 3600000);
-            var result = Astronomy.SearchMoonPhase(targetElong, startT, 15);
+            // Search back up to 30 days (full lunar cycle ~29.5 days) to always
+            // find the most recent peak regardless of current phase position.
+            // We start from 30 days ago and search forward 30 days — the first
+            // result that is before nowMs is the most recent past peak.
+            var startT = msToAstroTime(nowMs - 30 * 24 * 3600000);
+            var result = Astronomy.SearchMoonPhase(targetElong, startT, 30);
             if (result && result.date.getTime() < nowMs) return result.date.getTime();
             return null;
         } catch(e) {
@@ -48345,15 +48345,19 @@ class GravSimEndpoint {
                 var q = Astronomy.SearchMoonQuarter(t);
                 if (q) eventMs = q.time.date.getTime();
             } else if (nextName === 'Waxing Crescent') {
-                // Step every 10 min for up to 5 days — finds the 5° crossing reliably
-                // even when elong is currently 0–4° (just past new moon peak)
+                // Step every 10 min for up to 5 days — finds the 5° crossing reliably.
+                // Handles wrap: elong may start near 358-360° (approaching new moon)
+                // then drop to 0° and rise. We track the lowest point then wait for 5°.
                 var _wcStep = 10 * 60000, _wcMs = nowMs + _wcStep;
                 var _wcPrev = getElongationAtMs(nowMs);
+                var _wcPassedZero = (_wcPrev < 10); // already past new moon if low
                 for (var _wci = 0; _wci < 720; _wci++) {
                     var _wcE = getElongationAtMs(_wcMs);
-                    if (_wcPrev < 5 && _wcE >= 5) { eventMs = _wcMs - _wcStep / 2; break; }
-                    // Safety: if elong wrapped past 350 and came back, stop
-                    if (_wcE > 30) break;
+                    // Detect wrap: elong drops from >350 to <10 means we passed new moon
+                    if (_wcPrev > 350 && _wcE < 10) { _wcPassedZero = true; }
+                    if (_wcPassedZero && _wcE >= 5 && _wcE < 30) { eventMs = _wcMs - _wcStep / 2; break; }
+                    // Safety bail if we've gone too far
+                    if (_wcPassedZero && _wcE > 30) break;
                     _wcPrev = _wcE; _wcMs += _wcStep;
                 }
             } else if (nextName === 'Waxing Gibbous') {
