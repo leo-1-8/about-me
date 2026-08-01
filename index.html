@@ -47966,30 +47966,38 @@ class GravSimEndpoint {
         var icon, name;
         // Generate a live terminator SVG from the real elongation angle
         icon = generateMoonSVG(elong, 32, illum / 100);
-        // Phase name boundaries: New Moon ±5° around 0/360, Full Moon ±5° around 180.
-        // Waxing Gibbous ends at 175° so Full Moon band starts at 175° (not 180°),
-        // ensuring the name reads "Full Moon" before the peak, not "Waxing Gibbous".
+        // Phase name boundaries:
+        //   New Moon  : elong < 5° or >= 355° (±5° around 0/360)
+        //   Full Moon : 150° <= elong <= 210° (~±30° = ~3 days around peak)
+        //   Seasonal name uses the CLOSEST full moon peak:
+        //     waxing side (150–180): use NEXT full moon peak (approaching)
+        //     waning side (180–210): use PREV full moon peak (just passed)
         if      (elong < 5 || elong >= 355) { name = 'New Moon'; }
         else if (elong < 90)  { name = 'Waxing Crescent'; }
         else if (elong < 135) { name = 'First Quarter'; }
-        else if (elong < 175) { name = 'Waxing Gibbous'; }
-        else if (elong <= 185) {
-            // ±5° band around the 180° Full Moon peak. Use prev-peak for seasonal name.
-            var _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
+        else if (elong < 150) { name = 'Waxing Gibbous'; }
+        else if (elong <= 210) {
+            // In the Full Moon window — pick closest peak for seasonal name
+            var _peakMs;
+            if (elong < 180) {
+                // Waxing: approaching full — name after the UPCOMING peak
+                _peakMs = findNextMoonEvent(180, nowMs) || nowMs;
+            } else {
+                // Waning: just passed full — name after the MOST RECENT past peak
+                _peakMs = findPrevMoonEvent(180, nowMs) || nowMs;
+            }
             name = getFullMoonName(_peakMs);
         }
         else if (elong < 270) { name = 'Waning Gibbous'; }
         else if (elong < 315) { name = 'Third Quarter'; }
         else                  { name = 'Waning Crescent'; }
 
-        // Snap illumination to exact 0% / 100% when the phase name says New Moon or Full Moon.
-        // Without this, the astronomy formula gives 99.xx% a few hours before/after the peak.
+        // Snap illumination to 0% at New Moon and 100% only within ±5° of the actual peak.
+        // Outside that narrow band (but still in the Full Moon name window) show real value.
         if (name === 'New Moon') {
             illum = 0.00;
-        } else if (name !== 'Waxing Crescent' && name !== 'Waxing Gibbous' &&
-                   name !== 'First Quarter'   && name !== 'Waning Gibbous'  &&
-                   name !== 'Third Quarter'   && name !== 'Waning Crescent') {
-            // Any Full Moon name (seasonal names like "Sturgeon Full Moon", "Buck Full Moon", etc.)
+        } else if (elong >= 175 && elong <= 185) {
+            // Within ±5° of peak — snap to 100%
             illum = 100.00;
         }
 
@@ -48028,44 +48036,42 @@ class GravSimEndpoint {
         }
     }
 
-    // ── findPrevMoonEvent: search backwards for last full/new moon ────────────
+    // ── findPrevMoonEvent: find the most recent past full/new moon ──────────────
     function findPrevMoonEvent(targetElong, nowMs) {
+        var LUNAR_CYCLE_MS = 29.53059 * 24 * 3600000;
         try {
-            var LUNAR_CYCLE_MS = 29.53059 * 24 * 3600000;
-            // Strategy: start SearchMoonPhase from roughly one lunar cycle BEFORE now.
-            // SearchMoonPhase searches forward, so starting ~1 cycle back reliably
-            // finds the most recent past peak. We then verify the result is in the past,
-            // and if not, step back further. Try up to 3 offsets to cover edge cases.
-            var offsets = [1.02, 1.0, 0.97]; // multipliers of one lunar cycle back
-            for (var attempt = 0; attempt < offsets.length; attempt++) {
-                var startMs = nowMs - offsets[attempt] * LUNAR_CYCLE_MS;
-                var startT = msToAstroTime(startMs);
-                var result = Astronomy.SearchMoonPhase(targetElong, startT, 32);
+            // SearchMoonPhase searches FORWARD from a start time.
+            // To find the most recent PAST event, start from exactly 1 lunar cycle ago.
+            // The search window of 30 days will land on the event right before nowMs.
+            // We try a few offsets to handle cases where we are very near an event.
+            var best = null;
+            var starts = [1.0, 1.03, 0.97, 1.06, 0.94];
+            for (var i = 0; i < starts.length; i++) {
+                var startMs = nowMs - starts[i] * LUNAR_CYCLE_MS;
+                var result = Astronomy.SearchMoonPhase(targetElong, msToAstroTime(startMs), 32);
                 if (result) {
                     var t = result.date.getTime();
-                    // Must be strictly in the past (not the upcoming event)
-                    if (t < nowMs) return t;
+                    // Must be in the past, and closer to now than any previous candidate
+                    if (t < nowMs && (best === null || t > best)) {
+                        best = t;
+                    }
                 }
             }
-            // Last resort: start 1.5 cycles back
-            var lastStart = nowMs - 1.5 * LUNAR_CYCLE_MS;
-            var lastResult = Astronomy.SearchMoonPhase(targetElong, msToAstroTime(lastStart), 32);
-            if (lastResult) {
-                var lt = lastResult.date.getTime();
-                if (lt < nowMs) return lt;
-            }
+            if (best !== null) return best;
             return null;
         } catch(e) {
-            // Fallback: step backward in 6-hour increments
-            var step = 6 * 3600000;
+            // Fallback: step backward in 1-hour increments and detect peak crossing
+            var step = 3600000;
             var ms = nowMs - step;
             var prevE = getElongationAtMs(nowMs);
-            for (var i = 0; i < 300; i++) {
+            for (var i = 0; i < 800; i++) {
                 var e = getElongationAtMs(ms);
                 if (targetElong === 180) {
                     if (prevE >= 180 && e < 180) return ms + step / 2;
                 } else {
-                    if ((prevE > 300 || prevE < 60) && (e < 300 && e > 60)) return ms + step / 2;
+                    // New Moon: elongation wraps from ~360 down to ~0
+                    if ((prevE < 30 || prevE > 330) && e > prevE + 180) return ms + step / 2;
+                    if (prevE > 330 && e < 30) return ms + step / 2;
                 }
                 prevE = e; ms -= step;
             }
@@ -48341,12 +48347,12 @@ class GravSimEndpoint {
         // elongThresh is the elongation value at which this phase ENDS (= next phase begins).
         var phaseSequence = [
             { name: 'Waxing Crescent', elongThresh: 90,  useQuarter: true,  quarter: 1 }, // → First Quarter
-            { name: 'Waxing Gibbous',  elongThresh: 180, useSearch: true,  target: 180 }, // → Full Moon
+            { name: 'Waxing Gibbous',  elongThresh: 150, useSearch: true,  target: 180 }, // → Full Moon
             { name: 'Waning Gibbous',  elongThresh: 270, useQuarter: true,  quarter: 3 }, // → Third Quarter
             { name: 'Waning Crescent', elongThresh: 0,   useSearch: true,  target: 0   }, // → New Moon
             { name: 'New Moon',        elongThresh: 45,  elongCross: 45  },               // → Waxing Crescent
             { name: 'First Quarter',   elongThresh: 135, elongCross: 135 },               // → Waxing Gibbous
-            { name: 'Full Moon',       elongThresh: 185, elongCross: 185 },               // → Waning Gibbous
+            { name: 'Full Moon',       elongThresh: 210, elongCross: 210 },               // → Waning Gibbous
             { name: 'Third Quarter',   elongThresh: 315, elongCross: 315 },               // → Waning Crescent
         ];
 
@@ -48356,8 +48362,8 @@ class GravSimEndpoint {
         if      (elong < 5  || elong >= 355) currentPhaseName = 'New Moon';
         else if (elong < 90)  currentPhaseName = 'Waxing Crescent';
         else if (elong < 135) currentPhaseName = 'First Quarter';
-        else if (elong < 180) currentPhaseName = 'Waxing Gibbous';
-        else if (elong < 185) currentPhaseName = 'Full Moon';
+        else if (elong < 150) currentPhaseName = 'Waxing Gibbous';
+        else if (elong <= 210) currentPhaseName = 'Full Moon';  // ±30° window
         else if (elong < 270) currentPhaseName = 'Waning Gibbous';
         else if (elong < 315) currentPhaseName = 'Third Quarter';
         else                  currentPhaseName = 'Waning Crescent';
@@ -48467,8 +48473,8 @@ class GravSimEndpoint {
         if      (elong < 5 || elong >= 355) return 'New Moon';
         else if (elong < 90)  return 'Waxing Crescent';
         else if (elong < 135) return 'First Quarter';
-        else if (elong < 180) return 'Waxing Gibbous';
-        else if (elong < 185) return 'Full Moon';
+        else if (elong < 150) return 'Waxing Gibbous';
+        else if (elong <= 210) return 'Full Moon';  // ±30° window
         else if (elong < 270) return 'Waning Gibbous';
         else if (elong < 315) return 'Third Quarter';
         else                  return 'Waning Crescent';
@@ -48491,8 +48497,8 @@ class GravSimEndpoint {
                 if      (_elong < 5 || _elong >= 355) _curPhase = 'New Moon';
                 else if (_elong < 90)  _curPhase = 'Waxing Crescent';
                 else if (_elong < 135) _curPhase = 'First Quarter';
-                else if (_elong < 180) _curPhase = 'Waxing Gibbous';
-                else if (_elong < 185) _curPhase = 'Full Moon';
+                else if (_elong < 150) _curPhase = 'Waxing Gibbous';
+                else if (_elong <= 210) _curPhase = 'Full Moon';  // ±30° window
                 else if (_elong < 270) _curPhase = 'Waning Gibbous';
                 else if (_elong < 315) _curPhase = 'Third Quarter';
                 else                   _curPhase = 'Waning Crescent';
@@ -48593,11 +48599,13 @@ class GravSimEndpoint {
             }
 
             // Refresh all moon timestamps from Astronomy Engine
+            // Use _nudgeMs (5s past event) for both Next AND Prev so the search
+            // clearly starts after the just-passed peak and finds correct results.
             try {
                 _nextFullMs = findNextMoonEvent(180, _nudgeMs);
                 _nextNewMs  = findNextMoonEvent(0,   _nudgeMs);
-                _lastFullMs = findPrevMoonEvent(180, nowMs);
-                _lastNewMs  = findPrevMoonEvent(0,   nowMs);
+                _lastFullMs = findPrevMoonEvent(180, _nudgeMs);
+                _lastNewMs  = findPrevMoonEvent(0,   _nudgeMs);
             } catch(_me) {}
 
             // Immediately render the updated Last/Next dates so UI is not stale after rollover
