@@ -48345,7 +48345,17 @@ class GravSimEndpoint {
                 var q = Astronomy.SearchMoonQuarter(t);
                 if (q) eventMs = q.time.date.getTime();
             } else if (nextName === 'Waxing Crescent') {
-                eventMs = findNextElongationCross(5, nowMs);
+                // Step every 10 min for up to 5 days — finds the 5° crossing reliably
+                // even when elong is currently 0–4° (just past new moon peak)
+                var _wcStep = 10 * 60000, _wcMs = nowMs + _wcStep;
+                var _wcPrev = getElongationAtMs(nowMs);
+                for (var _wci = 0; _wci < 720; _wci++) {
+                    var _wcE = getElongationAtMs(_wcMs);
+                    if (_wcPrev < 5 && _wcE >= 5) { eventMs = _wcMs - _wcStep / 2; break; }
+                    // Safety: if elong wrapped past 350 and came back, stop
+                    if (_wcE > 30) break;
+                    _wcPrev = _wcE; _wcMs += _wcStep;
+                }
             } else if (nextName === 'Waxing Gibbous') {
                 eventMs = findNextElongationCross(135, nowMs);
             } else if (nextName === 'Waning Gibbous') {
@@ -48359,6 +48369,15 @@ class GravSimEndpoint {
                               'Waning Gibbous': 225, 'Third Quarter': 270, 'Waning Crescent': 315 };
             if (nextName === 'Full Moon')  eventMs = findNextMoonEvent(180, nowMs);
             else if (nextName === 'New Moon') eventMs = findNextMoonEvent(0, nowMs);
+            else if (nextName === 'Waxing Crescent') {
+                // Use tight 5-day window to avoid finding next cycle's crossing
+                var step2 = 3600000, ms2 = nowMs + step2, prevE2 = getElongationAtMs(nowMs);
+                for (var k = 0; k < 120; k++) {
+                    var e2 = getElongationAtMs(ms2);
+                    if (prevE2 < 5 && e2 >= 5) { eventMs = ms2 - step2 / 2; break; }
+                    prevE2 = e2; ms2 += step2;
+                }
+            }
             else if (threshMap[nextName])  eventMs = findNextElongationCross(threshMap[nextName], nowMs);
         }
 
