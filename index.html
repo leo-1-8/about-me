@@ -48444,21 +48444,90 @@ class GravSimEndpoint {
         }
         var diffMs = info.eventMs - nowMs;
         if (diffMs <= 0) {
-            // Phase just passed — immediately refresh next/last timestamps from
-            // Astronomy Engine so the countdown restarts without waiting for the
-            // 60-second updateWidget() cycle.
+            // Phase just passed — the elongation boundary may not have fully
+            // crossed yet in Astronomy Engine for a few seconds, so instead of
+            // relying on getNextPhaseInfo (which reads current elongation), we
+            // directly advance to the NEXT phase after the one that just ended.
+            var _nextPhaseOrder = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous',
+                                   'Full Moon','Waning Gibbous','Third Quarter','Waning Crescent'];
+            // info.name is the phase that just ended (the one we were counting to).
+            // The new "next" phase is the one after it.
+            var _justEndedName = info.name;
+            // Resolve seasonal full moon name back to 'Full Moon' for index lookup
+            var _justEndedKey = (_justEndedName !== 'New Moon' && _justEndedName !== 'Waxing Crescent' &&
+                                 _justEndedName !== 'First Quarter' && _justEndedName !== 'Waxing Gibbous' &&
+                                 _justEndedName !== 'Waning Gibbous' && _justEndedName !== 'Third Quarter' &&
+                                 _justEndedName !== 'Waning Crescent') ? 'Full Moon' : _justEndedName;
+            var _endedIdx = _nextPhaseOrder.indexOf(_justEndedKey);
+            var _newCurrentName = _nextPhaseOrder[(_endedIdx + 1) % 8]; // phase we just entered
+            var _newNextName    = _nextPhaseOrder[(_endedIdx + 2) % 8]; // phase to count down to
+
+            // Find the event time for the new next phase using a nudged time
+            // so SearchMoonPhase starts clearly after the just-passed event.
+            var _nudgeMs = info.eventMs + 5000; // 5 seconds past the event
+            var _newEventMs = null;
             try {
-                _nextFullMs = findNextMoonEvent(180, nowMs);
-                _nextNewMs  = findNextMoonEvent(0,   nowMs);
+                var _qMap2 = { 'New Moon': 0, 'First Quarter': 1, 'Full Moon': 2, 'Third Quarter': 3 };
+                if (_qMap2.hasOwnProperty(_newNextName)) {
+                    var _tq = Astronomy.MakeTime(new Date(_nudgeMs));
+                    var _qq = Astronomy.SearchMoonQuarter(_tq);
+                    var _expQ2 = _qMap2[_newNextName];
+                    var _s2 = 0;
+                    while (_qq && _qq.quarter !== _expQ2 && _s2 < 4) { _qq = Astronomy.NextMoonQuarter(_qq); _s2++; }
+                    if (_qq && _qq.quarter === _expQ2) _newEventMs = _qq.time.date.getTime();
+                } else if (_newNextName === 'Waxing Gibbous') {
+                    _newEventMs = findNextElongationCross(135, _nudgeMs);
+                } else if (_newNextName === 'Waning Gibbous') {
+                    _newEventMs = findNextElongationCross(225, _nudgeMs);
+                } else if (_newNextName === 'Waning Crescent') {
+                    _newEventMs = findNextElongationCross(315, _nudgeMs);
+                } else if (_newNextName === 'Waxing Crescent') {
+                    // Step search from just past new moon
+                    var _wcS = 10 * 60000, _wcM = _nudgeMs + _wcS;
+                    for (var _wci2 = 0; _wci2 < 720; _wci2++) {
+                        var _wcE2 = getElongationAtMs(_wcM);
+                        if (_wcE2 >= 5 && _wcE2 < 30) { _newEventMs = _wcM; break; }
+                        if (_wcE2 > 30) break;
+                        _wcM += _wcS;
+                    }
+                }
+            } catch(_te) {}
+
+            // Update the "Next:" label immediately with the new phase
+            if (_newEventMs) {
+                var _newDiff = _newEventMs - nowMs;
+                var _newDisplay = (_newNextName === 'Full Moon') ? getFullMoonName(_newEventMs) : _newNextName;
+                var _nTotalSec = Math.floor(_newDiff / 1000);
+                var _nHrs  = Math.floor(_nTotalSec / 3600);
+                var _nMins = Math.floor((_nTotalSec % 3600) / 60);
+                var _nSecs = _nTotalSec % 60;
+                var _nText;
+                if (_nHrs >= 24) {
+                    var _nDays = Math.floor(_nHrs / 24);
+                    var _nRHrs = _nHrs % 24;
+                    _nText = _newDisplay + ' in ' + _nDays + 'd ' + _padTwo(_nRHrs) + 'h ' + _padTwo(_nMins) + 'm ' + _padTwo(_nSecs) + 's';
+                } else {
+                    _nText = _newDisplay + ' in ' + _padTwo(_nHrs) + 'h ' + _padTwo(_nMins) + 'm ' + _padTwo(_nSecs) + 's';
+                }
+                var _html = _moonGeoGranted ? _nText : '<span style="color:#ff8a8a;">---</span>';
+                var _lbl  = document.getElementById('moonNextPhaseLabelInner');
+                var _lblM = document.getElementById('moonNextPhaseLabelInnerModal');
+                if (_lbl)  _lbl.innerHTML  = _html;
+                if (_lblM) _lblM.innerHTML = _html;
+            }
+
+            // Refresh all moon timestamps from Astronomy Engine
+            try {
+                _nextFullMs = findNextMoonEvent(180, _nudgeMs);
+                _nextNewMs  = findNextMoonEvent(0,   _nudgeMs);
                 _lastFullMs = findPrevMoonEvent(180, nowMs);
                 _lastNewMs  = findPrevMoonEvent(0,   nowMs);
-            } catch(e) {}
-            // Also schedule a full widget refresh (icon, bar, name …) in the
-            // background, but don't block the countdown on it.
-            setTimeout(updateWidget, 0);
-            // Re-tick immediately with the fresh timestamps so the "Next:" label
-            // switches to the new phase without any gap.
-            setTimeout(function() { _tickNextPhaseCountdown(); }, 50);
+            } catch(_me) {}
+
+            // Full widget refresh in background (icon, bar, name, %)
+            setTimeout(function() { try { updateWidget(); } catch(_e) {} }, 0);
+            // Resume normal ticking after a short settle so _rafTick takes over cleanly
+            setTimeout(function() { _tickNextPhaseCountdown(); }, 1500);
             return;
         }
         var displayName = (info.name === 'Full Moon') ? getFullMoonName(info.eventMs) : info.name;
