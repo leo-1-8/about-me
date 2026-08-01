@@ -47984,9 +47984,9 @@ class GravSimEndpoint {
         else if (elong < 315) { name = 'Third Quarter'; }
         else                  { name = 'Waning Crescent'; }
 
-        // Snap illumination to 0% at New Moon and 100% only within ±5° of the actual peak.
-        // Outside that narrow band (but still in the Full Moon name window) show real value.
-        if (name === 'New Moon') {
+        // Snap illumination to 0% when within ±5° of New Moon peak (elong < 5° or >= 355°),
+        // and to 100% within ±5° of Full Moon peak.
+        if (elong < 5 || elong >= 355) {
             illum = 0.00;
         } else if (elong >= 175 && elong <= 185) {
             // Within ±5° of peak — snap to 100%
