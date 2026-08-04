@@ -52514,8 +52514,10 @@ class GravSimEndpoint {
         if (btn)    { btn.disabled = true; btn.style.opacity = '0.8'; }
         if (textEl) textEl.textContent = 'Signing in…';
         if (errEl)  errEl.style.display = 'none';
+        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         try {
             await window.streakGoogleSignIn();
+            if (isMobile) return; // page is navigating away, result handled on return
             var name = localStorage.getItem('streakGoogleName') || '';
             // Auto-fill the name field with the Google display name
             var nameInput = document.getElementById('loginNameInput');
@@ -52643,8 +52645,9 @@ class GravSimEndpoint {
             provider.setCustomParameters({ prompt: 'select_account' });
             if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 // Mobile: redirect is reliable — popups get blocked
-                await signInWithRedirect(auth, provider);
-                // Page navigates away; result caught by handleStreakRedirectResult on return
+                // signInWithRedirect navigates away; any thrown error here is safe to ignore
+                try { await signInWithRedirect(auth, provider); } catch(redirectErr) { /* navigating away */ }
+                return; // result is handled by handleStreakRedirectResult on return
             } else {
                 // Desktop: popup is instant and smooth
                 var result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
