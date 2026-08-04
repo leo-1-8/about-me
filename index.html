@@ -678,15 +678,19 @@
             height: 100dvh;
             max-height: 100vh;
             max-height: 100dvh;
+            max-width: 100vw;
+            max-width: 100dvw;
             background: linear-gradient(180deg, #102847 0%, #0a1a31 100%);
             border: none;
             border-radius: 0;
             box-shadow: none;
             overflow: hidden;
+            overflow-x: hidden;
             color: rgba(235, 244, 255, 0.95);
             display: flex;
             flex-direction: column;
             min-height: 0;
+            box-sizing: border-box;
         }
         @media (max-width: 768px) {
             .settings-overlay {
@@ -1123,6 +1127,13 @@
             overscroll-behavior: contain;
             scrollbar-width: thin;
             scrollbar-color: rgba(139, 191, 255, 0.28) transparent;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+        }
+        .settings-card-body * {
+            box-sizing: border-box;
+            max-width: 100%;
         }
         .settings-card-body::-webkit-scrollbar {
             width: 5px;
@@ -52456,6 +52467,17 @@ class GravSimEndpoint {
 
     // Called when user clicks "Continue with Google"
     window.loginGoogleGuard = function(btn) {
+        var gUid = localStorage.getItem('streakGoogleUid');
+        var storedPw = localStorage.getItem('senderPassword') || '';
+        // Already signed in with Google — skip straight to Message Me
+        if (gUid && storedPw === 'google_' + gUid) {
+            if (typeof closeModal === 'function') closeModal('senderLogin');
+            if (typeof openModal === 'function') openModal('christmasMessage');
+            if (typeof startSenderThreadListener === 'function') {
+                try { startSenderThreadListener(); } catch(e) {}
+            }
+            return;
+        }
         // Block if a name/password account already exists on this device
         if (localStorage.getItem('accountCreatedOnDevice') || localStorage.getItem('userNameForMessage')) {
             _showLoginWarn('loginGoogleOneAcctWarn');
@@ -52514,11 +52536,8 @@ class GravSimEndpoint {
         if (btn)    { btn.disabled = true; btn.style.opacity = '0.8'; }
         if (textEl) textEl.textContent = 'Signing in…';
         if (errEl)  errEl.style.display = 'none';
-        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isMobile) localStorage.setItem('_streakSignInIntent', 'msgMe');
         try {
             await window.streakGoogleSignIn();
-            if (isMobile) return; // page is navigating away, result handled on return
             var name = localStorage.getItem('streakGoogleName') || '';
             // Auto-fill the name field with the Google display name
             var nameInput = document.getElementById('loginNameInput');
@@ -52573,15 +52592,9 @@ class GravSimEndpoint {
         var errEl = document.getElementById('starReviewGoogleError');
         if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
         if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
-        // On mobile, streakGoogleSignIn() redirects away — no result here, handled on return
-        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         try {
             await window.streakGoogleSignIn();
-            if (!isMobile) {
-                // Desktop: result is available immediately
-                updateStarReviewAuthUI();
-            }
-            // Mobile: page navigates away; updateStarReviewAuthUI is called by handleStreakRedirectResult on return
+            updateStarReviewAuthUI();
         } catch(e) {
             if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
             if (errEl) { errEl.textContent = 'Sign in failed. Please try again.'; errEl.style.display = 'block'; }
@@ -52604,63 +52617,6 @@ class GravSimEndpoint {
 
 
     // ── Google Sign-In ────────────────────────────────────────────────────────
-    // Handle redirect result on page load (fires after signInWithRedirect returns)
-    (async function handleStreakRedirectResult() {
-        try {
-            var { initializeApp, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
-            var { getAuth, getRedirectResult, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
-            var app; try { app = getApp('streakApp'); } catch(e) { app = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
-            var auth = getAuth(app);
-            try { await setPersistence(auth, browserLocalPersistence); } catch(e) {}
-            var result = await getRedirectResult(auth);
-            if (result && result.user) {
-                var user = result.user;
-                _streakGoogleUid = user.uid;
-                localStorage.setItem('streakGoogleUid', user.uid);
-                localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
-                if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
-                if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
-                if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
-                if (typeof updateStarReviewAuthUI === 'function') updateStarReviewAuthUI();
-                initStreak();
-                // Resume the flow that triggered the redirect
-                var _intent = localStorage.getItem('_streakRedirectIntent') || 'streak';
-                localStorage.removeItem('_streakRedirectIntent');
-                if (_intent === 'msgMe') {
-                    // Restore Message Me session then open the modal
-                    var gUid  = user.uid;
-                    var gName = user.displayName || user.email || 'User';
-                    var _storedPw = localStorage.getItem('senderPassword') || '';
-                    if (_storedPw !== 'google_' + gUid) {
-                        localStorage.removeItem('userNameForMessage');
-                        localStorage.removeItem('userNameStoredAt');
-                        localStorage.removeItem('senderPassword');
-                        localStorage.removeItem('accountCreatedOnDevice');
-                        localStorage.removeItem('lastKnownSenderName');
-                        localStorage.removeItem('lastKnownSenderPasswordHash');
-                        localStorage.removeItem('lastKnownSenderDeviceId');
-                        localStorage.removeItem('lastHandledResetAt');
-                        localStorage.removeItem('authorWasReset');
-                        localStorage.removeItem('VIEW_YOUR_MESSAGE_OPEN');
-                        localStorage.removeItem('christmasUserId');
-                    }
-                    localStorage.setItem('userNameForMessage', gName.trim());
-                    localStorage.setItem('userNameStoredAt', String(Date.now()));
-                    localStorage.setItem('accountCreatedOnDevice', '1');
-                    localStorage.setItem('senderPassword', 'google_' + gUid);
-                    setTimeout(function() {
-                        if (typeof closeModal === 'function') closeModal('senderLogin');
-                        if (typeof openModal === 'function') openModal('christmasMessage');
-                        if (typeof startSenderThreadListener === 'function') {
-                            try { startSenderThreadListener(); } catch(e) {}
-                        }
-                    }, 400);
-                }
-            }
-        } catch(e) {
-            console.warn('streakRedirectResult error:', e);
-        }
-    })();
 
     window.streakGoogleSignIn = async function() {
         var btn = document.getElementById('streakGoogleSignInBtn');
@@ -52669,7 +52625,7 @@ class GravSimEndpoint {
         if (errEl) errEl.style.display = 'none';
         try {
             var { initializeApp, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
-            var { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, browserPopupRedirectResolver, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
+            var { getAuth, signInWithPopup, GoogleAuthProvider, browserPopupRedirectResolver, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
             var app;
             try { app = getApp('streakApp'); } catch(e) { app = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
             var auth = getAuth(app);
@@ -52677,28 +52633,17 @@ class GravSimEndpoint {
             auth.useDeviceLanguage();
             var provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                // Mobile: redirect is reliable — popups get blocked
-                // Save which flow triggered this redirect so we can resume it on return
-                var _intent = localStorage.getItem('_streakSignInIntent') || 'streak';
-                localStorage.setItem('_streakRedirectIntent', _intent);
-                localStorage.removeItem('_streakSignInIntent');
-                // signInWithRedirect navigates away; any thrown error here is safe to ignore
-                try { await signInWithRedirect(auth, provider); } catch(redirectErr) { /* navigating away */ }
-                return; // result is handled by handleStreakRedirectResult on return
-            } else {
-                // Desktop: popup is instant and smooth
-                var result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
-                var user = result.user;
-                _streakGoogleUid = user.uid;
-                localStorage.setItem('streakGoogleUid', user.uid);
-                localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
-                if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
-                if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
-                if (btn) { btn.disabled = false; btn.style.opacity = ''; }
-                if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
-                initStreak();
-            }
+            var result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+            var user = result.user;
+            _streakGoogleUid = user.uid;
+            localStorage.setItem('streakGoogleUid', user.uid);
+            localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
+            if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
+            if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
+            if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+            if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
+            if (typeof updateStarReviewAuthUI === 'function') updateStarReviewAuthUI();
+            initStreak();
         } catch(e) {
             if (btn) { btn.disabled = false; btn.style.opacity = ''; }
             if (errEl) {
