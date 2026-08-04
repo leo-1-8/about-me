@@ -16722,7 +16722,7 @@
                 </div>
 
                 <!-- ── STREAK SECTION ── -->
-                <div id="streakSectionWrap" style="width:100%;border-radius:10px;padding:2px;box-sizing:border-box;transition:outline 0.2s;">
+                <div id="streakSectionWrap" style="width:100%;border-radius:10px;padding:2px;box-sizing:border-box;transition:outline 0.2s;margin-top:14px;">
                 <div id="streakSectionHeading" style="width:100%;text-align:left;font-size:13px;font-weight:700;letter-spacing:0.2px;color:rgba(223,235,255,0.9);margin-top:16px;margin-bottom:10px;display:flex;align-items:center;gap:6px;">STREAK <button type="button" class="settings-warning-btn" id="streakNoticeBtn" aria-label="Streak Notice">!</button> <span class="new-badge">[NEW]</span></div>
 
                 <!-- Not logged in state -->
@@ -16780,7 +16780,7 @@
 
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
-                    <div class="settings-version">v. 2</div>
+                    <div class="settings-version">v. 2.1</div>
                     <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
                 </div>
         </div>
@@ -52200,14 +52200,12 @@ class GravSimEndpoint {
         // Non-Google fallback IDs (christmasUserId) must never create streak nodes —
         // that's what causes the duplicate "Can't Reply" node bug.
         if (!_streakGoogleUid) {
-            console.log('[Streak] No Google UID confirmed yet — skipping writes to avoid duplicate nodes.');
             renderStreakUI({});
             return;
         }
 
         // Mutex: if this user's initStreak is already running, skip — prevents race conditions
         if (_streakInitLocks[userId]) {
-            console.log('[Streak] Already running for', userId, '— skipping duplicate call.');
             return;
         }
         _streakInitLocks[userId] = true;
@@ -52221,11 +52219,9 @@ class GravSimEndpoint {
             try { db = getDatabase(app); } catch(e) { db = getDatabase(app); }
 
             var streakPath = 'streaks/' + safeKey(userId);
-            console.log('[Streak] userId:', userId, '| path:', streakPath);
             var streakRef = ref(db, streakPath);
             var snap = await get(streakRef);
             var data = snap.val() || {};
-            console.log('[Streak] Firebase read result:', JSON.stringify(data));
 
             var today = todayStr();
             var yesterday = dateStrOffset(1);
@@ -52236,7 +52232,6 @@ class GravSimEndpoint {
 
             // Already visited today — streak unchanged, re-read fresh data and render
             if (visitDays[today]) {
-                console.log('[Streak] Already visited today, totalVisits incremented.');
                 var freshSnap2 = await get(streakRef);
                 data = freshSnap2.val() || data;
                 renderStreakUI(data);
@@ -52267,7 +52262,6 @@ class GravSimEndpoint {
             // Always do a fresh read after all writes so the UI shows committed Firebase data
             var freshSnap = await get(streakRef);
             data = freshSnap.val() || data;
-            console.log('[Streak] Init SUCCESS. totalVisits=' + (data.totalVisits || 0));
 
             renderStreakUI(data);
             startTimeTracking(db, userId, data);
@@ -52318,7 +52312,6 @@ class GravSimEndpoint {
                 // Update time display live
                 var timeEl = document.getElementById('streakTimeVal');
                 if (timeEl) timeEl.textContent = fmtTime(newTotal);
-                console.log('[Streak] Time saved:', fmtTime(newTotal));
             } catch(e) { console.error('[Streak] Time tracking save failed:', e); }
         }, 30000); // save every 30 seconds
     }
@@ -52576,10 +52569,16 @@ class GravSimEndpoint {
         var btn = document.getElementById('starReviewGoogleBtn');
         var errEl = document.getElementById('starReviewGoogleError');
         if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
-        if (errEl) errEl.style.display = 'none';
+        if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+        // On mobile, streakGoogleSignIn() redirects away — no result here, handled on return
+        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         try {
             await window.streakGoogleSignIn();
-            updateStarReviewAuthUI();
+            if (!isMobile) {
+                // Desktop: result is available immediately
+                updateStarReviewAuthUI();
+            }
+            // Mobile: page navigates away; updateStarReviewAuthUI is called by handleStreakRedirectResult on return
         } catch(e) {
             if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
             if (errEl) { errEl.textContent = 'Sign in failed. Please try again.'; errEl.style.display = 'block'; }
@@ -52602,14 +52601,39 @@ class GravSimEndpoint {
 
 
     // ── Google Sign-In ────────────────────────────────────────────────────────
+    // Handle redirect result on page load (fires after signInWithRedirect returns)
+    (async function handleStreakRedirectResult() {
+        try {
+            var { initializeApp, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
+            var { getAuth, getRedirectResult, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
+            var app; try { app = getApp('streakApp'); } catch(e) { app = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
+            var auth = getAuth(app);
+            try { await setPersistence(auth, browserLocalPersistence); } catch(e) {}
+            var result = await getRedirectResult(auth);
+            if (result && result.user) {
+                var user = result.user;
+                _streakGoogleUid = user.uid;
+                localStorage.setItem('streakGoogleUid', user.uid);
+                localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
+                if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
+                if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
+                if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
+                if (typeof updateStarReviewAuthUI === 'function') updateStarReviewAuthUI();
+                initStreak();
+            }
+        } catch(e) {
+            console.warn('streakRedirectResult error:', e);
+        }
+    })();
+
     window.streakGoogleSignIn = async function() {
         var btn = document.getElementById('streakGoogleSignInBtn');
         var errEl = document.getElementById('streakGoogleSignInError');
         if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
         if (errEl) errEl.style.display = 'none';
         try {
-            var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
-            var { getAuth, signInWithPopup, GoogleAuthProvider, browserPopupRedirectResolver, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
+            var { initializeApp, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
+            var { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, browserPopupRedirectResolver, setPersistence, browserLocalPersistence } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-auth.js');
             var app;
             try { app = getApp('streakApp'); } catch(e) { app = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
             var auth = getAuth(app);
@@ -52617,16 +52641,23 @@ class GravSimEndpoint {
             auth.useDeviceLanguage();
             var provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            var result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
-            var user = result.user;
-            _streakGoogleUid = user.uid;
-            localStorage.setItem('streakGoogleUid', user.uid);
-            localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
-            if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
-            if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
-            if (btn) { btn.disabled = false; btn.style.opacity = ''; }
-            if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
-            initStreak();
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                // Mobile: redirect is reliable — popups get blocked
+                await signInWithRedirect(auth, provider);
+                // Page navigates away; result caught by handleStreakRedirectResult on return
+            } else {
+                // Desktop: popup is instant and smooth
+                var result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+                var user = result.user;
+                _streakGoogleUid = user.uid;
+                localStorage.setItem('streakGoogleUid', user.uid);
+                localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
+                if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
+                if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
+                if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+                if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
+                initStreak();
+            }
         } catch(e) {
             if (btn) { btn.disabled = false; btn.style.opacity = ''; }
             if (errEl) {
