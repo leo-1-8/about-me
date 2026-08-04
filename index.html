@@ -52515,6 +52515,7 @@ class GravSimEndpoint {
         if (textEl) textEl.textContent = 'Signing in…';
         if (errEl)  errEl.style.display = 'none';
         var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isMobile) localStorage.setItem('_streakSignInIntent', 'msgMe');
         try {
             await window.streakGoogleSignIn();
             if (isMobile) return; // page is navigating away, result handled on return
@@ -52622,6 +52623,39 @@ class GravSimEndpoint {
                 if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
                 if (typeof updateStarReviewAuthUI === 'function') updateStarReviewAuthUI();
                 initStreak();
+                // Resume the flow that triggered the redirect
+                var _intent = localStorage.getItem('_streakRedirectIntent') || 'streak';
+                localStorage.removeItem('_streakRedirectIntent');
+                if (_intent === 'msgMe') {
+                    // Restore Message Me session then open the modal
+                    var gUid  = user.uid;
+                    var gName = user.displayName || user.email || 'User';
+                    var _storedPw = localStorage.getItem('senderPassword') || '';
+                    if (_storedPw !== 'google_' + gUid) {
+                        localStorage.removeItem('userNameForMessage');
+                        localStorage.removeItem('userNameStoredAt');
+                        localStorage.removeItem('senderPassword');
+                        localStorage.removeItem('accountCreatedOnDevice');
+                        localStorage.removeItem('lastKnownSenderName');
+                        localStorage.removeItem('lastKnownSenderPasswordHash');
+                        localStorage.removeItem('lastKnownSenderDeviceId');
+                        localStorage.removeItem('lastHandledResetAt');
+                        localStorage.removeItem('authorWasReset');
+                        localStorage.removeItem('VIEW_YOUR_MESSAGE_OPEN');
+                        localStorage.removeItem('christmasUserId');
+                    }
+                    localStorage.setItem('userNameForMessage', gName.trim());
+                    localStorage.setItem('userNameStoredAt', String(Date.now()));
+                    localStorage.setItem('accountCreatedOnDevice', '1');
+                    localStorage.setItem('senderPassword', 'google_' + gUid);
+                    setTimeout(function() {
+                        if (typeof closeModal === 'function') closeModal('senderLogin');
+                        if (typeof openModal === 'function') openModal('christmasMessage');
+                        if (typeof startSenderThreadListener === 'function') {
+                            try { startSenderThreadListener(); } catch(e) {}
+                        }
+                    }, 400);
+                }
             }
         } catch(e) {
             console.warn('streakRedirectResult error:', e);
@@ -52645,6 +52679,10 @@ class GravSimEndpoint {
             provider.setCustomParameters({ prompt: 'select_account' });
             if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 // Mobile: redirect is reliable — popups get blocked
+                // Save which flow triggered this redirect so we can resume it on return
+                var _intent = localStorage.getItem('_streakSignInIntent') || 'streak';
+                localStorage.setItem('_streakRedirectIntent', _intent);
+                localStorage.removeItem('_streakSignInIntent');
                 // signInWithRedirect navigates away; any thrown error here is safe to ignore
                 try { await signInWithRedirect(auth, provider); } catch(redirectErr) { /* navigating away */ }
                 return; // result is handled by handleStreakRedirectResult on return
