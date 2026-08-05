@@ -16666,6 +16666,75 @@
                     min-width: 0;
                     max-width: 100%;
                 }
+                /* ── Leaderboard name rank colours ── */
+                @keyframes lb-rainbow-sweep {
+                    0%   { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                @keyframes lb-gold-sweep {
+                    0%   { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                @keyframes lb-bronze-sweep {
+                    0%   { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                .lb-name-rank1 {
+                    background: linear-gradient(90deg,
+                        #ff0000, #ff8800, #ffee00, #00ee00,
+                        #00ccff, #7744ff, #ff00cc, #ff0000,
+                        #ff8800, #ffee00, #00ee00, #00ccff,
+                        #7744ff, #ff00cc, #ff0000);
+                    background-size: 200% auto;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: lb-rainbow-sweep 2s linear infinite;
+                    font-weight: 800 !important;
+                }
+                .lb-name-rank2 {
+                    background: linear-gradient(90deg,
+                        #b8860b, #ffd700, #ff8c00, #daa520,
+                        #ffffff, #daa520, #ff8c00, #ffd700,
+                        #b8860b, #ffd700, #ff8c00, #daa520);
+                    background-size: 200% auto;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: lb-gold-sweep 2.5s linear infinite;
+                    font-weight: 800 !important;
+                }
+                .lb-name-rank3 {
+                    background: linear-gradient(90deg,
+                        #6b3a2a, #cd7f32, #ffd700, #ffffff,
+                        #ffd700, #cd7f32, #6b3a2a, #cd7f32,
+                        #ffd700, #ffffff, #ffd700, #cd7f32);
+                    background-size: 200% auto;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: lb-bronze-sweep 2.5s linear infinite;
+                    font-weight: 800 !important;
+                }
+                .lb-name-rank4to10 {
+                    background: linear-gradient(90deg, #f5c518 30%, #fffbe6 60%, #f5c518 80%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    font-weight: 700 !important;
+                }
+                .lb-name-rank11to30 {
+                    color: #38bdf8 !important;
+                    font-weight: 700 !important;
+                }
+                .lb-name-rank31to70 {
+                    color: #e879f9 !important;
+                    font-weight: 700 !important;
+                }
+                .lb-name-rank71to100 {
+                    color: #ffffff !important;
+                    font-weight: 600 !important;
+                }
                 .lb-divider {
                     width: 1px;
                     height: 100%;
@@ -16721,9 +16790,14 @@
 
                     function fmtTime(minutes) {
                         var mins = Math.floor(minutes || 0);
-                        var h = Math.floor(mins / 60);
+                        var totalHours = Math.floor(mins / 60);
                         var m = mins % 60;
-                        return h + "H " + m + "M";
+                        if (totalHours >= 24) {
+                            var d = Math.floor(totalHours / 24);
+                            var h = totalHours % 24;
+                            return d + 'D ' + h + 'H ' + m + 'M';
+                        }
+                        return totalHours + 'H ' + m + 'M';
                     }
 
                     function initials(name) {
@@ -16747,16 +16821,29 @@
                         return 'lb-row';
                     }
 
+                    function nameRankClass(i) {
+                        var rank = i + 1;
+                        if (rank === 1)              return 'lb-name-rank1';
+                        if (rank === 2)              return 'lb-name-rank2';
+                        if (rank === 3)              return 'lb-name-rank3';
+                        if (rank <= 10)             return 'lb-name-rank4to10';
+                        if (rank <= 30)             return 'lb-name-rank11to30';
+                        if (rank <= 70)             return 'lb-name-rank31to70';
+                        if (rank <= 100)            return 'lb-name-rank71to100';
+                        return '';
+                    }
+
                     function buildRow(entry, i, myUid) {
                         var rk = rankLabel(i);
                         var isMe = myUid && entry.uid === myUid && !isGuestMode();
                         var cls = rowClass(i) + (isMe ? ' lb-me' : '');
+                        var nCls = nameRankClass(i);
                         var avatarHTML = entry.photo
                             ? '<img class="lb-avatar" src="' + entry.photo + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\';" /><div class="lb-avatar-fallback" style="display:none;">' + initials(entry.name) + '</div>'
                             : '<div class="lb-avatar-fallback">' + initials(entry.name) + '</div>';
                         return '<div class="' + cls + '">'
                             + '<div class="lb-rank ' + rk.cls + '">' + rk.label + '</div>'
-                            + '<div class="lb-player">' + avatarHTML + '<span class="lb-name">' + (entry.name || 'Anonymous') + (isMe ? ' <span style="color:#34d399;font-size:10px;font-weight:700;">(You)</span>' : '') + '</span></div>'
+                            + '<div class="lb-player">' + avatarHTML + '<span class="lb-name ' + nCls + '">' + (entry.name || 'Anonymous') + (isMe ? ' <span style="color:#34d399;font-size:10px;font-weight:700;-webkit-text-fill-color:#34d399;">(You)</span>' : '') + '</span></div>'
                             + '<div class="lb-divider"></div>'
                             + '<div class="lb-stat"><div class="lb-stat-val lb-streak-val">' + (entry.longest || 0) + '</div></div>'
                             + '<div class="lb-divider"></div>'
@@ -16839,6 +16926,22 @@
                             renderLeaderboard([], myUid);
                         }
                     }
+
+                    // Force re-render of leaderboard with a specific UID (pass null for guest mode)
+                    window._lbForceRerender = function(uid) {
+                        var myUid = (uid !== undefined) ? uid : (isGuestMode() ? null : (localStorage.getItem('streakGoogleUid') || null));
+                        var list = document.getElementById('leaderboardList');
+                        if (!list) return;
+                        // Re-render existing rows by re-reading current innerHTML entries isn't possible,
+                        // so detach the old listener and reload fresh
+                        if (window._lbRealtimeUnsub) {
+                            try { window._lbRealtimeUnsub(); } catch(e) {}
+                            window._lbRealtimeUnsub = null;
+                        }
+                        if (typeof window.loadLeaderboardFromFirebase === 'function') {
+                            window.loadLeaderboardFromFirebase();
+                        }
+                    };
 
                     // Called after streak renders — also write name/photo into the streak node
                     window._lbRefresh = async function() {
@@ -18010,6 +18113,8 @@ window.closeSettings = closeSettings;
             const settingsLangMenu = document.getElementById('settingsLangMenu');
             const settingsLangTriggerLabel = document.getElementById('settingsLangTriggerLabel');
             let welcomeIntroFlowStarted = false;
+            window._resetWelcomeFlow = function() { welcomeIntroFlowStarted = false; };
+            window._welcomeShownThisSession = false;
 
             function beginWelcomeIntroFlow() {
                 if (welcomeIntroFlowStarted) return;
@@ -18455,6 +18560,8 @@ window.closeSettings = closeSettings;
             var newWelcomeCountdownTimer = null;
 
             function showNewWelcome() {
+                if (window._welcomeShownThisSession) return;
+                window._welcomeShownThisSession = true;
                 var overlay = document.getElementById('newWelcomeOverlay');
                 if (!overlay) return;
                 overlay.style.display = 'flex';
@@ -37566,7 +37673,7 @@ function resetCloseCustomDateTime(){
 <!-- ── LOGIN VISITS MODAL ── -->
 <div id="loginVisitsModal" style="display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center;">
     <div id="loginVisitsModalBackdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);" onclick="closeLoginVisitsModal()"></div>
-    <div id="loginVisitsModalBox" style="position:relative; z-index:1; min-width:220px; padding:28px 32px 24px; border-radius:16px; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+    <div id="loginVisitsModalBox" style="position:relative; z-index:2; min-width:220px; padding:28px 32px 24px; border-radius:16px; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
         <div style="font-size:13px; font-weight:900; letter-spacing:2px; margin-bottom:18px;">VISITS</div>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px;">
             <span style="font-size:11px; font-weight:700; letter-spacing:1px; opacity:0.6;">VISITING NOW:</span>
@@ -37576,7 +37683,7 @@ function resetCloseCustomDateTime(){
             <span style="font-size:11px; font-weight:700; letter-spacing:1px; opacity:0.6;">TOTAL VISITS:</span>
             <span id="loginVisitsTotalVal" style="font-size:22px; font-weight:900; letter-spacing:2px;">—</span>
         </div>
-        <button onclick="closeLoginVisitsModal()" style="width:100%; padding:9px 0; border-radius:8px; border:none; background:#87CEEB; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
+        <button onclick="event.stopPropagation(); closeLoginVisitsModal();" style="width:100%; padding:9px 0; border-radius:8px; border:none; background:#87CEEB; color:#111; font-size:13px; font-weight:800; cursor:pointer; letter-spacing:1px;">OK</button>
     </div>
 </div>
 
@@ -37584,15 +37691,19 @@ function resetCloseCustomDateTime(){
 function openLoginVisitsModal() {
     var modal = document.getElementById('loginVisitsModal');
     if (!modal) return;
-    // Move to body to escape any overflow:hidden or stacking context issues
     if (modal.parentNode !== document.body) document.body.appendChild(modal);
     modal.style.display = 'flex';
-    modal.style.zIndex = '999999999';
+    modal.style.zIndex = '1000000010';
+    modal.style.pointerEvents = 'auto';
+    var loginModal = document.getElementById('postIntroLoginModal');
+    if (loginModal) loginModal.style.pointerEvents = 'none';
     applyLoginVisitsModalTheme();
 }
 function closeLoginVisitsModal() {
     var modal = document.getElementById('loginVisitsModal');
     if (modal) modal.style.display = 'none';
+    var loginModal = document.getElementById('postIntroLoginModal');
+    if (loginModal) loginModal.style.pointerEvents = 'auto';
 }
 function applyLoginVisitsModalTheme() {
     var box = document.getElementById('loginVisitsModalBox');
@@ -52018,9 +52129,14 @@ class GravSimEndpoint {
 
     function fmtTime(mins) {
         var m = Math.floor(mins);
-        var h = Math.floor(m / 60);
+        var totalHours = Math.floor(m / 60);
         var rm = m % 60;
-        return h + 'h ' + rm + 'm';
+        if (totalHours >= 24) {
+            var d = Math.floor(totalHours / 24);
+            var h = totalHours % 24;
+            return d + 'd ' + h + 'h ' + rm + 'm';
+        }
+        return totalHours + 'h ' + rm + 'm';
     }
 
     // ── Streak fire color system ─────────────────────────────────────────────
@@ -52059,20 +52175,43 @@ class GravSimEndpoint {
                 0%,100% { opacity:0; transform: scale(0.5) translateY(0); }
                 50%     { opacity:1; transform: scale(1) translateY(-6px); }
             }
-            @keyframes streakTextRainbow {
-                0%   { color: #FF8A00; }
-                16%  { color: #FF4444; }
-                33%  { color: #FFC107; }
-                50%  { color: #42A5F5; }
-                66%  { color: #8E24AA; }
-                83%  { color: #00C853; }
-                100% { color: #FF8A00; }
+            @keyframes streakRainbowSweep {
+                0%   { background-position: 0% 50%; }
+                100% { background-position: 200% 50%; }
             }
-            .streak-fire-rainbow { animation: streakHueRainbow 2s linear infinite; }
+            @keyframes streakFireGradShift {
+                0%   { x: -100%; }
+                100% { x: 100%; }
+            }
+            .streak-fire-rainbow-wrap { display: inline-flex; }
             .streak-fire-legendary { animation: streakHueLegendary 1.5s linear infinite; }
             .streak-sparkle { animation: streakSparkle 1.2s ease-in-out infinite; }
-            .streak-text-rainbow { animation: streakTextRainbow 2s linear infinite; }
-            .streak-text-legendary { animation: streakTextRainbow 1.5s linear infinite; }
+            .streak-text-rainbow {
+                background: linear-gradient(90deg,
+                    #ff0000, #ff8800, #ffee00, #00ee00,
+                    #00ccff, #7744ff, #ff00cc, #ff0000,
+                    #ff8800, #ffee00, #00ee00, #00ccff,
+                    #7744ff, #ff00cc, #ff0000);
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent !important;
+                animation: streakRainbowSweep 5s linear infinite;
+            }
+            .streak-text-legendary {
+                background: linear-gradient(90deg,
+                    #ff0000, #ff8800, #ffee00, #00ee00,
+                    #00ccff, #7744ff, #ff00cc, #ff0000,
+                    #ff8800, #ffee00, #00ee00, #00ccff,
+                    #7744ff, #ff00cc, #ff0000);
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent !important;
+                animation: streakRainbowSweep 5s linear infinite;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -52092,8 +52231,25 @@ class GravSimEndpoint {
 
         if (fc.type === 'legendary') {
             injectFireStyles();
+            var lgid = 'lfg' + (++_fireGradId);
+            var lfid = 'lff' + lgid;
             return '<svg class="streak-fire-legendary" width="44" height="56" viewBox="0 0 28 40" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                + '<path d="M14 2C14 2 18 8 18 13C18 13 21 10 20 6C20 6 26 11 26 19C26 25.627 20.627 31 14 31C7.373 31 2 25.627 2 19C2 13 7 8 8 6C8 6 8 10 10 12C10 12 10 6 14 2Z" fill="#FF8A00"/>'
+                + '<defs>'
+                + '<linearGradient id="' + lgid + '" x1="0%" y1="0%" x2="100%" y2="0%">'
+                + '<stop offset="0%"   stop-color="#ff0000"><animate attributeName="stop-color" values="#ff0000;#ff8800;#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="25%"  stop-color="#ff8800"><animate attributeName="stop-color" values="#ff8800;#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="50%"  stop-color="#ffee00"><animate attributeName="stop-color" values="#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="75%"  stop-color="#00ccff"><animate attributeName="stop-color" values="#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00;#00ee00;#00ccff" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="100%" stop-color="#7744ff"><animate attributeName="stop-color" values="#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00;#00ee00;#00ccff;#7744ff" dur="4s" repeatCount="indefinite"/></stop>'
+                + '</linearGradient>'
+                + '<filter id="' + lfid + '" x="-40%" y="-40%" width="180%" height="180%">'
+                + '<feGaussianBlur stdDeviation="2.5" result="blur"/>'
+                + '<feFlood flood-color="#FF8A00" flood-opacity="0.8" result="color"><animate attributeName="flood-color" values="#FF8A00;#ff00cc;#00ccff;#00ee00;#FF8A00" dur="4s" repeatCount="indefinite"/></feFlood>'
+                + '<feComposite in="color" in2="blur" operator="in" result="glow"/>'
+                + '<feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>'
+                + '</filter>'
+                + '</defs>'
+                + '<path d="M14 2C14 2 18 8 18 13C18 13 21 10 20 6C20 6 26 11 26 19C26 25.627 20.627 31 14 31C7.373 31 2 25.627 2 19C2 13 7 8 8 6C8 6 8 10 10 12C10 12 10 6 14 2Z" fill="url(#' + lgid + ')" filter="url(#' + lfid + ')"/>'
                 + '<path d="M14 16C14 16 16 19 16 21.5C16 22.881 15.105 24 14 24C12.895 24 12 22.881 12 21.5C12 19 14 16 14 16Z" fill="#FFD740"/>'
                 + '<circle class="streak-sparkle" cx="7" cy="8" r="1.5" fill="#FFF" style="animation-delay:0s"/>'
                 + '<circle class="streak-sparkle" cx="21" cy="6" r="1.2" fill="#FFF" style="animation-delay:0.4s"/>'
@@ -52103,8 +52259,18 @@ class GravSimEndpoint {
 
         if (fc.type === 'rainbow') {
             injectFireStyles();
-            return '<svg class="streak-fire-rainbow" width="44" height="56" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                + '<path d="M14 2C14 2 18 8 18 13C18 13 21 10 20 6C20 6 26 11 26 19C26 25.627 20.627 31 14 31C7.373 31 2 25.627 2 19C2 13 7 8 8 6C8 6 8 10 10 12C10 12 10 6 14 2Z" fill="#FF8A00"/>'
+            var rgid = 'rfg' + (++_fireGradId);
+            return '<svg width="44" height="56" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                + '<defs>'
+                + '<linearGradient id="' + rgid + '" x1="0%" y1="0%" x2="100%" y2="0%">'
+                + '<stop offset="0%"   stop-color="#ff0000"><animate attributeName="stop-color" values="#ff0000;#ff8800;#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="25%"  stop-color="#ff8800"><animate attributeName="stop-color" values="#ff8800;#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="50%"  stop-color="#ffee00"><animate attributeName="stop-color" values="#ffee00;#00ee00;#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="75%"  stop-color="#00ccff"><animate attributeName="stop-color" values="#00ccff;#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00;#00ee00;#00ccff" dur="4s" repeatCount="indefinite"/></stop>'
+                + '<stop offset="100%" stop-color="#7744ff"><animate attributeName="stop-color" values="#7744ff;#ff00cc;#ff0000;#ff8800;#ffee00;#00ee00;#00ccff;#7744ff" dur="4s" repeatCount="indefinite"/></stop>'
+                + '</linearGradient>'
+                + '</defs>'
+                + '<path d="M14 2C14 2 18 8 18 13C18 13 21 10 20 6C20 6 26 11 26 19C26 25.627 20.627 31 14 31C7.373 31 2 25.627 2 19C2 13 7 8 8 6C8 6 8 10 10 12C10 12 10 6 14 2Z" fill="url(#' + rgid + ')"/>'
                 + '<path d="M14 16C14 16 16 19 16 21.5C16 22.881 15.105 24 14 24C12.895 24 12 22.881 12 21.5C12 19 14 16 14 16Z" fill="#FFD740"/>'
                 + '</svg>';
         }
@@ -52173,11 +52339,16 @@ class GravSimEndpoint {
             var fc2 = getStreakFireColor(current);
             countEl.classList.remove('streak-text-rainbow', 'streak-text-legendary');
             countEl.style.color = '';
+            countEl.style.webkitTextFillColor = '';
             if (fc2.type === 'legendary') {
                 injectFireStyles();
+                countEl.style.color = 'transparent';
+                countEl.style.webkitTextFillColor = 'transparent';
                 countEl.classList.add('streak-text-legendary');
             } else if (fc2.type === 'rainbow') {
                 injectFireStyles();
+                countEl.style.color = 'transparent';
+                countEl.style.webkitTextFillColor = 'transparent';
                 countEl.classList.add('streak-text-rainbow');
             } else {
                 countEl.style.color = fc2.body;
@@ -52257,17 +52428,22 @@ class GravSimEndpoint {
             if (!el) return;
             el.classList.remove('streak-text-rainbow', 'streak-text-legendary');
             el.style.color = '';
+            el.style.webkitTextFillColor = '';
         });
         if (current >= 365) {
             injectFireStyles();
             rainbowEls.forEach(function(el) {
                 if (!el) return;
+                el.style.color = 'transparent';
+                el.style.webkitTextFillColor = 'transparent';
                 el.classList.add('streak-text-legendary');
             });
         } else if (current >= 300) {
             injectFireStyles();
             rainbowEls.forEach(function(el) {
                 if (!el) return;
+                el.style.color = 'transparent';
+                el.style.webkitTextFillColor = 'transparent';
                 el.classList.add('streak-text-rainbow');
             });
         } else {
@@ -52838,7 +53014,9 @@ class GravSimEndpoint {
         if (_timeTrackInterval) { clearInterval(_timeTrackInterval); _timeTrackInterval = null; }
         renderStreakUI({});
         // Reload leaderboard without UID so (You) disappears
-        if (typeof window.loadLeaderboardFromFirebase === 'function') {
+        if (typeof window._lbForceRerender === 'function') {
+            try { window._lbForceRerender(); } catch(e) {}
+        } else if (typeof window.loadLeaderboardFromFirebase === 'function') {
             try { window.loadLeaderboardFromFirebase(); } catch(e) {}
         }
         // Switch Firebase presence from HEEKO_tabXXX → guest_XXXX
@@ -52893,6 +53071,9 @@ class GravSimEndpoint {
                 btn.disabled = true;
                 btn.style.cursor = 'not-allowed';
                 btn.style.opacity = '0.85';
+                // Disable Google button while guest sign-in is in progress
+                var googleBtn = document.getElementById('postIntroGoogleBtn');
+                if (googleBtn) { googleBtn.disabled = true; googleBtn.style.opacity = '0.4'; googleBtn.style.cursor = 'not-allowed'; }
                 // Show loading state
                 btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="animation:postIntroSpin 0.8s linear infinite;flex-shrink:0;"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/><path d="M12 2a10 10 0 0 1 10 10" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/></svg> Signing in...';
                 // Random delay 5-10 seconds
@@ -53026,6 +53207,17 @@ class GravSimEndpoint {
         if (spinEl) spinEl.style.display = 'none';
         if (textEl) textEl.textContent = 'Continue with Google';
         if (errEl)  errEl.style.display = 'none';
+        // Re-enable guest button in case it was disabled during a previous sign-in attempt
+        var guestBtn = document.getElementById('postIntroGuestBtn');
+        if (guestBtn) {
+            guestBtn.disabled = false;
+            guestBtn.style.opacity = '1';
+            guestBtn.style.cursor = 'pointer';
+            guestBtn.style.background = 'transparent';
+            guestBtn.style.borderColor = 'rgba(255,255,255,0.18)';
+            guestBtn.style.color = 'rgba(255,255,255,0.65)';
+            guestBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Continue as Guest';
+        }
         // Show login modal immediately, then welcome message after
         var loginModal = document.getElementById('postIntroLoginModal');
         if (loginModal) loginModal.style.display = 'flex';
@@ -53037,6 +53229,10 @@ class GravSimEndpoint {
         var spinEl    = document.getElementById('postIntroGoogleBtnSpinner');
         var textEl    = document.getElementById('postIntroGoogleBtnText');
         var errEl     = document.getElementById('postIntroLoginError');
+        var guestBtn  = document.getElementById('postIntroGuestBtn');
+
+        // Disable guest button while Google sign-in is in progress
+        if (guestBtn) { guestBtn.disabled = true; guestBtn.style.opacity = '0.4'; guestBtn.style.cursor = 'not-allowed'; }
 
         // Set loading state
         btn.disabled = true;
@@ -53085,6 +53281,8 @@ class GravSimEndpoint {
                 if (bc2) { bc2.style.display = ''; bc2.style.visibility = 'visible'; bc2.style.opacity = '1'; }
             }, 900);
         } catch(e) {
+            // Restore guest button
+            if (guestBtn) { guestBtn.disabled = false; guestBtn.style.opacity = '1'; guestBtn.style.cursor = 'pointer'; }
             // Restore button on failure
             btn.disabled = false;
             btn.style.opacity = '';
@@ -53426,11 +53624,7 @@ class GravSimEndpoint {
         if (bc2) { bc2.style.display = ''; bc2.style.visibility = 'visible'; bc2.style.opacity = '1'; }
         // Show welcome message immediately — no delay
         if (typeof window.showNewWelcome === 'function') {
-            if (!isGuestMode()) {
-                window.showNewWelcome();
-            } else if (typeof window.closeNewWelcome === 'function') {
-                window.closeNewWelcome();
-            }
+            window.showNewWelcome();
         }
     }
 
@@ -53601,6 +53795,14 @@ class GravSimEndpoint {
             guestBtn.style.borderColor = 'rgba(255,255,255,0.18)';
             guestBtn.style.color = 'rgba(255,255,255,0.65)';
             guestBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Continue as Guest';
+        }
+
+        // Re-enable the Google button
+        var googleBtn = document.getElementById('postIntroGoogleBtn');
+        if (googleBtn) {
+            googleBtn.disabled = false;
+            googleBtn.style.opacity = '';
+            googleBtn.style.cursor = '';
         }
 
         // Show login modal
