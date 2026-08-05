@@ -701,9 +701,10 @@
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                height: 100dvh !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
                 backdrop-filter: blur(18px) !important;
                 -webkit-backdrop-filter: blur(18px) !important;
                 background: rgba(2, 8, 18, 0.88) !important;
@@ -716,12 +717,9 @@
                 pointer-events: auto !important;
             }
             .settings-card {
-                width: 100vw !important;
-                width: 100dvw !important;
-                height: 100vh !important;
-                height: 100dvh !important;
-                max-height: 100vh !important;
-                max-height: 100dvh !important;
+                width: 100% !important;
+                height: 100% !important;
+                max-height: 100% !important;
                 border-radius: 0 !important;
                 border: none !important;
                 overflow-y: auto !important;
@@ -732,6 +730,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 14px 14px 12px 16px;
+            padding-top: max(14px, env(safe-area-inset-top, 14px));
             border-bottom: 1px solid rgba(139, 191, 255, 0.2);
             flex-shrink: 0;
         }
