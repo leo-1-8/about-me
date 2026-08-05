@@ -12446,7 +12446,7 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(56px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(16px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0;">RATE US!</span>
@@ -12463,16 +12463,7 @@
                 </div>
             </div>
         </div>
-        <!-- ANSWER THIS FORM — horizontally centered, higher so not hidden by browser nav -->
-        <div class="form-link-below" id="formLinkBelow" style="display: block !important; position:fixed !important; left:50% !important; top:auto !important; transform:translateX(-50%) !important; bottom:calc(18px + env(safe-area-inset-bottom, 0px) + var(--vv-bottom-offset, 0px)) !important; margin:0 !important; padding:0 12px !important; width:auto !important; max-width:calc(100vw - 24px) !important; box-sizing:border-box !important; z-index:10006 !important; white-space:nowrap !important;">
-            <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSepwgBcRWKOAWcpfeGn-Jb2_nK6MYzGJtufxtD5QI1iA2-1IA/viewform?usp=dialog"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="color:#2e7d32; font-weight:700; font-style:italic; text-decoration:none; cursor:pointer; display:inline-block;"
-                data-i18n="form_answer"
-            >ANSWER THIS FORM</a>
-        </div>
+
     </div>
 
     <!-- Post-update notice (shown after loading, before welcome intro; only OK closes) -->
@@ -16755,7 +16746,7 @@
                     <!-- Streak count -->
                     <div style="text-align:center;margin-bottom:10px;">
                         <div id="streakCountDisplay" style="font-size:48px;font-weight:800;color:#ff6b2b;letter-spacing:-1px;line-height:1;font-family:'Poppins',sans-serif;">0</div>
-                        <div id="streakDayLabel" style="font-size:12px;font-weight:700;color:rgba(223,235,255,0.7);letter-spacing:2px;margin-top:4px;font-family:'Poppins',sans-serif;">DAY STREAK</div>
+                        <div id="streakDayLabel" style="font-size:12px;font-weight:700;color:rgba(223,235,255,0.7);letter-spacing:2px;margin-top:4px;font-family:'Poppins',sans-serif;">DAYS STREAK</div>
                     </div>
 
                     <!-- Last 7 days circles -->
@@ -52167,7 +52158,7 @@ class GravSimEndpoint {
             });
         } else {
             // Restore normal colors
-            if (curEl) curEl.style.color = '#ffffff';
+            if (curEl) curEl.style.color = '#ff8c00';
             if (lonEl) lonEl.style.color = '#fbbf24';
             if (timeEl) timeEl.style.color = '#60a5fa';
             if (visEl) visEl.style.color = '#34d399';
