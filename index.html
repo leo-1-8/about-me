@@ -150,7 +150,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 999999995;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
         }
 
@@ -15654,7 +15654,7 @@
     <!-- Log Out Confirmation Modal -->
     <div class="modal-overlay" id="logoutConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:99999; justify-content:center; align-items:center; pointer-events:auto !important;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.6);">
-            <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE YOU WANT TO LOG OUT?</div>
+            <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:20px;">ARE YOU SURE YOU WANT TO SIGN OUT?</div>
             <div id="logoutCountdownDisplay" style="font-family:'JetBrains Mono','Consolas',monospace; font-size:28px; font-weight:700; margin-bottom:20px; min-height:40px; transition:color 0.3s;"></div>
             <div style="display:flex; gap:12px;">
                 <button type="button" id="logoutCancelBtn" style="flex:1; padding:11px; border:none; border-radius:8px; background:#6b7280; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">CANCEL</button>
@@ -16321,20 +16321,22 @@
             </div>
             <div class="settings-card-body">
                 <!-- User profile row -->
-                <div style="font-size:11px; font-weight:700; color:rgba(150,180,255,0.6); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;">Your Account <button type="button" class="settings-warning-btn" id="accountNoticeBtn" aria-label="Google Account Notice">!</button> <span class="new-badge">[NEW]</span></div>
+                <div style="font-size:11px; font-weight:700; color:rgba(150,180,255,0.6); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;">Your Account <button type="button" class="settings-warning-btn" id="accountNoticeBtn" aria-label="Google Account Notice">!</button> <span class="new-badge">[NEW]</span><span id="settingsGuestBadge" style="display:none;"></span></div>
                 <div id="settingsUserRow" style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; margin-bottom:16px;">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <div id="settingsUserAvatar" style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; color:#fff; flex-shrink:0; overflow:hidden;">
                             <img id="settingsUserAvatarImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none; border-radius:50%;">
-                            <span id="settingsUserAvatarInitial">?</span>
+                            <span id="settingsUserAvatarInitial">?</span><span id="settingsGuestAvatarIcon" style="display:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
                         </div>
                         <div>
-                            <div id="settingsUserName" style="font-size:13px; font-weight:700; color:rgba(223,235,255,0.9); letter-spacing:0.2px;">Not signed in</div>
+                            <div id="settingsUserName" style="font-size:13px; font-weight:700; color:rgba(223,235,255,0.9); letter-spacing:0.2px;">Guest User</div>
                             <div id="settingsUserEmail" style="font-size:11px; font-weight:500; color:rgba(180,210,255,0.55); letter-spacing:0.2px; margin-top:1px; display:none;"></div>
                         </div>
                     </div>
                     <button type="button" id="settingsUserSignOutBtn" onclick="showSignOutConfirmModal()" style="display:none; font-size:10px; font-weight:700; color:rgba(255,100,100,0.85); background:none; border:1px solid rgba(255,100,100,0.3); border-radius:6px; padding:4px 10px; cursor:pointer; font-family:inherit; letter-spacing:0.5px; white-space:nowrap;">SIGN OUT</button>
-                    <button type="button" id="settingsUserSignInBtn" onclick="streakGoogleSignIn()" style="font-size:10px; font-weight:700; color:rgba(100,180,255,0.9); background:none; border:1px solid rgba(100,180,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer; font-family:inherit; letter-spacing:0.5px; white-space:nowrap;">SIGN IN</button>
+                    <div id="settingsUserSignInBtn" style="display:flex; flex-direction:column; gap:5px; align-items:flex-end;">
+                        <button type="button" id="settingsGuestExitBtn" onclick="showExitGuestConfirmModal()" style="display:none; font-size:9px; font-weight:700; color:rgba(255,200,80,0.9); background:none; border:1px solid rgba(255,200,80,0.3); border-radius:6px; padding:3px 8px; cursor:pointer; font-family:inherit; letter-spacing:0.5px; white-space:nowrap;">EXIT GUEST</button>
+                    </div>
                 </div>
                 <div class="settings-row-label" style="display:inline-flex; align-items:center; gap:6px;"><span data-i18n="settings_whats_new">What's New</span><span class="whats-new-blink-dot"></span></div>
                 <button type="button" class="settings-open-btn" id="settingsOpenUpdatesBtn" data-i18n="settings_open">Open</button>
@@ -16453,7 +16455,7 @@
                 </div>
 
                 <!-- Star Rating -->
-                <div class="star-rating-wrap">
+                <div class="star-rating-wrap" id="starRatingWrap">
                     <div id="starRatingLabelRow" style="width:100%;text-align:left;font-size:13px;font-weight:700;letter-spacing:0.2px;color:rgba(223,235,255,0.9);margin-bottom:-2px;display:flex;align-items:center;gap:6px;"><span data-i18n="star_rating_label">PLEASE LEAVE A STAR RATING</span> <button type="button" class="settings-warning-btn" id="starRatingNoteBtn" aria-label="Star rating note">!</button></div>
                     <div style="width:100%;text-align:left;font-size:10px;color:#ff8a8a;margin-bottom:6px;margin-top:0px;font-style:italic;">( Please restart/refresh the page if the ratings doesn't appear. )</div>
                     <div class="star-rating-stars" id="starRatingRow">
@@ -16491,12 +16493,6 @@
                             <div class="star-progress-count" id="spc1">0</div>
                         </div>
                         <div id="starReviewNotLoggedIn" style="display:none;width:100%;text-align:center;padding:14px 0 10px;">
-                            <div style="color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">Sign in with Google to leave a review</div>
-                            <button type="button" id="starReviewGoogleBtn" onclick="starReviewGoogleSignIn()" style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;border-radius:8px;border:none;background:#fff;color:#333;font-size:13px;font-weight:700;letter-spacing:0.3px;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,0.3);">
-                                <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                                Sign in with Google
-                            </button>
-                            <div id="starReviewGoogleError" style="display:none;margin-top:8px;font-size:11px;color:#ff8a8a;font-weight:600;"></div>
                         </div>
                         <div id="starReviewLoggedInUser" style="display:none;width:100%;margin-top:8px;margin-bottom:2px;font-size:11px;font-weight:700;color:rgba(100,180,255,0.85);letter-spacing:0.3px;"></div>
                         <textarea id="starReviewBox" placeholder="Write a review..." maxlength="150" style="display:none;width:100%;margin-top:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:inherit;font-size:12px;font-family:inherit;resize:none;outline:none;box-sizing:border-box;min-height:64px;" rows="3"></textarea>
@@ -16521,6 +16517,9 @@
 
                 <!-- Not logged in state -->
                 <div id="streakNotLoggedIn" style="width:100%;text-align:center;padding:14px 0 12px;display:block;">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 0 4px;">
+                        <div style="font-size:11px;font-weight:800;color:rgba(255,200,80,0.55);letter-spacing:2px;font-family:'Poppins',sans-serif;">STREAK UNAVAILABLE</div>
+                    </div>
                     <div id="streakGoogleSignInError" style="display:none;margin-top:8px;font-size:11px;color:#ff8a8a;font-weight:600;"></div>
                 </div>
 
@@ -16750,7 +16749,7 @@
 
                     function buildRow(entry, i, myUid) {
                         var rk = rankLabel(i);
-                        var isMe = myUid && entry.uid === myUid;
+                        var isMe = myUid && entry.uid === myUid && !isGuestMode();
                         var cls = rowClass(i) + (isMe ? ' lb-me' : '');
                         var avatarHTML = entry.photo
                             ? '<img class="lb-avatar" src="' + entry.photo + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\';" /><div class="lb-avatar-fallback" style="display:none;">' + initials(entry.name) + '</div>'
@@ -16789,7 +16788,7 @@
                     }
 
                     window.loadLeaderboardFromFirebase = async function loadLeaderboardFromFirebase() {
-                        var myUid = localStorage.getItem('streakGoogleUid') || null;
+                        var myUid = isGuestMode() ? null : (localStorage.getItem('streakGoogleUid') || null);
                         try {
                             var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
                             var { getDatabase, ref, onValue } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
@@ -52297,6 +52296,7 @@ class GravSimEndpoint {
     var _streakAuthReady = false; // set to true once onAuthStateChanged fires at least once
 
     var _streakInitLocks = {}; // per-user mutex to prevent concurrent initStreak races
+    var _streakVisitCounted = {}; // per-user guard: only count one visit per page load
     async function initStreak(confirmedUid) {
         // If a confirmedUid is passed (from onAuthStateChanged), always use it
         // Otherwise fall back to cached localStorage UID
@@ -52359,11 +52359,15 @@ class GravSimEndpoint {
             var _lbName = localStorage.getItem("streakGoogleName") || "";
             var _lbPhoto = localStorage.getItem("streakGooglePhoto") || "";
             var _lbUid = _streakGoogleUid || "";
-            var _lbUpdate = { totalVisits: increment(1) };
+            var _lbUpdate = {};
+            if (!_streakVisitCounted[userId]) {
+                _streakVisitCounted[userId] = true;
+                _lbUpdate.totalVisits = increment(1);
+            }
             if (_lbUid) _lbUpdate.googleUid = _lbUid;
             if (_lbName) _lbUpdate.googleName = _lbName;
             if (_lbPhoto) _lbUpdate.googlePhoto = _lbPhoto;
-            await update(streakRef, _lbUpdate);
+            if (Object.keys(_lbUpdate).length > 0) await update(streakRef, _lbUpdate);
 
             // Already visited today — streak unchanged, re-read fresh data and render
             if (visitDays[today]) {
@@ -52833,6 +52837,14 @@ class GravSimEndpoint {
         _streakGoogleUid = null;
         if (_timeTrackInterval) { clearInterval(_timeTrackInterval); _timeTrackInterval = null; }
         renderStreakUI({});
+        // Reload leaderboard without UID so (You) disappears
+        if (typeof window.loadLeaderboardFromFirebase === 'function') {
+            try { window.loadLeaderboardFromFirebase(); } catch(e) {}
+        }
+        // Switch Firebase presence from HEEKO_tabXXX → guest_XXXX
+        if (typeof window._refreshPresenceKey === 'function') {
+            try { window._refreshPresenceKey(); } catch(e) {}
+        }
     };
 
 })();
@@ -52855,11 +52867,47 @@ class GravSimEndpoint {
                 </span>
                 <span id="postIntroGoogleBtnText">Continue with Google</span>
             </button>
-            <!-- NOTICE link -->
-            <div style="margin-top:12px; text-align:left;">
+            <!-- NOTICE link + error — above the divider -->
+            <div style="margin-top:10px; text-align:left;">
                 <button type="button" onclick="event.stopPropagation(); openSignInNotice();" style="background:none; border:none; padding:0; cursor:pointer; font-family:inherit; font-size:11px; font-weight:700; color:rgba(100,180,255,0.75); letter-spacing:0.5px; text-decoration:underline; text-underline-offset:2px;">Why Google Sign In?</button>
             </div>
-            <div id="postIntroLoginError" style="display:none; margin-top:14px; font-size:12px; color:#ff6b6b; font-weight:500;"></div>
+            <div id="postIntroLoginError" style="display:none; margin-top:10px; font-size:12px; color:#ff6b6b; font-weight:500;"></div>
+            <!-- OR divider -->
+            <div style="display:flex; align-items:center; gap:10px; margin-top:14px; margin-bottom:10px;">
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.1);"></div>
+                <span style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.3); letter-spacing:1px;">OR</span>
+                <div style="flex:1; height:1px; background:rgba(255,255,255,0.1);"></div>
+            </div>
+            <!-- Guest note -->
+            <div style="margin-bottom:8px; text-align:center; font-size:11px; color:rgba(255,255,255,0.45); font-weight:500; letter-spacing:0.2px;">Browse as a Guest with limited access.</div>
+            <!-- Continue as Guest button -->
+            <button id="postIntroGuestBtn" type="button" onclick="event.stopPropagation(); handleGuestBtnClick(this);"
+                style="width:100%; margin-top:0; padding:12px 16px; border-radius:9px; border:1px solid rgba(255,255,255,0.18); background:transparent; color:rgba(255,255,255,0.65); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s, color 0.2s; letter-spacing:0.3px;"
+                onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.9)';"
+                onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.65)';">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                Continue as Guest
+            </button>
+            <script>
+            function handleGuestBtnClick(btn) {
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+                btn.style.opacity = '0.85';
+                // Show loading state
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="animation:postIntroSpin 0.8s linear infinite;flex-shrink:0;"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/><path d="M12 2a10 10 0 0 1 10 10" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/></svg> Signing in...';
+                // Random delay 5-10 seconds
+                var delay = (Math.floor(Math.random() * 6) + 5) * 1000;
+                setTimeout(function() {
+                    // Show verified state
+                    btn.style.background = 'rgba(52,211,153,0.12)';
+                    btn.style.borderColor = 'rgba(52,211,153,0.5)';
+                    btn.style.color = '#34d399';
+                    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Verified';
+                    // Enter guest mode after short pause
+                    setTimeout(function() { enterGuestMode(); }, 900);
+                }, delay);
+            }
+            </script>
             <style>@keyframes postIntroSpin { to { transform: rotate(360deg); } }</style>
         </div>
     </div>
@@ -52941,7 +52989,7 @@ class GravSimEndpoint {
             if (signOutBtn) signOutBtn.style.display = 'block';
             if (signInBtn) signInBtn.style.display = 'none';
         } else {
-            nameEl.textContent = 'Not signed in';
+            nameEl.textContent = 'Guest User';
             if (emailEl) { emailEl.textContent = ''; emailEl.style.display = 'none'; }
             if (avatarInitial) avatarInitial.textContent = '?';
             if (avatarImg) avatarImg.style.display = 'none';
@@ -53190,7 +53238,8 @@ class GravSimEndpoint {
     <!-- ── SIGN OUT CONFIRM MODAL ── -->
     <div id="signOutConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.78); z-index:999999999; justify-content:center; align-items:center; pointer-events:auto;">
         <div style="background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:32px 28px 24px; max-width:340px; width:90%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.65);">
-            <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:18px;">ARE YOU SURE YOU WANT TO LOG OUT?</div>
+            <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,180,40,0.12);border:1.5px solid rgba(255,180,40,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,200,80,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+            <div style="font-size:15px; font-weight:700; color:#ffffff; letter-spacing:0.5px; line-height:1.6; margin-bottom:18px;">ARE YOU SURE YOU WANT TO SIGN OUT?</div>
             <div id="signOutCountdownText" style="font-size:13px; font-weight:600; color:rgba(150,180,255,0.75); margin-bottom:18px; min-height:20px;"></div>
             <div style="display:flex; gap:12px;">
                 <button type="button" id="signOutNoBtn" onclick="hideSignOutConfirmModal()" style="flex:1; padding:11px; border:none; border-radius:8px; background:#6b7280; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">NO</button>
@@ -53255,5 +53304,458 @@ class GravSimEndpoint {
     })();
     </script>
     <!-- ── END SIGN OUT CONFIRM MODAL ── -->
+
+    <!-- ══════════════════════════════════════════════════════
+         GUEST MODE SYSTEM
+    ══════════════════════════════════════════════════════ -->
+
+    <!-- Guest Lock Prompt Modal -->
+    <div id="guestLockModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:999999997; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;" onclick="event.stopPropagation();">
+        <div style="background:#0f1729; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:28px 24px 24px; max-width:320px; width:100%; text-align:center; box-shadow:0 16px 48px rgba(0,0,0,0.8);" onclick="event.stopPropagation()">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,200,80,0.12);border:1.5px solid rgba(255,200,80,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,200,80,0.9)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div style="font-size:16px; font-weight:800; color:#ffffff; letter-spacing:0.4px; margin-bottom:8px;">Sign In Required</div>
+            <div style="font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.65; margin-bottom:22px;">This feature isn't available in Guest Mode. Sign in with your Google account to unlock it.</div>
+            <button type="button" onclick="event.stopPropagation(); document.getElementById('guestLockModal').style.display='none'; showExitGuestConfirmModal();" style="width:100%; padding:12px; border-radius:9px; border:none; background:#ffffff; color:#333; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 10px rgba(0,0,0,0.3); margin-bottom:10px;">
+                <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                Continue with Google
+            </button>
+            <button type="button" onclick="document.getElementById('guestLockModal').style.display='none';" style="width:100%; padding:10px; border-radius:9px; border:1px solid rgba(255,255,255,0.14); background:transparent; color:rgba(255,255,255,0.55); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Guest Mode Banner -->
+    <div id="guestModeBanner" data-guest-banner="1" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:99999990; background:linear-gradient(90deg,rgba(255,170,0,0.92),rgba(255,120,0,0.92)); padding:7px 16px; box-sizing:border-box; text-align:center; font-size:11.5px; font-weight:700; color:#fff; letter-spacing:0.5px; font-family:'Poppins',sans-serif; display:none; align-items:center; justify-content:center; gap:10px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        GUEST MODE — Some features are locked.
+        <button type="button" onclick="showExitGuestConfirmModal()" style="background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.4); border-radius:5px; color:#fff; font-size:10px; font-weight:800; padding:2px 9px; cursor:pointer; font-family:inherit; letter-spacing:0.5px;">SIGN OUT</button>
+    </div>
+
+    <style>
+        /* Guest lock overlay on locked elements */
+        .guest-locked-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .guest-lock-icon {
+            position: absolute;
+            top: 50%;
+            right: -4px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.85;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5));
+        }
+        /* Dim locked feature sections */
+        .guest-locked-section {
+            opacity: 0.62;
+            cursor: pointer;
+            position: relative;
+        }
+        .guest-locked-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            border-radius: inherit;
+            cursor: pointer;
+        }
+        /* Guest badge in settings */
+        #settingsGuestBadge {
+            display: none;
+            background: linear-gradient(90deg,#ff9500,#ff6000);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 2px 7px;
+            border-radius: 5px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        body.guest-mode #settingsGuestBadge { display: inline-block; }
+        body.guest-mode #guestModeBanner { display: flex !important; }
+        body.guest-mode #starReviewLoggedInUser { display: none !important; }
+        body.guest-mode #starReviewBox { display: none !important; }
+        body.guest-mode #starReviewCharCount { display: none !important; }
+        body.guest-mode #starReviewSubmitBtn { display: none !important; }
+        body.guest-mode #starReviewDone { display: none !important; }
+        body.guest-mode #starReviewDisplay { display: none !important; }
+        body.guest-mode #starAutoResponseBox { display: none !important; }
+        body.guest-mode .lb-me { background: none !important; border-color: rgba(255,255,255,0.1) !important; }
+        /* Hide guest banner during loading, welcome, splash, and bg picker overlays */
+        body.guest-mode:has(#loadingScreen:not(.hidden)) #guestModeBanner,
+        body.guest-mode:has(#updatedSplashOverlay[style*="flex"]) #guestModeBanner,
+        body.guest-mode:has(#newWelcomeOverlay.show) #guestModeBanner,
+        body.guest-mode:has(#bgPickerOverlay.show) #guestModeBanner { display: none !important; }
+        /* Push content down when banner visible */
+
+    </style>
+
+    <script>
+    // ══════════════════════════════════════════════════
+    // GUEST MODE CORE
+    // ══════════════════════════════════════════════════
+
+    // Lock SVG snippet (inline, used when adding locks)
+    var GUEST_LOCK_SVG = '<svg class="guest-lock-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,200,80,0.95)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
+    function isGuestMode() {
+        return sessionStorage.getItem('guestMode') === '1';
+    }
+
+    function enterGuestMode() {
+        // Clear any stale guest data first
+        sessionStorage.setItem('guestMode', '1');
+        // Close the login modal immediately
+        var modal = document.getElementById('postIntroLoginModal');
+        if (modal) modal.style.display = 'none';
+        // Remove intro-pending class
+        document.body.classList.remove('intro-pending');
+        document.body.classList.remove('intro-visible');
+        // Apply guest mode UI
+        applyGuestMode();
+        // Continue loading the page normally
+        if (typeof window.showMainButtons === 'function') window.showMainButtons();
+        var bc = document.getElementById('mainButtonContainer');
+        if (bc) { bc.style.display = ''; bc.style.visibility = 'visible'; bc.style.opacity = '1'; }
+        var bc2 = document.querySelector('.button-container');
+        if (bc2) { bc2.style.display = ''; bc2.style.visibility = 'visible'; bc2.style.opacity = '1'; }
+        // Show welcome message immediately — no delay
+        if (typeof window.showNewWelcome === 'function') {
+            if (!isGuestMode()) {
+                window.showNewWelcome();
+            } else if (typeof window.closeNewWelcome === 'function') {
+                window.closeNewWelcome();
+            }
+        }
+    }
+
+    function applyGuestMode() {
+        document.body.classList.add('guest-mode');
+
+        // Update settings user row
+        var nameEl = document.getElementById('settingsUserName');
+        var emailEl = document.getElementById('settingsUserEmail');
+        var avatarInitial = document.getElementById('settingsUserAvatarInitial');
+        var avatarImg = document.getElementById('settingsUserAvatarImg');
+        var signOutBtn = document.getElementById('settingsUserSignOutBtn');
+        var signInBtn = document.getElementById('settingsUserSignInBtn');
+        var guestExitBtn = document.getElementById('settingsGuestExitBtn');
+
+        if (nameEl) nameEl.textContent = 'Guest User';
+        if (emailEl) { emailEl.textContent = 'Guest Mode — not saving progress'; emailEl.style.display = 'block'; emailEl.style.color = 'rgba(255,180,50,0.7)'; }
+        // Show person icon, hide the ? initial
+        if (avatarInitial) avatarInitial.style.display = 'none';
+        var guestIcon = document.getElementById('settingsGuestAvatarIcon');
+        if (guestIcon) guestIcon.style.display = 'flex';
+        if (avatarImg) avatarImg.style.display = 'none';
+        // Avatar background orange for guest
+        var avatarEl = document.getElementById('settingsUserAvatar');
+        if (avatarEl) avatarEl.style.background = 'linear-gradient(135deg,#ff9500,#ff6000)';
+        if (signOutBtn) signOutBtn.style.display = 'none';
+        if (signInBtn) signInBtn.style.display = 'flex';
+        if (guestExitBtn) guestExitBtn.style.display = 'block';
+
+        // Lock features after a short delay (DOM may still be loading)
+        setTimeout(applyGuestLocks, 200);
+    }
+
+    function applyGuestLocks() {
+        // 1. STREAK nav link
+        _guestLockElement('streakNavLink');
+
+        // 2. MESSAGE ME click wrapper
+        _guestLockElement('christmasLinkWrapperAboutMe');
+
+        // 3. RATE US (Write a Review)
+        _guestLockElement('rateUsLink');
+
+        // 4. Streak section in settings
+        _guestLockSection('streakSectionHeading');
+
+        // 5. Leaderboard section in settings
+        _guestLockSection('leaderboardSectionWrap');
+
+        // 6. Star Rating section
+        _guestLockSection('starRatingWrap');
+
+        // 7. Reset star review UI — clear any logged-in user state
+        var loggedInUser = document.getElementById('starReviewLoggedInUser');
+        var reviewBox = document.getElementById('starReviewBox');
+        var reviewCharCount = document.getElementById('starReviewCharCount');
+        var reviewSubmitBtn = document.getElementById('starReviewSubmitBtn');
+        var reviewDone = document.getElementById('starReviewDone');
+        var reviewDisplay = document.getElementById('starReviewDisplay');
+        if (loggedInUser) { loggedInUser.style.display = 'none'; loggedInUser.innerHTML = ''; }
+        if (reviewBox) { reviewBox.style.display = 'none'; reviewBox.value = ''; }
+        if (reviewCharCount) reviewCharCount.style.display = 'none';
+        if (reviewSubmitBtn) reviewSubmitBtn.style.display = 'none';
+        if (reviewDone) reviewDone.style.display = 'none';
+        if (reviewDisplay) reviewDisplay.style.display = 'none';
+    }
+
+    // Lock an element in-place (preserves absolute positioning - no DOM wrapping)
+    function _guestLockElement(id) {
+        var el = document.getElementById(id);
+        if (!el || el.dataset.guestLocked) return;
+        el.dataset.guestLocked = '1';
+        el.style.opacity = '0.55';
+        el.style.cursor = 'pointer';
+
+        // Overlay lock centered on the element without moving it
+        var lockTarget = el;
+        // For MESSAGE ME wrapper, use the inner div which already has position:relative
+        if (id === 'christmasLinkWrapperAboutMe') {
+            lockTarget = el.querySelector('.christmas-message-link') || el;
+        }
+        var lockSpan = document.createElement('span');
+        lockSpan.className = 'guest-lock-icon-inline';
+        lockSpan.setAttribute('aria-hidden', 'true');
+        lockSpan.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9;';
+        lockSpan.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,210,80,1)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(0,0,0,0.9));pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+        lockTarget.appendChild(lockSpan);
+
+        // Intercept clicks at capture phase — only block if still in guest mode
+        el.addEventListener('click', function(e) {
+            if (!isGuestMode()) return;
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            showGuestLockModal();
+        }, true);
+    }
+
+    // Make a section dimmed and intercept clicks to show the lock modal
+    function _guestLockSection(id) {
+        var el = document.getElementById(id);
+        if (!el || el.dataset.guestLocked) return;
+        el.dataset.guestLocked = '1';
+        el.classList.add('guest-locked-section');
+
+        // Ensure the section is positioned so the overlay lock can be centered
+        if (!el.style.position || el.style.position === 'static') {
+            el.style.position = 'relative';
+        }
+
+        // Add a large centered lock icon overlaid on the section
+        var lockOverlay = document.createElement('div');
+        lockOverlay.className = 'guest-lock-icon-inline';
+        lockOverlay.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;display:flex;align-items:center;justify-content:center;';
+        lockOverlay.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,200,80,0.95)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 2px 8px rgba(0,0,0,0.7));pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+        el.appendChild(lockOverlay);
+
+        el.addEventListener('click', function(e) {
+            if (!isGuestMode()) return;
+            // Let settings note buttons still work
+            if (e.target.closest('.settings-warning-btn')) return;
+            showGuestLockModal();
+        });
+    }
+
+    function showGuestLockModal() {
+        var m = document.getElementById('guestLockModal');
+        if (m) m.style.display = 'flex';
+    }
+
+    function exitGuestModeAndShowLogin() {
+        // Close any open modals
+        var lockM = document.getElementById('guestLockModal');
+        if (lockM) lockM.style.display = 'none';
+        var settingsOverlay = document.getElementById('settingsOverlay');
+        if (settingsOverlay) settingsOverlay.classList.remove('show');
+
+        // Clear guest session
+        sessionStorage.removeItem('guestMode');
+        document.body.classList.remove('guest-mode');
+
+        // Remove guest locks so user sees normal UI after sign-in
+        _removeGuestLocks();
+
+        // Reset settings user row to "not signed in" defaults
+        var nameEl = document.getElementById('settingsUserName');
+        var emailEl = document.getElementById('settingsUserEmail');
+        var avatarEl = document.getElementById('settingsUserAvatar');
+        var guestExitBtn = document.getElementById('settingsGuestExitBtn');
+        var signInBtn = document.getElementById('settingsUserSignInBtn');
+        if (nameEl) nameEl.textContent = 'Guest User';
+        if (emailEl) { emailEl.style.display = 'none'; emailEl.style.color = ''; emailEl.textContent = ''; }
+        if (avatarEl) avatarEl.style.background = 'linear-gradient(135deg,#3b82f6,#8b5cf6)';
+        // Restore ? initial, hide guest person icon
+        var avatarInitialEl = document.getElementById('settingsUserAvatarInitial');
+        var guestIconEl = document.getElementById('settingsGuestAvatarIcon');
+        if (avatarInitialEl) { avatarInitialEl.textContent = '?'; avatarInitialEl.style.display = ''; }
+        if (guestIconEl) guestIconEl.style.display = 'none';
+        if (guestExitBtn) guestExitBtn.style.display = 'none';
+        if (signInBtn) signInBtn.style.display = 'flex';
+
+        // Reset "Continue as Guest" button back to its original state
+        var guestBtn = document.getElementById('postIntroGuestBtn');
+        if (guestBtn) {
+            guestBtn.disabled = false;
+            guestBtn.style.cursor = 'pointer';
+            guestBtn.style.opacity = '1';
+            guestBtn.style.background = 'transparent';
+            guestBtn.style.borderColor = 'rgba(255,255,255,0.18)';
+            guestBtn.style.color = 'rgba(255,255,255,0.65)';
+            guestBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Continue as Guest';
+        }
+
+        // Show login modal
+        var loginModal = document.getElementById('postIntroLoginModal');
+        if (loginModal) loginModal.style.display = 'flex';
+    }
+
+    function _removeGuestLocks() {
+        // Remove inline lock icons from _guestLockElement elements
+        document.querySelectorAll('[data-guest-locked]').forEach(function(el) {
+            el.style.opacity = '';
+            el.style.cursor = '';
+            delete el.dataset.guestLocked;
+            el.querySelectorAll('.guest-lock-icon-inline').forEach(function(icon) { icon.remove(); });
+        });
+        // Remove locked-section classes and badges
+        document.querySelectorAll('.guest-locked-section').forEach(function(el) {
+            el.classList.remove('guest-locked-section');
+            delete el.dataset.guestLocked;
+            el.querySelectorAll('.guest-lock-icon-inline, svg').forEach(function(icon) {
+                if (icon.closest('.guest-lock-icon-inline') || icon.parentNode === el) icon.remove();
+            });
+        });
+    }
+
+    // ─── Intercept guest-restricted actions ───────────────────
+    // Wrap handleMessageMeClick to block in guest mode
+    document.addEventListener('DOMContentLoaded', function() {
+        // Guard: Message Me
+        var origHandleMessageMe = window.handleMessageMeClick;
+        window.handleMessageMeClick = function() {
+            if (isGuestMode()) { showGuestLockModal(); return; }
+            if (origHandleMessageMe) origHandleMessageMe.apply(this, arguments);
+        };
+
+        // Guard: Streak nav click
+        var origHandleStreakNav = window.handleStreakNavClick;
+        window.handleStreakNavClick = function() {
+            if (isGuestMode()) { showGuestLockModal(); return; }
+            if (origHandleStreakNav) origHandleStreakNav.apply(this, arguments);
+        };
+
+        // Guard: Rate Us / Write a Review
+        var origHandleRateUs = window.handleRateUsClick;
+        window.handleRateUsClick = function() {
+            if (isGuestMode()) { showGuestLockModal(); return; }
+            if (origHandleRateUs) origHandleRateUs.apply(this, arguments);
+        };
+
+        // Guard: Star rating clicks and review textarea in guest mode
+        var starRatingRow = document.getElementById('starRatingRow');
+        if (starRatingRow) {
+            starRatingRow.addEventListener('click', function(e) {
+                if (isGuestMode()) { e.stopImmediatePropagation(); e.preventDefault(); showGuestLockModal(); }
+            }, true);
+        }
+        var starReviewBox = document.getElementById('starReviewBox');
+        if (starReviewBox) {
+            starReviewBox.addEventListener('focus', function(e) {
+                if (isGuestMode()) { e.preventDefault(); starReviewBox.blur(); showGuestLockModal(); }
+            }, true);
+            starReviewBox.addEventListener('click', function(e) {
+                if (isGuestMode()) { e.stopImmediatePropagation(); e.preventDefault(); showGuestLockModal(); }
+            }, true);
+        }
+
+        // Guard: openModal for christmasMessage (Message Me)
+        var origOpenModal = window.openModal;
+        window.openModal = function(type) {
+            if (isGuestMode() && type === 'christmasMessage') { showGuestLockModal(); return; }
+            if (origOpenModal) origOpenModal.apply(this, arguments);
+        };
+
+        // If guest mode was set (e.g. after page restore), apply UI
+        if (isGuestMode()) applyGuestMode();
+    });
+
+    // After successful Google sign-in, exit guest mode cleanly
+    var _origStreakGoogleSignInForGuest = window.streakGoogleSignIn;
+    window.streakGoogleSignIn = async function() {
+        var wasGuest = isGuestMode();
+        var result = await _origStreakGoogleSignInForGuest.apply(this, arguments);
+        if (wasGuest) {
+            sessionStorage.removeItem('guestMode');
+            document.body.classList.remove('guest-mode');
+            _removeGuestLocks();
+        }
+        return result;
+    };
+
+    // showPostIntroLoginModal: also respect already-in-guest-mode
+    var _origShowPostIntroLoginModal = window.showPostIntroLoginModal;
+    window.showPostIntroLoginModal = function() {
+        if (isGuestMode()) return; // guest already chose mode
+        if (_origShowPostIntroLoginModal) _origShowPostIntroLoginModal();
+    };
+    </script>
+    <!-- ══ END GUEST MODE SYSTEM ══ -->
+
+    <!-- ══ EXIT GUEST CONFIRM MODAL ══ -->
+    <div id="exitGuestConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); z-index:999999998; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;" onclick="event.stopPropagation();">
+        <div style="background:#0f1729; border:1px solid rgba(255,200,80,0.25); border-radius:18px; padding:30px 24px 24px; max-width:310px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.85);" onclick="event.stopPropagation()">
+            <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,180,40,0.12);border:1.5px solid rgba(255,180,40,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,200,80,0.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div style="font-size:15px; font-weight:800; color:#ffffff; letter-spacing:0.4px; margin-bottom:20px; line-height:1.3;">ARE YOU SURE YOU WANT<br>TO EXIT AS A GUEST?</div>
+            <div id="exitGuestCountdownDisplay" style="font-size:22px; font-weight:800; color:rgba(255,200,80,0.9); letter-spacing:1px; margin-bottom:14px; min-height:30px;">3s</div>
+            <div style="display:flex; gap:10px;">
+                <button type="button" id="exitGuestNoBtn" onclick="closeExitGuestConfirmModal()" style="flex:1; padding:11px; border-radius:9px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:rgba(255,255,255,0.7); font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:0.3px;">NO</button>
+                <button type="button" id="exitGuestYesBtn" onclick="confirmExitGuest()" disabled style="flex:1; padding:11px; border-radius:9px; border:none; background:rgba(255,180,40,0.25); color:rgba(255,200,80,0.45); font-size:13.5px; font-weight:800; cursor:not-allowed; font-family:inherit; letter-spacing:0.3px; transition:background 0.3s,color 0.3s;">YES</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    var _exitGuestCountdownTimer = null;
+    function showExitGuestConfirmModal() {
+        var modal = document.getElementById('exitGuestConfirmModal');
+        if (!modal) return;
+        modal.style.display = 'flex';
+        _startExitGuestCountdown();
+    }
+    function closeExitGuestConfirmModal() {
+        var modal = document.getElementById('exitGuestConfirmModal');
+        if (modal) modal.style.display = 'none';
+        _clearExitGuestCountdown();
+        var yesBtn = document.getElementById('exitGuestYesBtn');
+        var cdDisplay = document.getElementById('exitGuestCountdownDisplay');
+        if (yesBtn) { yesBtn.disabled = true; yesBtn.style.background = 'rgba(255,180,40,0.25)'; yesBtn.style.color = 'rgba(255,200,80,0.45)'; yesBtn.style.cursor = 'not-allowed'; }
+        if (cdDisplay) cdDisplay.textContent = '3s';
+    }
+    function _startExitGuestCountdown() {
+        _clearExitGuestCountdown();
+        var yesBtn = document.getElementById('exitGuestYesBtn');
+        var cdDisplay = document.getElementById('exitGuestCountdownDisplay');
+        if (!yesBtn || !cdDisplay) return;
+        yesBtn.disabled = true; yesBtn.style.background = 'rgba(255,180,40,0.25)'; yesBtn.style.color = 'rgba(255,200,80,0.45)'; yesBtn.style.cursor = 'not-allowed';
+        var secs = 3;
+        cdDisplay.textContent = secs + 's';
+        _exitGuestCountdownTimer = setInterval(function() {
+            secs--;
+            if (secs <= 0) {
+                _clearExitGuestCountdown();
+                cdDisplay.textContent = '';
+                yesBtn.disabled = false; yesBtn.style.background = 'rgba(255,180,40,0.88)'; yesBtn.style.color = '#1a0e00'; yesBtn.style.cursor = 'pointer';
+            } else { cdDisplay.textContent = secs + 's'; }
+        }, 1000);
+    }
+    function _clearExitGuestCountdown() {
+        if (_exitGuestCountdownTimer) { clearInterval(_exitGuestCountdownTimer); _exitGuestCountdownTimer = null; }
+    }
+    function confirmExitGuest() {
+        closeExitGuestConfirmModal();
+        exitGuestModeAndShowLogin();
+    }
+    </script>
+    <!-- ══ END EXIT GUEST CONFIRM MODAL ══ -->
 </body>
 </html>
