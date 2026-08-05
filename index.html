@@ -12465,7 +12465,7 @@
                     <span data-i18n="warning_updates_in">MAJOR UPDATE IN</span> <span id="warningTimer">---:--:--:--:---</span>
                 </div>
             </div>
-            <div id="mobileDataNote" style="font-size:8px;font-style:italic;font-weight:500;letter-spacing:0.2px;line-height:1.5;width:100%;display:flex;align-items:center;gap:8px;"><span style="font-size:16px;font-weight:700;white-space:nowrap;flex-shrink:0;">v. 2.1</span><span>Note: This website uses Mobile Data and may consume your mobile load.<br>Wi-Fi is highly recommended.</span></div>
+            <div id="mobileDataNote" style="font-size:7px;font-style:italic;font-weight:500;letter-spacing:0.2px;line-height:1.5;width:100%;display:flex;align-items:center;gap:8px;"><span style="font-size:16px;font-weight:700;white-space:nowrap;flex-shrink:0;">v. 2.1</span><span>Note: This website uses Mobile Data and may consume your mobile load.<br>Wi-Fi is highly recommended.</span></div>
         </div>
 
     </div>
@@ -15680,7 +15680,8 @@
                     </p>
                     <div id="update21-details" style="display:none; margin-bottom: 15px;">
                         <p style="margin-top: 12px;"><strong>🏠 Main Menu</strong></p>
-                        <p>Added Google Sign-In.</p>
+                        <p>Added Google Sign In.</p>
+                        <p>Added Guest Mode Sign in.</p>
                         <p style="margin-top: 20px;"><strong>💬 Message Me</strong></p>
                         <p>Upgraded to Google Account Authentication.</p>
                         <p>Removed "Create New Account?"</p>
@@ -16791,13 +16792,28 @@
                     function fmtTime(minutes) {
                         var mins = Math.floor(minutes || 0);
                         var totalHours = Math.floor(mins / 60);
-                        var m = mins % 60;
-                        if (totalHours >= 24) {
-                            var d = Math.floor(totalHours / 24);
-                            var h = totalHours % 24;
-                            return d + 'D ' + h + 'H ' + m + 'M';
+                        var rm = mins % 60;
+                        var totalDays = Math.floor(totalHours / 24);
+                        var rh = totalHours % 24;
+                        var totalWeeks = Math.floor(totalDays / 7);
+                        var rd = totalDays % 7;
+                        var totalMonths = Math.floor(totalWeeks / 4);
+                        var rw = totalWeeks % 4;
+                        var totalYears = Math.floor(totalMonths / 12);
+                        var rmh = totalMonths % 12;
+                        if (totalYears >= 1) {
+                            return totalYears + 'Y ' + rmh + 'MH';
                         }
-                        return totalHours + 'H ' + m + 'M';
+                        if (totalMonths >= 1) {
+                            return totalMonths + 'MH ' + rw + 'W';
+                        }
+                        if (totalWeeks >= 1) {
+                            return totalWeeks + 'W ' + rd + 'D';
+                        }
+                        if (totalDays >= 1) {
+                            return totalDays + 'D ' + rh + 'H';
+                        }
+                        return totalHours + 'H ' + rm + 'M';
                     }
 
                     function initials(name) {
@@ -52131,10 +52147,25 @@ class GravSimEndpoint {
         var m = Math.floor(mins);
         var totalHours = Math.floor(m / 60);
         var rm = m % 60;
-        if (totalHours >= 24) {
-            var d = Math.floor(totalHours / 24);
-            var h = totalHours % 24;
-            return d + 'd ' + h + 'h ' + rm + 'm';
+        var totalDays = Math.floor(totalHours / 24);
+        var rh = totalHours % 24;
+        var totalWeeks = Math.floor(totalDays / 7);
+        var rd = totalDays % 7;
+        var totalMonths = Math.floor(totalWeeks / 4);
+        var rw = totalWeeks % 4;
+        var totalYears = Math.floor(totalMonths / 12);
+        var rmh = totalMonths % 12;
+        if (totalYears >= 1) {
+            return totalYears + 'y ' + rmh + 'mh ' + rw + 'w';
+        }
+        if (totalMonths >= 1) {
+            return totalMonths + 'mh ' + rw + 'w ' + rd + 'd';
+        }
+        if (totalWeeks >= 1) {
+            return totalWeeks + 'w ' + rd + 'd ' + rh + 'h';
+        }
+        if (totalDays >= 1) {
+            return totalDays + 'd ' + rh + 'h ' + rm + 'm';
         }
         return totalHours + 'h ' + rm + 'm';
     }
@@ -53218,6 +53249,8 @@ class GravSimEndpoint {
             guestBtn.style.color = 'rgba(255,255,255,0.65)';
             guestBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Continue as Guest';
         }
+        // Pause music and hide now-playing bar while sign-in screen is shown
+        if (typeof _pauseAndHideMusicBar === 'function') _pauseAndHideMusicBar();
         // Show login modal immediately, then welcome message after
         var loginModal = document.getElementById('postIntroLoginModal');
         if (loginModal) loginModal.style.display = 'flex';
@@ -53269,6 +53302,8 @@ class GravSimEndpoint {
             }
             setTimeout(function() {
                 document.getElementById('postIntroLoginModal').style.display = 'none';
+                // Restore now-playing bar if it was hidden for sign-in
+                if (typeof _restoreMusicBarIfNeeded === 'function') _restoreMusicBarIfNeeded();
                 // Remove intro-pending class so CSS no longer hides the buttons
                 document.body.classList.remove('intro-pending');
                 document.body.classList.remove('intro-visible');
@@ -53302,8 +53337,41 @@ class GravSimEndpoint {
         }
     }
 
+    // ── Music: pause & hide now-playing bar when sign-in screen appears ──
+    function _pauseAndHideMusicBar() {
+        // Pause any playing song
+        if (typeof currentPlayingSong !== 'undefined' && currentPlayingSong) {
+            var audio = document.getElementById('musicPlayer-' + currentPlayingSong);
+            if (audio && !audio.paused) {
+                audio.pause();
+                var pauseIcon = document.getElementById('mnpPauseIcon');
+                var playIcon  = document.getElementById('mnpPlayIcon');
+                if (pauseIcon) pauseIcon.style.display = 'none';
+                if (playIcon)  playIcon.style.display  = '';
+                var playBtn = document.querySelector('[data-song="' + currentPlayingSong + '"]');
+                if (playBtn) playBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><polygon points="9,7.5 18,12 9,16.5" fill="currentColor"/></svg>';
+            }
+        }
+        // Hide the now-playing bar while sign-in screen is shown
+        var bar = document.getElementById('musicNowPlayingBar');
+        if (bar) bar.dataset.hiddenByLogin = '1';
+        if (bar) bar.style.display = 'none';
+    }
+
+    function _restoreMusicBarIfNeeded() {
+        var bar = document.getElementById('musicNowPlayingBar');
+        if (bar && bar.dataset.hiddenByLogin === '1') {
+            delete bar.dataset.hiddenByLogin;
+            // Only re-show if there is actually a song loaded
+            if (typeof currentPlayingSong !== 'undefined' && currentPlayingSong) {
+                bar.style.display = '';
+            }
+        }
+    }
+
     function showPostIntroLoginModal() {
         if (localStorage.getItem('streakGoogleUid')) return;
+        _pauseAndHideMusicBar();
         var modal = document.getElementById('postIntroLoginModal');
         if (modal) modal.style.display = 'flex';
     }
@@ -53524,8 +53592,8 @@ class GravSimEndpoint {
     </div>
 
     <!-- Guest Mode Banner -->
-    <div id="guestModeBanner" data-guest-banner="1" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:99999990; background:linear-gradient(90deg,rgba(255,170,0,0.92),rgba(255,120,0,0.92)); padding:7px 16px; box-sizing:border-box; text-align:center; font-size:11.5px; font-weight:700; color:#fff; letter-spacing:0.5px; font-family:'Poppins',sans-serif; display:none; align-items:center; justify-content:center; gap:10px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <div id="guestModeBanner" data-guest-banner="1" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:99999990; background:linear-gradient(90deg,rgba(255,170,0,0.92),rgba(255,120,0,0.92)); padding:5px 12px; box-sizing:border-box; text-align:center; font-size:9px; font-weight:700; color:#fff; letter-spacing:0.4px; font-family:'Poppins',sans-serif; display:none; align-items:center; justify-content:center; gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         GUEST MODE — Some features are locked.
         <button type="button" onclick="showExitGuestConfirmModal()" style="background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.4); border-radius:5px; color:#fff; font-size:10px; font-weight:800; padding:2px 9px; cursor:pointer; font-family:inherit; letter-spacing:0.5px;">SIGN OUT</button>
     </div>
@@ -53611,6 +53679,8 @@ class GravSimEndpoint {
         // Close the login modal immediately
         var modal = document.getElementById('postIntroLoginModal');
         if (modal) modal.style.display = 'none';
+        // Restore now-playing bar if it was hidden for sign-in
+        if (typeof _restoreMusicBarIfNeeded === 'function') _restoreMusicBarIfNeeded();
         // Remove intro-pending class
         document.body.classList.remove('intro-pending');
         document.body.classList.remove('intro-visible');
@@ -53804,6 +53874,9 @@ class GravSimEndpoint {
             googleBtn.style.opacity = '';
             googleBtn.style.cursor = '';
         }
+
+        // Pause music and hide now-playing bar while sign-in screen is shown
+        if (typeof _pauseAndHideMusicBar === 'function') _pauseAndHideMusicBar();
 
         // Show login modal
         var loginModal = document.getElementById('postIntroLoginModal');
