@@ -12279,7 +12279,7 @@
 </head>
 <body class="intro-pending">
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: none;">
+    <div class="loading-screen" id="loadingScreen" style="cursor: pointer; pointer-events: auto;">
         <button type="button" class="loading-disclaimer-btn" id="loadingDisclaimerBtn" aria-label="Disclaimer" title="Disclaimer">!</button>
         <div class="loading-disclaimer-overlay" id="loadingDisclaimerOverlay" aria-hidden="true">
             <div class="loading-disclaimer-modal" role="dialog" aria-labelledby="loadingDisclaimerTitle" aria-modal="true">
@@ -16575,7 +16575,7 @@
                     </div>
 
                     <!-- Header row -->
-                    <div style="display:grid;grid-template-columns:38px 1fr 1px 56px 1px 60px 1px 64px;align-items:center;gap:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px 10px 0 0;padding:8px 10px;margin-bottom:0;">
+                    <div style="display:grid;grid-template-columns:32px 1fr 1px 48px 1px 52px 1px 56px;align-items:center;gap:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px 10px 0 0;padding:8px 10px;margin-bottom:0;">
                         <div style="font-size:10px;font-weight:800;color:rgba(255,215,0,0.85);letter-spacing:0.5px;text-align:center;">NO.</div>
                         <div style="font-size:10px;font-weight:800;color:rgba(223,235,255,0.7);letter-spacing:0.5px;text-align:left;padding-left:8px;">NAME</div>
                         <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
@@ -16596,7 +16596,7 @@
                 <style>
                 .lb-row {
                     display: grid;
-                    grid-template-columns: 38px 1fr 1px 56px 1px 60px 1px 64px;
+                    grid-template-columns: 32px 1fr 1px 48px 1px 52px 1px 56px;
                     align-items: center;
                     justify-items: center;
                     gap: 0;
@@ -16662,6 +16662,8 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     font-family: 'Poppins', sans-serif;
+                    min-width: 0;
+                    max-width: 100%;
                 }
                 .lb-divider {
                     width: 1px;
@@ -17126,7 +17128,9 @@
     </script>
     <script>
         // Loading Screen with Percentage and Progress Bar
-        window.addEventListener('load', function() {
+        // Use DOMContentLoaded so the loading animation starts immediately,
+        // without waiting for all images/scripts to finish downloading.
+        document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loadingScreen');
             const loadingPercentage = document.getElementById('loadingPercentage');
             const progressBar = document.getElementById('progressBar');
