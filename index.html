@@ -1948,6 +1948,10 @@
             }
         }
 
+        /* Mobile data note theming */
+        #mobileDataNote { color: #ffffff; }
+        body:not(.dark-mode) #mobileDataNote { color: #111111; }
+
         .countdown-container {
             position: absolute;
             top: 80px;
@@ -12445,7 +12449,7 @@
             </div>
         </div>
         <!-- Bottom-anchored stack: MESSAGE ME + UPDATES IN box, pinned near the bottom of the page -->
-        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(16px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
+        <div id="bottomStack" style="position:fixed !important; left:50% !important; bottom:calc(0px + env(safe-area-inset-bottom, 0px)) !important; top:auto !important; transform:translateX(-50%) !important; display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:100% !important; max-width:500px !important; padding:0 20px !important; box-sizing:border-box !important; z-index:10005 !important;">
             <div class="warning-message" id="mainWarning" style="display: none; position:relative !important; bottom:auto !important; left:auto !important; top:auto !important; transform:none !important; margin:0 !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important;">
                 <div class="message-for-me-box" id="messageForMeBox" style="position:absolute; bottom:100%; left:0; right:0; margin-bottom:0px; display:flex; align-items:center; justify-content:center; white-space:nowrap;">
                     <span class="rate-us-link" id="rateUsLink" onclick="handleRateUsClick(); event.stopPropagation();" role="button" tabindex="0" style="position:absolute; left:0;">RATE US!</span>
@@ -12461,6 +12465,7 @@
                     <span data-i18n="warning_updates_in">MAJOR UPDATE IN</span> <span id="warningTimer">---:--:--:--:---</span>
                 </div>
             </div>
+            <div id="mobileDataNote" style="font-size:8px;font-style:italic;font-weight:500;letter-spacing:0.2px;line-height:1.5;width:100%;display:flex;align-items:center;gap:8px;"><span style="font-size:16px;font-weight:700;white-space:nowrap;flex-shrink:0;">v. 2.1</span><span>Note: This website uses Mobile Data and may consume your mobile load.<br>Wi-Fi is highly recommended.</span></div>
         </div>
 
     </div>
@@ -16498,13 +16503,13 @@
                         <div id="starReviewCharCount" style="text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);margin-top:4px;letter-spacing:0.5px;">150/150</div>
                         <button id="starReviewSubmitBtn" disabled style="margin-top:7px;width:100%;padding:8px 0;border-radius:8px;border:none;background:rgba(102,126,234,0.3);color:rgba(255,255,255,0.35);font-size:12px;font-weight:800;letter-spacing:1px;cursor:not-allowed;transition:background 0.2s,color 0.2s,transform 0.1s,box-shadow 0.1s;box-shadow:0 6px 0 rgba(50,60,150,0.4),0 12px 16px rgba(0,0,0,0.25);transform:translateY(0);">SUBMIT</button>
                         <div id="starReviewDisplay" style="display:none;margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
-                            <div id="starReviewTime" style="font-size:10px;color:rgba(255,255,255,0.45);font-family:'Share Tech Mono',monospace;margin-bottom:5px;"></div>
+                            <div id="starReviewTime" style="font-size:10px;color:#ffffff;font-family:'Share Tech Mono',monospace;margin-bottom:5px;"></div>
                             <div id="starReviewText" style="font-size:12px;line-height:1.5;color:inherit;"></div>
                         </div>
                         <div id="starReviewDone" style="display:none;margin-top:7px;font-size:11px;font-weight:700;letter-spacing:1px;color:#44dd77;text-align:center;">✓ REVIEW SUBMITTED, THANK YOU!</div>
                         <div id="starAutoResponseBox" style="display:none;margin-top:10px;padding:8px 10px;border-radius:6px;background:rgba(102,126,234,0.12);border:1px solid rgba(102,126,234,0.3);">
-                            <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#667eea;margin-bottom:4px;">AUTHOR</div>
-                            <div id="starAutoResponseTime" style="font-size:9px;color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;margin-bottom:4px;"></div>
+                            <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#667eea;margin-bottom:4px;">DEVELOPER RESPONSE</div>
+                            <div id="starAutoResponseTime" style="font-size:9px;color:#ffffff;font-family:'Share Tech Mono',monospace;margin-bottom:4px;"></div>
                             <div id="starAutoResponseText" style="font-size:12px;line-height:1.5;color:inherit;"></div>
                         </div>
                     </div>
@@ -16570,9 +16575,9 @@
                     </div>
 
                     <!-- Header row -->
-                    <div style="display:grid;grid-template-columns:32px 1fr 1px 48px 1px 52px 1px 56px;align-items:center;gap:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px 10px 0 0;padding:8px 10px;margin-bottom:0;">
+                    <div style="display:grid;grid-template-columns:32px 1fr 1px 48px 1px 48px 1px 48px;align-items:center;justify-items:center;gap:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px 10px 0 0;padding:8px 10px;margin-bottom:0;">
                         <div style="font-size:10px;font-weight:800;color:rgba(255,215,0,0.85);letter-spacing:0.5px;text-align:center;">NO.</div>
-                        <div style="font-size:10px;font-weight:800;color:rgba(223,235,255,0.7);letter-spacing:0.5px;text-align:left;padding-left:8px;">NAME</div>
+                        <div style="font-size:10px;font-weight:800;color:rgba(223,235,255,0.7);letter-spacing:0.5px;text-align:left;padding-left:8px;justify-self:start;width:100%;">NAME</div>
                         <div style="width:1px;align-self:stretch;background:rgba(255,255,255,0.12);"></div>
                         <div style="font-size:9px;font-weight:800;color:#fbbf24;letter-spacing:0.3px;text-align:center;line-height:1.3;">LONGEST<br>STREAK</div>
                         <div style="width:1px;align-self:stretch;background:rgba(255,255,255,0.12);"></div>
@@ -16591,7 +16596,7 @@
                 <style>
                 .lb-row {
                     display: grid;
-                    grid-template-columns: 32px 1fr 1px 48px 1px 52px 1px 56px;
+                    grid-template-columns: 32px 1fr 1px 48px 1px 48px 1px 48px;
                     align-items: center;
                     justify-items: center;
                     gap: 0;
@@ -16599,6 +16604,7 @@
                     border-bottom: 1px solid rgba(255,255,255,0.06);
                     transition: background 0.15s;
                 }
+                .lb-row > .lb-player { justify-self: start; }
                 .lb-row:last-child { border-bottom: none; }
                 .lb-row:nth-child(odd)  { background: rgba(255,255,255,0.025); }
                 .lb-row:nth-child(even) { background: rgba(255,255,255,0.05); }
@@ -16676,7 +16682,8 @@
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    margin: 0 auto;
+                    justify-self: center;
+                    margin: 0;
                 }
                 .lb-stat-val {
                     font-size: 12px;
@@ -16714,7 +16721,7 @@
                     };
 
                     function fmtTime(minutes) {
-                        var mins = minutes || 0;
+                        var mins = Math.floor(minutes || 0);
                         var h = Math.floor(mins / 60);
                         var m = mins % 60;
                         return h + "H " + m + "M";
@@ -16750,7 +16757,7 @@
                             : '<div class="lb-avatar-fallback">' + initials(entry.name) + '</div>';
                         return '<div class="' + cls + '">'
                             + '<div class="lb-rank ' + rk.cls + '">' + rk.label + '</div>'
-                            + '<div class="lb-player">' + avatarHTML + '<span class="lb-name">' + (entry.name || 'Anonymous') + '</span></div>'
+                            + '<div class="lb-player">' + avatarHTML + '<span class="lb-name">' + (entry.name || 'Anonymous') + (isMe ? ' <span style="color:#34d399;font-size:10px;font-weight:700;">(You)</span>' : '') + '</span></div>'
                             + '<div class="lb-divider"></div>'
                             + '<div class="lb-stat"><div class="lb-stat-val lb-streak-val">' + (entry.longest || 0) + '</div></div>'
                             + '<div class="lb-divider"></div>'
@@ -16785,53 +16792,50 @@
                         var myUid = localStorage.getItem('streakGoogleUid') || null;
                         try {
                             var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
-                            var { getDatabase, ref, get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                            var { getDatabase, ref, onValue } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
 
                             var app;
                             try { app = getApp('streakApp'); } catch(e) { app = initializeApp(LB_FIREBASE_CONFIG, 'streakApp'); }
                             var db = getDatabase(app);
 
-                            // Read all entries under streaks/
-                            var snap = await get(ref(db, 'streaks'));
-                            if (!snap.exists()) {
-                                renderLeaderboard([], myUid);
-                                return;
-                            }
+                            // Attach a real-time listener once — unsubscribe previous if exists
+                            if (window._lbRealtimeUnsub) return; // already listening
+                            window._lbRealtimeUnsub = onValue(ref(db, 'streaks'), function(snap) {
+                                var myUid2 = localStorage.getItem('streakGoogleUid') || null;
+                                if (!snap.exists()) { renderLeaderboard([], myUid2); return; }
 
-                            var entries = [];
-                            snap.forEach(function(child) {
-                                var d = child.val();
-                                if (!d) return;
-                                // Skip ghost entries: no name AND no real streak data
-                                var hasName = !!(d.googleName || d.name);
-                                var hasData = !!(d.longestStreak || d.totalVisits || d.totalMinutes);
-                                if (!hasName && !hasData) return;
-                                // Skip entries with no name at all (raw UID nodes without google_ prefix are duplicates)
-                                if (!hasName) return;
-                                entries.push({
-                                    uid: d.googleUid || child.key,
-                                    name: d.googleName || d.name || 'Anonymous',
-                                    photo: d.googlePhoto || d.photo || '',
-                                    longest: d.longestStreak || 0,
-                                    time: d.totalMinutes || 0,
-                                    visits: d.totalVisits || 0
+                                var entries = [];
+                                snap.forEach(function(child) {
+                                    var d = child.val();
+                                    if (!d) return;
+                                    var hasName = !!(d.googleName || d.name);
+                                    var hasData = !!(d.longestStreak || d.totalVisits || d.totalMinutes);
+                                    if (!hasName && !hasData) return;
+                                    if (!hasName) return;
+                                    entries.push({
+                                        uid: d.googleUid || child.key,
+                                        name: d.googleName || d.name || 'Anonymous',
+                                        photo: d.googlePhoto || d.photo || '',
+                                        longest: d.longestStreak || 0,
+                                        time: d.totalMinutes || 0,
+                                        visits: d.totalVisits || 0
+                                    });
                                 });
-                            });
 
-                            // Deduplicate by googleUid — keep the entry with higher longestStreak
-                            var seen = {};
-                            entries = entries.filter(function(e) {
-                                var key = e.uid;
-                                if (!seen[key]) { seen[key] = e; return true; }
-                                if ((e.longest || 0) > (seen[key].longest || 0)) {
-                                    seen[key].longest = e.longest;
-                                    seen[key].time = e.time;
-                                    seen[key].visits = e.visits;
-                                }
-                                return false;
-                            });
+                                var seen = {};
+                                entries = entries.filter(function(e) {
+                                    var key = e.uid;
+                                    if (!seen[key]) { seen[key] = e; return true; }
+                                    if ((e.longest || 0) > (seen[key].longest || 0)) {
+                                        seen[key].longest = e.longest;
+                                        seen[key].time = e.time;
+                                        seen[key].visits = e.visits;
+                                    }
+                                    return false;
+                                });
 
-                            renderLeaderboard(entries, myUid);
+                                renderLeaderboard(entries, myUid2);
+                            });
                         } catch(e) {
                             renderLeaderboard([], myUid);
                         }
@@ -16868,11 +16872,6 @@
                 })();
                 </script>
 
-                <div style="height:16px;"></div>
-                <div class="settings-version-row">
-                    <div class="settings-version">v. 2.1</div>
-                    <div class="settings-version-note" data-i18n="settings_version_note">Note: This website uses Mobile Data and may consume your mobile load. Wi‑Fi is highly recommended.</div>
-                </div>
         </div>
     </div>
     <div class="settings-caution-overlay" id="starRatingNoteOverlay" aria-hidden="true">
@@ -52019,9 +52018,10 @@ class GravSimEndpoint {
     }
 
     function fmtTime(mins) {
-        var h = Math.floor(mins / 60);
-        var m = mins % 60;
-        return h + 'h ' + m + 'm';
+        var m = Math.floor(mins);
+        var h = Math.floor(m / 60);
+        var rm = m % 60;
+        return h + 'h ' + rm + 'm';
     }
 
     // ── Streak fire color system ─────────────────────────────────────────────
@@ -52431,10 +52431,20 @@ class GravSimEndpoint {
 
         if (_timeTrackInterval) clearInterval(_timeTrackInterval);
 
+        // Update time display every second locally (no Firebase write — just live UI)
+        if (window._streakLiveTickInterval) clearInterval(window._streakLiveTickInterval);
+        window._streakLiveTickInterval = setInterval(function() {
+            if (!isLoggedIn()) { clearInterval(window._streakLiveTickInterval); return; }
+            var elapsedMins = Math.floor((Date.now() - _sessionStartMs) / 60000);
+            var displayTotal = _lastSavedMins + elapsedMins;
+            var timeEl = document.getElementById('streakTimeVal');
+            if (timeEl) timeEl.textContent = fmtTime(displayTotal);
+        }, 1000);
+
         _timeTrackInterval = setInterval(async function() {
             if (!isLoggedIn()) { clearInterval(_timeTrackInterval); return; }
             var elapsedMins = Math.floor((Date.now() - _sessionStartMs) / 60000);
-            if (elapsedMins === 0) return; // nothing to save yet
+            if (elapsedMins === 0) return; // nothing new to save yet
             var newTotal = _lastSavedMins + elapsedMins;
 
             try {
@@ -52442,15 +52452,38 @@ class GravSimEndpoint {
                 var { getDatabase, ref: fbRef, update: fbUpdate } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-database.js');
                 var app2; try { app2 = getApp('streakApp'); } catch(e) { app2 = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
                 var db2 = getDatabase(app2);
-                await fbUpdate(fbRef(db2, 'streaks/' + safeKey(userId)), { totalMinutes: newTotal });
-
-                // Update time display live
-                var timeEl = document.getElementById('streakTimeVal');
-                if (timeEl) timeEl.textContent = fmtTime(newTotal);
-                // Refresh leaderboard with latest time
+                await fbUpdate(fbRef(db2, 'streaks/' + safeKey(userId)), { totalMinutes: Math.floor(newTotal) });
+                _lastSavedMins = newTotal;
+                _sessionStartMs = Date.now();
                 if (typeof loadLeaderboardFromFirebase === "function") loadLeaderboardFromFirebase();
             } catch(e) { console.error('[Streak] Time tracking save failed:', e); }
-        }, 30000); // save every 30 seconds
+        }, 1000); // check every 1 second, only writes when a full minute has passed
+
+        // Real-time Firebase listener — updates ALL stats instantly when Firebase data changes
+        (async function attachRealtimeListener() {
+            try {
+                var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-app.js');
+                var { getDatabase, ref: fbRef2, onValue } = await import('https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/firebase-database.js');
+                var app3; try { app3 = getApp('streakApp'); } catch(e) { app3 = initializeApp(FIREBASE_CONFIG, 'streakApp'); }
+                var db3 = getDatabase(app3);
+                if (window._streakRealtimeUnsub) window._streakRealtimeUnsub();
+                window._streakRealtimeUnsub = onValue(fbRef2(db3, 'streaks/' + safeKey(userId)), function(snap) {
+                    var d = snap.val() || {};
+                    if (d.totalMinutes !== undefined) {
+                        var fbMins = Math.floor(d.totalMinutes);
+                        var localTotal = _lastSavedMins + Math.floor((Date.now() - _sessionStartMs) / 60000);
+                        // Only accept Firebase value if externally edited (differs by more than 1 min)
+                        if (Math.abs(fbMins - localTotal) > 1) {
+                            _lastSavedMins = fbMins;
+                            _sessionStartMs = Date.now();
+                        }
+                    }
+                    // Full re-render of all streak UI
+                    renderStreakUI(d);
+                    if (typeof loadLeaderboardFromFirebase === "function") loadLeaderboardFromFirebase();
+                });
+            } catch(e) { console.error('[Streak] Realtime listener failed:', e); }
+        })();
     }
 
     // ── Watch for login/logout and re-render ──────────────────────────────────
