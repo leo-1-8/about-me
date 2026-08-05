@@ -14957,171 +14957,6 @@
             </div>
         </div>
     </div>
-    <div class="modal-overlay" id="messageConfirmationModal">
-        <div class="message-confirmation-box" onclick="event.stopPropagation();">
-            <button class="close-button" onclick="closeMessageConfirmationModalX()" title="Close">×</button>
-            <div class="confirmation-header">
-                <h3 class="confirmation-title">CONFIRMATION</h3>
-                <div style="display:flex; justify-content:center; margin-top:4px;">
-                    <lord-icon
-                        id="confirmLordIcon1"
-                        src="https://cdn.lordicon.com/exymduqj.json"
-                        trigger="loop"
-                        delay="200"
-                        stroke="bold"
-                        colors="primary:#121331,secondary:#30c9e8"
-                        style="width:70px;height:70px;pointer-events:none;">
-                    </lord-icon>
-                </div>
-            </div>
-            <div class="confirmation-body">
-                <div class="name-input-wrapper">
-                    <button type="button" class="name-info-btn" onclick="toggleNameWarning(event); event.stopPropagation();" title="Info" aria-label="Name info">!</button>
-                    <input
-                        id="userNameInput"
-                        class="name-input-field"
-                        type="text"
-                        placeholder="Name or Nickname"
-                        maxlength="50"
-                        onkeypress="if(event.key==='Enter') proceedToMessage()"
-                    />
-                </div>
-                <button type="button" class="name-submit-btn" onclick="proceedToMessage()">Submit</button>
-                <!-- Author reset notice -->
-                <div id="authorResetNotice" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); color:#ef4444; font-size:12px; font-weight:600; text-align:center; letter-spacing:0.3px; line-height:1.5;">
-                    AUTHOR RESET YOUR DATA FOR SOME REASON.
-                </div>
-                <div id="oneAccountWarningConfirm" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.45); color:#ef4444; font-size:12px; font-weight:700; text-align:center; letter-spacing:0.5px; line-height:1.5;">
-                    YOU CAN ONLY CREATE ONE ACCOUNT!
-                </div>
-            </div>
-            
-            <!-- Error Message (shown when name is empty) -->
-            <div class="name-error-message" id="nameErrorMessage" style="display: none;"></div>
-            
-            <!-- Profanity Error Message -->
-            <div class="name-error-message" id="confirmProfanityErrorInitial" style="display: none; color: #ef4444; font-weight: 500;">
-                Your name/nickname contains inappropriate language. Please use a different name or nickname.
-            </div>
-            
-            <!-- Violations Counter -->
-            <div class="name-error-message" id="confirmViolationsCounterInitial" style="display: none; color: #ef4444; font-weight: 600;">
-                Remaining Violations: <span id="confirmViolationsCountInitial">10</span>
-            </div>
-            
-            <!-- Name Warning Info Box (hidden by default) -->
-            <div class="name-warning-overlay" id="nameWarningOverlay" style="display: none; cursor: default;">
-                <div class="name-warning-box" onclick="event.stopPropagation();">
-                    <p class="name-warning-text">Note: Names and nicknames are <span style="color:#ef4444;">permanent</span> once submitted. Please <span style="color:#ef4444;">review them carefully</span> before submitting. Feel free to use fake name/nickname or anything that doesn't <span style="color:#ef4444;">violate the rules</span>.</p>
-                    <button type="button" class="name-warning-ok-btn" onclick="closeNameWarning()">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Final Name Confirmation Modal -->
-    <div class="modal-overlay" id="nameFinalConfirmModal">
-        <div class="message-confirmation-box" onclick="event.stopPropagation();">
-            <div class="confirmation-header">
-                <h3 class="confirmation-title">LAST CONFIRMATION</h3>
-                <div style="display:flex; justify-content:center; margin-top:4px;">
-                    <lord-icon
-                        id="confirmLordIcon2"
-                        src="https://cdn.lordicon.com/exymduqj.json"
-                        trigger="loop"
-                        delay="200"
-                        stroke="bold"
-                        colors="primary:#121331,secondary:#30c9e8"
-                        style="width:70px;height:70px;pointer-events:none;">
-                    </lord-icon>
-                </div>
-            </div>
-            <div class="confirmation-body" style="margin-bottom: 0;">
-                <p id="confirmNameQuestion" style="margin: 0; font-size: 14px; text-align: center; line-height: 1.6; font-weight: 500;"></p>
-                <p style="margin: 6px 0 0 0; font-size: 14px; text-align: center; line-height: 1.6;">If not, please click 'Edit' and double-check it.</p>
-                
-                <!-- Profanity Error Message -->
-                <p id="confirmProfanityError" style="margin: 8px 0 0 0; font-size: 13px; text-align: center; line-height: 1.6; color: #ef4444; font-weight: 500; display: none;">
-                    Your name contains inappropriate language. Please use a different name or nickname.
-                </p>
-            </div>
-            <div class="edit-confirm-timer" style="margin: 12px 0 15px 0; display: flex; justify-content: center;"><span id="nameConfirmCountdown">10</span>s</div>
-            <div style="display: flex; gap: 10px; margin-top: 12px;">
-                <button type="button" class="name-submit-btn" style="flex: 1;" onclick="goBackToEditName()">Edit</button>
-                <button type="button" class="name-submit-btn" id="nameFinalConfirmSubmitBtn" style="flex: 1; opacity: 0.5; cursor: not-allowed;" onclick="confirmFinalName()" disabled>Submit</button>
-            </div>
-            <!-- One-account-per-device warning -->
-            <div id="oneAccountWarning" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.12); border:1.5px solid rgba(239,68,68,0.45); color:#ef4444; font-size:12px; font-weight:700; text-align:center; letter-spacing:0.5px; line-height:1.5;">
-                YOU CAN ONLY CREATE ONE ACCOUNT!
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Password Creation Modal -->
-    <div class="modal-overlay" id="senderPasswordModal">
-        <div class="message-confirmation-box" onclick="event.stopPropagation();" style="max-width:380px; width:90%;">
-            <!-- Exclamation/Info icon on the LEFT - SMALLER -->
-            <div id="senderPwExclam" style="position:absolute; top:16px; left:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transform: rotate(180deg); z-index:2;" onclick="showImportantMessage()" title="Important information">i</div>
-            <button type="button" id="senderPwExitBtn" onclick="openPasswordExitConfirm()" title="Exit" aria-label="Exit" style="position:absolute; top:16px; right:16px; width: 20px; height: 20px; border-radius: 50%; background: #888888; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; border: none; padding: 0; line-height: 1; font-family: inherit; z-index:2;">✕</button>
-            <div class="confirmation-header" style="margin-bottom: 20px; margin-top: -12px;">
-                <h3 class="confirmation-title" style="text-align: center; margin: 0;">PASSWORD</h3>
-            </div>
-            <div class="confirmation-body" style="margin-bottom:0; padding: 16px 0 0 0;">
-                <!-- Password input row -->
-                <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
-                    <input id="senderPasswordInput" type="password" autocomplete="new-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" placeholder="Type a password..." style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid rgba(0,0,0,0.18); background:#f0f2f5; color:#111111; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none;" oninput="checkSenderPasswordRequirements()">
-                    <button type="button" id="senderPwEyeBtn" data-state="hidden" onclick="toggleSenderPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#555555; display:flex; align-items:center;">
-                        <span id="senderPwEyeOpen" style="display:none;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                        <span id="senderPwEyeClosed" style="display:inline-flex;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16"></path></svg>
-                        </span>
-                    </button>
-                </div>
-                <!-- Submit button -->
-                <button type="button" id="senderPasswordSubmitBtn" class="name-submit-btn" style="width:100%; opacity:0.45; cursor:not-allowed;" disabled onclick="submitSenderPassword()">Submit</button>
-                <!-- Requirements -->
-                <div id="pwReqContainer" style="margin-top:14px; display:flex; flex-direction:column; gap:4px; overflow:hidden; transition: margin-top 0.4s ease;">
-                    <div class="pw-req" id="pwReq1" data-met="false">
-                        <span class="pw-req-circle"></span>
-                        <span class="pw-req-text">Must be at least 8 characters long.</span>
-                    </div>
-                    <div class="pw-req" id="pwReq2" data-met="false">
-                        <span class="pw-req-circle"></span>
-                        <span class="pw-req-text">Must contain at least one uppercase and lowercase letter (A-z).</span>
-                    </div>
-                    <div class="pw-req" id="pwReq3" data-met="false">
-                        <span class="pw-req-circle"></span>
-                        <span class="pw-req-text">Must contain at least one number (0-9).</span>
-                    </div>
-                    <div class="pw-req" id="pwReq4" data-met="false">
-                        <span class="pw-req-circle"></span>
-                        <span class="pw-req-text">Must contain at least one special character (e.g., ! @ $ % ^ &amp; *).</span>
-                    </div>
-                    <div class="pw-req" id="pwReq5" data-met="false">
-                        <span class="pw-req-circle"></span>
-                        <span class="pw-req-text">Must not contain spaces.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Password Modal Exit Confirmation -->
-    <div class="password-exit-confirm-overlay" id="passwordExitConfirmOverlay" style="display:none;">
-        <div class="password-exit-confirm-box" onclick="event.stopPropagation();">
-            <div class="password-exit-confirm-title">ARE YOU SURE YOU WANT TO EXIT?</div>
-            <div class="password-exit-confirm-desc">Exiting will cancel your progress and you will need to create again.</div>
-            <div class="password-exit-confirm-timer"><span id="pwExitConfirmCountdown">5</span>s</div>
-            <div class="password-exit-confirm-buttons">
-                <button type="button" class="password-exit-cancel-btn" onclick="closePasswordExitConfirm()">Cancel</button>
-                <button type="button" class="password-exit-exit-btn" id="pwExitConfirmBtn" disabled onclick="confirmPasswordExit()">Exit</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Login Modal (returning user on new device) -->
     <div class="modal-overlay" id="senderLoginModal" style="pointer-events:auto;">
         <div class="message-confirmation-box" onclick="event.stopPropagation();" style="max-width:380px; width:90%; pointer-events:auto; position:relative; overflow:hidden;">
@@ -15168,53 +15003,13 @@
                 </lord-icon>
             </div>
             <div class="confirmation-body" style="margin-bottom:0; padding:16px 14px 16px 14px;">
-                <!-- Name input row -->
-                <div style="margin-bottom:12px;">
-                    <input id="loginNameInput" type="text" autocomplete="off" spellcheck="false" placeholder="Input Name/Nickname..."
-                        style="width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
-                        oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
-                        onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
-                        onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
-                </div>
-                <!-- Password input row -->
-                <div style="position:relative; display:flex; align-items:center; margin-bottom:12px;">
-                    <input id="loginPasswordInput" type="password" autocomplete="current-password" spellcheck="false" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" placeholder="Input password..."
-                        style="width:100%; padding:10px 40px 10px 12px; border-radius:8px; border:1.5px solid; font-size:14px; font-family:inherit; box-sizing:border-box; outline:none; transition:background 0.2s, color 0.2s, border-color 0.2s;"
-                        oninput="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout(); return;} updateLoginSubmitState();" 
-                        onkeydown="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();event.preventDefault();return false;}if(event.key==='Enter') attemptSenderLogin()"
-                        onfocus="if(isLoginAttemptLockedOut()){handleLoginInputDuringLockout();}">
-                    <button type="button" id="loginPwEyeBtn" data-state="hidden" onclick="toggleLoginPwVisibility()" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; padding:4px; color:#555555; display:flex; align-items:center;">
-                        <span id="loginPwEyeOpen" style="display:none;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                        <span id="loginPwEyeClosed" style="display:inline-flex;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 4l16 16"></path></svg>
-                        </span>
-                    </button>
-                </div>
-                <!-- Submit button -->
-                <button type="button" id="loginSubmitBtn" class="name-submit-btn" style="width:100%; opacity:0.45; cursor:not-allowed;" disabled onclick="attemptSenderLogin()">Submit</button>
-                <!-- Create new account link — ABOVE the OR divider -->
-                <div style="margin-top:12px; display:flex; align-items:center; justify-content:center; text-align:center; width:100%;">
-                    <span style="font-size:12px; color:#888;">New here?&nbsp;</span>
-                    <span style="font-size:12px; color:#87CEEB; cursor:pointer; font-weight:600; text-decoration:underline;" onclick="loginCreateAccountGuard()">Create an account</span>
-                </div>
-                <!-- One-account warning for Create an account -->
-                <div id="loginCreateAcctOneAcctWarn" style="display:none;margin-top:6px;padding:9px 12px;border-radius:8px;background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.45);color:#ef4444;font-size:12px;font-weight:700;text-align:center;letter-spacing:0.5px;line-height:1.5;">
-                    YOU CAN ONLY CREATE ONE ACCOUNT!
-                </div>
-                <!-- Google sign-in divider -->
-                <div style="display:flex;align-items:center;gap:8px;margin:12px 0 10px;">
-                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
-                    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1px;">OR</span>
-                    <div style="flex:1;height:1px;background:rgba(255,255,255,0.12);"></div>
-                </div>
+                
                 <button type="button" id="msgMeGoogleBtn" onclick="loginGoogleGuard(this)" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 0;border-radius:8px;border:none;background:#fff;color:#333;font-size:13px;font-weight:700;letter-spacing:0.3px;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
                     <span id="msgMeGoogleBtnIcon" style="display:flex;align-items:center;">
                         <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                     </span>
                     <span id="msgMeGoogleBtnText">Continue with Google</span>
-                </div>
+                </button>
                 <!-- One-account warning for Google button -->
                 <div id="loginGoogleOneAcctWarn" style="display:none;margin-top:8px;padding:9px 12px;border-radius:8px;background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.45);color:#ef4444;font-size:12px;font-weight:700;text-align:center;letter-spacing:0.5px;line-height:1.5;">
                     YOU CAN ONLY CREATE ONE ACCOUNT!
@@ -15276,14 +15071,6 @@
         </div>
     </div>
 
-
-    <!-- Important Message Modal (Overlay inside Password Modal) -->
-    <div class="important-message-overlay" id="importantMessageOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10001; justify-content: center; align-items: center; pointer-events: auto;" onclick="if(event.target.id === 'importantMessageOverlay') closeImportantMessage()">
-        <div class="important-message-box" style="background: rgba(20, 24, 40, 0.95); border-radius: 12px; padding: 24px; max-width: 340px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); position: relative; pointer-events: auto;">
-            <p style="margin: 0 0 20px 0; font-size: 14px; color: #cccccc; line-height: 1.6; text-align: center; pointer-events: none;">Important: Please <span style="color:#ef4444;">remember your password</span> or save it in a secure place. It <span style="color:#ef4444;">cannot be recovered</span> if you forget it, so you'll need it to access your messages.</p>
-            <button type="button" style="width: 100%; padding: 12px 16px; background: #87CEEB; border: none; border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 14px; pointer-events: auto; z-index: 10002; position: relative;" onmousedown="closeImportantMessage()">OK</button>
-        </div>
-    </div>
 
     <!-- Christmas Message Modal -->
     <div class="modal-overlay" id="christmasMessageModal">
@@ -15898,6 +15685,7 @@
                         <p style="margin-top: 20px;"><strong>⚙️ Settings</strong></p>
                         <p>Added Your Account.</p>
                         <p>Added Streak.</p>
+                        <p>Added Leaderboard.</p>
                         <p>Upgraded Write a Review to Google Account Authentication.</p>
                         <p style="margin-top: 20px;"><strong>🌙 Moon Phase</strong></p>
                         <p>Added Moon Phase Calendar.</p>
@@ -16740,11 +16528,12 @@
                 <div id="streakLoggedIn" style="display:none;width:100%;">
 
                     <!-- 7 Flames row -->
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1.5px;margin-bottom:6px;font-family:'Poppins',sans-serif;">WEEKLY PROGRESS</div>
                     <div id="streakFlamesRow" style="display:flex;gap:8px;align-items:flex-end;justify-content:center;margin-bottom:12px;width:100%;"></div>
 
                     <!-- Streak count -->
-                    <div style="text-align:center;margin-bottom:10px;">
-                        <div id="streakCountDisplay" style="font-size:48px;font-weight:800;color:#ff6b2b;letter-spacing:-1px;line-height:1;font-family:'Poppins',sans-serif;">0</div>
+                    <div style="text-align:center;margin-bottom:16px;">
+                        <div id="streakCountDisplay" style="font-size:56px;font-weight:800;color:#ff6b2b;letter-spacing:-1px;line-height:1;font-family:'Poppins',sans-serif;">0</div>
                         <div id="streakDayLabel" style="font-size:12px;font-weight:700;color:rgba(223,235,255,0.7);letter-spacing:2px;margin-top:4px;font-family:'Poppins',sans-serif;">DAYS STREAK</div>
                     </div>
 
@@ -16778,6 +16567,306 @@
                     </div>
                 </div>
                 </div><!-- ── END STREAK SECTION ── -->
+
+                <!-- ── LEADERBOARD SECTION ── -->
+                <div id="leaderboardSectionWrap" style="width:100%;box-sizing:border-box;margin-top:18px;">
+                    <div style="width:100%;text-align:center;font-size:13px;font-weight:800;letter-spacing:1.5px;color:rgba(223,235,255,0.95);margin-bottom:10px;">
+                        LEADERBOARD
+                    </div>
+
+                    <!-- Header row -->
+                    <div style="display:grid;grid-template-columns:38px 1fr 1px 56px 1px 60px 1px 64px;align-items:center;gap:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px 10px 0 0;padding:8px 10px;margin-bottom:0;">
+                        <div style="font-size:10px;font-weight:800;color:rgba(255,215,0,0.85);letter-spacing:0.5px;text-align:center;">NO.</div>
+                        <div style="font-size:10px;font-weight:800;color:rgba(223,235,255,0.7);letter-spacing:0.5px;text-align:left;padding-left:8px;">NAME</div>
+                        <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
+                        <div style="font-size:9px;font-weight:800;color:#fbbf24;letter-spacing:0.3px;text-align:center;line-height:1.3;">LONGEST<br>STREAK</div>
+                        <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
+                        <div style="font-size:9px;font-weight:800;color:#60a5fa;letter-spacing:0.3px;text-align:center;line-height:1.3;">TIME<br>SPENT</div>
+                        <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
+                        <div style="font-size:9px;font-weight:800;color:#34d399;letter-spacing:0.3px;text-align:center;line-height:1.3;">TOTAL<br>VISITS</div>
+                    </div>
+
+                    <!-- Leaderboard list -->
+                    <div id="leaderboardList" style="width:100%;border:1px solid rgba(255,255,255,0.1);border-top:none;border-radius:0 0 10px 10px;overflow:visible;">
+                        <div style="text-align:center;padding:18px;color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">Loading leaderboard...</div>
+                    </div>
+                </div>
+                <!-- ── END LEADERBOARD SECTION ── -->
+
+                <style>
+                .lb-row {
+                    display: grid;
+                    grid-template-columns: 38px 1fr 1px 56px 1px 60px 1px 64px;
+                    align-items: center;
+                    justify-items: center;
+                    gap: 0;
+                    padding: 9px 10px;
+                    border-bottom: 1px solid rgba(255,255,255,0.06);
+                    transition: background 0.15s;
+                }
+                .lb-row:last-child { border-bottom: none; }
+                .lb-row:nth-child(odd)  { background: rgba(255,255,255,0.025); }
+                .lb-row:nth-child(even) { background: rgba(255,255,255,0.05); }
+                .lb-row.lb-top1 { background: rgba(255,215,0,0.13) !important; border: 1.5px solid rgba(255,215,0,0.55) !important; margin: -1px; }
+                .lb-row.lb-top2 { background: rgba(192,192,192,0.10) !important; border: 1.5px solid rgba(192,192,192,0.4) !important; margin: -1px; }
+                .lb-row.lb-top3 { background: rgba(205,127,50,0.10) !important; border: 1.5px solid rgba(205,127,50,0.4) !important; margin: -1px; }
+                .lb-row.lb-me   { background: rgba(100,180,255,0.09) !important; outline: 1px solid rgba(100,180,255,0.25); }
+                .lb-rank {
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-align: center;
+                    color: rgba(255,255,255,0.5);
+                    font-family: 'Poppins', sans-serif;
+                }
+                .lb-rank.gold   { color: #ffd700; font-size: 14px; }
+                .lb-rank.silver { color: #c0c0c0; font-size: 13px; }
+                .lb-rank.bronze { color: #cd7f32; font-size: 13px; }
+                .lb-player {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 7px;
+                    padding-left: 8px;
+                    min-width: 0;
+                    justify-self: start;
+                    width: 100%;
+                }
+                .lb-avatar {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    flex-shrink: 0;
+                    border: 1.5px solid rgba(255,255,255,0.15);
+                    background: rgba(255,255,255,0.1);
+                }
+                .lb-avatar-fallback {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                    background: linear-gradient(135deg,#667eea,#764ba2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    font-weight: 800;
+                    color: #fff;
+                    border: 1.5px solid rgba(255,255,255,0.15);
+                }
+                .lb-name {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: rgba(223,235,255,0.9);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-family: 'Poppins', sans-serif;
+                }
+                .lb-divider {
+                    width: 1px;
+                    height: 32px;
+                    background: rgba(255,255,255,0.10);
+                }
+                .lb-stat {
+                    text-align: center;
+                    font-family: 'Poppins', sans-serif;
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                }
+                .lb-stat-val {
+                    font-size: 12px;
+                    font-weight: 800;
+                    line-height: 1;
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                }
+                .lb-streak-val { color: #fbbf24; }
+                @keyframes flamePop {
+                    0%   { transform: scale(1);   filter: drop-shadow(0 0 0px #ff6b2b); }
+                    40%  { transform: scale(1.35); filter: drop-shadow(0 0 6px #ff8c00); }
+                    70%  { transform: scale(0.95); filter: drop-shadow(0 0 4px #ffd93d); }
+                    100% { transform: scale(1);   filter: drop-shadow(0 0 3px #ff6b2b); }
+                }
+                .flame-lit-anim {
+                    animation: flamePop 0.55s ease-out forwards;
+                    display: inline-flex;
+                }
+                .lb-time-val   { color: #60a5fa; font-size: 10px !important; }
+                .lb-visits-val { color: #34d399; }
+                </style>
+
+                <script>
+                (function() {
+                    var LB_FIREBASE_CONFIG = {
+                        apiKey: 'AIzaSyDzb58CCQAfRafnxdS-wawJhaT3uG2xMeY',
+                        authDomain: 'my-website-6fe0d.firebaseapp.com',
+                        databaseURL: 'https://my-website-6fe0d-default-rtdb.firebaseio.com',
+                        projectId: 'my-website-6fe0d',
+                        storageBucket: 'my-website-6fe0d.firebasestorage.app',
+                        messagingSenderId: '106731880567',
+                        appId: '1:106731880567:web:beb553fff430c16248c672'
+                    };
+
+                    function fmtTime(minutes) {
+                        var mins = minutes || 0;
+                        var h = Math.floor(mins / 60);
+                        var m = mins % 60;
+                        return h + "H " + m + "M";
+                    }
+
+                    function initials(name) {
+                        if (!name) return '?';
+                        var parts = name.trim().split(/\s+/);
+                        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+                        return name[0].toUpperCase();
+                    }
+
+                    function rankLabel(i) {
+                        if (i === 0) return { label: '🥇', cls: 'gold' };
+                        if (i === 1) return { label: '🥈', cls: 'silver' };
+                        if (i === 2) return { label: '🥉', cls: 'bronze' };
+                        return { label: '#' + (i + 1), cls: '' };
+                    }
+
+                    function rowClass(i) {
+                        if (i === 0) return 'lb-row lb-top1';
+                        if (i === 1) return 'lb-row lb-top2';
+                        if (i === 2) return 'lb-row lb-top3';
+                        return 'lb-row';
+                    }
+
+                    function buildRow(entry, i, myUid) {
+                        var rk = rankLabel(i);
+                        var isMe = myUid && entry.uid === myUid;
+                        var cls = rowClass(i) + (isMe ? ' lb-me' : '');
+                        var avatarHTML = entry.photo
+                            ? '<img class="lb-avatar" src="' + entry.photo + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\';" /><div class="lb-avatar-fallback" style="display:none;">' + initials(entry.name) + '</div>'
+                            : '<div class="lb-avatar-fallback">' + initials(entry.name) + '</div>';
+                        return '<div class="' + cls + '">'
+                            + '<div class="lb-rank ' + rk.cls + '">' + rk.label + '</div>'
+                            + '<div class="lb-player">' + avatarHTML + '<span class="lb-name">' + (entry.name || 'Anonymous') + '</span></div>'
+                            + '<div class="lb-divider"></div>'
+                            + '<div class="lb-stat"><div class="lb-stat-val lb-streak-val">' + (entry.longest || 0) + '</div></div>'
+                            + '<div class="lb-divider"></div>'
+                            + '<div class="lb-stat"><div class="lb-stat-val lb-time-val">' + fmtTime(entry.time || 0) + '</div></div>'
+                            + '<div class="lb-divider"></div>'
+                            + '<div class="lb-stat"><div class="lb-stat-val lb-visits-val">' + (entry.visits || 0) + '</div></div>'
+                            + '</div>';
+                    }
+
+                    function renderLeaderboard(entries, myUid) {
+                        var list = document.getElementById('leaderboardList');
+                        if (!list) return;
+                        if (!entries || entries.length === 0) {
+                            list.innerHTML = '<div style="text-align:center;padding:18px;color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">No data yet. Be the first! 🔥</div>';
+                            return;
+                        }
+                        entries.sort(function(a, b) {
+                            if ((b.longest || 0) !== (a.longest || 0)) return (b.longest || 0) - (a.longest || 0);
+                            if ((b.time || 0) !== (a.time || 0)) return (b.time || 0) - (a.time || 0);
+                            return (b.visits || 0) - (a.visits || 0);
+                        });
+                        var top50 = entries.slice(0, 50);
+                        list.innerHTML = top50.map(function(e, i) { return buildRow(e, i, myUid); }).join('');
+                    }
+
+                    function showError(msg) {
+                        var list = document.getElementById('leaderboardList');
+                        if (list) list.innerHTML = '<div style="text-align:center;padding:18px;color:rgba(255,100,100,0.6);font-size:12px;font-weight:600;">' + msg + '</div>';
+                    }
+
+                    window.loadLeaderboardFromFirebase = async function loadLeaderboardFromFirebase() {
+                        var myUid = localStorage.getItem('streakGoogleUid') || null;
+                        try {
+                            var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
+                            var { getDatabase, ref, get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+
+                            var app;
+                            try { app = getApp('streakApp'); } catch(e) { app = initializeApp(LB_FIREBASE_CONFIG, 'streakApp'); }
+                            var db = getDatabase(app);
+
+                            // Read all entries under streaks/
+                            var snap = await get(ref(db, 'streaks'));
+                            if (!snap.exists()) {
+                                renderLeaderboard([], myUid);
+                                return;
+                            }
+
+                            var entries = [];
+                            snap.forEach(function(child) {
+                                var d = child.val();
+                                if (!d) return;
+                                // Skip ghost entries: no name AND no real streak data
+                                var hasName = !!(d.googleName || d.name);
+                                var hasData = !!(d.longestStreak || d.totalVisits || d.totalMinutes);
+                                if (!hasName && !hasData) return;
+                                // Skip entries with no name at all (raw UID nodes without google_ prefix are duplicates)
+                                if (!hasName) return;
+                                entries.push({
+                                    uid: d.googleUid || child.key,
+                                    name: d.googleName || d.name || 'Anonymous',
+                                    photo: d.googlePhoto || d.photo || '',
+                                    longest: d.longestStreak || 0,
+                                    time: d.totalMinutes || 0,
+                                    visits: d.totalVisits || 0
+                                });
+                            });
+
+                            // Deduplicate by googleUid — keep the entry with higher longestStreak
+                            var seen = {};
+                            entries = entries.filter(function(e) {
+                                var key = e.uid;
+                                if (!seen[key]) { seen[key] = e; return true; }
+                                if ((e.longest || 0) > (seen[key].longest || 0)) {
+                                    seen[key].longest = e.longest;
+                                    seen[key].time = e.time;
+                                    seen[key].visits = e.visits;
+                                }
+                                return false;
+                            });
+
+                            renderLeaderboard(entries, myUid);
+                        } catch(e) {
+                            renderLeaderboard([], myUid);
+                        }
+                    }
+
+                    // Called after streak renders — also write name/photo into the streak node
+                    window._lbRefresh = async function() {
+                        var uid = localStorage.getItem('streakGoogleUid');
+                        var name = localStorage.getItem('streakGoogleName') || '';
+                        var photo = localStorage.getItem('streakGooglePhoto') || '';
+                        if (uid && name) {
+                            try {
+                                var { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
+                                var { getDatabase, ref, update } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                                var app;
+                                try { app = getApp('streakApp'); } catch(e) { app = initializeApp(LB_FIREBASE_CONFIG, 'streakApp'); }
+                                var db = getDatabase(app);
+                                function safeKeyLb(id) { return String(id || '').replace(/[.#$\[\]/]/g, '_'); }
+                                // Write display info into the streak node — must use same path as initStreak: streaks/google_<uid>
+                                await update(ref(db, 'streaks/google_' + safeKeyLb(uid)), {
+                                    googleUid: uid,
+                                    googleName: name,
+                                    googlePhoto: photo
+                                });
+                            } catch(e) { /* silent */ }
+                        }
+                        loadLeaderboardFromFirebase();
+                    };
+
+                    // Load on DOMContentLoaded
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(loadLeaderboardFromFirebase, 800);
+                    });
+                })();
+                </script>
 
                 <div style="height:16px;"></div>
                 <div class="settings-version-row">
@@ -52066,7 +52155,12 @@ class GravSimEndpoint {
             var lit = Math.min(current, 7);
             var html = '';
             for (var i = 0; i < 7; i++) {
-                html += fireSVG(i < lit, current);
+                var svgStr = fireSVG(i < lit, current);
+                if (i < lit) {
+                    html += '<span class="flame-lit-anim" style="animation-delay:' + (i * 0.06) + 's">' + svgStr + '</span>';
+                } else {
+                    html += svgStr;
+                }
             }
             flamesRow.innerHTML = html;
         }
@@ -52116,7 +52210,7 @@ class GravSimEndpoint {
                 var tick = visited ? '✔' : '○';
                 daysHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
                     + '<div style="font-size:9px;font-weight:700;color:' + (isToday ? '#60a5fa' : 'rgba(255,255,255,0.5)') + ';letter-spacing:0.3px;">' + dayNames[dow] + '</div>'
-                    + '<div style="width:30px;height:30px;border-radius:50%;background:' + circleColor + ';display:flex;align-items:center;justify-content:center;font-size:13px;color:' + tickColor + ';font-weight:800;border:' + (isToday ? '2px solid #60a5fa' : '1px solid rgba(255,255,255,0.1)') + ';">' + tick + '</div>'
+                    + '<div style="width:30px;height:30px;border-radius:50%;background:' + circleColor + ';display:flex;align-items:center;justify-content:center;font-size:13px;color:' + tickColor + ';font-weight:800;border:' + (isToday ? '2px solid #60a5fa' : '1px solid rgba(255,255,255,0.1)') + ';box-shadow:' + (isToday ? '0 0 8px 3px rgba(96,165,250,0.4)' : 'none') + ';">' + tick + '</div>'
                     + '</div>';
             }
             daysRow.innerHTML = daysHtml;
@@ -52165,6 +52259,9 @@ class GravSimEndpoint {
             var numColor = (fc5.type === 'legendary' || fc5.type === 'rainbow') ? '#FF8A00' : fc5.body;
             if (streakCountEl) streakCountEl.style.color = numColor;
         }
+
+        // ── Refresh leaderboard with current user's stats
+        if (typeof window._lbRefresh === 'function') window._lbRefresh();
     }
 
     // ── Firebase streak logic ─────────────────────────────────────────────────
@@ -52229,7 +52326,15 @@ class GravSimEndpoint {
             var visitDays = data.visitDays || {};
 
             // Always atomically increment totalVisits on every page load (server-side, can never reset to 1)
-            await update(streakRef, { totalVisits: increment(1) });
+            // Also always write display info so leaderboard can read it
+            var _lbName = localStorage.getItem("streakGoogleName") || "";
+            var _lbPhoto = localStorage.getItem("streakGooglePhoto") || "";
+            var _lbUid = _streakGoogleUid || "";
+            var _lbUpdate = { totalVisits: increment(1) };
+            if (_lbUid) _lbUpdate.googleUid = _lbUid;
+            if (_lbName) _lbUpdate.googleName = _lbName;
+            if (_lbPhoto) _lbUpdate.googlePhoto = _lbPhoto;
+            await update(streakRef, _lbUpdate);
 
             // Already visited today — streak unchanged, re-read fresh data and render
             if (visitDays[today]) {
@@ -52313,6 +52418,8 @@ class GravSimEndpoint {
                 // Update time display live
                 var timeEl = document.getElementById('streakTimeVal');
                 if (timeEl) timeEl.textContent = fmtTime(newTotal);
+                // Refresh leaderboard with latest time
+                if (typeof loadLeaderboardFromFirebase === "function") loadLeaderboardFromFirebase();
             } catch(e) { console.error('[Streak] Time tracking save failed:', e); }
         }, 30000); // save every 30 seconds
     }
@@ -52630,6 +52737,8 @@ class GravSimEndpoint {
             localStorage.setItem('streakGoogleName', user.displayName || user.email || 'User');
             if (user.email) localStorage.setItem('streakGoogleEmail', user.email);
             if (user.photoURL) localStorage.setItem('streakGooglePhoto', user.photoURL);
+            // Pause any playing music on sign-in
+            document.querySelectorAll('audio[id^="musicPlayer-"]').forEach(function(a) { if (!a.paused) a.pause(); });
             if (btn) { btn.disabled = false; btn.style.opacity = ''; }
             if (typeof updateSettingsUserRow === 'function') updateSettingsUserRow();
             if (typeof updateStarReviewAuthUI === 'function') updateStarReviewAuthUI();
@@ -53071,6 +53180,14 @@ class GravSimEndpoint {
 
         window.confirmSignOut = function() {
             hideSignOutConfirmModal();
+            // Pause any playing background music
+            try {
+                if (typeof bgMusicAudio !== 'undefined' && bgMusicAudio && !bgMusicAudio.paused) {
+                    bgMusicAudio.pause();
+                }
+                // Also pause any other audio elements
+                document.querySelectorAll('audio').forEach(function(a) { a.pause(); });
+            } catch(e) {}
             if (typeof streakGoogleSignOut === 'function') streakGoogleSignOut();
         };
     })();
