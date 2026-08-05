@@ -53339,17 +53339,11 @@ class GravSimEndpoint {
 
     // ── Music: pause & hide now-playing bar when sign-in screen appears ──
     function _pauseAndHideMusicBar() {
-        // Pause any playing song and clear its src to dismiss the browser media pill
+        // Pause any playing song
         if (typeof currentPlayingSong !== 'undefined' && currentPlayingSong) {
             var audio = document.getElementById('musicPlayer-' + currentPlayingSong);
-            if (audio) {
-                // Save playback position and src so we can restore later
-                audio.dataset.savedSrc = audio.src || audio.currentSrc || '';
-                audio.dataset.savedTime = audio.currentTime || 0;
+            if (audio && !audio.paused) {
                 audio.pause();
-                // Clearing src removes the browser's native media notification pill
-                audio.src = '';
-                audio.load();
                 var pauseIcon = document.getElementById('mnpPauseIcon');
                 var playIcon  = document.getElementById('mnpPlayIcon');
                 if (pauseIcon) pauseIcon.style.display = 'none';
@@ -53368,21 +53362,8 @@ class GravSimEndpoint {
         var bar = document.getElementById('musicNowPlayingBar');
         if (bar && bar.dataset.hiddenByLogin === '1') {
             delete bar.dataset.hiddenByLogin;
-            // Restore the audio src so the song can be resumed
+            // Only re-show if there is actually a song loaded
             if (typeof currentPlayingSong !== 'undefined' && currentPlayingSong) {
-                var audio = document.getElementById('musicPlayer-' + currentPlayingSong);
-                if (audio && audio.dataset.savedSrc) {
-                    var savedSrc  = audio.dataset.savedSrc;
-                    var savedTime = parseFloat(audio.dataset.savedTime) || 0;
-                    delete audio.dataset.savedSrc;
-                    delete audio.dataset.savedTime;
-                    audio.src = savedSrc;
-                    audio.load();
-                    audio.addEventListener('loadedmetadata', function onMeta() {
-                        audio.removeEventListener('loadedmetadata', onMeta);
-                        audio.currentTime = savedTime;
-                    }, { once: true });
-                }
                 bar.style.display = '';
             }
         }
@@ -53606,7 +53587,7 @@ class GravSimEndpoint {
                 <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
                 Continue with Google
             </button>
-            <button type="button" onclick="document.getElementById('guestLockModal').style.display='none'; if(typeof _restoreMusicBarIfNeeded==='function')_restoreMusicBarIfNeeded();" style="width:100%; padding:10px; border-radius:9px; border:1px solid rgba(255,255,255,0.14); background:transparent; color:rgba(255,255,255,0.55); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">Cancel</button>
+            <button type="button" onclick="document.getElementById('guestLockModal').style.display='none';" style="width:100%; padding:10px; border-radius:9px; border:1px solid rgba(255,255,255,0.14); background:transparent; color:rgba(255,255,255,0.55); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">Cancel</button>
         </div>
     </div>
 
@@ -53636,9 +53617,32 @@ class GravSimEndpoint {
         }
         /* Dim locked feature sections */
         .guest-locked-section {
-            opacity: 0.62;
+            opacity: 0.72;
             cursor: pointer;
             position: relative;
+        }
+        /* Blur only the actual content children, not the lock icon overlay */
+        .guest-locked-section > *:not(.guest-lock-icon-inline) {
+            filter: blur(2px);
+            -webkit-filter: blur(2px);
+        }
+        /* Blur inline-locked nav items content but not the lock span */
+        [data-guest-locked] > *:not(.guest-lock-icon-inline) {
+            filter: blur(2px);
+            -webkit-filter: blur(2px);
+        }
+        /* Always keep lock icons sharp — override any inherited blur.
+           CSS filter on a parent cannot be overridden by a child, so we
+           use isolation:isolate + a backdrop trick instead: the lock span
+           itself gets filter:none and we use mix-blend-mode to lift it. */
+        .guest-lock-icon-inline {
+            filter: none !important;
+            -webkit-filter: none !important;
+            isolation: isolate;
+            position: absolute;
+        }
+        .guest-lock-icon-inline svg {
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.9)) !important;
         }
         .guest-locked-section::after {
             content: '';
@@ -53787,20 +53791,45 @@ class GravSimEndpoint {
         if (!el || el.dataset.guestLocked) return;
         el.dataset.guestLocked = '1';
         el.style.opacity = '0.55';
+        el.style.filter = '';
         el.style.cursor = 'pointer';
 
-        // Overlay lock centered on the element without moving it
-        var lockTarget = el;
-        // For MESSAGE ME wrapper, use the inner div which already has position:relative
+        // Wrap any bare text nodes in a span so the [data-guest-locked] > * blur CSS applies
+        Array.from(el.childNodes).forEach(function(node) {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                var wrapper = document.createElement('span');
+                wrapper.className = 'guest-lock-text-wrap';
+                el.insertBefore(wrapper, node);
+                wrapper.appendChild(node);
+            }
+        });
+
+        // For christmasLinkWrapperAboutMe: manually blur only the inner link (not the wrapper),
+        // then append the lock to the wrapper so it's never inside a blurred element.
         if (id === 'christmasLinkWrapperAboutMe') {
-            lockTarget = el.querySelector('.christmas-message-link') || el;
+            var innerLink = el.querySelector('.christmas-message-link');
+            if (innerLink) {
+                innerLink.style.filter = 'blur(2px)';
+                innerLink.style.webkitFilter = 'blur(2px)';
+            }
+            el.style.position = 'relative';
+            var lockSpan = document.createElement('span');
+            lockSpan.className = 'guest-lock-icon-inline';
+            lockSpan.setAttribute('aria-hidden', 'true');
+            lockSpan.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9;';
+            lockSpan.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,210,80,1)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(0,0,0,0.9));pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+            el.appendChild(lockSpan);
+        } else {
+            if (!el.style.position || el.style.position === 'static') {
+                el.style.position = 'relative';
+            }
+            var lockSpan = document.createElement('span');
+            lockSpan.className = 'guest-lock-icon-inline';
+            lockSpan.setAttribute('aria-hidden', 'true');
+            lockSpan.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9;';
+            lockSpan.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,210,80,1)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(0,0,0,0.9));pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+            el.appendChild(lockSpan);
         }
-        var lockSpan = document.createElement('span');
-        lockSpan.className = 'guest-lock-icon-inline';
-        lockSpan.setAttribute('aria-hidden', 'true');
-        lockSpan.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9;';
-        lockSpan.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,210,80,1)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(0,0,0,0.9));pointer-events:none;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-        lockTarget.appendChild(lockSpan);
 
         // Intercept clicks at capture phase — only block if still in guest mode
         el.addEventListener('click', function(e) {
@@ -53817,6 +53846,16 @@ class GravSimEndpoint {
         if (!el || el.dataset.guestLocked) return;
         el.dataset.guestLocked = '1';
         el.classList.add('guest-locked-section');
+
+        // Wrap bare text nodes so the .guest-locked-section > * blur CSS applies to them
+        Array.from(el.childNodes).forEach(function(node) {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                var wrapper = document.createElement('span');
+                wrapper.className = 'guest-lock-text-wrap';
+                el.insertBefore(wrapper, node);
+                wrapper.appendChild(node);
+            }
+        });
 
         // Ensure the section is positioned so the overlay lock can be centered
         if (!el.style.position || el.style.position === 'static') {
@@ -53839,7 +53878,6 @@ class GravSimEndpoint {
     }
 
     function showGuestLockModal() {
-        if (typeof _pauseAndHideMusicBar === 'function') _pauseAndHideMusicBar();
         var m = document.getElementById('guestLockModal');
         if (m) m.style.display = 'flex';
     }
@@ -53907,6 +53945,7 @@ class GravSimEndpoint {
         // Remove inline lock icons from _guestLockElement elements
         document.querySelectorAll('[data-guest-locked]').forEach(function(el) {
             el.style.opacity = '';
+            el.style.filter = '';
             el.style.cursor = '';
             delete el.dataset.guestLocked;
             el.querySelectorAll('.guest-lock-icon-inline').forEach(function(icon) { icon.remove(); });
@@ -54012,7 +54051,6 @@ class GravSimEndpoint {
     <script>
     var _exitGuestCountdownTimer = null;
     function showExitGuestConfirmModal() {
-        if (typeof _pauseAndHideMusicBar === 'function') _pauseAndHideMusicBar();
         var modal = document.getElementById('exitGuestConfirmModal');
         if (!modal) return;
         modal.style.display = 'flex';
@@ -54026,8 +54064,6 @@ class GravSimEndpoint {
         var cdDisplay = document.getElementById('exitGuestCountdownDisplay');
         if (yesBtn) { yesBtn.disabled = true; yesBtn.style.background = 'rgba(255,180,40,0.25)'; yesBtn.style.color = 'rgba(255,200,80,0.45)'; yesBtn.style.cursor = 'not-allowed'; }
         if (cdDisplay) cdDisplay.textContent = '3s';
-        // Restore music bar since user cancelled
-        if (typeof _restoreMusicBarIfNeeded === 'function') _restoreMusicBarIfNeeded();
     }
     function _startExitGuestCountdown() {
         _clearExitGuestCountdown();
