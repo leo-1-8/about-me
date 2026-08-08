@@ -31438,7 +31438,7 @@ window.closeSettings = closeSettings;
             light.addEventListener('wheel', function(e) {
                 e.preventDefault();
                 const delta = e.deltaY > 0 ? 5 : -5;
-                messageThemeState.lightness = Math.max(5, Math.min(95, messageThemeState.lightness + delta));
+                messageThemeState.lightness = Math.max(0.5, Math.min(95, messageThemeState.lightness + delta));
                 refreshMessageThemeWheelUi();
             }, { passive: false });
         }
@@ -38617,7 +38617,7 @@ function cdtpRenderTime(){
   if(ds)ds.textContent=monthsShort[_cdtpMonth]+' '+_cdtpDay+', '+_cdtpYear+' at '+String(_cdtpHour).padStart(2,'0')+':'+String(_cdtpMin).padStart(2,'0')+':'+String(_cdtpSec).padStart(2,'0')+' '+_cdtpAmPm;
 }
 
-function cdtpHourTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpHour=Math.max(1,Math.min(12,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
+function cdtpHourTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpHour=Math.max(0.5,Math.min(12,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
 function cdtpMinTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpMin=Math.max(0,Math.min(59,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
 function cdtpSecTyped(v){var n=parseInt(v);if(isNaN(n))return;_cdtpSec=Math.max(0,Math.min(59,n));_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
 function cdtpSetAmPm(v){_cdtpAmPm=v;_cdtpTimeModified=true;if(_cdtpAutoUpdateInterval){clearInterval(_cdtpAutoUpdateInterval);_cdtpAutoUpdateInterval=null;}cdtpRenderTime();}
@@ -42181,7 +42181,7 @@ function inverse_terra(ovec, st) {
         let cos, sin, denom;
         let count = 0;
         let W = 0;
-        const distanceAu = Math.max(1, Math.hypot(ovec[0], ovec[1], ovec[2]));
+        const distanceAu = Math.max(0.5, Math.hypot(ovec[0], ovec[1], ovec[2]));
         for (;;) {
             if (++count > 10) {
                 throw `inverse_terra failed to converge: W=${W}, distanceAu=${distanceAu}`;
@@ -51466,6 +51466,8 @@ class GravSimEndpoint {
             }
 
             locBtn.addEventListener('click', function() {
+                // Sync location into interactive night sky too
+                if (typeof nskUseGPS === 'function') nskUseGPS();
                 if (!navigator.geolocation) {
                     if (tzEl) tzEl.textContent = 'Location not supported on this browser. Please enable location access manually.';
                     locBtn.style.display = 'none';
@@ -52079,12 +52081,12 @@ class GravSimEndpoint {
 </div>
 
 <!-- ══ INTERACTIVE NIGHT SKY MODAL ══ -->
-<div id="nightSkyModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999990;background:#070b14;flex-direction:column;overflow:hidden;" aria-modal="true" role="dialog" aria-label="Interactive Night Sky">
+<div id="nightSkyModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;height:100dvh;z-index:999999990;background:#070b14;flex-direction:column;overflow:hidden;overscroll-behavior:none;touch-action:none;" aria-modal="true" role="dialog" aria-label="Interactive Night Sky">
 
   <!-- Top bar -->
   <div id="nsk-topbar" style="position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(to bottom,rgba(7,11,20,0.95) 0%,rgba(7,11,20,0) 100%);pointer-events:none;">
     <div style="pointer-events:auto;display:flex;align-items:center;gap:10px;">
-      <button id="nsk-close" onclick="closeNightSkyModal()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;" aria-label="Close Night Sky">×</button>
+      <button id="nsk-close" onclick="closeNightSkyModal()" style="background:none;border:none;color:rgba(255,255,255,0.75);font-size:22px;cursor:pointer;line-height:1;padding:4px;font-family:inherit;" aria-label="Close Night Sky">×</button>
       <div>
         <div style="font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.5px;">INTERACTIVE NIGHT SKY</div>
         <div id="nsk-location-label" style="font-family:'Poppins',sans-serif;font-size:9px;font-weight:600;color:rgba(160,196,255,0.65);letter-spacing:0.5px;">Locating…</div>
@@ -52093,15 +52095,64 @@ class GravSimEndpoint {
     <div style="pointer-events:auto;display:flex;align-items:center;gap:8px;">
       <button id="nsk-toggle-const" onclick="nskToggleConstellations()" title="Toggle Constellations" style="height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(200,220,255,0.85);font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;">✦ CONST</button>
       <button id="nsk-toggle-labels" onclick="nskToggleLabels()" title="Toggle Labels" style="height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(200,220,255,0.85);font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;">Aa LABELS</button>
-      <button onclick="nskResetView()" title="Reset View" style="height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(200,220,255,0.85);font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;">⊙ RESET</button>
+      <button id="nsk-atmos-btn" onclick="nskToggleAtmos()" title="Toggle Atmosphere" style="height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(200,220,255,0.85);font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;">◑ ATMOS</button>
+      <button id="nsk-iss-btn" onclick="nskToggleISS()" title="Track ISS &amp; Satellites" style="height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(200,220,255,0.85);font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.4px;">&#x1F6F8; ISS</button>
     </div>
   </div>
 
   <!-- Canvas -->
-  <canvas id="nsk-canvas" style="display:block;width:100%;height:100%;touch-action:none;cursor:grab;"></canvas>
+  <canvas id="nsk-canvas" style="display:block;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;"></canvas>
+
+  <!-- Cardinal Direction Overlay -->
+  <div id="nsk-cardinal-overlay" style="position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden;">
+    <div id="nsk-cardinal-N"  class="nsk-cardinal" data-dir="N"></div>
+    <div id="nsk-cardinal-E"  class="nsk-cardinal" data-dir="E"></div>
+    <div id="nsk-cardinal-S"  class="nsk-cardinal" data-dir="S"></div>
+    <div id="nsk-cardinal-W"  class="nsk-cardinal" data-dir="W"></div>
+  </div>
+
+  <style>
+  .nsk-cardinal {
+    position: absolute;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(160, 210, 255, 0.75);
+    text-shadow:
+      0 0 8px rgba(100, 170, 255, 0.6),
+      0 0 18px rgba(80, 140, 255, 0.3);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1;
+    will-change: transform;
+    /* Pill background */
+    background: rgba(7, 11, 20, 0.55);
+    border: 1px solid rgba(100, 170, 255, 0.22);
+    border-radius: 6px;
+    padding: 3px 7px 2px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: opacity 0.18s ease;
+    /* N gets a distinct colour */
+  }
+  #nsk-cardinal-N {
+    color: rgba(180, 230, 255, 0.92);
+    border-color: rgba(130, 200, 255, 0.38);
+    text-shadow:
+      0 0 10px rgba(140, 210, 255, 0.8),
+      0 0 24px rgba(80, 160, 255, 0.4);
+    font-size: 14px;
+  }
+  @media (max-width: 480px) {
+    .nsk-cardinal { font-size: 11px; padding: 2px 5px 2px; }
+    #nsk-cardinal-N { font-size: 12px; }
+  }
+  </style>
 
   <!-- Bottom controls -->
-  <div id="nsk-controls" style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:12px 14px 18px;background:linear-gradient(to top,rgba(7,11,20,0.97) 0%,rgba(7,11,20,0) 100%);">
+  <div id="nsk-controls" style="position:absolute;bottom:0;left:0;right:0;z-index:10;padding:12px 14px calc(18px + env(safe-area-inset-bottom, 0px));background:linear-gradient(to top,rgba(7,11,20,0.97) 0%,rgba(7,11,20,0) 100%);">
     <!-- Time row -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
       <button onclick="nskAdjustTime(-3600)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="-1 hour">‹</button>
@@ -52124,7 +52175,6 @@ class GravSimEndpoint {
           style="height:26px;padding:0 6px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-family:'Poppins',sans-serif;font-size:9px;font-weight:600;cursor:pointer;outline:none;">
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
-        <button onclick="nskUseGPS()" title="Use my location" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(160,196,255,0.85);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⊕</button>
         <button onclick="nskZoom(1.3)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
         <div id="nsk-zoom-label" style="font-family:'Share Tech Mono','JetBrains Mono',monospace;font-size:9px;font-weight:600;color:rgba(160,200,255,0.55);white-space:nowrap;min-width:28px;text-align:center;line-height:1.2;pointer-events:none;user-select:none;">90°<br><span style="font-size:8px;opacity:0.7;">FOV</span></div>
         <button onclick="nskZoom(1/1.3)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
@@ -52154,7 +52204,8 @@ class GravSimEndpoint {
 // ── State ──────────────────────────────────────────
 var NSK = {
   open: false,
-  lat: 14.14, lon: 121.21, // default Philippines
+  lat: null, lon: null,  // no default — wait for real location
+  locationKnown: false,
   locationLabel: '',
   simTime: null,       // null = live, else Date object
   showConstellations: true,
@@ -52163,6 +52214,8 @@ var NSK = {
   azCenter: 180,       // azimuth center degrees
   altCenter: 45,       // altitude center degrees
   fov: 90,             // vertical field of view degrees
+  // atmosphere
+  atmosMode: false,
   // drag
   dragging: false,
   lastX: 0, lastY: 0,
@@ -52507,6 +52560,8 @@ function isOnScreen(x,y,margin){
 
 // ── Sky color based on sun altitude ────────────────────────────────────────
 function skyColors(sunAlt){
+  // Atmos mode: always render as deep night regardless of sun position
+  if(NSK.atmosMode) return {top:'#010306',mid:'#030710',hor:'#060c1a'};
   if(sunAlt<-18) return {top:'#020408',mid:'#050a12',hor:'#070d18'};
   if(sunAlt<-6)  return {top:'#02060f',mid:'#0a1428',hor:'#1a2a4a'};
   if(sunAlt<0)   return {top:'#050c1a',mid:'#1a2a50',hor:'#e08040'};
@@ -52673,158 +52728,175 @@ function nskDrawLandscape(ctx, horYpx, sunAlt, alpha){
 }
 
 
+// ── Star alt/az cache — recompute only when LST/lat changes, not on pan ───
+var _starCache = { lst: -999, lat: -999, data: null };
+function getStarAltAz(lst, lat){
+  if(Math.abs(_starCache.lst-lst)<0.0003 && _starCache.lat===lat) return _starCache.data;
+  var bg=BG_STARS, nm=NAMED_STARS, total=bg.length+nm.length;
+  var data=new Array(total);
+  for(var i=0;i<bg.length;i++) data[i]=raDecToAltAz(bg[i].ra,bg[i].dec,lst,lat);
+  for(var j=0;j<nm.length;j++) data[bg.length+j]=raDecToAltAz(nm[j].ra,nm[j].dec,lst,lat);
+  _starCache={lst:lst,lat:lat,data:data};
+  return data;
+}
+
+// ── drag flag exposed so nskSetupInteraction can set it ───────────────────
+var _isDragging=false;
+
 function draw(){
   var canvas=NSK.canvas, ctx=NSK.ctx;
   if(!canvas||!ctx||!NSK.open) return;
 
+  // No location yet — draw a dark sky with a prompt
+  if(!NSK.locationKnown){
+    ctx.fillStyle='#070b14';
+    ctx.fillRect(0,0,NSK.W,NSK.H);
+    ctx.save();
+    ctx.textAlign='center';
+    ctx.fillStyle='rgba(160,196,255,0.55)';
+    ctx.font='bold 13px Poppins,sans-serif';
+    ctx.fillText('Location needed', NSK.W/2, NSK.H/2 - 28);
+    ctx.font='11px Poppins,sans-serif';
+    ctx.fillStyle='rgba(120,160,220,0.45)';
+    // Word-wrap subtitle to fit canvas width with padding
+    var words='Allow location access to see what planets, stars and moon are above you.'.split(' ');
+    var maxW=NSK.W-48, line='', lines=[], y=NSK.H/2+2;
+    for(var wi=0;wi<words.length;wi++){
+      var test=line+(line?' ':'')+words[wi];
+      if(ctx.measureText(test).width>maxW && line){lines.push(line);line=words[wi];}
+      else line=test;
+    }
+    if(line) lines.push(line);
+    var lineH=17;
+    var startY=y-(lines.length-1)*lineH/2;
+    for(var li=0;li<lines.length;li++) ctx.fillText(lines[li],NSK.W/2,startY+li*lineH);
+    ctx.restore();
+    return;
+  }
+
   var now=NSK.simTime||new Date();
   var jd=julianDay(now);
-  var lst=localSiderealTime(jd,NSK.lon);
+  // Round LST to ~1-second resolution so the cache holds during a pan gesture
+  var lst=Math.round(localSiderealTime(jd,NSK.lon)*3600)/3600;
 
   // Sun
   var sun=sunPosition(jd);
   var sunAA=raDecToAltAz(sun.ra,sun.dec,lst,NSK.lat);
 
-  // Background gradient
+  // Sky gradient
   var sc=skyColors(sunAA.alt);
   var grd=ctx.createLinearGradient(0,0,0,NSK.H);
-  grd.addColorStop(0,sc.top);
-  grd.addColorStop(0.5,sc.mid);
-  grd.addColorStop(1,sc.hor);
-  ctx.fillStyle=grd;
-  ctx.fillRect(0,0,NSK.W,NSK.H);
+  grd.addColorStop(0,sc.top); grd.addColorStop(0.5,sc.mid); grd.addColorStop(1,sc.hor);
+  ctx.fillStyle=grd; ctx.fillRect(0,0,NSK.W,NSK.H);
 
-  // Night brightness factor (0=day, 1=dark night)
-  var nightF=Math.max(0,Math.min(1,(-sunAA.alt-6)/12));
-  var dawnF=Math.max(0,Math.min(1,(-sunAA.alt+2)/8)); // show stars at twilight
+  var nightF = NSK.atmosMode ? 1 : Math.max(0,Math.min(1,(-sunAA.alt-6)/12));
+  var dawnF  = NSK.atmosMode ? 1 : Math.max(0,Math.min(1,(-sunAA.alt+2)/8));
+  var starFade = NSK.atmosMode ? 1 : Math.max(0,Math.min(1,(-sunAA.alt-4)/14));
 
   // Horizon line
   var horY=altAzToXY(0,NSK.azCenter);
   ctx.save();
-  ctx.strokeStyle='rgba(100,180,255,0.2)';
-  ctx.lineWidth=1;
-  ctx.setLineDash([4,8]);
-  ctx.beginPath();ctx.moveTo(0,horY.y);ctx.lineTo(NSK.W,horY.y);ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
+  ctx.strokeStyle='rgba(100,180,255,0.2)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
+  ctx.beginPath(); ctx.moveTo(0,horY.y); ctx.lineTo(NSK.W,horY.y); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
 
-  // Compass labels on horizon
-  var compass=[{l:'N',az:0},{l:'NE',az:45},{l:'E',az:90},{l:'SE',az:135},{l:'S',az:180},{l:'SW',az:225},{l:'W',az:270},{l:'NW',az:315}];
-  ctx.font='bold 10px Poppins,sans-serif';
-  ctx.fillStyle='rgba(160,200,255,0.5)';
-  ctx.textAlign='center';
-  compass.forEach(function(c){
-    var p=altAzToXY(0,c.az);
-    if(p.x>0&&p.x<NSK.W){ ctx.fillText(c.l,p.x,horY.y+14); }
-  });
+  // Compass — draw intermediate points on horizon during non-drag
+  if(!_isDragging){
+    var compassSub=[{l:'NE',az:45},{l:'SE',az:135},{l:'SW',az:225},{l:'NW',az:315}];
+    ctx.font='bold 9px Poppins,sans-serif'; ctx.fillStyle='rgba(160,200,255,0.35)'; ctx.textAlign='center';
+    compassSub.forEach(function(c){ var p=altAzToXY(0,c.az); if(p.x>20&&p.x<NSK.W-20) ctx.fillText(c.l,p.x,horY.y+14); });
+  }
+  // Cardinal direction overlay — always update (including during drag)
+  nskUpdateCardinalOverlay();
 
-  var starFade=Math.max(0,Math.min(1,((-sunAA.alt-4)/14)));
+  // Cached star alt/az — only re-trig when time moves
+  var starAltAz=getStarAltAz(lst,NSK.lat);
+  var bgCount=BG_STARS.length;
 
-  // Constellation lines
-  if(NSK.showConstellations&&starFade>0.05){
+  // Constellation lines — skip during drag
+  if(!_isDragging && NSK.showConstellations && starFade>0.05){
     ctx.save();
-    ctx.strokeStyle='rgba(120,160,255,'+(0.18*starFade)+')';
-    ctx.lineWidth=0.8;
+    ctx.strokeStyle='rgba(120,160,255,'+(0.18*starFade)+')'; ctx.lineWidth=0.8;
     var starByName={};
-    NAMED_STARS.forEach(function(s){ starByName[s.name]=s; });
+    NAMED_STARS.forEach(function(s,i){ starByName[s.name]={aa:starAltAz[bgCount+i]}; });
     Object.keys(CONST_LINES).forEach(function(cid){
       CONST_LINES[cid].forEach(function(pair){
-        var s1=starByName[pair[0]], s2=starByName[pair[1]];
-        if(!s1||!s2) return;
-        var aa1=raDecToAltAz(s1.ra,s1.dec,lst,NSK.lat);
-        var aa2=raDecToAltAz(s2.ra,s2.dec,lst,NSK.lat);
-        if(aa1.alt<-10&&aa2.alt<-10) return;
-        var p1=altAzToXY(aa1.alt,aa1.az);
-        var p2=altAzToXY(aa2.alt,aa2.az);
-        ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke();
+        var e1=starByName[pair[0]],e2=starByName[pair[1]];
+        if(!e1||!e2||e1.aa.alt<-10&&e2.aa.alt<-10) return;
+        var p1=altAzToXY(e1.aa.alt,e1.aa.az), p2=altAzToXY(e2.aa.alt,e2.aa.az);
+        ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
       });
     });
     ctx.restore();
   }
 
-  // Background stars — progressive zoom tiers
-  // fov > 100° → zoomed out  → show only bright bg stars (mag < 4.5)
-  // fov 50–100° → normal     → show up to mag 5.5
-  // fov < 50°  → zoomed in   → show all up to mag 6.5
+  // Background stars — mag-limit tier + drag simplification
   var magLimit;
-  if(NSK.fov > 100){
-    magLimit = 4.5;
-  } else if(NSK.fov > 50){
-    // smooth interpolation: 4.5 at fov=100, 5.5 at fov=50
-    magLimit = 4.5 + (100 - NSK.fov) / 50 * 1.0;
-  } else {
-    // smooth interpolation: 5.5 at fov=50, 6.5 at fov=20
-    magLimit = 5.5 + (50 - NSK.fov) / 30 * 1.0;
-    magLimit = Math.min(6.5, magLimit);
-  }
+  if(NSK.fov>100)     magLimit=4.5;
+  else if(NSK.fov>50) magLimit=4.5+(100-NSK.fov)/50;
+  else                magLimit=Math.min(6.5,5.5+(50-NSK.fov)/30);
+  var drawMagLimit=_isDragging ? Math.min(magLimit,4.2) : magLimit;
 
   ctx.save();
-  for(var bsi=0;bsi<BG_STARS.length;bsi++){
-    var s=BG_STARS[bsi];
-    // BG_STARS are sorted brightest-first, so once we exceed magLimit we can stop
-    if(s.mag > magLimit) break;
-    var aa=raDecToAltAz(s.ra,s.dec,lst,NSK.lat);
-    if(aa.alt<-2) continue;
-    var p=altAzToXY(aa.alt,aa.az);
-    if(!isOnScreen(p.x,p.y)) continue;
-    var brightness=Math.max(0,(magLimit-s.mag+0.5)/3.5)*starFade;
-    var r=Math.max(0.3,(6.5-s.mag)/5.5*1.1);
+  for(var bsi=0;bsi<bgCount;bsi++){
+    var bs=BG_STARS[bsi];
+    if(bs.mag>drawMagLimit) break;
+    var baa=starAltAz[bsi];
+    if(baa.alt<-2) continue;
+    var bp=altAzToXY(baa.alt,baa.az);
+    if(!isOnScreen(bp.x,bp.y)) continue;
+    var brightness=Math.max(0,(magLimit-bs.mag+0.5)/3.5)*starFade;
     var alpha=brightness*0.65;
     if(alpha<0.02) continue;
     ctx.globalAlpha=alpha;
-    // Slight color variation: brighter bg stars lean slightly warm/blue
-    ctx.fillStyle = s.mag < 4.0 ? '#ddeeff' : '#ffffff';
-    ctx.beginPath();ctx.arc(p.x,p.y,r,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle=bs.mag<4.0?'#ddeeff':'#ffffff';
+    var br=Math.max(0.3,(6.5-bs.mag)/5.5*1.1);
+    ctx.beginPath(); ctx.arc(bp.x,bp.y,br,0,2*Math.PI); ctx.fill();
   }
-  ctx.globalAlpha=1;
-  ctx.restore();
+  ctx.globalAlpha=1; ctx.restore();
 
   // Named stars
   ctx.save();
-  NAMED_STARS.forEach(function(s){
-    var aa=raDecToAltAz(s.ra,s.dec,lst,NSK.lat);
+  NAMED_STARS.forEach(function(s,i){
+    var aa=starAltAz[bgCount+i];
     var p=altAzToXY(aa.alt,aa.az);
     if(!isOnScreen(p.x,p.y,50)) return;
     var belowHorizon=aa.alt<0;
-    var brightF=starFade;
-    if(belowHorizon) brightF*=0;
+    var brightF=belowHorizon?0:starFade;
     var maxR=Math.max(0.8,(3-s.mag)/1.5+1.2);
     var r=Math.min(4,maxR);
     var alpha=Math.max(0,Math.min(1,(1-s.mag/7)*brightF));
     if(alpha<0.01&&!belowHorizon) return;
 
-    if(!belowHorizon&&alpha>0.05){
-      // Glow
+    // Glow — always draw
+    if(!belowHorizon && alpha>0.05){
       var glow=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r*4);
-      var glowA=alpha*0.35;
-      glow.addColorStop(0,'rgba(180,210,255,'+glowA+')');
+      glow.addColorStop(0,'rgba(180,210,255,'+(alpha*0.35)+')');
       glow.addColorStop(1,'rgba(180,210,255,0)');
       ctx.fillStyle=glow;
-      ctx.beginPath();ctx.arc(p.x,p.y,r*4,0,2*Math.PI);ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x,p.y,r*4,0,2*Math.PI); ctx.fill();
     }
     ctx.globalAlpha=belowHorizon?0:alpha;
     ctx.fillStyle=s.mag<0?'#fff8e0':s.mag<1?'#fffce8':'#e8f0ff';
-    ctx.beginPath();ctx.arc(p.x,p.y,r,0,2*Math.PI);ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x,p.y,r,0,2*Math.PI); ctx.fill();
     ctx.globalAlpha=1;
 
-    // Label
-    // Show more star names when zoomed in (fov smaller = more zoomed)
-    var labelMagLimit = NSK.fov > 80 ? 1.8 : NSK.fov > 50 ? 2.5 : NSK.fov > 30 ? 3.2 : 4.0;
-    if(NSK.showLabels&&!belowHorizon&&alpha>0.2&&s.mag<labelMagLimit){
-      ctx.font='10px Poppins,sans-serif';
-      ctx.fillStyle='rgba(200,220,255,'+(alpha*0.8)+')';
-      ctx.textAlign='left';
-      ctx.fillText(s.name,p.x+r+3,p.y+4);
+    // Labels — always shown
+    if(NSK.showLabels && !belowHorizon && alpha>0.2){
+      var labelMagLimit=NSK.fov>80?1.8:NSK.fov>50?2.5:NSK.fov>30?3.2:4.0;
+      if(s.mag<labelMagLimit){
+        ctx.font='10px Poppins,sans-serif';
+        ctx.fillStyle='rgba(200,220,255,'+(alpha*0.8)+')';
+        ctx.textAlign='left';
+        ctx.fillText(s.name,p.x+r+3,p.y+4);
+      }
     }
   });
-  ctx.globalAlpha=1;
-  ctx.restore();
+  ctx.globalAlpha=1; ctx.restore();
 
-  // Constellation labels
-  if(NSK.showConstellations&&NSK.showLabels&&starFade>0.1){
-    ctx.save();
-    ctx.font='bold 9px Poppins,sans-serif';
-    ctx.textAlign='center';
+  // Constellation labels — skip during drag
+  if(!_isDragging && NSK.showConstellations && NSK.showLabels && starFade>0.1){
+    ctx.save(); ctx.font='bold 9px Poppins,sans-serif'; ctx.textAlign='center';
     CONSTELLATIONS.forEach(function(c){
       var aa=raDecToAltAz(c.ra,c.dec,lst,NSK.lat);
       if(aa.alt<5) return;
@@ -52836,6 +52908,9 @@ function draw(){
     ctx.restore();
   }
 
+  // Zoom scale: objects grow as FOV shrinks. Capped so they don't become absurd at wide FOV.
+  var zoomScale = Math.min(8, 90 / NSK.fov);
+
   // Planets
   PLANETS.forEach(function(pname){
     var pos=planetPosition(jd,pname);
@@ -52843,40 +52918,28 @@ function draw(){
     if(aa.alt<0) return;
     var p=altAzToXY(aa.alt,aa.az);
     if(!isOnScreen(p.x,p.y,20)) return;
-    // Planet colors
-    var colors={Mercury:'#b8a090',Venus:'#fffce0',Mars:'#ff6030',Jupiter:'#d4a878',Saturn:'#e0c880',Uranus:'#80e8e0',Neptune:'#6080e0'};
-    var r=pname==='Jupiter'?5:pname==='Saturn'?4.5:pname==='Venus'?4:3;
+    var colors={Mercury:'#b8a090',Venus:'#fffce0',Mars:'#ff6030',Jupiter:'#d4a870',Saturn:'#e8d090',Uranus:'#90d8d8',Neptune:'#4060e0'};
+    var baseR=pname==='Jupiter'?5:pname==='Saturn'?4.5:pname==='Venus'?4:3;
+    var r=baseR*zoomScale;
     var vis=starFade;
     if(pname==='Venus'||pname==='Mercury') vis=Math.max(vis,0.3);
     if(pname==='Jupiter') vis=Math.max(vis,0.2);
     if(vis<0.05) return;
-
-    ctx.save();
-    ctx.globalAlpha=vis;
-    // Glow
+    ctx.save(); ctx.globalAlpha=vis;
     var g2=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r*5);
-    g2.addColorStop(0,colors[pname]+'80');
-    g2.addColorStop(1,colors[pname]+'00');
-    ctx.fillStyle=g2;
-    ctx.beginPath();ctx.arc(p.x,p.y,r*5,0,2*Math.PI);ctx.fill();
-
+    g2.addColorStop(0,colors[pname]+'80'); g2.addColorStop(1,colors[pname]+'00');
+    ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(p.x,p.y,r*5,0,2*Math.PI); ctx.fill();
     ctx.fillStyle=colors[pname];
-    ctx.beginPath();ctx.arc(p.x,p.y,r,0,2*Math.PI);ctx.fill();
-
-    // Saturn ring hint
+    ctx.beginPath(); ctx.arc(p.x,p.y,r,0,2*Math.PI); ctx.fill();
     if(pname==='Saturn'){
-      ctx.strokeStyle='rgba(220,200,120,0.7)';
-      ctx.lineWidth=1.5;
-      ctx.beginPath();ctx.ellipse(p.x,p.y,r*2,r*0.6,0.4,0,2*Math.PI);ctx.stroke();
+      ctx.strokeStyle='rgba(220,200,120,0.7)'; ctx.lineWidth=Math.max(1,1.5*zoomScale);
+      ctx.beginPath(); ctx.ellipse(p.x,p.y,r*2,r*0.6,0.4,0,2*Math.PI); ctx.stroke();
     }
-    ctx.globalAlpha=1;
-    ctx.restore();
-
+    ctx.globalAlpha=1; ctx.restore();
     if(NSK.showLabels){
       ctx.font='bold 10px Poppins,sans-serif';
       ctx.fillStyle='rgba(220,200,140,'+(vis*0.9)+')';
-      ctx.textAlign='left';
-      ctx.fillText(pname,p.x+r+4,p.y+4);
+      ctx.textAlign='left'; ctx.fillText(pname,p.x+r+4,p.y+4);
     }
   });
 
@@ -52885,92 +52948,79 @@ function draw(){
   var moonAA=raDecToAltAz(moon.ra,moon.dec,lst,NSK.lat);
   if(moonAA.alt>-5){
     var mp=altAzToXY(moonAA.alt,moonAA.az);
-    if(isOnScreen(mp.x,mp.y,30)){
-      var moonR=moonAA.alt>0?12:8;
+    var baseMoonR=moonAA.alt>0?12:8;
+    var moonR=baseMoonR*zoomScale;
+    if(isOnScreen(mp.x,mp.y,moonR+10)){
       var moonAlpha=moonAA.alt>0?1:0.3;
-      ctx.save();
-      ctx.globalAlpha=moonAlpha;
-      // Glow
+      ctx.save(); ctx.globalAlpha=moonAlpha;
       var mg=ctx.createRadialGradient(mp.x,mp.y,0,mp.x,mp.y,moonR*4);
-      mg.addColorStop(0,'rgba(220,230,255,0.3)');
-      mg.addColorStop(1,'rgba(220,230,255,0)');
-      ctx.fillStyle=mg;
-      ctx.beginPath();ctx.arc(mp.x,mp.y,moonR*4,0,2*Math.PI);ctx.fill();
-      // Moon disc
-      ctx.fillStyle='#d0d8f0';
-      ctx.beginPath();ctx.arc(mp.x,mp.y,moonR,0,2*Math.PI);ctx.fill();
-      // Shadow
+      mg.addColorStop(0,'rgba(220,230,255,0.3)'); mg.addColorStop(1,'rgba(220,230,255,0)');
+      ctx.fillStyle=mg; ctx.beginPath(); ctx.arc(mp.x,mp.y,moonR*4,0,2*Math.PI); ctx.fill();
+      ctx.fillStyle='#d0d8f0'; ctx.beginPath(); ctx.arc(mp.x,mp.y,moonR,0,2*Math.PI); ctx.fill();
       var phA=moon.phase*2*Math.PI;
       ctx.fillStyle='rgba(7,11,20,0.88)';
-      ctx.beginPath();
-      ctx.arc(mp.x,mp.y,moonR,Math.PI/2,-Math.PI/2,false);
+      ctx.beginPath(); ctx.arc(mp.x,mp.y,moonR,Math.PI/2,-Math.PI/2,false);
       var sc2=Math.cos(phA);
       ctx.bezierCurveTo(mp.x+sc2*moonR,mp.y-moonR,mp.x+sc2*moonR,mp.y+moonR,mp.x,mp.y+moonR);
-      ctx.closePath();ctx.fill();
-      ctx.globalAlpha=1;
-      ctx.restore();
-      if(NSK.showLabels&&moonAA.alt>0){
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha=1; ctx.restore();
+      if(NSK.showLabels && moonAA.alt>0){
         ctx.font='bold 10px Poppins,sans-serif';
         ctx.fillStyle='rgba(200,220,255,0.8)';
-        ctx.textAlign='left';
-        ctx.fillText('Moon',mp.x+moonR+4,mp.y+4);
+        ctx.textAlign='left'; ctx.fillText('Moon',mp.x+moonR+4,mp.y+4);
       }
     }
   }
 
-  // Sun (show near/below horizon)
+  // Sun
   if(sunAA.alt>-20){
     var sp=altAzToXY(sunAA.alt,sunAA.az);
-    if(isOnScreen(sp.x,sp.y,60)){
+    var baseSunR=sunAA.alt>0?18:14;
+    var sunR=baseSunR*zoomScale;
+    if(isOnScreen(sp.x,sp.y,sunR+20)){
       ctx.save();
       var sunVis=sunAA.alt>0?1:Math.max(0,(20+sunAA.alt)/20);
       ctx.globalAlpha=sunVis;
-      var sunR=sunAA.alt>0?18:14;
-      // Corona
       for(var ri=5;ri>=1;ri--){
         var sg=ctx.createRadialGradient(sp.x,sp.y,0,sp.x,sp.y,sunR*ri);
-        sg.addColorStop(0,'rgba(255,220,80,'+(0.08/ri)+')');
-        sg.addColorStop(1,'rgba(255,180,40,0)');
-        ctx.fillStyle=sg;
-        ctx.beginPath();ctx.arc(sp.x,sp.y,sunR*ri,0,2*Math.PI);ctx.fill();
+        sg.addColorStop(0,'rgba(255,220,80,'+(0.08/ri)+')'); sg.addColorStop(1,'rgba(255,180,40,0)');
+        ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(sp.x,sp.y,sunR*ri,0,2*Math.PI); ctx.fill();
       }
       ctx.fillStyle=sunAA.alt>0?'#fff8a0':'#ffb050';
-      ctx.beginPath();ctx.arc(sp.x,sp.y,sunR,0,2*Math.PI);ctx.fill();
-      ctx.globalAlpha=1;
-      ctx.restore();
-      if(NSK.showLabels&&sunAA.alt>-5){
+      ctx.beginPath(); ctx.arc(sp.x,sp.y,sunR,0,2*Math.PI); ctx.fill();
+      ctx.globalAlpha=1; ctx.restore();
+      if(NSK.showLabels && sunAA.alt>-5){
         ctx.font='bold 10px Poppins,sans-serif';
         ctx.fillStyle='rgba(255,230,120,0.85)';
-        ctx.textAlign='left';
-        ctx.fillText('Sun',sp.x+sunR+4,sp.y+4);
+        ctx.textAlign='left'; ctx.fillText('Sun',sp.x+sunR+4,sp.y+4);
       }
     }
   }
 
-  // Altitude grid lines (every 30°)
-  ctx.save();
-  ctx.strokeStyle='rgba(80,120,180,0.07)';
-  ctx.lineWidth=1;
-  for(var alt=-60;alt<=90;alt+=30){
-    var gp=altAzToXY(alt,NSK.azCenter);
-    ctx.beginPath();ctx.moveTo(0,gp.y);ctx.lineTo(NSK.W,gp.y);ctx.stroke();
-    if(alt!==0&&alt>-20&&alt<85){
-      ctx.font='9px Share Tech Mono,monospace';
-      ctx.fillStyle='rgba(100,140,200,0.35)';
-      ctx.textAlign='left';
-      ctx.fillText(alt+'°',4,gp.y-2);
+  // Altitude grid lines (skip during drag)
+  if(!_isDragging){
+    ctx.save(); ctx.strokeStyle='rgba(80,120,180,0.07)'; ctx.lineWidth=1;
+    for(var alt=-60;alt<=90;alt+=30){
+      var gp=altAzToXY(alt,NSK.azCenter);
+      ctx.beginPath(); ctx.moveTo(0,gp.y); ctx.lineTo(NSK.W,gp.y); ctx.stroke();
+      if(alt!==0&&alt>-20&&alt<85){
+        ctx.font='9px Share Tech Mono,monospace';
+        ctx.fillStyle='rgba(100,140,200,0.35)';
+        ctx.textAlign='left'; ctx.fillText(alt+'°',4,gp.y-2);
+      }
     }
-  }
-  ctx.restore();
-
-  // ── Landscape silhouette ───────────────────────────────────────────────
-  // Fades OUT as you zoom in (fov shrinks below 55°), fades back IN when zoomed out
-  var landscapeAlpha = Math.max(0, Math.min(1, (NSK.fov - 35) / 30));
-  if(landscapeAlpha > 0.01){
-    nskDrawLandscape(ctx, horY.y, sunAA.alt, landscapeAlpha);
+    ctx.restore();
   }
 
-  // Update time display
+  // Landscape
+  var landscapeAlpha=Math.max(0,Math.min(1,(NSK.fov-35)/30));
+  if(landscapeAlpha>0.01){
+    nskDrawLandscape(ctx,horY.y,NSK.atmosMode?-20:sunAA.alt,landscapeAlpha);
+  }
+
+  // ISS / Satellite tracker
+  drawISS(ctx, jd, lst);
+
   nskUpdateTimeDisplay(now);
 }
 
@@ -52981,16 +53031,448 @@ function nskUpdateTimeDisplay(now){
   if(dd) dd.textContent=now.toLocaleDateString(undefined,{weekday:'short',year:'numeric',month:'short',day:'numeric'});
 }
 
-// ── RAF loop ───────────────────────────────────────────────────────────────
-function nskLoop(){
-  if(!NSK.open){NSK.rafId=null;return;}
-  // If live mode, advance sim every second
-  if(!NSK.simTime){
-    draw();
+
+// ══════════════════════════════════════════════════════════════════════════
+//  ISS & SATELLITE TRACKER
+// ══════════════════════════════════════════════════════════════════════════
+var NSK_ISS = {
+  enabled:   false,
+  lat:       null,   // current ISS geographic lat
+  lon:       null,   // current ISS geographic lon
+  alt:       null,   // altitude km
+  velocity:  null,   // km/s
+  fetchTimer: null,
+  // Trail: last N positions [{ lat, lon, alt, t }]
+  trail:     [],
+  TRAIL_MAX: 40,
+  // State flags
+  fetching:  false,
+  error:     null,
+  // Computed per-draw
+  aa:        null,   // { alt, az } from observer
+};
+
+// Geographic lat/lon + altitude → Alt/Az from observer (simplified but accurate)
+// Uses flat-Earth approximation for the angle, which is fine for a ~420 km orbit
+function issGeoToAltAz(issLat, issLon, issAltKm, obsLat, obsLon) {
+  var R  = 6371;           // Earth radius km
+  var dLat = (issLat - obsLat) * Math.PI / 180;
+  var dLon = (issLon - obsLon) * Math.PI / 180;
+  var latR = obsLat * Math.PI / 180;
+
+  // Haversine great-circle distance
+  var a   = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(latR)*Math.cos(issLat*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  var gcd = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); // radians
+  var gcdKm = R * gcd;
+
+  // Slant range from observer to ISS (straight line through space)
+  var obsR   = R;
+  var issR   = R + issAltKm;
+  var slant  = Math.sqrt(obsR*obsR + issR*issR - 2*obsR*issR*Math.cos(gcd));
+
+  // Elevation angle
+  var sinEl  = (Math.cos(gcd) * issR - obsR) / slant;
+  var elDeg  = Math.asin(Math.max(-1, Math.min(1, sinEl))) * 180 / Math.PI;
+
+  // Bearing (azimuth) from observer to ISS sub-point
+  var y      = Math.sin(dLon) * Math.cos(issLat * Math.PI / 180);
+  var x      = Math.cos(latR)*Math.sin(issLat*Math.PI/180) -
+               Math.sin(latR)*Math.cos(issLat*Math.PI/180)*Math.cos(dLon);
+  var az     = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+
+  return { alt: elDeg, az: az, slantKm: slant, gcdKm: gcdKm };
+}
+
+// Fetch ISS position from wheretheiss.at (CORS-open, no key needed)
+function issFetch() {
+  if (NSK_ISS.fetching) return;
+  NSK_ISS.fetching = true;
+  fetch('https://api.wheretheiss.at/v1/satellites/25544', { cache: 'no-store' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      NSK_ISS.fetching = false;
+      NSK_ISS.error    = null;
+      NSK_ISS.lat      = d.latitude;
+      NSK_ISS.lon      = d.longitude;
+      NSK_ISS.alt      = d.altitude;   // km
+      NSK_ISS.velocity = d.velocity;   // km/s
+      // Push to trail
+      NSK_ISS.trail.push({ lat: d.latitude, lon: d.longitude, alt: d.altitude, t: Date.now() });
+      if (NSK_ISS.trail.length > NSK_ISS.TRAIL_MAX) NSK_ISS.trail.shift();
+      scheduleDraw();
+    })
+    .catch(function(e) {
+      NSK_ISS.fetching = false;
+      NSK_ISS.error    = 'No data';
+    });
+}
+
+function issStartPolling() {
+  issStopPolling();
+  issFetch(); // immediate
+  NSK_ISS.fetchTimer = setInterval(issFetch, 5000); // every 5 s
+}
+
+function issStopPolling() {
+  if (NSK_ISS.fetchTimer) { clearInterval(NSK_ISS.fetchTimer); NSK_ISS.fetchTimer = null; }
+}
+
+window.nskToggleISS = function() {
+  NSK_ISS.enabled = !NSK_ISS.enabled;
+  var btn = document.getElementById('nsk-iss-btn');
+  if (NSK_ISS.enabled) {
+    if (btn) {
+      btn.style.background = 'rgba(80,200,120,0.22)';
+      btn.style.border     = '1px solid rgba(80,220,140,0.5)';
+      btn.style.color      = '#80ffb0';
+    }
+    issStartPolling();
   } else {
-    draw();
+    if (btn) {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.border     = '1px solid rgba(255,255,255,0.15)';
+      btn.style.color      = 'rgba(200,220,255,0.85)';
+    }
+    issStopPolling();
+    NSK_ISS.trail = [];
+    scheduleDraw();
   }
-  NSK.rafId=requestAnimationFrame(nskLoop);
+};
+
+// Draw the ISS on the canvas — called inside draw() after Moon/Sun
+function drawISS(ctx, jd, lst) {
+  if (!NSK_ISS.enabled) return;
+  if (!NSK.locationKnown) return;
+
+  // ISS spacecraft icon — drawn at a fixed comfortable pixel size, scaled by FOV zoom
+  // The ISS has: long truss (horizontal bar), two large solar array wings (angled panels),
+  // the hab modules (central box), and a small docking port.
+  function drawSatIcon(cx, cy, sz, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(cx, cy);
+
+    // sz is the "unit" — base it on a readable minimum
+    // At 90° FOV sz=14, zoomed in sz grows. Never smaller than 12px unit.
+    var S = sz; // use as-is (caller sets a proper size now)
+
+    // ── Outer glow halo ──────────────────────────────────────────────────
+    var gl = ctx.createRadialGradient(0, 0, 0, 0, 0, S * 2.8);
+    gl.addColorStop(0, 'rgba(80,255,160,0.35)');
+    gl.addColorStop(0.4, 'rgba(80,255,160,0.12)');
+    gl.addColorStop(1,   'rgba(80,255,160,0)');
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(0, 0, S * 2.8, 0, 2*Math.PI); ctx.fill();
+
+    // ── Main horizontal truss (the long backbone of the ISS) ─────────────
+    ctx.fillStyle   = 'rgba(200,215,230,0.95)';
+    ctx.strokeStyle = 'rgba(160,200,240,0.7)';
+    ctx.lineWidth   = 0.8;
+    // Truss bar: wide flat rectangle
+    ctx.beginPath();
+    ctx.rect(-S * 1.5, -S * 0.13, S * 3, S * 0.26);
+    ctx.fill(); ctx.stroke();
+
+    // Truss end caps
+    ctx.fillStyle = 'rgba(180,200,220,0.9)';
+    ctx.beginPath(); ctx.rect(-S * 1.55, -S * 0.22, S * 0.18, S * 0.44); ctx.fill();
+    ctx.beginPath(); ctx.rect( S * 1.37, -S * 0.22, S * 0.18, S * 0.44); ctx.fill();
+
+    // ── Solar array wings — 4 panels (2 per side, Port & Starboard) ──────
+    // Each wing has 2 rectangular panels with a thin gap between them
+    // Left side (port): panels extend left and slightly down from truss ends
+    var panW = S * 0.9;   // panel width
+    var panH = S * 0.42;  // panel height
+    var gap  = S * 0.06;  // gap between panels in a pair
+
+    // LEFT outer wing pair (top + bottom panels)
+    ctx.fillStyle   = 'rgba(30,100,220,0.92)';
+    ctx.strokeStyle = 'rgba(100,180,255,0.75)';
+    ctx.lineWidth   = 0.7;
+    // Left-top panel
+    ctx.beginPath(); ctx.rect(-S*1.52 - panW, -(panH + gap/2), panW, panH); ctx.fill(); ctx.stroke();
+    // Left-bottom panel
+    ctx.beginPath(); ctx.rect(-S*1.52 - panW, gap/2, panW, panH); ctx.fill(); ctx.stroke();
+    // Solar cell grid lines on left-top
+    ctx.strokeStyle = 'rgba(80,160,255,0.35)'; ctx.lineWidth = 0.4;
+    for (var gi = 1; gi < 4; gi++) {
+      var gx = -S*1.52 - panW + panW * gi / 4;
+      ctx.beginPath(); ctx.moveTo(gx, -(panH+gap/2)); ctx.lineTo(gx, -gap/2); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(-S*1.52-panW, -(panH+gap/2)+panH*0.5); ctx.lineTo(-S*1.52, -(panH+gap/2)+panH*0.5); ctx.stroke();
+    // Solar cell grid lines on left-bottom
+    for (var gi2 = 1; gi2 < 4; gi2++) {
+      var gx2 = -S*1.52 - panW + panW * gi2 / 4;
+      ctx.beginPath(); ctx.moveTo(gx2, gap/2); ctx.lineTo(gx2, gap/2+panH); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(-S*1.52-panW, gap/2+panH*0.5); ctx.lineTo(-S*1.52, gap/2+panH*0.5); ctx.stroke();
+
+    // RIGHT outer wing pair (port & starboard mirrored)
+    ctx.fillStyle   = 'rgba(30,100,220,0.92)';
+    ctx.strokeStyle = 'rgba(100,180,255,0.75)';
+    ctx.lineWidth   = 0.7;
+    // Right-top panel
+    ctx.beginPath(); ctx.rect(S*1.52, -(panH + gap/2), panW, panH); ctx.fill(); ctx.stroke();
+    // Right-bottom panel
+    ctx.beginPath(); ctx.rect(S*1.52, gap/2, panW, panH); ctx.fill(); ctx.stroke();
+    // Solar cell grid lines on right-top
+    ctx.strokeStyle = 'rgba(80,160,255,0.35)'; ctx.lineWidth = 0.4;
+    for (var gi3 = 1; gi3 < 4; gi3++) {
+      var gx3 = S*1.52 + panW * gi3 / 4;
+      ctx.beginPath(); ctx.moveTo(gx3, -(panH+gap/2)); ctx.lineTo(gx3, -gap/2); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(S*1.52, -(panH+gap/2)+panH*0.5); ctx.lineTo(S*1.52+panW, -(panH+gap/2)+panH*0.5); ctx.stroke();
+    // Solar cell grid lines on right-bottom
+    for (var gi4 = 1; gi4 < 4; gi4++) {
+      var gx4 = S*1.52 + panW * gi4 / 4;
+      ctx.beginPath(); ctx.moveTo(gx4, gap/2); ctx.lineTo(gx4, gap/2+panH); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(S*1.52, gap/2+panH*0.5); ctx.lineTo(S*1.52+panW, gap/2+panH*0.5); ctx.stroke();
+
+    // ── Hab modules (integrated truss segment + modules cluster) ──────────
+    // Main pressurised module block (US Lab, Node 1-3, Russian segment)
+    ctx.fillStyle   = 'rgba(215,225,240,0.97)';
+    ctx.strokeStyle = 'rgba(180,210,240,0.6)';
+    ctx.lineWidth   = 0.7;
+    // Central module cluster — slightly rounded rect
+    var modW = S * 0.72, modH = S * 0.5;
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(-modW/2, -modH/2, modW, modH, S * 0.08);
+    } else {
+      ctx.rect(-modW/2, -modH/2, modW, modH);
+    }
+    ctx.fill(); ctx.stroke();
+
+    // Module segment dividers (cylindrical look)
+    ctx.strokeStyle = 'rgba(140,170,200,0.5)'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(-modW*0.22, -modH/2); ctx.lineTo(-modW*0.22, modH/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo( modW*0.22, -modH/2); ctx.lineTo( modW*0.22, modH/2); ctx.stroke();
+
+    // Specular highlight on modules
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(-modW*0.1, -modH*0.28, modW*0.28, modH*0.14, 0, 0, 2*Math.PI);
+    ctx.fill();
+
+    // ── Radiator panels (smaller, perpendicular to solar panels) ──────────
+    ctx.fillStyle   = 'rgba(220,235,245,0.75)';
+    ctx.strokeStyle = 'rgba(180,210,240,0.4)';
+    ctx.lineWidth   = 0.5;
+    // Left radiator
+    ctx.beginPath(); ctx.rect(-S*0.85, -S*0.55, S*0.28, S*0.11); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(-S*0.85,  S*0.44, S*0.28, S*0.11); ctx.fill(); ctx.stroke();
+    // Right radiator
+    ctx.beginPath(); ctx.rect( S*0.57, -S*0.55, S*0.28, S*0.11); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect( S*0.57,  S*0.44, S*0.28, S*0.11); ctx.fill(); ctx.stroke();
+
+    // ── Docking port (Harmony / PMA stub pointing up) ─────────────────────
+    ctx.fillStyle   = 'rgba(190,205,220,0.9)';
+    ctx.strokeStyle = 'rgba(160,190,215,0.5)';
+    ctx.lineWidth   = 0.5;
+    ctx.beginPath(); ctx.rect(-S*0.1, -modH/2 - S*0.22, S*0.2, S*0.22); ctx.fill(); ctx.stroke();
+    // Port ring
+    ctx.strokeStyle = 'rgba(140,180,220,0.8)'; ctx.lineWidth = 0.7;
+    ctx.beginPath(); ctx.arc(0, -modH/2 - S*0.22, S*0.12, 0, 2*Math.PI); ctx.stroke();
+
+    // ── Centre bright dot (status light) ──────────────────────────────────
+    ctx.fillStyle = '#e8f4ff';
+    ctx.beginPath(); ctx.arc(0, 0, S * 0.12, 0, 2*Math.PI); ctx.fill();
+
+    ctx.restore();
+  }
+
+  // Draw ground track trail
+  if (NSK_ISS.trail.length > 1) {
+    ctx.save();
+    for (var ti = 1; ti < NSK_ISS.trail.length; ti++) {
+      var tp = NSK_ISS.trail[ti];
+      var taa = issGeoToAltAz(tp.lat, tp.lon, tp.alt, NSK.lat, NSK.lon);
+      if (taa.alt < -20) continue;
+      var txy = altAzToXY(taa.alt, taa.az);
+      if (!isOnScreen(txy.x, txy.y, 60)) continue;
+      var age = (Date.now() - tp.t) / (NSK_ISS.TRAIL_MAX * 5200); // fade over trail age
+      var talpha = Math.max(0.04, 0.45 * (1 - age) * ((ti + 1) / NSK_ISS.trail.length));
+      ctx.strokeStyle = 'rgba(80,255,160,' + talpha.toFixed(2) + ')';
+      ctx.lineWidth = 1.2;
+      // Draw dot for each trail point
+      ctx.beginPath(); ctx.arc(txy.x, txy.y, 1.4, 0, 2*Math.PI);
+      ctx.fillStyle = 'rgba(80,255,160,' + (talpha * 1.4).toFixed(2) + ')';
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Current ISS position
+  if (NSK_ISS.lat === null) {
+    // Fetching — show spinner-like status near top
+    ctx.save();
+    ctx.font = '10px Poppins,sans-serif';
+    ctx.fillStyle = 'rgba(80,200,120,0.65)';
+    ctx.textAlign = 'center';
+    ctx.fillText('ISS: locating\u2026', NSK.W / 2, 52);
+    ctx.restore();
+    return;
+  }
+
+  if (NSK_ISS.error) {
+    ctx.save();
+    ctx.font = '10px Poppins,sans-serif';
+    ctx.fillStyle = 'rgba(255,120,80,0.65)';
+    ctx.textAlign = 'center';
+    ctx.fillText('ISS: ' + NSK_ISS.error, NSK.W / 2, 52);
+    ctx.restore();
+    return;
+  }
+
+  var aa = issGeoToAltAz(NSK_ISS.lat, NSK_ISS.lon, NSK_ISS.alt, NSK.lat, NSK.lon);
+  NSK_ISS.aa = aa; // store for hit-test
+
+  var p   = altAzToXY(aa.alt, aa.az);
+  var vis = aa.alt > 0 ? 1.0 : Math.max(0, 1 + aa.alt / 15); // fade when slightly below horizon
+  if (vis < 0.01) {
+    // ISS is well below horizon — show an edge indicator
+    var edgeAz = altAzToXY(0, aa.az);
+    var clampedX = Math.max(20, Math.min(NSK.W - 20, edgeAz.x));
+    var horY2    = altAzToXY(0, NSK.azCenter);
+    ctx.save();
+    ctx.font      = 'bold 9px Poppins,sans-serif';
+    ctx.fillStyle = 'rgba(80,200,120,0.45)';
+    ctx.textAlign = 'center';
+    ctx.fillText('\uD83D\uDEF8 ISS below horizon', clampedX, horY2.y + 26);
+    ctx.restore();
+    return;
+  }
+
+  // sz = base unit in pixels. At 90° FOV it's 14px (readable icon).
+  // Grows as you zoom in, shrinks slightly at very wide FOV. Min 10px so icon is never a dot.
+  var sz = Math.max(10, Math.min(26, 14 * (90 / NSK.fov)));
+  drawSatIcon(p.x, p.y, sz, vis);
+
+  // Label
+  if (NSK.showLabels) {
+    ctx.save();
+    ctx.font      = 'bold 10px Poppins,sans-serif';
+    ctx.fillStyle = 'rgba(80,255,160,' + (vis * 0.92).toFixed(2) + ')';
+    ctx.textAlign = 'left';
+    ctx.fillText('ISS  ' + aa.alt.toFixed(1) + '\u00b0', p.x + sz * 2.6, p.y + 4);
+    ctx.restore();
+  }
+}
+
+// Add ISS to hit-test
+var _origNskHitTest = null; // patched below after nskHitTest is defined
+
+// ── Cardinal Direction Overlay ─────────────────────────────────────────────
+// Places N/E/S/W pills on the horizon line, clamped to screen edges.
+// When a direction is on-screen, the pill sits right on the horizon.
+// When it drifts off-screen, the pill sticks to the nearest edge so the user
+// always knows which way to pan. Runs every draw frame — zero jitter.
+function nskUpdateCardinalOverlay(){
+  var W = NSK.W, H = NSK.H;
+  if(!W || !H) return;
+
+  // altAzToXY() returns values in CSS-pixel space (NSK.W/H are CSS px).
+  // Pill dimensions (approximate — matches CSS)
+  var PW = 32;  // pill width  (half = 16)
+  var PH = 22;  // pill height (half = 11)
+  var TOP_SAFE    = 54;      // below top-bar
+  var BOTTOM_SAFE = H - 72;  // above bottom controls
+  var LEFT_SAFE   = 10;
+  var RIGHT_SAFE  = W - PW - 10;
+
+  var CARDINALS = [
+    {id:'N', az:0},
+    {id:'E', az:90},
+    {id:'S', az:180},
+    {id:'W', az:270},
+  ];
+
+  CARDINALS.forEach(function(d){
+    var el = document.getElementById('nsk-cardinal-' + d.id);
+    if(!el) return;
+
+    // Project horizon point for this azimuth
+    var p   = altAzToXY(0, d.az);
+    var px  = p.x;          // x on screen (horizon row)
+    var py  = p.y;          // y on screen (horizon altitude)
+
+    // Desired position: center the pill on the horizon projection
+    var tx = px - PW / 2;
+    var ty = py - PH / 2;
+
+    // Clamp to safe area (keeps pill visible at all times)
+    tx = Math.max(LEFT_SAFE,   Math.min(RIGHT_SAFE,   tx));
+    ty = Math.max(TOP_SAFE,    Math.min(BOTTOM_SAFE,  ty));
+
+    el.style.left      = '0';
+    el.style.top       = '0';
+    el.style.right     = '';
+    el.style.bottom    = '';
+    el.style.transform = 'translate3d(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px,0)';
+
+    // Subtle fade when the direction is far behind the viewer (>120° off-center azimuth)
+    var dAz = Math.abs(((d.az - NSK.azCenter + 540) % 360) - 180); // 0..180
+    // Fully visible up to 90°, fade between 100°–160°, very dim beyond
+    var fade = dAz < 100 ? 1 : dAz > 160 ? 0.18 : 1 - (dAz - 100) / 75;
+    el.style.opacity = fade.toFixed(2);
+
+    el.textContent = d.id;
+  });
+}
+
+// ── RAF loop ───────────────────────────────────────────────────────────────
+var _drawScheduled = false;
+function scheduleDraw(){
+  if(_drawScheduled) return;
+  _drawScheduled = true;
+  requestAnimationFrame(function(){
+    _drawScheduled = false;
+    if(!NSK.open) return;
+    draw();
+  });
+}
+// Immediate draw — use inside RAF callbacks where we're already in the right frame
+function drawNow(){
+  if(!NSK.open) return;
+  _drawScheduled = false; // cancel any pending scheduleDraw for this frame
+  draw();
+}
+
+// ── Live clock: update display every RAF frame so seconds match the device exactly.
+// ── Full scene redraw is scheduled to fire right at each real second boundary.
+var _liveClockRAF  = null;
+var _liveTickTimer = null;
+
+function _stopLiveClock(){
+  if(_liveClockRAF)  { cancelAnimationFrame(_liveClockRAF); _liveClockRAF = null; }
+  if(_liveTickTimer) { clearTimeout(_liveTickTimer); _liveTickTimer = null; }
+}
+
+function _liveclockFrame(){
+  if(!NSK.open || NSK.simTime){ _liveClockRAF = null; return; }
+  // Update the clock text on every frame — no canvas redraw, just DOM text
+  nskUpdateTimeDisplay(new Date());
+  _liveClockRAF = requestAnimationFrame(_liveclockFrame);
+}
+
+function _scheduleNextSecondTick(){
+  if(!NSK.open || NSK.simTime) return;
+  // Calculate exact ms until the next whole second
+  var msUntilNext = 1000 - (Date.now() % 1000);
+  _liveTickTimer = setTimeout(function(){
+    if(!NSK.open || NSK.simTime) return;
+    scheduleDraw();            // full scene redraw aligned to the real second flip
+    _scheduleNextSecondTick(); // chain to the next second
+  }, msUntilNext);
+}
+
+function nskLoop(){
+  if(!NSK.open){ NSK.rafId = null; return; }
+  // nskLoop only keeps itself alive; actual clock/draw work is handled by
+  // _liveclockFrame (display) and _scheduleNextSecondTick (scene redraws).
+  NSK.rafId = requestAnimationFrame(nskLoop);
 }
 
 function nskResize(){
@@ -53002,7 +53484,7 @@ function nskResize(){
   NSK.W=W; NSK.H=H;
   NSK.ctx.scale(pr,pr);
   _lsCache=null; // invalidate landscape cache on resize
-  draw();
+  scheduleDraw();
 }
 
 // ── Controls ───────────────────────────────────────────────────────────────
@@ -53010,36 +53492,54 @@ window.nskToggleConstellations=function(){
   NSK.showConstellations=!NSK.showConstellations;
   var btn=document.getElementById('nsk-toggle-const');
   if(btn) btn.style.opacity=NSK.showConstellations?'1':'0.45';
-  draw();
+  scheduleDraw();
 };
 window.nskToggleLabels=function(){
   NSK.showLabels=!NSK.showLabels;
   var btn=document.getElementById('nsk-toggle-labels');
   if(btn) btn.style.opacity=NSK.showLabels?'1':'0.45';
-  draw();
+  scheduleDraw();
 };
 window.nskResetView=function(){
   NSK.azCenter=180; NSK.altCenter=45; NSK.fov=90;
   nskUpdateZoomLabel();
-  draw();
+  scheduleDraw();
+};
+window.nskToggleAtmos=function(){
+  NSK.atmosMode=!NSK.atmosMode;
+  var btn=document.getElementById('nsk-atmos-btn');
+  if(btn){
+    if(NSK.atmosMode){
+      btn.style.background='rgba(80,120,255,0.25)';
+      btn.style.border='1px solid rgba(100,160,255,0.55)';
+      btn.style.color='#a0c4ff';
+      btn.textContent='● ATMOS';
+    } else {
+      btn.style.background='rgba(255,255,255,0.08)';
+      btn.style.border='1px solid rgba(255,255,255,0.15)';
+      btn.style.color='rgba(200,220,255,0.85)';
+      btn.textContent='◑ ATMOS';
+    }
+  }
+  scheduleDraw();
 };
 function nskUpdateZoomLabel(){
   var el=document.getElementById('nsk-zoom-label');
   if(!el) return;
-  var fov=Math.round(NSK.fov);
-  var tier = NSK.fov > 100 ? '🔭−' : NSK.fov > 50 ? '🌟' : '✨+';
-  el.innerHTML = fov+'°<br><span style="font-size:8px;opacity:0.7;">'+tier+'</span>';
+  var fovStr = NSK.fov < 1 ? NSK.fov.toFixed(2)+'°' : NSK.fov < 10 ? NSK.fov.toFixed(1)+'°' : Math.round(NSK.fov)+'°';
+  var tier = NSK.fov > 100 ? '🔭−' : NSK.fov > 50 ? '🌟' : NSK.fov > 15 ? '✨+' : '🔬';
+  el.innerHTML = fovStr+'<br><span style="font-size:8px;opacity:0.7;">'+tier+'</span>';
 }
 window.nskZoom=function(factor){
-  NSK.fov=Math.max(20,Math.min(150,NSK.fov/factor));
+  NSK.fov=Math.max(0.5,Math.min(150,NSK.fov/factor));
   nskUpdateZoomLabel();
-  draw();
+  scheduleDraw();
 };
 window.nskAdjustTime=function(sec){
   var base=NSK.simTime||new Date();
   NSK.simTime=new Date(base.getTime()+sec*1000);
   nskSyncSliderToTime(NSK.simTime);
-  draw();
+  scheduleDraw();
 };
 window.nskSetNow=function(){
   NSK.simTime=null;
@@ -53048,7 +53548,11 @@ window.nskSetNow=function(){
   // Reset date input
   var di=document.getElementById('nsk-date-input');
   if(di) di.value=now.toISOString().slice(0,10);
-  draw();
+  // Restart the live clock and aligned second ticks
+  _stopLiveClock();
+  _liveClockRAF = requestAnimationFrame(_liveclockFrame);
+  _scheduleNextSecondTick();
+  scheduleDraw();
 };
 window.nskOnSliderInput=function(val){
   var base=NSK.simTime||new Date();
@@ -53056,7 +53560,7 @@ window.nskOnSliderInput=function(val){
   d.setHours(0,0,0,0);
   d.setSeconds(parseInt(val,10));
   NSK.simTime=d;
-  draw();
+  scheduleDraw();
 };
 window.nskOnDateChange=function(val){
   if(!val) return;
@@ -53066,7 +53570,7 @@ window.nskOnDateChange=function(val){
   d.setFullYear(parseInt(parts[0],10),parseInt(parts[1],10)-1,parseInt(parts[2],10));
   NSK.simTime=d;
   nskSyncSliderToTime(d);
-  draw();
+  scheduleDraw();
 };
 function nskSyncSliderToTime(d){
   var slider=document.getElementById('nsk-time-slider');
@@ -53084,10 +53588,11 @@ window.nskUseGPS=function(){
   navigator.geolocation.getCurrentPosition(function(pos){
     NSK.lat=pos.coords.latitude;
     NSK.lon=pos.coords.longitude;
+    NSK.locationKnown=true;
     nskReverseGeocode(NSK.lat,NSK.lon);
-    draw();
+    scheduleDraw();
   },function(){
-    if(locLabel) locLabel.textContent='Location unavailable';
+    if(locLabel) locLabel.textContent='Location Denied';
   },{timeout:8000,maximumAge:300000});
 };
 
@@ -53105,6 +53610,7 @@ function nskReverseGeocode(lat,lon){
 function nskUpdateLocationLabel(){
   var el=document.getElementById('nsk-location-label');
   if(!el) return;
+  if(!NSK.locationKnown){ el.textContent='Location Denied'; return; }
   var latS=(NSK.lat>=0?'+':'')+NSK.lat.toFixed(2)+'°, '+(NSK.lon>=0?'+':'')+NSK.lon.toFixed(2)+'°';
   el.textContent=NSK.locationLabel?(NSK.locationLabel+' · '+latS):latS;
 }
@@ -53130,12 +53636,13 @@ window.nskLocationSearch=function(val,immediate){
           btn.onclick=function(){
             NSK.lat=parseFloat(item.lat);
             NSK.lon=parseFloat(item.lon);
+            NSK.locationKnown=true;
             NSK.locationLabel=item.display_name.split(',').slice(0,2).join(', ');
             nskUpdateLocationLabel();
             var inp=document.getElementById('nsk-location-input');
             if(inp) inp.value=NSK.locationLabel;
             results.style.display='none';
-            draw();
+            scheduleDraw();
           };
           results.appendChild(btn);
         });
@@ -53178,6 +53685,26 @@ function nskHitTest(cx,cy){
   NAMED_STARS.forEach(function(s){
     check(s.name,s.ra,s.dec,'star',{mag:s.mag,con:s.con,dist:s.dist});
   });
+
+  // ISS
+  if(NSK_ISS.enabled && NSK_ISS.aa && NSK_ISS.lat !== null){
+    var issP = altAzToXY(NSK_ISS.aa.alt, NSK_ISS.aa.az);
+    var issD = Math.hypot(issP.x - cx, issP.y - cy);
+    if(issD < 32 && issD < bestDist){
+      bestDist = issD;
+      best = {
+        name: 'ISS (Space Station)',
+        type: 'iss',
+        aa:   NSK_ISS.aa,
+        extra: {
+          lat:      NSK_ISS.lat,
+          lon:      NSK_ISS.lon,
+          altKm:    NSK_ISS.alt,
+          velocity: NSK_ISS.velocity,
+        }
+      };
+    }
+  }
 
   return best;
 }
@@ -53299,6 +53826,26 @@ function nskShowInfo(obj){
     html+=row('Distance',obj.extra.dist?obj.extra.dist.toFixed(1)+' ly':'\u2014');
     html+=row('Altitude','<span style="color:'+altColor+'">'+alt+'\u00b0</span>');
     html+=row('Azimuth','<span style="color:#80e080">'+az+'\u00b0</span>');
+  } else if(obj.type==='iss'){
+    // ISS SVG icon
+    function issSVG(){
+      return '<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">'+
+        '<circle cx="18" cy="18" r="15" fill="rgba(80,255,160,0.07)"/>'+
+        '<rect x="4"  y="16" width="10" height="5" rx="1" fill="#3c8cff" stroke="rgba(120,200,255,0.6)" stroke-width="0.6"/>'+
+        '<rect x="22" y="16" width="10" height="5" rx="1" fill="#3c8cff" stroke="rgba(120,200,255,0.6)" stroke-width="0.6"/>'+
+        '<rect x="12" y="14" width="12" height="9" rx="1.5" fill="rgba(200,230,255,0.95)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>'+
+        '<circle cx="18" cy="18" r="2" fill="#ffffff"/>'+
+        '</svg>';
+    }
+    function iconBox2(svgStr){ return '<div style="width:36px;height:36px;border-radius:10px;background:rgba(80,255,160,0.08);border:1px solid rgba(80,255,160,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+svgStr+'</div>'; }
+    var ex=obj.extra;
+    html='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconBox2(issSVG())+'<div><div style="font-family:Poppins,sans-serif;font-size:13px;font-weight:700;color:#80ffb0;">'+obj.name+'</div><div style="font-size:9px;color:rgba(80,200,130,0.65);letter-spacing:0.4px;">LIVE TRACKING</div></div></div>';
+    html+=row('Altitude',  '<span style="color:'+altColor+'">'+alt+'\u00b0</span>');
+    html+=row('Azimuth',   '<span style="color:#80e080">'+az+'\u00b0</span>');
+    html+=row('Orbit alt', ex.altKm!==null ? (ex.altKm).toFixed(1)+' km' : '\u2014');
+    html+=row('Speed',     ex.velocity!==null ? (ex.velocity).toFixed(2)+' km/s' : '\u2014');
+    html+=row('Lat/Lon',   ex.lat!==null ? ex.lat.toFixed(2)+'\u00b0, '+ex.lon.toFixed(2)+'\u00b0' : '\u2014');
+    html+='<div style="margin-top:10px;font-size:9px;color:rgba(80,200,130,0.55);text-align:center;letter-spacing:0.3px;">Updates every 5 seconds</div>';
   }
 
   content.innerHTML=html;
@@ -53321,81 +53868,233 @@ function nskGetConstellationAtPos(aa){
 
 // ── Drag / pinch ───────────────────────────────────────────────────────────
 function nskSetupInteraction(){
-  var canvas=NSK.canvas;
-  // Mouse
-  canvas.addEventListener('mousedown',function(e){
-    NSK.dragging=true; NSK.lastX=e.clientX; NSK.lastY=e.clientY;
-    canvas.style.cursor='grabbing';
-  });
-  window.addEventListener('mousemove',function(e){
-    if(!NSK.dragging) return;
-    var dx=e.clientX-NSK.lastX, dy=e.clientY-NSK.lastY;
-    NSK.lastX=e.clientX; NSK.lastY=e.clientY;
-    var scale=NSK.fov/NSK.H;
-    NSK.azCenter=(NSK.azCenter-dx*scale*0.8+360)%360;
-    NSK.altCenter=Math.max(-80,Math.min(85,NSK.altCenter+dy*scale*0.8));
-    draw();
-  });
-  window.addEventListener('mouseup',function(){
-    NSK.dragging=false; if(canvas) canvas.style.cursor='grab';
-  });
-  canvas.addEventListener('click',function(e){
-    if(Math.abs(e.clientX-NSK.lastX)<4&&Math.abs(e.clientY-NSK.lastY)<4){
-      var rect=canvas.getBoundingClientRect();
-      var obj=nskHitTest(e.clientX-rect.left,e.clientY-rect.top);
+  var canvas = NSK.canvas;
+
+  // ── Inertia state ────────────────────────────────────────────────────────
+  var vel = { az: 0, alt: 0 };        // degrees/ms velocity
+  var inertiaRAF = null;
+  var lastInertiaT = 0;
+  var FRICTION = 0.88;                 // per-frame decay
+  var MIN_VEL = 0.002;                 // deg/ms below which we stop
+
+  function stopInertia(){
+    if(inertiaRAF){ cancelAnimationFrame(inertiaRAF); inertiaRAF = null; }
+  }
+
+  function tickInertia(now){
+    var dt = Math.min(now - lastInertiaT, 64);
+    lastInertiaT = now;
+    vel.az  *= FRICTION;
+    vel.alt *= FRICTION;
+    if(Math.abs(vel.az) < MIN_VEL && Math.abs(vel.alt) < MIN_VEL){
+      inertiaRAF = null;
+      _isDragging = false;
+      scheduleDraw();
+      return;
+    }
+    NSK.azCenter  = (NSK.azCenter  - vel.az  * dt + 360) % 360;
+    NSK.altCenter = Math.max(-80, Math.min(85, NSK.altCenter + vel.alt * dt));
+    scheduleDraw();
+    inertiaRAF = requestAnimationFrame(tickInertia);
+  }
+
+  // ── Shared drag state ────────────────────────────────────────────────────
+  var dragging   = false;
+  var lastX      = 0, lastY = 0;
+  var lastT      = 0;
+  var dragStartX = 0, dragStartY = 0;
+
+  // Pending pan delta — set by pointer events, consumed by the RAF render loop
+  var pendingDx  = 0, pendingDy = 0;
+  var dragRAF    = null;
+
+  // Velocity sampling for flick-inertia
+  var velSamples  = [];
+  var MAX_SAMPLES = 6;
+
+  // Single RAF loop that consumes pending deltas — avoids double-scheduling
+  function dragFrame(){
+    dragRAF = null;
+    if(!dragging && pendingDx === 0 && pendingDy === 0) return;
+    var scale = NSK.fov / NSK.H;
+    NSK.azCenter  = (NSK.azCenter  - pendingDx * scale + 360) % 360;
+    NSK.altCenter = Math.max(-80, Math.min(85, NSK.altCenter + pendingDy * scale));
+    pendingDx = 0;
+    pendingDy = 0;
+    drawNow();  // draw inside the RAF — no extra scheduling needed
+  }
+
+  function scheduleDragFrame(){
+    if(!dragRAF) dragRAF = requestAnimationFrame(dragFrame);
+  }
+
+  function endDrag(){
+    if(!dragging) return;
+    dragging    = false;
+    _isDragging = false;
+    canvas.style.cursor = 'grab';
+    try { canvas.releasePointerCapture(canvas._capturedPointerId); } catch(ex){}
+
+    // Flush any remaining pending delta immediately
+    if(pendingDx !== 0 || pendingDy !== 0){
+      var scale = NSK.fov / NSK.H;
+      NSK.azCenter  = (NSK.azCenter  - pendingDx * scale + 360) % 360;
+      NSK.altCenter = Math.max(-80, Math.min(85, NSK.altCenter + pendingDy * scale));
+      pendingDx = 0; pendingDy = 0;
+    }
+    if(dragRAF){ cancelAnimationFrame(dragRAF); dragRAF = null; }
+
+    // Launch inertia from recent velocity samples (ignore samples > 120 ms old)
+    var now = performance.now();
+    var sumAz = 0, sumAlt = 0, n = 0;
+    for(var i = velSamples.length - 1; i >= 0; i--){
+      if(now - velSamples[i].t > 120) break;
+      sumAz  += velSamples[i].az;
+      sumAlt += velSamples[i].alt;
+      n++;
+    }
+    velSamples = [];
+    if(n > 0){
+      vel.az  = sumAz  / n;
+      vel.alt = sumAlt / n;
+      lastInertiaT = now;
+      stopInertia();
+      inertiaRAF = requestAnimationFrame(tickInertia);
+    } else {
+      scheduleDraw();
+    }
+  }
+
+  // ── Pointer Events (mouse + touch + stylus unified) ───────────────────────
+  // Prevent ALL default browser pan/zoom on the canvas
+  canvas.style.touchAction = 'none';
+
+  canvas.addEventListener('pointerdown', function(e){
+    // For touch, only track the primary finger here; pinch handled via TouchEvents
+    if(e.pointerType === 'touch' && !e.isPrimary) return;
+    stopInertia();
+    dragging      = true;
+    _isDragging   = true;
+    lastX         = e.clientX;
+    lastY         = e.clientY;
+    lastT         = performance.now();
+    dragStartX    = e.clientX;
+    dragStartY    = e.clientY;
+    pendingDx     = 0;
+    pendingDy     = 0;
+    velSamples    = [];
+    canvas.style.cursor = 'grabbing';
+    canvas._capturedPointerId = e.pointerId;
+    try { canvas.setPointerCapture(e.pointerId); } catch(ex){}
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener('pointermove', function(e){
+    if(!dragging || (e.pointerType === 'touch' && !e.isPrimary)) return;
+
+    var now = performance.now();
+    var dx  = e.clientX - lastX;
+    var dy  = e.clientY - lastY;
+    var dt  = Math.max(0.5, now - lastT);
+
+    // Update tracked position BEFORE touching pendingDx/Dy
+    lastX = e.clientX;
+    lastY = e.clientY;
+    lastT = now;
+
+    if(dx === 0 && dy === 0) return;
+
+    // Accumulate delta for the next RAF frame
+    pendingDx += dx;
+    pendingDy += dy;
+
+    // Record velocity sample for flick-inertia
+    var scale = NSK.fov / NSK.H;
+    velSamples.push({ az: -dx * scale / dt, alt: dy * scale / dt, t: now });
+    if(velSamples.length > MAX_SAMPLES) velSamples.shift();
+
+    scheduleDragFrame();
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener('pointerup', function(e){
+    var wasDragging = dragging;
+    var upX = e.clientX, upY = e.clientY;
+    endDrag();
+    // Tap: tiny movement
+    if(Math.abs(upX - dragStartX) < 8 && Math.abs(upY - dragStartY) < 8){
+      var rect = canvas.getBoundingClientRect();
+      var obj  = nskHitTest(upX - rect.left, upY - rect.top);
       if(obj) nskShowInfo(obj);
-      else{
-        var panel=document.getElementById('nsk-info-panel');
-        if(panel) panel.style.display='none';
+      else {
+        var panel = document.getElementById('nsk-info-panel');
+        if(panel) panel.style.display = 'none';
       }
     }
-  });
-  // Wheel zoom
-  canvas.addEventListener('wheel',function(e){
-    e.preventDefault();
-    nskZoom(e.deltaY<0?1.15:1/1.15);
-  },{passive:false});
-  // Touch
-  var touchStart={};
-  canvas.addEventListener('touchstart',function(e){
-    e.preventDefault();
-    if(e.touches.length===1){
-      touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY,t:Date.now()};
-      NSK.lastX=e.touches[0].clientX; NSK.lastY=e.touches[0].clientY;
-      NSK.lastPinchDist=null;
-    } else if(e.touches.length===2){
-      NSK.lastPinchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+  }, { passive: false });
+
+  canvas.addEventListener('pointercancel', function(){ endDrag(); }, { passive: true });
+
+  // ── Pinch-to-zoom (TouchEvents — more reliable for 2-finger than Pointer) ──
+  var lastPinchDist = null;
+
+  canvas.addEventListener('touchstart', function(e){
+    if(e.touches.length === 2){
+      stopInertia();
+      // End single-finger drag cleanly when second finger lands
+      if(dragging){ endDrag(); }
+      lastPinchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
     }
-  },{passive:false});
-  canvas.addEventListener('touchmove',function(e){
-    e.preventDefault();
-    if(e.touches.length===1&&NSK.lastPinchDist===null){
-      var dx=e.touches[0].clientX-NSK.lastX, dy=e.touches[0].clientY-NSK.lastY;
-      NSK.lastX=e.touches[0].clientX; NSK.lastY=e.touches[0].clientY;
-      var scale=NSK.fov/NSK.H;
-      NSK.azCenter=(NSK.azCenter-dx*scale*0.8+360)%360;
-      NSK.altCenter=Math.max(-80,Math.min(85,NSK.altCenter+dy*scale*0.8));
-      draw();
-    } else if(e.touches.length===2){
-      var dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
-      if(NSK.lastPinchDist){nskZoom(dist/NSK.lastPinchDist);}
-      NSK.lastPinchDist=dist;
-    }
-  },{passive:false});
-  canvas.addEventListener('touchend',function(e){
-    if(e.changedTouches.length===1&&e.touches.length===0){
-      var dx=Math.abs(e.changedTouches[0].clientX-touchStart.x);
-      var dy=Math.abs(e.changedTouches[0].clientY-touchStart.y);
-      var dt=Date.now()-touchStart.t;
-      if(dx<10&&dy<10&&dt<300){
-        var rect=canvas.getBoundingClientRect();
-        var obj=nskHitTest(e.changedTouches[0].clientX-rect.left,e.changedTouches[0].clientY-rect.top);
-        if(obj) nskShowInfo(obj);
-        else{var panel=document.getElementById('nsk-info-panel');if(panel)panel.style.display='none';}
+  }, { passive: true });
+
+  canvas.addEventListener('touchmove', function(e){
+    if(e.touches.length === 2 && lastPinchDist !== null){
+      var dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      if(dist > 0){
+        var factor = dist / lastPinchDist;
+        NSK.fov = Math.max(0.5, Math.min(150, NSK.fov / factor));
+        nskUpdateZoomLabel();
+        scheduleDraw();
       }
-      NSK.lastPinchDist=null;
+      lastPinchDist = dist;
+      e.preventDefault();
     }
-  },{passive:false});
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', function(e){
+    if(e.touches.length < 2) lastPinchDist = null;
+  }, { passive: true });
+
+  // ── Wheel zoom ───────────────────────────────────────────────────────────
+  var wheelAccum = 0;
+  var wheelRAF   = null;
+  var wheelTimer = null;
+  canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    stopInertia();
+    wheelAccum += e.deltaY;
+    if(!wheelRAF){
+      wheelRAF = requestAnimationFrame(function(){
+        wheelRAF = null;
+        var factor = wheelAccum < 0 ? 1.15 : 1 / 1.15;
+        wheelAccum = 0;
+        NSK.fov = Math.max(0.5, Math.min(150, NSK.fov / factor));
+        nskUpdateZoomLabel();
+        drawNow();
+      });
+    }
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(function(){
+      wheelAccum = 0;
+      scheduleDraw();
+    }, 250);
+  }, { passive: false });
 }
 
 // ── Open / close ───────────────────────────────────────────────────────────
@@ -53404,6 +54103,7 @@ window.openNightSkyModal=function(){
   if(!modal) return;
   modal.style.display='flex';
   NSK.open=true;
+  document.body.style.overflow='hidden'; // prevent background page scroll
   NSK.canvas=document.getElementById('nsk-canvas');
   NSK.ctx=NSK.canvas.getContext('2d');
 
@@ -53421,16 +54121,23 @@ window.openNightSkyModal=function(){
     nskSetupInteraction();
     if(NSK.rafId) cancelAnimationFrame(NSK.rafId);
     NSK.rafId=requestAnimationFrame(nskLoop);
+    // Start pixel-perfect clock display + scene redraws aligned to real seconds
+    _stopLiveClock();
+    _liveClockRAF = requestAnimationFrame(_liveclockFrame);
+    _scheduleNextSecondTick();
 
     // Auto-locate
+    scheduleDraw(); // draw the "location needed" prompt immediately
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(pos){
         NSK.lat=pos.coords.latitude;
         NSK.lon=pos.coords.longitude;
+        NSK.locationKnown=true;
         nskReverseGeocode(NSK.lat,NSK.lon);
-        draw();
+        scheduleDraw();
       },function(){
         nskUpdateLocationLabel();
+        scheduleDraw(); // redraw with the prompt
       },{timeout:6000,maximumAge:300000});
     } else {
       nskUpdateLocationLabel();
@@ -53443,7 +54150,13 @@ window.openNightSkyModal=function(){
 
 window.closeNightSkyModal=function(){
   NSK.open=false;
+  NSK.locationKnown=false;
+  NSK.lat=null; NSK.lon=null;
+  NSK.locationLabel='';
+  document.body.style.overflow=''; // restore page scroll
   if(NSK.rafId){cancelAnimationFrame(NSK.rafId);NSK.rafId=null;}
+  _stopLiveClock();
+  issStopPolling(); // stop ISS API polling when modal closes
   var modal=document.getElementById('nightSkyModal');
   if(modal) modal.style.display='none';
   window.removeEventListener('resize',nskResize);
@@ -53631,7 +54344,7 @@ window.addEventListener('popstate',function(e){
             }
         })();
 
-        // Mirror Enable Location button in modal → trigger the original
+        // Mirror Enable Location button in modal → trigger the original + sync night sky
         var locBtnModal = document.getElementById('moonEnableLocationBtnModal');
         var locBtnOrig  = document.getElementById('moonEnableLocationBtn');
         if (locBtnModal && locBtnOrig && !locBtnModal._bound) {
@@ -53645,6 +54358,8 @@ window.addEventListener('popstate',function(e){
                     }
                     return;
                 }
+                // Also sync location into the interactive night sky
+                if (typeof nskUseGPS === 'function') nskUseGPS();
                 // Temporarily make original visible so its click fires properly
                 var prevDisplay = locBtnOrig.style.display;
                 locBtnOrig.style.display = '';
